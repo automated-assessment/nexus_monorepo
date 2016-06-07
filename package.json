@@ -1,0 +1,30 @@
+{
+  "name": "nexus",
+  "version": "1.0.0",
+  "description": "Nexus Automated Assessment Platform",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samwhite0/fyp.git"
+  },
+  "author": "Sam White - King's College London",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/samwhite0/fyp/issues"
+  },
+  "homepage": "https://github.com/samwhite0/fyp#readme",
+  "dependencies": {
+    "babel-core": "^5.8.33",
+    "babel-loader": "^5.3.3",
+    "bootstrap": "^3.3.5",
+    "css-loader": "^0.21.0",
+    "cssnext-loader": "^1.0.1",
+    "extract-text-webpack-plugin": "^0.8.2",
+    "file-loader": "^0.8.4",
+    "jquery": "^2.1.4",
+    "node-sass": "^3.4.1",
+    "path": "^0.12.7",
+    "sass-loader": "^3.1.1",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.2"
+  }
+}

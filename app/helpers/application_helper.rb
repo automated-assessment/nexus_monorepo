@@ -1,0 +1,34 @@
+module ApplicationHelper
+  def authenticate_staff!
+    redirect_to '/401', status: :unauthorized if current_user.student?
+  end
+
+  def distance_from_now_string(datetime)
+    s = distance_of_time_in_words_to_now(datetime)
+    s << ' ago' if datetime.past?
+    s
+  end
+
+  def strftime_uk(datetime)
+    datetime.strftime('%A, %d %b %Y %H:%M')
+  end
+
+  def pretty_datetime(datetime)
+    content_tag('span', distance_from_now_string(datetime), 'data-toggle': 'tooltip', title: strftime_uk(datetime))
+  end
+
+  def verify_access_token_header
+    token = request.headers['HTTP_NEXUS_ACCESS_TOKEN']
+    return false if token.nil?
+    AccessToken.find_by(access_token: token).present?
+  end
+
+  def render_unauthorized_json
+    render json: { response: 'Unauthorized' }.to_json,
+           status: 401
+  end
+
+  def icon(name)
+    content_tag('i', '', class: "fa fa-#{name}")
+  end
+end

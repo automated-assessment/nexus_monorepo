@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nexus</title>
+    <%= csrf_meta_tags %>
+    <%= stylesheet_link_tag "/assets/bundle.css" %>
+    <%= favicon_link_tag "/favicon.ico" %>
+  </head>
+  <body>
+    <div class="container">
+      <%= render 'layouts/navbar' %>
+      <%= render 'layouts/flashes' %>
+      <%= yield %>
+      <%= debug(params) if Rails.env.development? %>
+    </div>
+    <%= javascript_include_tag "/assets/bundle.js" %>
+  </body>
+</html>

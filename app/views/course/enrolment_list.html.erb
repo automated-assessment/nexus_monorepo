@@ -1,0 +1,20 @@
+<%= render 'header' %>
+<h5>Enrolment List</h5>
+<% if @course.students.size > 0 %>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th width="20%">User Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @course.students.each do |c| %>
+        <tr>
+          <th scope="row"><%= c.full_name %></th>
+          <td><%= c.level_string %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

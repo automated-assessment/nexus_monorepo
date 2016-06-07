@@ -1,0 +1,49 @@
+<h3>Assignments</h3>
+<br />
+<h4>Current</h4>
+<% if @course.assignments.current.empty? %>
+  <p>There are no current assignments for this course.</p>
+<% else %>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th width="20%">Deadline</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @course.assignments.current.each do |a| %>
+        <tr>
+          <th scope="row"><%= link_to a.title, a %></th>
+          <td class="<%= a.decorator_class %>">
+            <%= pretty_datetime a.deadline %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<h4>Upcoming</h4>
+<% if @course.assignments.upcoming.empty? %>
+  <p>There are no upcoming assignments for this course.</p>
+<% else %>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th width="20%">Starts</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @course.assignments.upcoming.each do |a| %>
+        <tr>
+          <th scope="row"><%= link_to a.title, a %></th>
+          <td>
+            <%= pretty_datetime a.start %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

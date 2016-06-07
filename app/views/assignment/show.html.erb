@@ -1,0 +1,30 @@
+<%= render 'header' %>
+<p>
+  <h4>Description</h4>
+  <%= @assignment.description %>
+  <hr />
+  <h4>Marking Tools</h4>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Tool</th>
+        <th>Context</th>
+        <th>Weight</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @assignment.marking_tool_contexts.each do |t| %>
+        <tr>
+          <th scope="row"><%= t.marking_tool.name %></th>
+          <td><%= t.context %></td>
+          <td><%= t.weight %>%</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</p>
+<% if @assignment.started? %>
+  <hr />
+  <h4>Your submissions</h4>
+  <%= render 'submissions_table' %>
+<% end %>

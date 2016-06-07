@@ -1,0 +1,43 @@
+<div class="well">
+  <h2>Add Marking Tool</h2>
+  <hr />
+  <%= form_for(@marking_tool, url: create_marking_tool_path, html: { class: 'form-horizontal' }) do |f| %>
+
+    <div class="form-group">
+      <%= f.label :name, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :name, class: 'form-control', placeholder: 'Tool Name' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :uid, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :uid, class: 'form-control', placeholder: 'Unique Identifier' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :description, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :description, class: 'form-control', placeholder: 'Description (Optional)' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :url, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :url, class: 'form-control', placeholder: 'Webhook URL' %>
+        <span>Use the tokens <code>%{aid}</code> for Assignment ID and <code>%{sid}</code> for Submission ID.</span>
+        <br />
+        <span>Example: <code>http://example.com:3000/mark?assignment=%{aid}&amp;submission=%{sid}</code></span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <%= f.submit 'Create', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,59 @@
+<div class="devise-form well">
+  <h2>Sign up</h2>
+  <hr />
+
+
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'form-horizontal' }) do |f| %>
+    <%= devise_error_messages! %>
+
+    <div class="form-group">
+      <%= f.label :email, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.email_field :email, class: "form-control", placeholder: "Email", autofocus: true, required: true %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :first_name, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :first_name, class: "form-control", placeholder: "First Name", required: true %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :last_name, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :last_name, class: "form-control", placeholder: "Last Name", required: true %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :student_id, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :student_id, class: "form-control", placeholder: "Student ID", required: true %>
+      </div>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+      <%= f.label :password, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.password_field :password, autocomplete: "off", class: "form-control", placeholder: "Password" %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :password_confirmation, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.password_field :password_confirmation, autocomplete: "off", class: "form-control", placeholder: "Password confirmation" %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <%= f.submit "Sign up", class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>

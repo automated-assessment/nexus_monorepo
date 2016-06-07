@@ -1,0 +1,24 @@
+require: rubocop-rspec
+
+AllCops:
+  RunRailsCops: true
+  Exclude:
+    - bin/**/*
+    - db/migrate/**/*
+    - db/schema.rb
+    - node_modules/**/*
+    - vendor/**/*
+Documentation:
+  Enabled: false
+Metrics/AbcSize:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
+Metrics/LineLength:
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
+Rails/HasAndBelongsToMany:
+  Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false

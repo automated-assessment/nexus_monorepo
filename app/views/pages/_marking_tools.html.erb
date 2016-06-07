@@ -1,0 +1,32 @@
+<div class="marking-tools">
+  <h4><%= icon 'cubes' %> Marking Tools</h4>
+  <% if @marking_tools.empty? %>
+    <p>There are no marking tools.</p>
+  <% else %>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>UID</th>
+          <th>Description</th>
+          <th>URL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @marking_tools.each do |m| %>
+          <tr>
+            <th scope="row"><%= m.name %></th>
+            <th><%= m.uid %></th>
+            <td><%= m.description %></td>
+            <td><code><%= m.url %></code></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+  <div class="center-controls">
+    <%= link_to(new_marking_tool_path) do %>
+      <button type="button" class="btn btn-success">Add Marking Tool</button>
+    <% end %>
+  </div>
+</div>

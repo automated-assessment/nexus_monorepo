@@ -1,0 +1,25 @@
+<div class="page-header">
+  <h5 class="course-title"><%= icon 'tasks' %> <%= link_to @submission.assignment.title, @submission.assignment %></h5>
+  <h2>Attempt #<%= @submission.attempt_number%></h2>
+  <div class="assignment-dates">
+    Submitted <%= pretty_datetime @submission.submitted %>
+    <% if @submission.late %>
+      <span class="label label-danger">Late</span>
+    <% end %>
+  </div>
+</div>
+
+<h4>Final Mark: <%= display_final_mark @submission %></h4>
+
+<br />
+
+<%= render 'marking_breakdown' %>
+
+<br />
+
+<%= render 'feedback_items' %>
+
+<br />
+
+<h4>Log</h4>
+<pre><code><%= @submission.log %></code></pre>

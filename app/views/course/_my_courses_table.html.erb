@@ -1,0 +1,20 @@
+<% if current_user.courses.empty? %>
+  <p>You are not enroled in any courses.</p>
+<% else %>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th width="20%">Teacher</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% current_user.courses.each do |c| %>
+        <tr>
+          <th scope="row"><%= link_to c.title, c %></th>
+          <td><%= c.teacher.full_name %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

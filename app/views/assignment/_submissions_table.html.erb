@@ -1,0 +1,39 @@
+<% if current_user.submissions_for(@assignment.id).empty? %>
+  <p>You have not made any submissions yet.</p>
+<% else %>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Submitted</th>
+        <th>Attempt</th>
+        <th>Mark</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% current_user.submissions_for(@assignment.id).each do |s| %>
+        <tr>
+          <th>
+            <%= link_to s do %>
+            <%= pretty_datetime s.submitted %>
+            <% end %>
+            <% if s.late %>
+            <span class="label label-danger">Late</span>
+            <% end %>
+          </th>
+          <td>
+            <%= link_to s do %>
+              #<%= s.attempt_number %>
+            <% end %>
+          </td>
+          <td><%= display_final_mark s %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<div class="center-controls">
+  <%= link_to(new_submission_path(aid: @assignment.id)) do %>
+    <button type="button" class="btn btn-success">Upload New Submission</button>
+  <% end %>
+</div>
