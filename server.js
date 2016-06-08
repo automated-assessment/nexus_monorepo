@@ -25,26 +25,29 @@ app.use(errorhandler({
   showStack: true
 }));
 
-app.get('/say_hello', (req, res) => {
-  console.log('Hello!');
-  res.sendStatus(200);
-});
-
-app.post('/mark_javac', (req, res) => {
+app.post('/mark', (req, res, next) => {
+  if (!req.query.sid || isNaN(req.query.sid)) {
+    res.status(400).send('Invalid sid (submission ID)');
+    return next();
+  }
   let output = '';
   const submissionID = req.query.sid;
   console.log(`Request to mark submission ${submissionID} received.`);
   res.sendStatus(200);
 
+  // resolve submission directory
   const sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, submissionID);
   console.log(`Using directory: ${sourceDir}`);
 
   try {
+    // find .java files and cat to 'sources.txt'
     const childFind = execSync('find . -name "*.java" > sources.txt', { cwd: sourceDir });
     const childCat = execSync('cat sources.txt', { cwd: sourceDir });
+    // append found files to html feedback
     output += '<p class="text-info">Java source files found:</p>';
     output += `<pre><code>${childCat.toString()}</code></pre>`;
     output += '<p class="text-info">Compiler Output:</p>';
+    // execute javac
     const childJavac = execSync('javac -Xlint:all @sources.txt 2>&1', { cwd: sourceDir, timeout: 60000 });
     output += `<pre><code>${childJavac.toString()}</code></pre>`;
     // Success. Report 100 score
@@ -68,6 +71,7 @@ app.post('/mark_javac', (req, res) => {
         console.log(`Error from request: ${err}`);
       }
     });
+    return next();
   }
 });
 
