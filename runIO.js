@@ -40,23 +40,37 @@ function main () {
 			console.log('Unkown Error');
 		}
 	} else {
-		var javaExecute = spawnSync('java', [nameOfFile], {
-		// input: "test",
-		cwd:'TestingEnvironment', 
-		timeout:2000
-		}); 
+		//To execute for every single test provided by the educator
+		for (var i = 0; i < arrayOfInput.length; ++i) {
+			var inputTest = arrayOfInput[i];
+
+			var javaExecute = spawnSync('java', [nameOfFile], {
+			// input: inputTest,
+			cwd:'TestingEnvironment', 
+			timeout:2000
+			}); 
+
 			if (!(javaExecute.status == 0)) {
 			//get errors to the user
-			if (!(javaExecute.stderr.toString() == "")) {
-				printErrors(javaExecute.stderr.toString(), 'running');
-			} else if (!(javaExecute.error == null)) {
-				printErrors(javaExecute.error, 'running');
-			} 
-			else {
-				console.log('Unkown Error');
+				if (!(javaExecute.stderr.toString() == "")) {
+					printErrors(javaExecute.stderr.toString(), 'running');
+				} else if (!(javaExecute.error == null)) {
+					printErrors(javaExecute.error, 'running');
+				} 
+				else {
+					console.log('Unkown Error');
+				}
+			} else {
+				//No Errors Branch
+				//Compare user's input with educator's input and provide feedback
+				// var obj = {
+				// 	index : i,
+				// 	message: "Message",
+				// 	result: output,
+				// 	wrong: true/false
+				// }
+				console.log(javaExecute.stdout.toString());
 			}
-		} else {
-			console.log(javaExecute.stdout.toString());
 		}
 	}
 
