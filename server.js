@@ -16,7 +16,11 @@ app.use(errorhandler({
   showStack: true
 }));
 
-app.post('/mark', (req, res) => {
+app.post('/mark', (req, res, next) => {
+  if (!req.query.sid || isNaN(req.query.sid)) {
+    res.status(400).send('Invalid sid (submission ID)');
+    return next();
+  }
   const submissionID = req.query.sid;
   console.log(`Request to mark submission ${submissionID} received.`);
   res.sendStatus(200);
@@ -39,6 +43,8 @@ app.post('/mark', (req, res) => {
       console.log(`Error from request: ${err}`);
     }
   });
+
+  return next();
 });
 
 app.listen(port, () => {
