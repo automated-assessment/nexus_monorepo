@@ -26,7 +26,10 @@ As a minimum, `NEXUS_ACCESS_TOKEN` is required, although other environment varia
 - `NEXUS_TOOL_CANONICAL_NAME`: the canonical (unique) name that Nexus associates with this tool _(default: `rng`)_
 - `PORT`: _(default: `5001`)_
 
-#### HTTP Endpoints
+#### Linting
+- ESLint is configured
+
+### HTTP Endpoints
 ##### `POST /mark`
 - Waits for a few seconds (to simulate the behaviour of a 'real' tool doing work)
 - Generates a random mark [0, 100]
