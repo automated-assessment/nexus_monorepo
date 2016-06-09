@@ -2,11 +2,38 @@
 <html>
 
 <head>
-<title>IO-tool frame</title>
+	<title>IO-tool frame</title>
+	<link href="/static/coreCSS/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
+	<div class="col-lg-2"></div>
+	<div class="col-lg-8 col-md-12 col-sm-12 ">
+		<div class="panel panel-primary text-center">
+			<div class="panel-heading">
+				<h3>Create IO Assignment</h3>
+			</div>
+			<div class="panel-body">
+				<div class="col-lg-6 col-md-12 col-sm-12">
+					<label> Select Input Files</label>
+					<textarea placeholder="Input Test #{{nIndex}}" class="form-control" rows=2 ></textarea>
+				</div>
+				<div class="col-lg-6 col-md-12 col-sm-12">
+					<label> Select Output Files</label>
+					<textarea placeholder="Output Test #{{nIndex}}" class="form-control" rows=2></textarea>
+				</div>
+				<div class="col-lg-12 col-md-12 col-sm-12">
+					<textarea placeholder="Description of Test #{{nIndex}}, Special Cases, Guiding Steps, etc." class="form-control" rows=3  style="margin-top:10px;"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
 
 </body>
-
+<style>
+textarea {
+	 resize: none;
+}
+</style>
+<script src="/static/coreJS/bootstrap.js"></script>
 </html>
