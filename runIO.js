@@ -13,9 +13,9 @@ var app = express();
 app.use(express.static(__dirname));
 //HTTP Requests
 app.use(bodyParser.json());
-app.listen(3000);
+app.listen(3001);
 
-console.log("Server running on http://localhost:3000/");
+console.log("Server running on http://localhost:3001/");
 
 function readPath() {
 	fs.readFileSync('sourcesPath', 'utf8', function (err,data) {
@@ -106,4 +106,4 @@ function printErrors(param, when) {
 	console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!! END: Standard Errors while ' + when + ' !!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 }
 
-main();
+// main();
