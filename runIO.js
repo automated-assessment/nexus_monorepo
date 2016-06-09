@@ -1,8 +1,21 @@
 var	fs = require('fs');
+var express = require('express');
+var bodyParser = require('body-parser');
+
+//Library for linux commands. e.g javac
 var spawn = require('child_process').spawn;
 var spawnSync = require('child_process').spawnSync;
 var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
+
+//Server
+var app = express();
+app.use(express.static(__dirname));
+//HTTP Requests
+app.use(bodyParser.json());
+app.listen(3000);
+
+console.log("Server running on http://localhost:3000/");
 
 function readPath() {
 	fs.readFileSync('sourcesPath', 'utf8', function (err,data) {
