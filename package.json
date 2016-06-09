@@ -1,0 +1,18 @@
+{
+  "name": "io-tool",
+  "version": "1.0.0",
+  "description": "Tool for automated-assessements King's",
+  "main": "runIO.js",
+  "scripts": {
+    "test": "nodejs runIO.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.kcl.ac.uk/automated-assessment/IO-tool.git"
+  },
+  "author": "GeorgeRaduta",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}
