@@ -1,5 +1,5 @@
 ## Nexus - RNG Marking Tool
-_A detailed explanation of the code can be found in the main Nexus repo's [Wiki](https://github.kcl.ac.uk/sam/nexus/wiki)_
+_A detailed explanation of the code can be found in the main Nexus repo's [Wiki](https://github.kcl.ac.uk/automated-assessment/nexus/wiki)_
 
 Designed as a minimal example of a Tool to receive requests, and send a mark+feedback over the defined interfaces
 
