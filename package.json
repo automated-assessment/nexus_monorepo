@@ -11,5 +11,8 @@
     "url": "https://github.kcl.ac.uk/automated-assessment/IO-tool.git"
   },
   "author": "GeorgeRaduta",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4"
+  }
 }
