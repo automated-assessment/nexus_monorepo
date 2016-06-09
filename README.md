@@ -1,5 +1,5 @@
 ## Nexus - Central Management Component
-_Full documentation can be found in the [Wiki](https://github.kcl.ac.uk/sam/nexus/wiki)_
+_Full documentation can be found in the [Wiki](https://github.kcl.ac.uk/automated-assessment/nexus/wiki)_
 ### Tech
 - Ruby (2.x)
   - Ruby on Rails (4.2.4)
