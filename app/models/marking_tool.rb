@@ -7,4 +7,6 @@ class MarkingTool < ActiveRecord::Base
   validates :uid, presence: true
   validates :url, presence: true
   validates :config_url, presence: true, if: 'requires_config?'
+
+  scope :configurable, -> { where(requires_config: true) }
 end
