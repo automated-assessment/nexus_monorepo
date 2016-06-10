@@ -35,6 +35,23 @@
     </div>
 
     <div class="form-group">
+      <%= f.label :requires_config, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.check_box :requires_config, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :config_url, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :config_url, class: 'form-control', placeholder: 'Config page URL' %>
+        <span>Use the token <code>%{aid}</code> for Assignment ID.</span>
+        <br />
+        <span>Example: <code>http://example.com:3000/config?assignment=%{aid}</code></span>
+      </div>
+    </div>
+
+    <div class="form-group">
       <div class="col-lg-10 col-lg-offset-2">
         <%= f.submit 'Create', class: 'btn btn-primary' %>
       </div>
