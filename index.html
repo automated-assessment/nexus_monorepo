@@ -1,0 +1,46 @@
+<!DOCTYPE>
+<html>
+
+<head>
+	<title>IO-tool frame</title>
+	<link href="/static/coreCSS/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+	<link href="/static/coreCSS/font-awesome.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body ng-app="IndexModule">
+	<div ng-view></div>
+
+</body>
+<style>
+textarea {
+	 resize: none;	
+}
+</style>
+<script src="/static/coreJS/bootstrap.min.js"></script>
+<script src="/static/coreJS/angular.min.js"></script>
+<script src="/static/coreJS/angular-route.js"></script>
+
+<script>
+var app = angular.module('IndexModule',['ngRoute']);
+app.config(['$routeProvider', function($routeProvider) {
+	$routeProvider.
+	when('/config', {
+		templateUrl: 'config.html',
+		controller: 'ConfigCtrl'
+	}).
+	when('/404', {
+		templateUrl: '404.html'
+	}).
+	when('/new-IO-assignment', {
+		templateUrl: 'new-assignment.html'
+	}).
+	otherwise({
+		redirectTo: '/404'
+	});
+}]);
+
+app.controller('ConfigCtrl', function($scope){
+	
+});
+</script>
+</html>
