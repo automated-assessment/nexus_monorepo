@@ -2,6 +2,7 @@
   <div class="col-md-8">
     <h5 class="course-title"><%= icon 'book' %> <%= link_to @assignment.course.title, @assignment.course %></h5>
     <h2><%= @assignment.title %></h2>
+    <h6>Assignment ID: <code><%= @assignment.id %></code></h6>
     <hr />
     <div class="assignment-dates">
       <% if @assignment.started? %>
