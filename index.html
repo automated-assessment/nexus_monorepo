@@ -5,6 +5,7 @@
 	<title>IO-tool frame</title>
 	<link href="/static/coreCSS/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 	<link href="/static/coreCSS/font-awesome.css" rel="stylesheet" type="text/css"/>
+	<link href="/static/coreCSS/codemirror.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body ng-app="IndexModule">
@@ -19,9 +20,11 @@ textarea {
 <script src="/static/coreJS/bootstrap.min.js"></script>
 <script src="/static/coreJS/angular.min.js"></script>
 <script src="/static/coreJS/angular-route.js"></script>
-
+<script src="/static/coreJS/codemirror.js"></script>
+<script src="/static/coreJS/ui-codemirror.js"></script>
 <script>
-var app = angular.module('IndexModule',['ngRoute']);
+
+var app = angular.module('IndexModule',['ngRoute', 'ui.codemirror']);
 app.config(['$routeProvider', function($routeProvider) {
 	$routeProvider.
 	when('/config', {
@@ -31,16 +34,57 @@ app.config(['$routeProvider', function($routeProvider) {
 	when('/404', {
 		templateUrl: '404.html'
 	}).
-	when('/new-IO-assignment', {
-		templateUrl: 'new-assignment.html'
-	}).
 	otherwise({
 		redirectTo: '/404'
 	});
 }]);
 
+var initialString = "public class HelloWorld { \n\n\t" + 
+"public static void main(String[] args) { \n\n\t\t" + 
+"System.out.println(\"Hello, World\");\n \n\t}\n\n}";
+
 app.controller('ConfigCtrl', function($scope){
-	
+	var th = $scope;
+
+	//Initializations
+	th.listOfIOTests = [];
+	th.testTotal = 0;
+	th.inputArray = [];
+	th.outputArray = [];
+	th.descriptionArray = [];
+
+	//Add a new set of I/O Test cases;
+	th.addTest = function() {
+		th.listOfIOTests.push(th.testTotal);
+		th.inputArray.push("");
+		th.outputArray.push("");
+		th.descriptionArray.push("");
+		th.testTotal += 1;
+	};
+
+	//Create JAVA Like text-area with CodeMirror
+// BEGIN : TextEditor for JAVA
+        th.areaTextValue = initialString;
+        th.editorOptions = {
+            lineWrapping : true,
+            lineNumbers: true,
+            mode: 'text/x-java',
+            dragDrop: true,
+            autoCloseBrackets: true
+            // allowDropFileTypes Allow only certain types. TODO
+        };
+        // END
+	th.verifyAssingment = function() {
+		console.log(th.inputArray);
+		console.log(th.outputArray);
+		console.log(th.descriptionArray);
+		if (th.testTotal == 0) {
+			alert("You did not insert any tests. In this manner only compilation of the source will be tested");
+		}
+	};
+	th.cancel = function() {
+		alert("Nothing to do for that");
+	}
 });
 </script>
 </html>

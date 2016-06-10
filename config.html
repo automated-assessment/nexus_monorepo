@@ -6,27 +6,45 @@
 			<h3>Create IO Assignment</h3>
 		</div>
 		<div class="panel-body">
-			<div>
-				<div class="col-lg-6 col-md-12 col-sm-12">
-					<label> Select Input Files</label>
-					<textarea placeholder="Input Test #{{nIndex}}" class="form-control" rows=2 ></textarea>
+			<!-- BEGIN: Labels -->
+			<div id="labelsFiles" class="text-center">
+				<label class="col-lg-6 control-label" style="padding-left:0px;">Select Input Files
+				</label>
+				<label class="control-label col-lg-6" style="padding-left:0px;">Select Output Files
+				</label>
+			</div>
+			<!-- END: Labels -->
+			<div ng-repeat="n in listOfIOTests" class="col-lg-12 col-md-12 col-sm-12">
+				<div class="col-lg-12 col-md-12 col-sm-12" style="margin-top:10;">
+					<i> Test #{{n}}</i>					
 				</div>
 				<div class="col-lg-6 col-md-12 col-sm-12">
-					<label> Select Output Files</label>
-					<textarea placeholder="Output Test #{{nIndex}}" class="form-control" rows=2></textarea>
+					<textarea placeholder="Input #{{n}}" class="form-control" rows=2 ng-model="inputArray[n]"></textarea>
+				</div>
+				<div class="col-lg-6 col-md-12 col-sm-12">
+					<textarea placeholder="Output #{{n}}" class="form-control" rows=2 ng-model="outputArray[n]"></textarea>
 				</div>
 				<div class="col-lg-12 col-md-12 col-sm-12">
-					<textarea placeholder="Description of Test #{{nIndex}}, Special Cases, Guiding Steps, etc." class="form-control" rows=3  style="margin-top:10px;"></textarea>
-					{{2+2}}
+					<textarea placeholder="Description of Test #{{n}} (e.g Special Cases, Guiding Steps, etc.)" class="form-control" rows=3  style="margin-top:10px;"></textarea>
 				</div>
-				<div class="col-lg-12">
-					<label> <i class="fa fa-plus-circle"> </i>Add test </label>
-				</div> 
+				<hr>
+			</div>
+			<div class="col-lg-12" style="margin-top:10;">
+				<label> <a href="" class="fa fa-plus-circle" ng-click="addTest()">&nbsp;Add I/O test </a></label>
+			</div> 
+			<div class="col-lg-12 form-group">
+				<label class="control-label col-lg-6">Select Skeleton File</label>
+				<!-- <input class="col-lg-6" placeholder="ClassName" ng-model="class_name"></input>
+
+				<input type="file" on-read-file="displayCodeContents(contents)"/> -->
+				<!-- BEGIN : Java Text Area-->
+				<ui-codemirror ui-codemirror-opts="editorOptions" ng-model="areaTextValue" id="textEditor"></ui-codemirror>
+				<!-- END : Java Text Area-->
 			</div>
 		</div>
 		<div class="panel-footer text-right">
-			<button class="btn btn-danger" type="button"> Cancel </button>
-			<button class="btn btn-success" type="button"> Save </button>
+			<button class="btn btn-danger" type="button" ng-click="cancel()"> Cancel </button>
+			<button class="btn btn-success" type="button" ng-click="verifyAssingment()"> Verify </button>
 		</div>
 	</div>
 </div>
