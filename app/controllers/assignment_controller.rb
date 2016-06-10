@@ -10,6 +10,10 @@ class AssignmentController < ApplicationController
     @assignment = Assignment.find(params[:id])
   end
 
+  def quick_config_confirm
+    @assignment = Assignment.find(params[:id])
+  end
+
   def configure_tools
     @assignment = Assignment.find(params[:id])
 
@@ -36,7 +40,11 @@ class AssignmentController < ApplicationController
 
     @assignment.save!
 
-    redirect_to action: 'show', id: @assignment.id
+    if @assignment.marking_tools.configurable.any?
+      redirect_to action: 'quick_config_confirm', id: @assignment.id
+    else
+      redirect_to action: 'show', id: @assignment.id
+    end
   end
 
   private
