@@ -22,7 +22,7 @@
             <td><%= m.description %></td>
             <td><code><%= m.url %></code></td>
             <td><%= m.requires_config %></td>
-            <td><%= m.config_url? ? "<code>#{m.config_url}</code>".html_safe : '-' %></td>
+            <td><code><%= m.requires_config? ? m.config_url : 'n/a' %></code></td>
           </tr>
         <% end %>
       </tbody>
