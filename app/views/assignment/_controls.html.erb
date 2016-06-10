@@ -1,7 +1,9 @@
 <% if current_user.eql?(@assignment.course.teacher) %>
   <div class="course-controls">
     <% if @assignment.configurable_tools? %>
-      <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'cog' %> Configure Tools</button>
+      <%= link_to assignment_configure_tools_path(id: @assignment.id) do %>
+        <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'cog' %> Configure Tools</button>
+      <% end %>
     <% end %>
   </div>
 <% end %>

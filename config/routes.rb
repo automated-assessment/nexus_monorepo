@@ -29,6 +29,7 @@ Rails.application.routes.draw do
   ### Assignments
   get 'assignments' => 'assignment#mine', as: :my_assignments
   get 'assignments/:id' => 'assignment#show', as: :assignment
+  get 'assignments/:id/configure_tools' => 'assignment#configure_tools', as: :assignment_configure_tools
   post 'assignments/create' => 'assignment#create', as: :create_assignment
   get 'assignments/new/:cid' => 'assignment#new', as: :new_assignment
 
