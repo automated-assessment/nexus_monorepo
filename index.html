@@ -53,22 +53,25 @@ app.controller('ConfigCtrl', function($scope, $http, toastr){
 	var th = $scope;
 
 	//Initializations
-	th.listOfIOTests = [1];
-	th.testTotal = 1;
+	th.listOfIOTests = [0];
+	th.testTotal = 0;
 	th.inputArray = ["Hello, World!"];
 	th.outputArray = ["Hello, World!"];
 	th.descriptionArray = ["Hello, World! should be print it with no new-line"];
+	th.startProcess = true;
 	th.loading = false; //loading value for when verify button is clicked
 	th.compileError = false;
 	th.ranError = false;
+	th.allPassed=  false;
 
 	//Add a new set of I/O Test cases;
 	th.addTest = function() {
-		th.listOfIOTests.push(th.testTotal);
+		th.testTotal += 1;
+		th.listOfIOTests.push(th.listOfIOTests.length);
 		th.inputArray.push("");
 		th.outputArray.push("");
 		th.descriptionArray.push("");
-		th.testTotal += 1;
+		console.log(th.listOfIOTests);
 	};
 
 	//Create JAVA Like text-area with CodeMirror
@@ -86,7 +89,7 @@ app.controller('ConfigCtrl', function($scope, $http, toastr){
     th.verifyAssingment = function() {
     	th.loading = true;
 		//Verifications not to add empty tests
-		if (th.testTotal == 0) {
+		if (th.listOfIOTests.length == 0) {
 			//To add Toastr
 			toastr.error("No I/O Tests inserted");
 			th.loading = false;
@@ -101,16 +104,18 @@ app.controller('ConfigCtrl', function($scope, $http, toastr){
 
 			$http.post("/check-educator-code", obj).success(function(response) {
 				th.loading = false;
-				// $('#previewModal').modal('show'); 
-				// th.responseTestList = response.array;
-				// th.passed = response.passed;
-				console.log(response);
-				if (response.compiled.bool == true) {
-					toastr.success("Source compiled successfully");
-				} else {
+				th.startProcess = false;
+				console.log(response.resultsArray);
+
+				if (response.compiled.bool == false) {
 					th.compileError = true;
 					toastr.error("Error. Please see bottom of the page for details");
 					th.errorMessage = response.compiled.error;
+				} else {
+					th.compileError = false;
+					th.table = response.resultsArray;
+					th.allPassed = response.allPassed;
+
 				}
 			}).error(function(status) {
 				toastr.error("Error - HTTP Post Request");
