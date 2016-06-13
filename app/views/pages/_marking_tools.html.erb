@@ -10,6 +10,8 @@
           <th>UID</th>
           <th>Description</th>
           <th>URL</th>
+          <th>Requires Configuration</th>
+          <th>Config URL</th>
         </tr>
       </thead>
       <tbody>
@@ -19,6 +21,8 @@
             <th><%= m.uid %></th>
             <td><%= m.description %></td>
             <td><code><%= m.url %></code></td>
+            <td><%= m.requires_config %></td>
+            <td><code><%= m.requires_config? ? m.config_url : 'n/a' %></code></td>
           </tr>
         <% end %>
       </tbody>

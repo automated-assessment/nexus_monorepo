@@ -12,6 +12,11 @@ class MarkingToolController < ApplicationController
   private
 
   def marking_tool_params
-    params.require(:marking_tool).permit(:name, :uid, :description, :url)
+    params.require(:marking_tool).permit(:name,
+                                         :uid,
+                                         :description,
+                                         :url,
+                                         :requires_config,
+                                         :config_url)
   end
 end

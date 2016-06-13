@@ -10,6 +10,23 @@ class AssignmentController < ApplicationController
     @assignment = Assignment.find(params[:id])
   end
 
+  def quick_config_confirm
+    @assignment = Assignment.find(params[:id])
+  end
+
+  def configure_tools
+    @assignment = Assignment.find(params[:id])
+
+    # augment template URLs with parameters
+    params = {
+      aid: @assignment.id
+    }
+    @tools_with_augmented_urls = []
+    @assignment.marking_tools.configurable.each do |t|
+      @tools_with_augmented_urls << { tool: t, augmented_url: t.config_url % params }
+    end
+  end
+
   def new
     authenticate_staff!
     @assignment = Assignment.new
@@ -23,7 +40,11 @@ class AssignmentController < ApplicationController
 
     @assignment.save!
 
-    redirect_to action: 'show', id: @assignment.id
+    if @assignment.marking_tools.configurable.any?
+      redirect_to action: 'quick_config_confirm', id: @assignment.id
+    else
+      redirect_to action: 'show', id: @assignment.id
+    end
   end
 
   private

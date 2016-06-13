@@ -37,6 +37,10 @@ class Assignment < ActiveRecord::Base
     ''
   end
 
+  def configurable_tools?
+    marking_tools.configurable.any?
+  end
+
   private
 
   def valid_weightings
