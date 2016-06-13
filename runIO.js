@@ -10,7 +10,7 @@ var execSync = require('child_process').execSync;
 
 //Server
 var app = express();
-app.use(express.static(__dirname));
+app.use(express.static(__dirname + "/static/"));
 //HTTP Requests
 app.use(bodyParser.json());
 app.listen(3001);
