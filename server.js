@@ -20,11 +20,14 @@ app.use(errorhandler({
   showStack: true
 }));
 
-app.get('/config', (req, res, next) => {
-  res.sendFile(path.resolve(__dirname, 'config.html'));
-});
+app.use('/static', express.static(path.resolve(__dirname, 'configPage', 'dist')));
 
 app.post('/config', (req, res, next) => {
+  const aid = req.body.aid;
+  if (isNaN(parseInt(req.body.aid, 10))) {
+    res.status(400).send('aid is not a number!');
+    return next();
+  }
   let min = parseInt(req.body.min, 10);
   let max = parseInt(req.body.max, 10);
   if (isNaN(min) || isNaN(max)) {
@@ -39,8 +42,10 @@ app.post('/config', (req, res, next) => {
   if (max > 100) {
     max = 100;
   }
-  // save config
-  const config = {
+  // update config
+  const config = jsonfile.readFileSync(configFile);
+  console.log(`Read config: ${JSON.stringify(config)}`);
+  config[aid] = {
     min,
     max
   };
@@ -55,17 +60,22 @@ app.post('/mark', (req, res, next) => {
     res.status(400).send('Invalid sid (submission ID)');
     return next();
   }
+  if (!req.query.aid || isNaN(req.query.aid)) {
+    res.status(400).send('Invalid aid (assignment ID)');
+    return next();
+  }
   const submissionID = req.query.sid;
-  console.log(`Request to mark submission ${submissionID} received.`);
+  const assignmentID = req.query.aid;
+  console.log(`Request to mark submission ${submissionID} (assignment ${assignmentID} received.`);
   res.sendStatus(200);
 
   // load config
   const config = jsonfile.readFileSync(configFile);
-  if (config.min === undefined) { console.log('No min value found in config! Will use default of 0'); }
-  if (config.max === undefined) { console.log('No max value found in config! Will use default of 100'); }
+  if (config[assignmentID].min === undefined) { console.log('No min value found in config! Will use default of 0'); }
+  if (config[assignmentID].max === undefined) { console.log('No max value found in config! Will use default of 100'); }
   // default values
-  let min = config.min || 0;
-  let max = config.max || 100;
+  let min = config[assignmentID].min || 0;
+  let max = config[assignmentID].max || 100;
   // sanity checks
   if (min < 0) {
     min = 0;
@@ -84,8 +94,10 @@ app.post('/mark', (req, res, next) => {
   });
 
   const progressBarHTML = `<div class="progress"><div class="progress-bar" role="progressbar" style="width: ${randomMark}%;">${randomMark}%</div></div>`;
+  const boundsHTML = `<p class="text-primary">Random number generated between bounds [${min}, ${max}]</p>`;
+  const fullHTML = `<div>${progressBarHTML}${boundsHTML}</div>`;
 
-  sendFeedback(progressBarHTML, submissionID, (err, res, body) => {
+  sendFeedback(fullHTML, submissionID, (err, res, body) => {
     if (err) {
       console.log(`Error from request: ${err}`);
     }
