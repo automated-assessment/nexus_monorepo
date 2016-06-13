@@ -50,9 +50,49 @@
 			<div ng-show="loading" class="col-lg-12">
 				<i class="text-center fa fa-spinner fa-spin fa-2x"></i>
 			</div>
-			<div ng-show="compileError" class="col-lg-12 text-left" style="margin-top : 20px;">
-				<label><i class="fa fa-times" style="color:red;">&nbsp;</i>Compilation: </label>
-				<pre style="color:red">{{errorMessage}}</pre>
+			<div ng-hide="startProcess">
+				<!-- BEGIN: Compilation Errors/Checked -->
+				<div ng-show="compileError" class="col-lg-12 col-md-12 col-sm-12 text-left" style="margin-top : 20px;">
+					<label><i class="fa fa-times" style="color:red;">&nbsp;</i>Compilation: </label>
+					<pre style="color:red">{{errorMessage}}</pre>
+				</div>
+				<div ng-hide="compileError" class="col-lg-12 col-md-12 col-sm-12 text-left" style="margin-top:20px;">
+					<label><i class="fa fa-check" style="color:green;">&nbsp;</i>Compilation Done </label>
+				</div>
+				<!-- END: Compilation Error Messages -->
+				<!-- BEGIN: Java run Errors/Checked -->
+				<div ng-hide="compileError">
+					<div class="col-lg-12 col-md-12 col-sm-12 text-left" style="margin-top:20px;">
+						<label>
+							<i ng-show="allPassed"class="fa fa-check" style="color:green;">&nbsp;</i>
+							<i ng-hide="allPassed"class="fa fa-times" style="color:red;">&nbsp;</i>
+
+							Run Java Done </label>
+					</div>
+					<table class="table table-striped text-center table-bordered">
+						<thead class="text-center">
+							<tr>
+								<th class="text-center">Index</th>
+								<th class="text-center">Passed</th>
+								<th class="text-center">Your Output</th>
+								<th class="text-center">Expected Output</th>
+								<th class="text-center">Message</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="test in table">
+								<td>{{$index}}</td>
+								<td ng-show="test.passed" style="color:green"><i class="fa fa-check"></i></td>
+								<td ng-hide="test.passed" style="color:red"><i class="fa fa-times"</i></td>
+
+								<td>{{test.output}}</td>
+								<td>{{test.expectedOutput}}</td>
+								<td>{{test.message}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<!-- END: Java run Errors -->
 			</div>
 		</div>
 	</div>
