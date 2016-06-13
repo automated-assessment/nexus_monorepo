@@ -25,7 +25,7 @@
 					<textarea placeholder="Output #{{n}}" class="form-control" rows=2 ng-model="outputArray[n]"></textarea>
 				</div>
 				<div class="col-lg-12 col-md-12 col-sm-12">
-					<textarea placeholder="Description of Test #{{n}} (e.g Special Cases, Guiding Steps, etc.)" class="form-control" rows=3  style="margin-top:10px;"></textarea>
+					<textarea placeholder="Description of Test #{{n}} (e.g Special Cases, Guiding Steps, etc.)" class="form-control" rows=3  ng-model="descriptionArray[n]" style="margin-top:10px;"></textarea>
 				</div>
 				<hr>
 			</div>
@@ -33,18 +33,27 @@
 				<label> <a href="" class="fa fa-plus-circle" ng-click="addTest()">&nbsp;Add I/O test </a></label>
 			</div> 
 			<div class="col-lg-12 form-group">
-				<label class="control-label col-lg-6">Select Skeleton File</label>
-				<!-- <input class="col-lg-6" placeholder="ClassName" ng-model="class_name"></input>
+				<label class="control-label col-lg-12">Select Skeleton File</label>
+				<!-- <	input class="col-lg-6" placeholder="ClassName" ng-model="class_name"></input> -->
 
-				<input type="file" on-read-file="displayCodeContents(contents)"/> -->
+				<input type="file" on-read-file="displayCodeContents(contents)"/>
 				<!-- BEGIN : Java Text Area-->
 				<ui-codemirror ui-codemirror-opts="editorOptions" ng-model="areaTextValue" id="textEditor"></ui-codemirror>
 				<!-- END : Java Text Area-->
 			</div>
 		</div>
-		<div class="panel-footer text-right">
-			<button class="btn btn-danger" type="button" ng-click="cancel()"> Cancel </button>
-			<button class="btn btn-success" type="button" ng-click="verifyAssingment()"> Verify </button>
+		<div class="panel-footer text-right clearfix">
+			<div ng-hide="loading">
+				<button class="btn btn-danger" type="button" ng-click="cancel()"> Cancel </button>
+				<button class="btn btn-success" type="button" ng-click="verifyAssingment()"> Verify </button>
+			</div>
+			<div ng-show="loading" class="col-lg-12">
+				<i class="text-center fa fa-spinner fa-spin fa-2x"></i>
+			</div>
+			<div ng-show="compileError" class="col-lg-12 text-left" style="margin-top : 20px;">
+				<label><i class="fa fa-times" style="color:red;">&nbsp;</i>Compilation: </label>
+				<pre style="color:red">{{errorMessage}}</pre>
+			</div>
 		</div>
 	</div>
 </div>

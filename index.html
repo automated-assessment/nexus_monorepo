@@ -6,6 +6,7 @@
 	<link href="/static/coreCSS/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 	<link href="/static/coreCSS/font-awesome.css" rel="stylesheet" type="text/css"/>
 	<link href="/static/coreCSS/codemirror.css" rel="stylesheet" type="text/css"/>
+	<link href="/static/coreCSS/angular-toastr.min.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body ng-app="IndexModule">
@@ -14,17 +15,22 @@
 </body>
 <style>
 textarea {
-	 resize: none;	
+	resize: none;	
 }
 </style>
 <script src="/static/coreJS/bootstrap.min.js"></script>
 <script src="/static/coreJS/angular.min.js"></script>
 <script src="/static/coreJS/angular-route.js"></script>
-<script src="/static/coreJS/codemirror.js"></script>
+
+<!-- Text Editor Files -->
 <script src="/static/coreJS/ui-codemirror.js"></script>
+<script src="/static/coreJS/codemirror.js"></script>
+<script src="/static/coreJS/clike.js"></script>
+<script src="/static/coreJS/closebrackets.js"></script>
+<script src="/static/coreJS/angular-toastr.tpls.min.js"></script>
 <script>
 
-var app = angular.module('IndexModule',['ngRoute', 'ui.codemirror']);
+var app = angular.module('IndexModule',['ngRoute', 'ui.codemirror', 'toastr']);
 app.config(['$routeProvider', function($routeProvider) {
 	$routeProvider.
 	when('/config', {
@@ -43,15 +49,18 @@ var initialString = "public class HelloWorld { \n\n\t" +
 "public static void main(String[] args) { \n\n\t\t" + 
 "System.out.println(\"Hello, World\");\n \n\t}\n\n}";
 
-app.controller('ConfigCtrl', function($scope){
+app.controller('ConfigCtrl', function($scope, $http, toastr){
 	var th = $scope;
 
 	//Initializations
-	th.listOfIOTests = [];
-	th.testTotal = 0;
-	th.inputArray = [];
-	th.outputArray = [];
-	th.descriptionArray = [];
+	th.listOfIOTests = [1];
+	th.testTotal = 1;
+	th.inputArray = ["Hello, World!"];
+	th.outputArray = ["Hello, World!"];
+	th.descriptionArray = ["Hello, World! should be print it with no new-line"];
+	th.loading = false; //loading value for when verify button is clicked
+	th.compileError = false;
+	th.ranError = false;
 
 	//Add a new set of I/O Test cases;
 	th.addTest = function() {
@@ -63,23 +72,49 @@ app.controller('ConfigCtrl', function($scope){
 	};
 
 	//Create JAVA Like text-area with CodeMirror
-// BEGIN : TextEditor for JAVA
-        th.areaTextValue = initialString;
-        th.editorOptions = {
-            lineWrapping : true,
-            lineNumbers: true,
-            mode: 'text/x-java',
-            dragDrop: true,
-            autoCloseBrackets: true
-            // allowDropFileTypes Allow only certain types. TODO
-        };
-        // END
-	th.verifyAssingment = function() {
-		console.log(th.inputArray);
-		console.log(th.outputArray);
-		console.log(th.descriptionArray);
+	// BEGIN : TextEditor for JAVA
+	th.areaTextValue = initialString;
+	th.editorOptions = {
+		lineWrapping : true,
+		lineNumbers: true,
+		mode: 'text/x-java',
+		dragDrop: true,
+		autoCloseBrackets: true
+        // allowDropFileTypes Allow only certain types. TODO
+    };
+    // END
+    th.verifyAssingment = function() {
+    	th.loading = true;
+		//Verifications not to add empty tests
 		if (th.testTotal == 0) {
-			alert("You did not insert any tests. In this manner only compilation of the source will be tested");
+			//To add Toastr
+			toastr.error("No I/O Tests inserted");
+			th.loading = false;
+		} else {
+			//TODO HTTP Request
+			var obj = {
+				input : th.inputArray,
+				output : th.outputArray,
+				description : th.descriptionArray,
+				code: th.areaTextValue
+			};
+
+			$http.post("/check-educator-code", obj).success(function(response) {
+				th.loading = false;
+				// $('#previewModal').modal('show'); 
+				// th.responseTestList = response.array;
+				// th.passed = response.passed;
+				console.log(response);
+				if (response.compiled.bool == true) {
+					toastr.success("Source compiled successfully");
+				} else {
+					th.compileError = true;
+					toastr.error("Error. Please see bottom of the page for details");
+					th.errorMessage = response.compiled.error;
+				}
+			}).error(function(status) {
+				toastr.error("Error - HTTP Post Request");
+			});  
 		}
 	};
 	th.cancel = function() {
