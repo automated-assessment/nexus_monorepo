@@ -20,6 +20,10 @@ app.use(errorhandler({
   showStack: true
 }));
 
+app.get('/config', (req, res, next) => {
+  res.sendFile(path.resolve(__dirname, 'config.html'));
+});
+
 app.post('/config', (req, res, next) => {
   let min = parseInt(req.body.min, 10);
   let max = parseInt(req.body.max, 10);
