@@ -1,12 +1,14 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import errorhandler from 'errorhandler';
+import jsonfile from 'jsonfile';
 import path from 'path';
 import sleep from 'sleep';
 import { execSync } from 'child_process';
 import { sendMark, sendFeedback } from './utils';
 
 const port = process.env.PORT || 5001;
+const configFile = 'config.json';
 
 const app = express();
 
@@ -25,10 +27,23 @@ app.post('/mark', (req, res, next) => {
   console.log(`Request to mark submission ${submissionID} received.`);
   res.sendStatus(200);
 
-  // emulate waiting
-  sleep.sleep(Math.floor(Math.random() * 5) + 1);
-
-  const randomMark = Math.floor(Math.random() * 100);
+  // load config
+  const config = jsonfile.readFileSync(configFile);
+  if (config.min === undefined) { console.log('No min value found in config! Will use default of 0'); }
+  if (config.max === undefined) { console.log('No max value found in config! Will use default of 100'); }
+  // default values
+  let min = config.min || 0;
+  let max = config.max || 100;
+  // sanity checks
+  if (min < 0) {
+    min = 0;
+  }
+  if (max > 100) {
+    max = 100;
+  }
+  // generate number
+  console.log(`Generating random number in range [${min}, ${max}]`);
+  const randomMark = Math.floor(Math.random() * (max - min + 1)) + min;
 
   sendMark(randomMark, submissionID, (err, res, body) => {
     if (err) {
