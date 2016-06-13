@@ -12,11 +12,39 @@ const configFile = 'config.json';
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(errorhandler({
   dumpExceptions: true,
   showStack: true
 }));
+
+app.post('/config', (req, res, next) => {
+  let min = parseInt(req.body.min, 10);
+  let max = parseInt(req.body.max, 10);
+  if (isNaN(min) || isNaN(max)) {
+    res.status(400).send('Invalid min/max values!');
+    return next();
+  }
+  res.sendStatus(200);
+  // sanity checks
+  if (min < 0) {
+    min = 0;
+  }
+  if (max > 100) {
+    max = 100;
+  }
+  // save config
+  const config = {
+    min,
+    max
+  };
+  console.log(`Updating config: ${JSON.stringify(config)}`);
+  jsonfile.writeFileSync(configFile, config);
+
+  return next();
+});
 
 app.post('/mark', (req, res, next) => {
   if (!req.query.sid || isNaN(req.query.sid)) {
