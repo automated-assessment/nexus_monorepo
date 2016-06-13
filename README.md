@@ -1,11 +1,12 @@
-## Nexus - RNG Marking Tool
+## Nexus - Configurable RNG Marking Tool
 _A detailed explanation of the code can be found in the main Nexus repo's [Wiki](https://github.kcl.ac.uk/sam/nexus/wiki)_
 
-Designed as a minimal example of a Tool to receive requests, and send a mark+feedback over the defined interfaces
+Designed as a minimal example of a Tool to receive requests, and send a mark+feedback over the defined interfaces, **and also provide configuration**
 
 ### Tech
 - Node.js (4.x)
   - Express (4.x)
+  - React.js for the config page
   - Written in ES6 using Babel with `stage-0` proposals enabled
   - _See `package.json` for full list of packages_
 
@@ -16,7 +17,8 @@ Designed as a minimal example of a Tool to receive requests, and send a mark+fee
 #### Quick-start
 1. Clone the repo
 2. Install Node.js deps: `$ npm install`
-3. Start the tool: `$ NEXUS_ACCESS_TOKEN=foo npm start`
+3. Compile the configuration page: `$ cd configPage && webpack`
+4. Start the tool: `$ NEXUS_ACCESS_TOKEN=foo npm start`
 
 As a minimum, `NEXUS_ACCESS_TOKEN` is required, although other environment variables are available:
 
@@ -27,33 +29,11 @@ As a minimum, `NEXUS_ACCESS_TOKEN` is required, although other environment varia
 - `PORT`: _(default: `5001`)_
 
 #### Linting
-- ESLint is configured
+- ESLint is configured (for server code only, not for React component _yet_)
 
 ### HTTP Endpoints
+TBC
+
 ##### `POST /mark`
-- Waits for a few seconds (to simulate the behaviour of a 'real' tool doing work)
-- Generates a random mark [0, 100]
-- Sends that mark back to the CMC
-- Sends a basic Boostrap progress bar reflecting the mark as feedback to the CMC
-
-Required query parameters:
-- `sid`: Submission ID
-
-Returns:
-- `200 OK`
-- `400 Bad Request` if the submission ID is missing or NaN
-
-Example:
-
-```
-$ http POST localhost:5001/mark?sid=222                                   
-HTTP/1.1 200 OK
-Connection: keep-alive
-Content-Length: 2
-Content-Type: text/plain; charset=utf-8
-Date: Wed, 08 Jun 2016 15:51:10 GMT
-ETag: W/"2-4KoCHiHd29bYzs7HHpz1ZA"
-X-Powered-By: Express
-
-OK
-```
+##### `POST /config`
+##### `GET /static/config.html`
