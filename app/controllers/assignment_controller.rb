@@ -18,12 +18,12 @@ class AssignmentController < ApplicationController
     @assignment = Assignment.find(params[:id])
 
     # augment template URLs with parameters
-    # TODO: extract this functionality to a helper, duplicated from submission utils
-    data = {}
-    data[:aid] = @assignment.id
+    params = {
+      aid: @assignment.id
+    }
     @tools_with_augmented_urls = []
     @assignment.marking_tools.configurable.each do |t|
-      @tools_with_augmented_urls << { tool: t, augmented_url: t.config_url % data }
+      @tools_with_augmented_urls << { tool: t, augmented_url: t.config_url % params }
     end
   end
 

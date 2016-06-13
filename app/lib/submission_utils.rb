@@ -4,6 +4,14 @@ require 'uri'
 
 class SubmissionUtils
   class << self
+    def build_url_params(submission)
+      params = {
+        sid: submission.id,
+        aid: submission.assignment.id
+      }
+      params
+    end
+
     def unzip!(submission)
       submission.log!('=== Extraction ===')
       begin
@@ -33,7 +41,7 @@ class SubmissionUtils
       submission.assignment.marking_tools.each do |mt|
         begin
           submission.log!("Notifying #{mt.name}...")
-          uri = URI.parse(mt.url % get_url_params(submission))
+          uri = URI.parse(mt.url % build_url_params(submission))
           submission.log!("  - Using URL #{uri}", 'Debug')
 
           http = Net::HTTP.new(uri.host, uri.port)
@@ -54,13 +62,6 @@ class SubmissionUtils
       end
       submission.log!('Tools notified!')
       submission.log!('=== Marks/Feedback ===')
-    end
-
-    def get_url_params(submission)
-      data = {}
-      data[:sid] = submission.id
-      data[:aid] = submission.assignment.id
-      data
     end
   end
 end
