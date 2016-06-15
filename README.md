@@ -1,5 +1,5 @@
 ## Nexus - `javac` Marking Tool
-_A detailed explanation of the code can be found in the main Nexus repo's [Wiki](https://github.kcl.ac.uk/sam/nexus/wiki)_
+_A detailed explanation of the code can be found in the main Nexus repo's [Wiki](https://github.kcl.ac.uk/automated-assessment/nexus/wiki)_
 
 Takes a submission and attempts to compile all `.java` files found. Scores 0 for errors, 100 otherwise; and returns console output as feedback.
 
