@@ -2,7 +2,7 @@ machine:
   node:
     version: 4.2.3
   ruby:
-    version: 2.2.3
+    version: 2.2.5
 dependencies:
   post:
     - npm install -g npm
