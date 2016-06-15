@@ -3,6 +3,10 @@ _A detailed explanation of the code can be found in the main Nexus repo's [Wiki]
 
 Designed as a minimal example of a Tool to receive requests, and send a mark+feedback over the defined interfaces, **and also provide configuration**
 
+This is the same as the RNG marking tool, except:
+- Each assignment has its own minimum and maximum bounds within which the random mark is generated.
+- This is configured through a html/javascript webpage, provided at a certain http endpoint
+
 ### Tech
 - Node.js (4.x)
   - Express (4.x)
@@ -32,8 +36,12 @@ As a minimum, `NEXUS_ACCESS_TOKEN` is required, although other environment varia
 - ESLint is configured (for server code only, not for React component _yet_)
 
 ### HTTP Endpoints
-TBC
 
 ##### `POST /mark`
+- The dispatch inferface. Requires `sid` and `aid`.
+
 ##### `POST /config`
-##### `GET /static/config.html`
+- Updates the configuration for a given assignment. Requires `aid`, `min` and `max`.
+
+##### `GET /static/config.html?aid=x`
+- Displays the configuration page for assignment `x`
