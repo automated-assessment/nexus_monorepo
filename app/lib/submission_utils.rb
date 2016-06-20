@@ -64,7 +64,7 @@ class SubmissionUtils
       repo_name = "submissions-#{submission.assignment.id}-#{submission.id}"
       repo_desc = "Automatically created on #{DateTime.now.utc} by Nexus after submission \##{submission.id} made for assignment \##{submission.assignment.id} by user \##{submission.user.id} (#{submission.user.full_name})"
       res = Octokit.create_repository(repo_name,
-                                      organization: 'ppa-dev',
+                                      organization: Rails.configuration.ghe_org,
                                       private: true,
                                       has_issues: false,
                                       has_wiki: false,
