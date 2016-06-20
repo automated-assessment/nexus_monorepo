@@ -65,3 +65,20 @@ $border: #e5e5e5;
 .sub-pane {
   padding: 20px;
 }
+
+#web-ide-mount-node {
+  .editor-container {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    margin-top: 15px;
+
+    .editor-header {
+      background-color: #f7f7f7;
+      border-bottom: 1px solid #d8d8d8;
+      border-top-left-radius: 2px;
+      border-top-right-radius: 2px;
+      padding: 5px 10px;
+    }
+  }
+}
