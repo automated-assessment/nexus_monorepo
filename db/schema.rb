@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160610122631) do
+ActiveRecord::Schema.define(version: 20160620144828) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -126,29 +126,30 @@ ActiveRecord::Schema.define(version: 20160610122631) do
     t.string   "saved_filename"
     t.text     "log"
     t.boolean  "extraction_error",  default: false
+    t.text     "repourl"
+    t.text     "commithash"
   end
 
   add_index "submissions", ["assignment_id"], name: "index_submissions_on_assignment_id"
   add_index "submissions", ["user_id"], name: "index_submissions_on_user_id"
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
+    t.string   "email",                  default: "",    null: false
+    t.string   "encrypted_password",     default: "",    null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",          default: 0,     null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.string   "first_name"
-    t.string   "last_name"
-    t.integer  "level",                  default: 0
-    t.string   "student_id",             default: ""
-    t.string   "title",                  default: ""
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+    t.string   "provider"
+    t.string   "uid"
+    t.text     "name"
+    t.boolean  "admin",                  default: false
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true

@@ -1,6 +1,6 @@
 module ApplicationHelper
   def authenticate_staff!
-    redirect_to '/401', status: :unauthorized if current_user.student?
+    redirect_to '/401', status: :unauthorized unless current_user.admin?
   end
 
   def distance_from_now_string(datetime)

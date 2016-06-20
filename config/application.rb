@@ -41,5 +41,9 @@ module Fyp
     end
 
     config.exceptions_app = routes
+
+    # Custom config params
+    config.ghe_oauth_id = ENV['GHE_OAUTH_ID']
+    config.ghe_oauth_secret = ENV['GHE_OAUTH_SECRET']
   end
 end

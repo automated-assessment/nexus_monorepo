@@ -11,7 +11,7 @@
     <tbody>
       <% @course.students.each do |c| %>
         <tr>
-          <th scope="row"><%= c.full_name %></th>
+          <th scope="row"><%= c.name %></th>
           <td><%= c.level_string %></td>
         </tr>
       <% end %>
