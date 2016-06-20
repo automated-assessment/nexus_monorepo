@@ -7,8 +7,11 @@ class SubmissionUtils
     def build_url_params(submission)
       params = {
         sid: submission.id,
-        aid: submission.assignment.id
+        aid: submission.assignment.id,
+        repo: submission.repourl,
+        sha: submission.commithash
       }
+      params.each { |k, v| params[k] = URI.escape(v.to_s) }
       params
     end
 
@@ -32,6 +35,55 @@ class SubmissionUtils
         submission.log!('Could not extract submission!', 'Error')
         submission.report_extraction_error!
       end
+
+      setup_local_repository!(submission)
+    end
+
+    def setup_local_repository!(submission)
+      submission.log!('=== Git ===')
+      repo_path = Rails.root.join('var', 'submissions', 'code', "#{submission.id}")
+
+      submission.log!("Using dir: #{repo_path}")
+      submission.log!('Initialising git repo...')
+      repo = Git.init(repo_path.to_s)
+      repo.config('user.name', 'Nexus')
+      repo.config('user.email', 'nexus@nexus')
+      submission.log!('Committing files...')
+      repo.add(all: true)
+      repo.commit('Submission made via Nexus')
+      submission.log!("Commit SHA: #{repo.log[0].sha}")
+      submission.commithash = repo.log[0].sha.to_s
+      submission.save!
+
+      setup_remote_repository!(submission)
+    end
+
+    def setup_remote_repository!(submission)
+      submission.log!('=== Remote Git ===')
+      submission.log!('Creating remote repo...')
+      repo_name = "submissions-#{submission.assignment.id}-#{submission.id}"
+      repo_desc = "Automatically created on #{DateTime.now.utc} by Nexus after submission \##{submission.id} made for assignment \##{submission.assignment.id} by user \##{submission.user.id} (#{submission.user.full_name})"
+      res = Octokit.create_repository(repo_name,
+                                      organization: Rails.configuration.ghe_org,
+                                      private: true,
+                                      has_issues: false,
+                                      has_wiki: false,
+                                      description: repo_desc)
+      submission.log!("Repo created at: #{res.html_url}")
+      submission.repourl = res.clone_url
+      submission.save!
+
+      push_submission_to_github!(submission)
+    end
+
+    def push_submission_to_github!(submission)
+      repo_path = Rails.root.join('var', 'submissions', 'code', "#{submission.id}")
+      repo = Git.init(repo_path.to_s)
+      repo.config('user.name', 'Nexus')
+      repo.config('user.email', 'nexus@nexus')
+
+      repo.add_remote('origin', submission.repourl)
+      repo.push
 
       notify_tools!(submission)
     end

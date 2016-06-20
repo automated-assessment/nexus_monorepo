@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160610122631) do
+ActiveRecord::Schema.define(version: 20160620124333) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -126,6 +126,8 @@ ActiveRecord::Schema.define(version: 20160610122631) do
     t.string   "saved_filename"
     t.text     "log"
     t.boolean  "extraction_error",  default: false
+    t.text     "repourl"
+    t.text     "commithash"
   end
 
   add_index "submissions", ["assignment_id"], name: "index_submissions_on_assignment_id"

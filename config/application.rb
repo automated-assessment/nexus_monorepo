@@ -41,5 +41,10 @@ module Fyp
     end
 
     config.exceptions_app = routes
+
+    # Custom config params
+    config.ghe_user = ENV['NEXUS_GITHUB_USER']
+    config.ghe_password = ENV['NEXUS_GITHUB_TOKEN']
+    config.ghe_org = ENV['NEXUS_GITHUB_ORG'] || 'ppa-dev'
   end
 end
