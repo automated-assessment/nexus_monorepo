@@ -28,9 +28,7 @@
       <%= f.label :url, class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
         <%= f.text_field :url, class: 'form-control', placeholder: 'Webhook URL' %>
-        <span>Use the tokens <code>%{aid}</code> for Assignment ID and <code>%{sid}</code> for Submission ID.</span>
-        <br />
-        <span>Example: <code>http://example.com:3000/mark?assignment=%{aid}&amp;submission=%{sid}</code></span>
+        <%= render 'template_fields' %>
       </div>
     </div>
 

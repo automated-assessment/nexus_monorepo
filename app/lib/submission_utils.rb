@@ -7,8 +7,11 @@ class SubmissionUtils
     def build_url_params(submission)
       params = {
         sid: submission.id,
-        aid: submission.assignment.id
+        aid: submission.assignment.id,
+        repo: submission.repourl,
+        sha: submission.commithash
       }
+      params.each { |k, v| params[k] = URI.escape(v.to_s) }
       params
     end
 
