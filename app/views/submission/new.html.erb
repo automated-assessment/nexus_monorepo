@@ -1,26 +1,30 @@
 <div class="well">
   <h2>Upload Submission for <%= @submission.assignment.title %></h2>
   <hr />
-  <%= form_for(@submission, url: create_submission_path,  html: { class: 'form-horizontal' }) do |f| %>
+  <h4>Select a submission method:</h4>
+  <!-- Nav tabs -->
+  <ul class="nav nav-justified nav-pills" role="tablist">
+    <% if @submission.assignment.allow_zip %>
+      <li role="presentation"><a href="#zip" aria-controls="zip" role="tab" data-toggle="tab"><%= icon 'file-archive-o' %> ZIP</a></li>
+    <% end %>
+    <% if @submission.assignment.allow_git %>
+      <li role="presentation"><a href="#git" aria-controls="git" role="tab" data-toggle="tab"><%= icon 'git' %> Git</a></li>
+    <% end %>
+    <% if @submission.assignment.allow_ide %>
+      <li role="presentation"><a href="#ide" aria-controls="ide" role="tab" data-toggle="tab"><%= icon 'code' %> Web IDE</a></li>
+    <% end %>
+  </ul>
 
-    <%= f.hidden_field :assignment_id, value: @submission.assignment.id %>
-
-    <p>Please upload only <strong>ZIP</strong> archives. Any other type of file
-    will result in a <strong>422</strong> error.</p>
-
-    <br />
-
-    <div class="form-group">
-      <%= f.label 'File', class: 'col-lg-2 control-label' %>
-      <div class="col-lg-10">
-        <%= f.file_field :code %>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="col-lg-10 col-lg-offset-2">
-        <%= f.submit 'Submit', class: 'btn btn-primary' %>
-      </div>
-    </div>
-  <% end %>
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <% if @submission.assignment.allow_zip %>
+      <div role="tabpanel" class="tab-pane sub-pane" id="zip"><hr><%= render 'zip' %></div>
+    <% end %>
+    <% if @submission.assignment.allow_git %>
+      <div role="tabpanel" class="tab-pane sub-pane" id="git"><hr><%= render 'git' %></div>
+    <% end %>
+    <% if @submission.assignment.allow_ide %>
+      <div role="tabpanel" class="tab-pane sub-pane" id="ide"><hr><%= render 'ide' %></div>
+    <% end %>
+  </div>
 </div>

@@ -62,7 +62,7 @@ class SubmissionUtils
       submission.log!('=== Remote Git ===')
       submission.log!('Creating remote repo...')
       repo_name = "submissions-#{submission.assignment.id}-#{submission.id}"
-      repo_desc = "Automatically created on #{DateTime.now.utc} by Nexus after submission \##{submission.id} made for assignment \##{submission.assignment.id} by user \##{submission.user.id} (#{submission.user.full_name})"
+      repo_desc = "Automatically created on #{DateTime.now.utc} by Nexus after submission \##{submission.id} made for assignment \##{submission.assignment.id} by user \##{submission.user.id} (#{submission.user.name})"
       res = Octokit.create_repository(repo_name,
                                       organization: Rails.configuration.ghe_org,
                                       private: true,

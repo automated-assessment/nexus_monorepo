@@ -31,7 +31,8 @@ Rails.application.routes.draw do
   ### Submissions
   get 'submissions' => 'submission#mine', as: :my_submissions
   get 'submissions/:id' => 'submission#show', as: :submission
-  post 'submissions/create' => 'submission#create', as: :create_submission
+  post 'submissions/create/zip' => 'submission#create_zip', as: :create_zip_submission
+  post 'submissions/create/git' => 'submission#create_git', as: :create_git_submission
   get 'submissions/new/:aid' => 'submission#new', as: :new_submission
 
   ### Access Tokens

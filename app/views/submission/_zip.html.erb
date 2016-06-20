@@ -1,0 +1,22 @@
+<%= form_for(@submission, url: create_zip_submission_path,  html: { class: 'form-horizontal' }) do |f| %>
+
+  <%= f.hidden_field :assignment_id, value: @submission.assignment.id %>
+
+  <p>Please upload only <strong>ZIP</strong> archives. Any other type of file
+  will result in a <strong>422</strong> error.</p>
+
+  <br />
+
+  <div class="form-group">
+    <%= f.label 'File', class: 'col-lg-2 control-label' %>
+    <div class="col-lg-10">
+      <%= f.file_field :code %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-lg-10 col-lg-offset-2">
+      <%= f.submit 'Submit', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

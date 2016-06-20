@@ -1,0 +1,28 @@
+<%= form_for(@submission, url: create_git_submission_path,  html: { class: 'form-horizontal' }) do |f| %>
+
+  <%= f.hidden_field :assignment_id, value: @submission.assignment.id %>
+
+  <p>((( Additional instructions. )))</p>
+
+  <br />
+
+  <div class="form-group">
+    <%= f.label 'Repo clone URL', class: 'col-lg-2 control-label' %>
+    <div class="col-lg-10">
+      <%= f.text_field :repourl, class: 'form-control', required: true %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label 'Commit hash (SHA)', class: 'col-lg-2 control-label' %>
+    <div class="col-lg-10">
+      <%= f.text_field :commithash, class: 'form-control', required: true %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-lg-10 col-lg-offset-2">
+      <%= f.submit 'Submit', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
