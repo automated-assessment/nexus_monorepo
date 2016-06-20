@@ -19,6 +19,14 @@ _Full documentation can be found in the [Wiki](https://github.kcl.ac.uk/automate
 - Node 4.x
 
 #### Environment Variables
+##### `NEXUS_GHE_OAUTH_ID` (Requried)
+- The ID of an OAuth Application on King's GitHub Enterprise, used for logging in via GitHub.
+- Set to something irrelevant such as `000` if just using manual (seeded) logins.
+
+##### `NEXUS_GHE_OAUTH_SECRET` (Requried)
+- The Secret of an OAuth Application on King's GitHub Enterprise, used for logging in via GitHub.
+- Set to something irrelevant such as `000` if just using manual (seeded) logins.
+
 ##### `NEXUS_GITHUB_USER` (Requried)
 - Username of the account to authenticate with King's GitHub Enterprise API
 
@@ -37,7 +45,8 @@ _Full documentation can be found in the [Wiki](https://github.kcl.ac.uk/automate
 5. Set up database: `$ bundle exec rake db:setup`
 6. Start Nexus: `$ rails server`
 7. [http://localhost:3000](http://localhost:3000)
-8. Sample user details can be found in `db/seeds.rb`
+8. Sample admin user details can be found in `db/seeds.rb`
+9. To use this account, go to Manual Login, which can be found at `/users/login`
 
 
 \* `npm-exec` executes the local version of a node module, rather than a globally installed version: `alias npm-exec='PATH=$(npm bin):$PATH'`

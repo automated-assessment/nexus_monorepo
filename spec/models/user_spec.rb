@@ -30,7 +30,7 @@ RSpec.describe User, type: :model do
     describe '#full_name' do
       it 'returns user\'s full name as a string' do
         user = build(:student, first_name: 'Adam', last_name: 'Smith')
-        expect(user.full_name).to eq('Adam Smith')
+        expect(user.name).to eq('Adam Smith')
       end
     end
     describe '#level_string' do

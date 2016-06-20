@@ -1,13 +1,15 @@
 <div>
   <% if user_signed_in? %>
     <div class="page-header">
-      <h2><%= current_user.full_name %>'s Dashboard</h2>
+      <h2><%= current_user.name %>'s Dashboard</h2>
     </div>
   <% else %>
     <div class="jumbotron">
       <h3>Welcome!</h3>
       <p>
-        Please <%= link_to 'Login', new_user_session_path %> or <%= link_to 'Register', new_user_registration_path %> to begin.
+        Please
+        <%= link_to(user_omniauth_authorize_url(provider: :github)) do %><%= icon 'github' %> Login<% end %>
+        to begin.
       </p>
     </div>
   <% end %>

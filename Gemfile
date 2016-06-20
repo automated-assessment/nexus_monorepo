@@ -25,6 +25,8 @@ gem 'cocoon'
 # Fake data generation
 gem 'factory_girl_rails'
 gem 'faker'
+# Omniauth thru GitHub
+gem 'omniauth-github'
 # Git interaction
 gem 'git'
 gem 'octokit', '~> 4.0'

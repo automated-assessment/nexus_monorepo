@@ -15,12 +15,12 @@
     <% @courses.each do |c| %>
       <tr class="<%= 'success' if current_user.enrolled_in?(c.id) %>">
         <th scope="row"><%= link_to c.title, c %></th>
-        <td><%= c.teacher.full_name %></td>
+        <td><%= c.teacher.name %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
-<% if current_user.staff? %>
+<% if current_user.admin? %>
   <div class="center-controls">
     <%= link_to(new_course_path) do %>
       <button type="button" class="btn btn-success">Create Course</button>
