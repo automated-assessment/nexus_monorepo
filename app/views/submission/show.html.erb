@@ -7,6 +7,12 @@
       <span class="label label-danger">Late</span>
     <% end %>
   </div>
+  <div class="sha">
+    Commit SHA: <code><%= @submission.commithash %></code>
+  </div>
+  <div class="repourl">
+    Remote URL: <code><%= @submission.repourl %></code>
+  </div>
 </div>
 
 <h4>Final Mark: <%= display_final_mark @submission %></h4>
