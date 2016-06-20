@@ -29,6 +29,7 @@ _Full documentation can be found in the [Wiki](https://github.kcl.ac.uk/automate
 - Name of the organisation to create repos and upload student's submissions to (defaults to `ppa-dev`)
 
 #### Quick-start
+0. Ensure environment variables are set up (see above) - using a `.env` file is probably best
 1. Clone the repo
 2. Install Ruby deps: `$ bundle install`
 3. Install Node.js deps: `$ npm install`
