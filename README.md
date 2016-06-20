@@ -19,15 +19,25 @@ _Full documentation can be found in the [Wiki](https://github.kcl.ac.uk/automate
 - Node 4.x
 
 #### Environment Variables
-##### `GHE_OAUTH_ID` (Requried)
+##### `NEXUS_GHE_OAUTH_ID` (Requried)
 - The ID of an OAuth Application on King's GitHub Enterprise, used for logging in via GitHub.
 - Set to something irrelevant such as `000` if just using manual (seeded) logins.
 
-##### `GHE_OAUTH_SECRET` (Requried)
+##### `NEXUS_GHE_OAUTH_SECRET` (Requried)
 - The Secret of an OAuth Application on King's GitHub Enterprise, used for logging in via GitHub.
 - Set to something irrelevant such as `000` if just using manual (seeded) logins.
 
+##### `NEXUS_GITHUB_USER` (Requried)
+- Username of the account to authenticate with King's GitHub Enterprise API
+
+##### `NEXUS_GITHUB_TOKEN` (Requried)
+- Password (or Personal Access Token) of the account to authenticate with King's GitHub Enterprise API
+
+##### `NEXUS_GITHUB_ORG`
+- Name of the organisation to create repos and upload student's submissions to (defaults to `ppa-dev`)
+
 #### Quick-start
+0. Ensure environment variables are set up (see above) - using a `.env` file is probably best
 1. Clone the repo
 2. Install Ruby deps: `$ bundle install`
 3. Install Node.js deps: `$ npm install`
