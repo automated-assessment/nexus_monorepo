@@ -18,6 +18,16 @@ _Full documentation can be found in the [Wiki](https://github.kcl.ac.uk/automate
 - Ruby 2.x (and `bundler`)
 - Node 4.x
 
+#### Environment Variables
+##### `NEXUS_GITHUB_USER` (Requried)
+- Username of the account to authenticate with King's GitHub Enterprise API
+
+##### `NEXUS_GITHUB_TOKEN` (Requried)
+- Password (or Personal Access Token) of the account to authenticate with King's GitHub Enterprise API
+
+##### `NEXUS_GITHUB_ORG`
+- Name of the organisation to create repos and upload student's submissions to (defaults to `ppa-dev`)
+
 #### Quick-start
 1. Clone the repo
 2. Install Ruby deps: `$ bundle install`
