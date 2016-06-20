@@ -18,6 +18,15 @@ _Full documentation can be found in the [Wiki](https://github.kcl.ac.uk/automate
 - Ruby 2.x (and `bundler`)
 - Node 4.x
 
+#### Environment Variables
+##### `GHE_OAUTH_ID` (Requried)
+- The ID of an OAuth Application on King's GitHub Enterprise, used for logging in via GitHub.
+- Set to something irrelevant such as `000` if just using manual (seeded) logins.
+
+##### `GHE_OAUTH_SECRET` (Requried)
+- The Secret of an OAuth Application on King's GitHub Enterprise, used for logging in via GitHub.
+- Set to something irrelevant such as `000` if just using manual (seeded) logins.
+
 #### Quick-start
 1. Clone the repo
 2. Install Ruby deps: `$ bundle install`
@@ -26,7 +35,8 @@ _Full documentation can be found in the [Wiki](https://github.kcl.ac.uk/automate
 5. Set up database: `$ bundle exec rake db:setup`
 6. Start Nexus: `$ rails server`
 7. [http://localhost:3000](http://localhost:3000)
-8. Sample user details can be found in `db/seeds.rb`
+8. Sample admin user details can be found in `db/seeds.rb`
+9. To use this account, go to Manual Login, which can be found at `/users/login`
 
 
 \* `npm-exec` executes the local version of a node module, rather than a globally installed version: `alias npm-exec='PATH=$(npm bin):$PATH'`
