@@ -30,6 +30,8 @@ gem 'omniauth-github'
 # Git interaction
 gem 'git'
 gem 'octokit', '~> 4.0'
+# Markdown rendering
+gem 'redcarpet'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

@@ -1,7 +1,6 @@
 <%= render 'header' %>
 <p>
-  <h4>Description</h4>
-  <%= @assignment.description %>
+  <%= markdown(@assignment.description) %>
   <hr />
   <h4>Marking Tools</h4>
   <table class="table table-hover">
