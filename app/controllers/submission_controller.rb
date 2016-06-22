@@ -64,6 +64,6 @@ class SubmissionController < ApplicationController
   end
 
   def submission_params
-    params.require(:submission).permit(:assignment_id, :repourl, :commithash)
+    params.require(:submission).permit(:assignment_id, :repourl, :gitbranch, :commithash)
   end
 end

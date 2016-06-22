@@ -38,6 +38,7 @@ module ApplicationHelper
     else
       content_tag('i', '', class: 'fa fa-times', style: 'color:darkred')
     end
+  end
 
   def markdown(text)
     options = {
