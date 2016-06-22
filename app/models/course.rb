@@ -10,6 +10,6 @@ class Course < ActiveRecord::Base
   default_scope { order(:title) }
 
   def teacher_cannot_be_student
-    errors.add(:teacher, 'teacher cannot be a student') if teacher.student?
+    errors.add(:teacher, 'teacher cannot be a student') unless teacher.admin?
   end
 end
