@@ -1,6 +1,7 @@
 class SubmissionController < ApplicationController
   include ApplicationHelper
   require_relative '../lib/submission_utils'
+  require_relative '../lib/git_utils'
 
   before_action :authenticate_user!, except: [:report_mark]
 
@@ -38,6 +39,9 @@ class SubmissionController < ApplicationController
     end
 
     SubmissionUtils.unzip!(@submission)
+    GitUtils.setup_local_submission_repository!(@submission)
+    GitUtils.push_submission_to_github!(@submission)
+    SubmissionUtils.notify_tools!(@submission)
 
     redirect_to action: 'show', id: @submission.id
   end
