@@ -59,6 +59,9 @@ class AssignmentController < ApplicationController
                                        :allow_late,
                                        :late_cap,
                                        :course_id,
+                                       :allow_zip,
+                                       :allow_git,
+                                       :allow_ide,
                                        marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id])
   end
 end

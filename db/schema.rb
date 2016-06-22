@@ -75,14 +75,6 @@ ActiveRecord::Schema.define(version: 20160622114843) do
   add_index "intermediate_marks", ["marking_tool_id"], name: "index_intermediate_marks_on_marking_tool_id"
   add_index "intermediate_marks", ["submission_id"], name: "index_intermediate_marks_on_submission_id"
 
-  create_table "marking_strategies", force: :cascade do |t|
-    t.string   "name"
-    t.string   "description"
-    t.string   "filename"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
-
   create_table "marking_tool_contexts", force: :cascade do |t|
     t.integer  "assignment_id"
     t.integer  "marking_tool_id"

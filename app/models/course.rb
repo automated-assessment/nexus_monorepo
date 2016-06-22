@@ -5,7 +5,6 @@ class Course < ActiveRecord::Base
 
   validates :title, presence: true
   validates :teacher, presence: true
-  validate :teacher_cannot_be_student, unless: 'teacher.nil?'
 
   default_scope { order(:title) }
 

@@ -32,6 +32,14 @@ module ApplicationHelper
     content_tag('i', '', class: "fa fa-#{name}")
   end
 
+  def boolean_icon(bool)
+    if bool
+      content_tag('i', '', class: 'fa fa-check', style: 'color:green')
+    else
+      content_tag('i', '', class: 'fa fa-times', style: 'color:darkred')
+    end
+  end
+
   def markdown(text)
     options = {
       filter_html: true,

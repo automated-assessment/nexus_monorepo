@@ -14,7 +14,7 @@ class SubmissionController < ApplicationController
     @submission.assignment = Assignment.find(params[:aid])
   end
 
-  def create
+  def create_zip
     @submission = Submission.new(submission_params)
     @submission.user = current_user
 
@@ -46,6 +46,17 @@ class SubmissionController < ApplicationController
     redirect_to action: 'show', id: @submission.id
   end
 
+  def create_git
+    @submission = Submission.new(submission_params)
+    @submission.user = current_user
+    @submission.save!
+    @submission.open_log!
+
+    SubmissionUtils.notify_tools!(@submission)
+
+    redirect_to action: 'show', id: @submission.id
+  end
+
   private
 
   def save_file_name(submission)
@@ -53,6 +64,6 @@ class SubmissionController < ApplicationController
   end
 
   def submission_params
-    params.require(:submission).permit(:assignment_id)
+    params.require(:submission).permit(:assignment_id, :repourl, :gitbranch, :commithash)
   end
 end
