@@ -267,5 +267,5 @@ Devise.setup do |config|
                     authorize_url: 'https://github.kcl.ac.uk/login/oauth/authorize',
                     token_url: 'https://github.kcl.ac.uk/login/oauth/access_token'
                   },
-                  scope: 'user'
+                  scope: 'user repo'
 end
