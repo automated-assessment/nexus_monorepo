@@ -7,11 +7,14 @@
       <span class="label label-danger">Late</span>
     <% end %>
   </div>
-  <div class="sha">
-    Commit SHA: <code><%= @submission.commithash %></code>
-  </div>
   <div class="repourl">
     Remote URL: <code><%= @submission.repourl %></code>
+  </div>
+  <div class="gitbranch">
+    Branch: <code><%= @submission.gitbranch %></code>
+  </div>
+  <div class="sha">
+    Commit SHA: <code><%= @submission.commithash %></code>
   </div>
 </div>
 

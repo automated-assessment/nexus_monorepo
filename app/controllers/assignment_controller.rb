@@ -1,5 +1,6 @@
 class AssignmentController < ApplicationController
   include ApplicationHelper
+  require_relative '../lib/git_utils'
 
   before_action :authenticate_user!
 
@@ -37,8 +38,9 @@ class AssignmentController < ApplicationController
   def create
     authenticate_staff!
     @assignment = Assignment.new(assignment_params)
-
     @assignment.save!
+
+    GitUtils.setup_remote_assignment_repo!(@assignment)
 
     if @assignment.marking_tools.configurable.any?
       redirect_to action: 'quick_config_confirm', id: @assignment.id
