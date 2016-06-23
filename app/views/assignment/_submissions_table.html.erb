@@ -33,7 +33,11 @@
 <% end %>
 
 <div class="center-controls">
-  <%= link_to(new_submission_path(aid: @assignment.id)) do %>
-    <button type="button" class="btn btn-success">Upload New Submission</button>
+  <% if user_can_submit_to(@assignment) %>
+    <%= link_to(new_submission_path(aid: @assignment.id)) do %>
+      <button type="button" class="btn btn-success">Upload New Submission</button>
+    <% end %>
+  <% else %>
+    You have reached the maximum amount of attempts for this assignment.
   <% end %>
 </div>

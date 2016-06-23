@@ -10,19 +10,20 @@
     <hr />
     <div class="assignment-dates">
       <% if @assignment.started? %>
-        <h6>Started: <%= strftime_uk @assignment.start %></h6>
+        <h5>Started: <%= strftime_uk @assignment.start %></h5>
         <h5>Deadline: <%= strftime_uk @assignment.deadline %>
         <span class="label label-warning"><%= distance_from_now_string @assignment.deadline %></span></h5>
       <% else %>
         <h5>Starts: <%= strftime_uk @assignment.start %>
         <span class="label label-info"><%= distance_from_now_string @assignment.start %></span></h5>
-        <h6>Deadline: <%= strftime_uk @assignment.deadline %> </h6>
+        <h5>Deadline: <%= strftime_uk @assignment.deadline %> </h5>
       <% end %>
       <% if @assignment.allow_late? %>
-        <h5>Late submissions are allowed, but will be capped at <span class="text-danger"><%= @assignment.late_cap %>%</span></h5>
+        <h5>Late submissions <span class="text-success">are</span> allowed, but will be capped at <span class="text-danger"><%= @assignment.late_cap %>%</span></h5>
       <% else %>
       <h5>Late submissions are <span class="text-danger">not</span> allowed</h5>
       <% end %>
+      <h5>Maximum attempts: <%= @assignment.max_attempts %></h5>
     </div>
   </div>
   <div class="col-md-4">

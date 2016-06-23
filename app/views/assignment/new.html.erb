@@ -54,6 +54,14 @@
       </div>
     </div>
 
+    <div class="form-group">
+      <%= f.label :max_attempts, 'Maximum attempts', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.number_field :max_attempts, min: 0, step: 1, value: '0', class: 'form-control' %>
+        <p>Use <code>0</code> for no limit.</p>
+      </div>
+    </div>
+
     <hr />
     <h4>Submission Methods</h4>
     <div class="form-group">

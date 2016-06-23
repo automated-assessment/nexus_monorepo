@@ -12,11 +12,14 @@ class SubmissionController < ApplicationController
   def new
     @submission = Submission.new
     @submission.assignment = Assignment.find(params[:aid])
+    return unless allowed_to_submit
   end
 
   def create_zip
     @submission = Submission.new(submission_params)
     @submission.user = current_user
+    return unless allowed_to_submit
+
     @submission.studentrepo = false
 
     uploaded_file = params[:submission][:code]
@@ -55,6 +58,8 @@ class SubmissionController < ApplicationController
   def create_git
     @submission = Submission.new(submission_params)
     @submission.user = current_user
+    return unless allowed_to_submit
+
     @submission.studentrepo = true
     @submission.save!
     @submission.open_log!
@@ -65,6 +70,15 @@ class SubmissionController < ApplicationController
   end
 
   private
+
+  def allowed_to_submit
+    if user_can_submit_to(@submission.assignment)
+      return true
+    else
+      redirect_to(@submission.assignment, flash: { warning: 'You have reached the maximum amount of attempts for this assignment.' })
+      return false
+    end
+  end
 
   def save_file_name(submission)
     "#{submission.user.id}_#{submission.id}.zip"

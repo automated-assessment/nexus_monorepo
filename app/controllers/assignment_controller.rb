@@ -58,6 +58,7 @@ class AssignmentController < ApplicationController
                                        :deadline,
                                        :allow_late,
                                        :late_cap,
+                                       :max_attempts,
                                        :course_id,
                                        :allow_zip,
                                        :allow_git,
