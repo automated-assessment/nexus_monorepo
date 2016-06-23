@@ -17,6 +17,7 @@ class SubmissionController < ApplicationController
   def create_zip
     @submission = Submission.new(submission_params)
     @submission.user = current_user
+    @submission.studentrepo = false
 
     uploaded_file = params[:submission][:code]
 
@@ -54,6 +55,7 @@ class SubmissionController < ApplicationController
   def create_git
     @submission = Submission.new(submission_params)
     @submission.user = current_user
+    @submission.studentrepo = true
     @submission.save!
     @submission.open_log!
 

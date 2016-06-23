@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160622190305) do
+ActiveRecord::Schema.define(version: 20160623151025) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -125,6 +125,7 @@ ActiveRecord::Schema.define(version: 20160622190305) do
     t.text     "repourl"
     t.text     "commithash"
     t.string   "gitbranch"
+    t.boolean  "studentrepo"
   end
 
   add_index "submissions", ["assignment_id"], name: "index_submissions_on_assignment_id"

@@ -4,11 +4,23 @@ require 'uri'
 
 class SubmissionUtils
   class << self
+    def augment_clone_url(submission)
+      url = submission.repourl
+      if submission.studentrepo
+        auth = submission.user.githubtoken
+        url.insert(url.index('//') + 2, "#{auth}@")
+      else
+        auth = "#{Rails.configuration.ghe_user}:#{Rails.configuration.ghe_password}"
+        url.insert(url.index('//') + 2, "#{auth}@")
+      end
+      url
+    end
+
     def build_json_payload(submission)
       payload = {
         sid: submission.id,
         aid: submission.assignment.id,
-        repo: submission.repourl,
+        cloneurl: augment_clone_url(submission),
         branch: submission.gitbranch,
         sha: submission.commithash
       }
