@@ -39,8 +39,13 @@ class SubmissionController < ApplicationController
     end
 
     SubmissionUtils.unzip!(@submission)
-    GitUtils.setup_local_submission_repository!(@submission)
-    GitUtils.push_submission_to_github!(@submission)
+
+    if Submission.where(user: @submission.user).where(repourl: @submission.assignment.repourl).empty?
+      GitUtils.first_time_push!(@submission)
+    else
+      GitUtils.subsequent_push!(@submission)
+    end
+
     SubmissionUtils.notify_tools!(@submission)
 
     redirect_to action: 'show', id: @submission.id
