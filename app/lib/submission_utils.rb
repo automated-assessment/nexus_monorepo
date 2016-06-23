@@ -4,16 +4,27 @@ require 'uri'
 
 class SubmissionUtils
   class << self
-    def build_url_params(submission)
-      params = {
+    def augment_clone_url(submission)
+      url = submission.repourl
+      if submission.studentrepo
+        auth = submission.user.githubtoken
+        url.insert(url.index('//') + 2, "#{auth}@")
+      else
+        auth = "#{Rails.configuration.ghe_user}:#{Rails.configuration.ghe_password}"
+        url.insert(url.index('//') + 2, "#{auth}@")
+      end
+      url
+    end
+
+    def build_json_payload(submission)
+      payload = {
         sid: submission.id,
         aid: submission.assignment.id,
-        repo: submission.repourl,
+        cloneurl: augment_clone_url(submission),
         branch: submission.gitbranch,
         sha: submission.commithash
       }
-      params.each { |k, v| params[k] = URI.escape(v.to_s) }
-      params
+      payload.to_json
     end
 
     def unzip!(submission)
@@ -43,11 +54,13 @@ class SubmissionUtils
       submission.assignment.marking_tools.each do |mt|
         begin
           submission.log!("Notifying #{mt.name}...")
-          uri = URI.parse(mt.url % build_url_params(submission))
+          uri = URI.parse(mt.url)
           submission.log!("  - Using URL #{uri}", 'Debug')
 
           http = Net::HTTP.new(uri.host, uri.port)
-          req = Net::HTTP::Post.new(uri.request_uri)
+          req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
+
+          req.body = build_json_payload(submission)
 
           res = http.request(req)
 
