@@ -4,16 +4,15 @@ require 'uri'
 
 class SubmissionUtils
   class << self
-    def build_url_params(submission)
-      params = {
+    def build_json_payload(submission)
+      payload = {
         sid: submission.id,
         aid: submission.assignment.id,
         repo: submission.repourl,
         branch: submission.gitbranch,
         sha: submission.commithash
       }
-      params.each { |k, v| params[k] = URI.escape(v.to_s) }
-      params
+      payload.to_json
     end
 
     def unzip!(submission)
@@ -43,11 +42,13 @@ class SubmissionUtils
       submission.assignment.marking_tools.each do |mt|
         begin
           submission.log!("Notifying #{mt.name}...")
-          uri = URI.parse(mt.url % build_url_params(submission))
+          uri = URI.parse(mt.url)
           submission.log!("  - Using URL #{uri}", 'Debug')
 
           http = Net::HTTP.new(uri.host, uri.port)
-          req = Net::HTTP::Post.new(uri.request_uri)
+          req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
+
+          req.body = build_json_payload(submission)
 
           res = http.request(req)
 
