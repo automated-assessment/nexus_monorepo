@@ -5,5 +5,9 @@
         <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'cog' %> Configure Tools</button>
       <% end %>
     <% end %>
+
+    <%= link_to(edit_assignment_path(id: @assignment.id)) do %>
+      <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'edit' %> Edit Assignment</button>
+    <% end %>
   </div>
 <% end %>
