@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   get 'courses/all' => 'course#index', as: :all_courses
   get 'courses/:id' => 'course#show', as: :course
   get 'courses/:id/list' => 'course#enrolment_list', as: :enrolment_list
+  get 'courses/:id/edit' => 'course#edit', as: :edit_course
+  patch 'courses/:id' => 'course#update', as: :update_course
 
   ### Assignments
   get 'assignments' => 'assignment#mine', as: :my_assignments

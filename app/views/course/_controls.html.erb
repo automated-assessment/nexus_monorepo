@@ -2,17 +2,22 @@
   <div class="course-controls">
     <ul>
         <% if user_can_administrate @course %>
-        <li>
-          <%= link_to(new_assignment_path(cid: @course.id)) do %>
-          <%= icon 'plus-circle' %> Create Assignment
-          <% end %>
-        </li>
-        <li>
-          <%= link_to(enrolment_list_path, id: @course.id) do %>
-            <%= icon 'list' %> Enrolment List
-            <span class="label label-default"><%= @course.students.size %></span>
-          <% end %>
-        </li>
+          <li>
+            <%= link_to(new_assignment_path(cid: @course.id)) do %>
+              <%= icon 'plus-circle' %> Create Assignment
+            <% end %>
+          </li>
+          <li>
+            <%= link_to(enrolment_list_path, id: @course.id) do %>
+              <%= icon 'list' %> Enrolment List
+              <span class="label label-default"><%= @course.students.size %></span>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to(edit_course_path(id: @course.id)) do %>
+              <%= icon 'edit' %> Edit Course
+            <% end %>
+          </li>
         <% end %>
         <% if !current_user.eql? @course.teacher %>
           <li>
