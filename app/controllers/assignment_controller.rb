@@ -49,6 +49,20 @@ class AssignmentController < ApplicationController
     end
   end
 
+  def edit
+    @assignment = Assignment.find(params[:id])
+  end
+
+  def update
+    @assignment = Assignment.find(params[:id])
+    if @assignment.update_attributes(assignment_params)
+      flash[:success] = 'Assignment updated'
+      redirect_to @assignment
+    else
+      render 'edit'
+    end
+  end
+
   private
 
   def assignment_params

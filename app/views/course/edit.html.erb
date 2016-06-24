@@ -1,7 +1,7 @@
 <div class="well">
-  <h2>Create Course</h2>
+  <h2>Edit Course</h2>
   <hr />
-  <%= form_for(@course, url: create_course_path, html: { class: 'form-horizontal' }) do |f| %>
+  <%= form_for(@course, url: update_course_path, html: { class: 'form-horizontal' }) do |f| %>
     <div class="form-group">
       <%= f.label :title, class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
@@ -26,7 +26,7 @@
 
     <div class="form-group">
       <div class="col-lg-10 col-lg-offset-2">
-        <%= f.submit 'Create', class: 'btn btn-primary' %>
+        <%= f.submit 'Save Changes', class: 'btn btn-primary' %>
       </div>
     </div>
   <% end %>

@@ -30,6 +30,9 @@
       <% end %>
     </tbody>
   </table>
+  <p>
+    Highest mark: <%= @assignment.highest_mark_for(current_user) %>%
+  </p>
 <% end %>
 
 <div class="center-controls">

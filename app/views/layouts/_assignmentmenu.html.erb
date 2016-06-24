@@ -2,8 +2,8 @@
   <li>
     <%= link_to my_assignments_path do %>
       Assignments
-      <% unless current_user.assignments.current.empty? %>
-        <span class="label label-primary"><%= current_user.assignments.current.size %></span>
+      <% unless current_user.assignments.started.empty? %>
+        <span class="label label-primary"><%= current_user.assignments.started.size %></span>
       <% end %>
     <% end %>
   </li>

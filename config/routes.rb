@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   get 'courses/all' => 'course#index', as: :all_courses
   get 'courses/:id' => 'course#show', as: :course
   get 'courses/:id/list' => 'course#enrolment_list', as: :enrolment_list
+  get 'courses/:id/edit' => 'course#edit', as: :edit_course
+  patch 'courses/:id' => 'course#update', as: :update_course
 
   ### Assignments
   get 'assignments' => 'assignment#mine', as: :my_assignments
@@ -27,6 +29,8 @@ Rails.application.routes.draw do
   get 'assignments/:id/configure_tools' => 'assignment#configure_tools', as: :assignment_configure_tools
   post 'assignments/create' => 'assignment#create', as: :create_assignment
   get 'assignments/new/:cid' => 'assignment#new', as: :new_assignment
+  get 'assignments/:id/edit' => 'assignment#edit', as: :edit_assignment
+  patch 'assignments/:id' => 'assignment#update', as: :update_assignment
 
   ### Submissions
   get 'submissions' => 'submission#mine', as: :my_submissions

@@ -1,10 +1,8 @@
 <div class="well">
-  <h2>Create Assignment</h2>
+  <h2>Edit Assignment</h2>
   <h4 class="course-title"><%= icon 'book' %> <%= link_to @assignment.course.title, @assignment.course %></h4>
   <hr />
-  <%= form_for(@assignment, url: create_assignment_path, html: { class: 'form-horizontal' }) do |f| %>
-
-    <%= f.hidden_field :course_id, value: @assignment.course.id %>
+  <%= form_for(@assignment, url: update_assignment_path, html: { class: 'form-horizontal' }) do |f| %>
 
     <div class="form-group">
       <%= f.label :title, class: 'col-lg-2 control-label' %>
@@ -24,14 +22,14 @@
     <div class="form-group">
       <%= f.label :start, class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
-        <%= f.datetime_field :start, class: 'form-control', id: 'startfield', value: DateTime.now.utc.strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
+        <%= f.datetime_field :start, class: 'form-control', id: 'startfield', value: @assignment.start.strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
       </div>
     </div>
 
     <div class="form-group">
       <%= f.label :deadline, class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
-        <%= f.datetime_field :deadline, class: 'form-control', id: 'deadlinefield', value: (DateTime.now.utc + 1.week).strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
+        <%= f.datetime_field :deadline, class: 'form-control', id: 'deadlinefield', value: @assignment.deadline.strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
       </div>
     </div>
 
@@ -40,7 +38,7 @@
       <div class="col-lg-10">
         <div class="checkbox">
           <label>
-            <%= f.check_box :allow_late, checked: true %>
+            <%= f.check_box :allow_late %>
             Allow late submissions
           </label>
         </div>
@@ -50,14 +48,14 @@
     <div class="form-group">
       <%= f.label :late_cap, 'Late grade cap (%)', class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
-        <%= f.number_field :late_cap, in: 0..100, step: 1, value: '40', class: 'form-control' %>
+        <%= f.number_field :late_cap, in: 0..100, step: 1, class: 'form-control' %>
       </div>
     </div>
 
     <div class="form-group">
       <%= f.label :max_attempts, 'Maximum attempts', class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
-        <%= f.number_field :max_attempts, min: 0, step: 1, value: '0', class: 'form-control' %>
+        <%= f.number_field :max_attempts, min: 0, step: 1, class: 'form-control' %>
         <p>Use <code>0</code> for no limit.</p>
       </div>
     </div>
@@ -68,7 +66,7 @@
       <div class="col-lg-10">
         <div class="checkbox">
           <label>
-            <%= f.check_box :allow_zip, checked: true %>
+            <%= f.check_box :allow_zip %>
             Allow ZIP uploads
           </label>
         </div>
@@ -79,7 +77,7 @@
       <div class="col-lg-10">
         <div class="checkbox">
           <label>
-            <%= f.check_box :allow_git, checked: true %>
+            <%= f.check_box :allow_git %>
             Allow git repository URL + commit SHA submissions
           </label>
         </div>
@@ -90,30 +88,11 @@
       <div class="col-lg-10">
         <div class="checkbox">
           <label>
-            <%= f.check_box :allow_ide, checked: true %>
+            <%= f.check_box :allow_ide %>
             Allow in-browser IDE submissions
           </label>
         </div>
       </div>
-    </div>
-
-    <hr />
-    <h4>Marking Tools</h4>
-    <p>
-      Tools can be given a weighting of <strong>0%</strong> to be used for feedback only; not contributing to the final mark.
-    </p>
-    <br />
-
-    <div class="marking-tools">
-      <%= f.fields_for :marking_tool_contexts do |ff| %>
-        <%= render 'marking_tool_context_fields', f: ff %>
-
-        <div class="add-tool-link">
-          <%= link_to_add_association f, :marking_tool_contexts, partial: 'marking_tool_context_fields' do |link| %>
-            <%= icon 'plus-circle' %> Add Tool
-          <% end %>
-        </div>
-      <% end %>
     </div>
 
     <hr>
@@ -121,7 +100,7 @@
 
     <div class="form-group">
       <div class="col-lg-10 col-lg-offset-2">
-        <%= f.submit 'Create', class: 'btn btn-primary' %>
+        <%= f.submit 'Save Changes', class: 'btn btn-primary' %>
       </div>
     </div>
   <% end %>
