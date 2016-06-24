@@ -5,14 +5,14 @@
     <thead>
       <tr>
         <th>Name</th>
-        <th width="20%">User Type</th>
+        <th width="20%">Staff?</th>
       </tr>
     </thead>
     <tbody>
       <% @course.students.each do |c| %>
         <tr>
           <th scope="row"><%= c.name %></th>
-          <td><%= c.level_string %></td>
+          <td><%= c.admin? %></td>
         </tr>
       <% end %>
     </tbody>
