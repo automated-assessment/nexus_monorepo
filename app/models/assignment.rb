@@ -17,8 +17,7 @@ class Assignment < ActiveRecord::Base
   validates_datetime :deadline, after: :start
 
   default_scope { order(:start) }
-  scope :current, -> { where('start < ?', Time.current).reorder(:deadline) }
-  scope :upcoming, -> { where('start > ?', Time.current) }
+  scope :started, -> { where('start < ?', Time.current).reorder(:deadline) }
 
   def started?
     start.past?

@@ -1,4 +1,4 @@
-<% if current_user.assignments.current.empty? %>
+<% if current_user.assignments.started.empty? %>
   <p>You have no current assignments.</p>
 <% else %>
   <table class="table table-hover">
@@ -6,14 +6,18 @@
       <tr>
         <th>Title</th>
         <th>Course</th>
+        <th width="20%">Start</th>
         <th width="20%">Deadline</th>
       </tr>
     </thead>
     <tbody>
-      <% current_user.assignments.current.each do |a| %>
+      <% current_user.assignments.started.each do |a| %>
         <tr>
           <th scope="row"><%= link_to a.title, a %></th>
           <td><%= link_to a.course.title, a.course %></td>
+          <td>
+            <%= pretty_datetime a.start %>
+          </td>
           <td class="<%= a.decorator_class %>">
             <%= pretty_datetime a.deadline %>
           </td>
