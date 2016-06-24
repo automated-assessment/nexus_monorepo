@@ -1,5 +1,6 @@
 class Assignment < ActiveRecord::Base
   belongs_to :course
+  has_many :submissions
   has_many :marking_tool_contexts
   has_many :marking_tools, through: :marking_tool_contexts
 
@@ -39,6 +40,10 @@ class Assignment < ActiveRecord::Base
 
   def configurable_tools?
     marking_tools.configurable.any?
+  end
+
+  def highest_mark_for(u = current_user)
+    submissions.where(user: u).where.not(mark: nil).reorder(mark: :desc).first.mark
   end
 
   private
