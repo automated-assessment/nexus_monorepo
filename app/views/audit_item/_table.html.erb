@@ -1,4 +1,4 @@
-<table class="table table-hover">
+<table class="table">
   <thead>
     <tr>
       <th width="15%">Date</th>
@@ -8,7 +8,7 @@
   </thead>
   <tbody>
     <% items.each do |a| %>
-      <tr>
+      <tr class="<%= a.bootstrap_decorator %>">
         <th scope="row"><%= pretty_datetime a.timestamp %></th>
         <td><%= a.level.capitalize %></td>
         <td><%= a.body %></td>

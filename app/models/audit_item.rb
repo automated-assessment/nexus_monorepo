@@ -17,4 +17,19 @@ class AuditItem < ActiveRecord::Base
     self.timestamp = DateTime.now.utc
     self.level = 'info' if level.nil?
   end
+
+  def bootstrap_decorator
+    case level.downcase
+    when 'success'
+      return 'success'
+    when 'error'
+      return 'danger'
+    when 'warning'
+      return 'warning'
+    when 'debug'
+      return 'active'
+    else
+      return ''
+    end
+  end
 end
