@@ -16,6 +16,11 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :courses
   has_many :assignments, through: :courses
   has_many :submissions
+  has_many :audit_items
+
+  after_create do
+    log("User id #{id} (uid #{uid}) '#{name}' created.")
+  end
 
   def enrolled_in?(id)
     courses.find_by(id: id)
@@ -23,5 +28,11 @@ class User < ActiveRecord::Base
 
   def submissions_for(aid)
     submissions.where(assignment_id: aid).all || {}
+  end
+
+  def log(body, level = 'info')
+    AuditItem.create!(user: self,
+                      body: body,
+                      level: level)
   end
 end

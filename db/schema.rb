@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160623162353) do
+ActiveRecord::Schema.define(version: 20160626230852) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -38,6 +38,25 @@ ActiveRecord::Schema.define(version: 20160623162353) do
   end
 
   add_index "assignments", ["course_id"], name: "index_assignments_on_course_id"
+
+  create_table "audit_items", force: :cascade do |t|
+    t.text     "body"
+    t.string   "level"
+    t.integer  "access_token_id"
+    t.integer  "assignment_id"
+    t.integer  "course_id"
+    t.integer  "marking_tool_id"
+    t.integer  "submission_id"
+    t.integer  "user_id"
+    t.datetime "timestamp",       limit: 3
+  end
+
+  add_index "audit_items", ["access_token_id"], name: "index_audit_items_on_access_token_id"
+  add_index "audit_items", ["assignment_id"], name: "index_audit_items_on_assignment_id"
+  add_index "audit_items", ["course_id"], name: "index_audit_items_on_course_id"
+  add_index "audit_items", ["marking_tool_id"], name: "index_audit_items_on_marking_tool_id"
+  add_index "audit_items", ["submission_id"], name: "index_audit_items_on_submission_id"
+  add_index "audit_items", ["user_id"], name: "index_audit_items_on_user_id"
 
   create_table "courses", force: :cascade do |t|
     t.string   "title",       null: false

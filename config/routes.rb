@@ -49,6 +49,9 @@ Rails.application.routes.draw do
   get 'marking_tools/new' => 'marking_tool#new', as: :new_marking_tool
   post 'marking_tools/create' => 'marking_tool#create', as: :create_marking_tool
 
+  ### Audit Items
+  get 'audit_items/all' => 'audit_item#all', as: :all_audit_items
+
   ### Static Pages
   get 'pages/landing'
 

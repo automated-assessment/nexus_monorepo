@@ -3,6 +3,7 @@ class Submission < ActiveRecord::Base
   belongs_to :user
   has_many :intermediate_marks
   has_many :feedback_items
+  has_many :audit_items
 
   validates :assignment, presence: true
   validates :user, presence: true
@@ -13,7 +14,6 @@ class Submission < ActiveRecord::Base
     self.submitted = DateTime.now.utc
     self.late = assignment.deadline.past?
     self.attempt_number = user.submissions_for(assignment.id).count + 1
-    self.log = ''
   end
 
   after_create do
@@ -36,30 +36,25 @@ class Submission < ActiveRecord::Base
 
   def calculate_final_mark_if_possible
     return if intermediate_marks.any?(&:pending?)
-    log!('All Marking Tools have reported. Calculating final mark...')
+    log('All Marking Tools have reported. Calculating final mark...')
     final_mark = 0
     intermediate_marks.each do |im|
       final_mark += im.mark * assignment.marking_tool_contexts.find_by(marking_tool_id: im.marking_tool_id).weight / 100
     end
     final_mark = final_mark.floor
-    log!("Calculated final mark as #{final_mark}!")
+    log("Calculated final mark as #{final_mark}!")
     if late
       self.mark = [assignment.late_cap, final_mark].min
-      log!("Mark has been capped at #{[assignment.late_cap, final_mark].min} due to being a late submission") if final_mark > assignment.late_cap
+      log("Mark has been capped at #{[assignment.late_cap, final_mark].min} due to being a late submission") if final_mark > assignment.late_cap
     else
       self.mark = final_mark
     end
     save!
   end
 
-  def open_log!
-    log!("Log opened for submission ID \##{id}!")
-  end
-
-  def log!(message, level = ' Info')
-    log << "\n" if message.start_with?('=== ')
-    log << "[#{DateTime.now.utc.strftime('%A, %d %b %Y %H:%M')}][#{level}] :: #{message}\n"
-    log << "\n" if message.start_with?('=== ')
-    self.save!
+  def log(body, level = 'info')
+    AuditItem.create!(submission: self,
+                      body: body,
+                      level: level)
   end
 end
