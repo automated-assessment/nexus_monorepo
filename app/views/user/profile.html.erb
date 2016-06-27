@@ -1,7 +1,0 @@
-<div class="page-header">
-  <h2>
-    <%= current_user.name %>
-    <div class="right-gravatar"><%= gravatar_for current_user, 60 %></div>
-  </h2>
-</div>
-<%= render partial: 'audit_item/panel', locals: { items: current_user.audit_items } %>

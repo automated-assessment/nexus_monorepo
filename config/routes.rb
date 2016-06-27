@@ -8,7 +8,6 @@ Rails.application.routes.draw do
   end
 
   ### Users
-  get 'user/profile' => 'user#profile', as: :user_profile
   get 'user/enrol/:id' => 'user#enrol', as: :enrol
   get 'user/unenrol/:id' => 'user#unenrol', as: :unenrol
 
