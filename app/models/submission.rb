@@ -44,6 +44,10 @@ class Submission < ActiveRecord::Base
     end
     final_mark = final_mark.floor
     log("Calculated final mark as #{final_mark}")
+    if mark_override
+      log('Did not set final mark as mark override has been used', 'Warn')
+      return
+    end
     if late
       self.mark = [assignment.late_cap, final_mark].min
       log("Mark has been capped at #{[assignment.late_cap, final_mark].min} due to being submitted late") if final_mark > assignment.late_cap
