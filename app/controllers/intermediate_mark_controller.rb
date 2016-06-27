@@ -13,7 +13,7 @@ class IntermediateMarkController < ApplicationController
     if @intermediate_mark.pending?
       render json: { response: 'Mark received successfully!' }.to_json
 
-      @submission.log("Mark of #{params[:mark]} received from #{@marking_tool.name}!")
+      @submission.log("Mark #{params[:mark]} received from #{@marking_tool.name}")
       @intermediate_mark.mark = params[:mark]
       @intermediate_mark.save!
     else

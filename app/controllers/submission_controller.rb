@@ -36,8 +36,7 @@ class SubmissionController < ApplicationController
       file.write(uploaded_file.read)
       @submission.saved_filename = save_file_name(@submission)
       @submission.save!
-      @submission.log('=== Storage ===')
-      @submission.log("Uploaded file successfully saved as #{save_file_name(@submission)} (original filename #{uploaded_file.original_filename})")
+      @submission.log("Saved submission as #{save_file_name(@submission)} (original filename #{uploaded_file.original_filename})")
     end
 
     SubmissionUtils.unzip!(@submission)

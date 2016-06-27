@@ -17,6 +17,7 @@ class Submission < ActiveRecord::Base
   end
 
   after_create do
+    log("Submission id #{id} created.")
     # Create intermediate marks for all tools with weight >0%
     assignment.marking_tool_contexts.each do |mtc|
       IntermediateMark.create(marking_tool_id: mtc.marking_tool.id,
@@ -42,10 +43,10 @@ class Submission < ActiveRecord::Base
       final_mark += im.mark * assignment.marking_tool_contexts.find_by(marking_tool_id: im.marking_tool_id).weight / 100
     end
     final_mark = final_mark.floor
-    log("Calculated final mark as #{final_mark}!")
+    log("Calculated final mark as #{final_mark}")
     if late
       self.mark = [assignment.late_cap, final_mark].min
-      log("Mark has been capped at #{[assignment.late_cap, final_mark].min} due to being a late submission") if final_mark > assignment.late_cap
+      log("Mark has been capped at #{[assignment.late_cap, final_mark].min} due to being submitted late") if final_mark > assignment.late_cap
     else
       self.mark = final_mark
     end

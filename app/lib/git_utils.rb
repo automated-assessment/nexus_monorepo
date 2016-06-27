@@ -34,6 +34,7 @@ class GitUtils
       repo.add_remote('origin', submission.assignment.repourl)
       repo.push('origin', branch_name)
 
+      submission.log('Submission stored on GHE (new branch created)', 'success')
       submission.gitbranch = branch_name
       submission.repourl = submission.assignment.repourl
       submission.commithash = repo.log[0].sha.to_s
@@ -63,6 +64,7 @@ class GitUtils
       repo.commit(gen_commit_msg(submission), allow_empty: true)
       repo.push('origin', branch_name)
 
+      submission.log('Submission stored on GHE (used existing branch)', 'success')
       submission.gitbranch = branch_name
       submission.repourl = submission.assignment.repourl
       submission.commithash = repo.log[0].sha.to_s
