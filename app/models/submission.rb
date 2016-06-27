@@ -44,6 +44,10 @@ class Submission < ActiveRecord::Base
     end
     final_mark = final_mark.floor
     log("Calculated final mark as #{final_mark}")
+    if mark_override
+      log('Did not set final mark as mark override has been used', 'Warn')
+      return
+    end
     if late
       self.mark = [assignment.late_cap, final_mark].min
       log("Mark has been capped at #{[assignment.late_cap, final_mark].min} due to being submitted late") if final_mark > assignment.late_cap
@@ -51,6 +55,18 @@ class Submission < ActiveRecord::Base
       self.mark = final_mark
     end
     save!
+  end
+
+  def augmented_clone_url
+    url = repourl
+    if studentrepo
+      auth = user.githubtoken
+      url.insert(url.index('//') + 2, "#{auth}@")
+    else
+      auth = "#{Rails.configuration.ghe_user}:#{Rails.configuration.ghe_password}"
+      url.insert(url.index('//') + 2, "#{auth}@")
+    end
+    url
   end
 
   def log(body, level = 'info')

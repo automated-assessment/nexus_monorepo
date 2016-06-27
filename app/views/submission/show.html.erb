@@ -1,20 +1,41 @@
-<div class="page-header">
-  <h5 class="course-title"><%= icon 'tasks' %> <%= link_to @submission.assignment.title, @submission.assignment %></h5>
-  <h2>Attempt #<%= @submission.attempt_number%></h2>
-  <div class="assignment-dates">
-    Submitted <%= pretty_datetime @submission.submitted %>
-    <% if @submission.late %>
-      <span class="label label-danger">Late</span>
-    <% end %>
+<div class="row">
+  <div class="col-md-8">
+    <div>
+      <h5 class="course-title"><%= icon 'tasks' %> <%= link_to @submission.assignment.title, @submission.assignment %></h5>
+      <h2>Attempt #<%= @submission.attempt_number%></h2>
+      <div class="assignment-dates">
+        Submitted <%= pretty_datetime @submission.submitted %>
+        <% if @submission.late %>
+          <span class="label label-danger">Late</span>
+        <% end %>
+      </div>
+      <div class="repourl">
+        Remote URL: <code><%= @submission.repourl %></code>
+      </div>
+      <div class="gitbranch">
+        Branch: <code><%= @submission.gitbranch %></code>
+      </div>
+      <div class="sha">
+        Commit SHA: <code><%= @submission.commithash %></code>
+      </div>
+    </div>
   </div>
-  <div class="repourl">
-    Remote URL: <code><%= @submission.repourl %></code>
-  </div>
-  <div class="gitbranch">
-    Branch: <code><%= @submission.gitbranch %></code>
-  </div>
-  <div class="sha">
-    Commit SHA: <code><%= @submission.commithash %></code>
+  <div class="col-md-4">
+    <div class="course-controls">
+      <% if current_user.admin? %>
+        <%= link_to edit_mark_for_submission_path(id: @submission.id) do %>
+          <button type="button" name="button" class="btn btn-sm btn-danger"><%= icon 'exclamation' %> Override Mark</button>
+        <% end %>
+        <% unless @submission.studentrepo %>
+          <%= link_to @submission.repourl.gsub!(/.git\z/, '').concat("/commit/#{@submission.commithash}") do %>
+            <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'github-square' %> Show in GHE</button>
+          <% end %>
+        <% end %>
+        <br>
+        <h6>Clone command:</h6>
+        <input type="text" class="form-control cloneurl-field" value="git clone <%= @submission.augmented_clone_url %>" readonly></input>
+      <% end %>
+    </div>
   </div>
 </div>
 

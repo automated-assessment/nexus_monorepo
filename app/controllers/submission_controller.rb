@@ -65,6 +65,27 @@ class SubmissionController < ApplicationController
     redirect_to action: 'show', id: @submission.id
   end
 
+  def edit_mark
+    return unless allowed_to_override
+    @submission = Submission.find(params[:id])
+  end
+
+  def override
+    return unless allowed_to_override
+
+    @submission = Submission.find(params[:id])
+    if @submission.update_attributes(submission_override_params)
+      flash[:success] = 'Mark overridden successfully'
+      redirect_to @submission
+    else
+      render 'edit_mark'
+    end
+    @submission.mark_override = true
+    @submission.save!
+
+    @submission.log("Mark overridden to #{@submission.mark}% by #{current_user.name}")
+  end
+
   private
 
   def allowed_to_submit
@@ -76,11 +97,24 @@ class SubmissionController < ApplicationController
     end
   end
 
+  def allowed_to_override
+    if current_user.admin?
+      return true
+    else
+      redirect_to '/404', status: :not_found
+      return false
+    end
+  end
+
   def save_file_name(submission)
     "#{submission.user.id}_#{submission.id}.zip"
   end
 
   def submission_params
     params.require(:submission).permit(:assignment_id, :repourl, :gitbranch, :commithash)
+  end
+
+  def submission_override_params
+    params.require(:submission).permit(:mark)
   end
 end
