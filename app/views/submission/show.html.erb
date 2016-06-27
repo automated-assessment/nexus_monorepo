@@ -28,7 +28,4 @@
 
 <%= render 'feedback_items' %>
 
-<br />
-
-<h4>Log</h4>
-<pre><code><%= @submission.log %></code></pre>
+<%= render partial: 'audit_item/panel', locals: { items: @submission.audit_items.asc } %>

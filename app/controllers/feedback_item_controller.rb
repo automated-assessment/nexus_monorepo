@@ -12,7 +12,7 @@ class FeedbackItemController < ApplicationController
 
     if @feedback_item.nil?
       render json: { response: 'Feedback received successfully!' }.to_json
-      @submission.log!("Feedback received from #{@marking_tool.name}!")
+      @submission.log("Feedback received from #{@marking_tool.name}")
       @feedback_item = FeedbackItem.create(submission: @submission,
                                            marking_tool: @marking_tool,
                                            body: params[:body])

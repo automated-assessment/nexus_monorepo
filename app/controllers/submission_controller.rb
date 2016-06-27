@@ -32,14 +32,11 @@ class SubmissionController < ApplicationController
     @submission.original_filename = uploaded_file.original_filename
     @submission.save!
 
-    @submission.open_log!
-
     File.open(Rails.root.join('var', 'submissions', 'uploads', save_file_name(@submission)), 'wb') do |file|
       file.write(uploaded_file.read)
       @submission.saved_filename = save_file_name(@submission)
       @submission.save!
-      @submission.log!('=== Storage ===')
-      @submission.log!("Uploaded file successfully saved as #{save_file_name(@submission)} (original filename #{uploaded_file.original_filename})")
+      @submission.log("Saved submission as #{save_file_name(@submission)} (original filename #{uploaded_file.original_filename})")
     end
 
     SubmissionUtils.unzip!(@submission)
@@ -62,7 +59,6 @@ class SubmissionController < ApplicationController
 
     @submission.studentrepo = true
     @submission.save!
-    @submission.open_log!
 
     SubmissionUtils.notify_tools!(@submission)
 

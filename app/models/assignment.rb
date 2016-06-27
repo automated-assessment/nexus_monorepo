@@ -3,6 +3,7 @@ class Assignment < ActiveRecord::Base
   has_many :submissions
   has_many :marking_tool_contexts
   has_many :marking_tools, through: :marking_tool_contexts
+  has_many :audit_items
 
   accepts_nested_attributes_for :marking_tool_contexts, reject_if: proc { |attributes| attributes[:marking_tool_id].blank? }
 
@@ -18,6 +19,14 @@ class Assignment < ActiveRecord::Base
 
   default_scope { order(:start) }
   scope :started, -> { where('start < ?', Time.current).reorder(:deadline) }
+
+  after_create do
+    log("Assignment id #{id} (#{title}) created.")
+  end
+
+  after_update do
+    log("Assignment id #{id} updated.")
+  end
 
   def started?
     start.past?
@@ -43,6 +52,12 @@ class Assignment < ActiveRecord::Base
 
   def highest_mark_for(u = current_user)
     submissions.where(user: u).where.not(mark: nil).reorder(mark: :desc).first.mark
+  end
+
+  def log(body, level = 'info')
+    AuditItem.create!(assignment: self,
+                      body: body,
+                      level: level)
   end
 
   private
