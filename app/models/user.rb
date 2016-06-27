@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
       user.email = auth.info.email
       user.name = auth.info.name
       user.githubtoken = auth.credentials.token
+      user.ghe_profile_url = auth.extra.raw_info.html_url if auth.extra.raw_info.html_url
       user.password = Devise.friendly_token[0, 20]
     end
   end

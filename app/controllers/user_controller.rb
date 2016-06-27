@@ -1,9 +1,6 @@
 class UserController < ApplicationController
   before_action :authenticate_user!
 
-  def profile
-  end
-
   def enrol
     cid = params[:id]
     unless current_user.enrolled_in?(cid)
