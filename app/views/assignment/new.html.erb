@@ -36,6 +36,16 @@
     </div>
 
     <div class="form-group">
+      <%= f.label :max_attempts, 'Maximum attempts', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.number_field :max_attempts, min: 0, step: 1, value: '0', class: 'form-control' %>
+        <p>Use <code>0</code> for no limit.</p>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="form-group">
       <%= f.label 'Options', class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
         <div class="checkbox">
@@ -55,10 +65,9 @@
     </div>
 
     <div class="form-group">
-      <%= f.label :max_attempts, 'Maximum attempts', class: 'col-lg-2 control-label' %>
+      <%= f.label 'Deadline (Late Submissions)', class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
-        <%= f.number_field :max_attempts, min: 0, step: 1, value: '0', class: 'form-control' %>
-        <p>Use <code>0</code> for no limit.</p>
+        <%= f.datetime_field :latedeadline, class: 'form-control', id: 'deadlinefield', value: (DateTime.now.utc + 8.days).strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
       </div>
     </div>
 
