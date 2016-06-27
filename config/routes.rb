@@ -38,6 +38,8 @@ Rails.application.routes.draw do
   post 'submissions/create/zip' => 'submission#create_zip', as: :create_zip_submission
   post 'submissions/create/git' => 'submission#create_git', as: :create_git_submission
   get 'submissions/new/:aid' => 'submission#new', as: :new_submission
+  get 'submissions/:id/edit_mark' => 'submission#edit_mark', as: :edit_mark_for_submission
+  patch 'submissions/:id/override' => 'submission#override', as: :override_submission
 
   ### Access Tokens
   get 'tokens/new' => 'access_token#new', as: :new_access_token
