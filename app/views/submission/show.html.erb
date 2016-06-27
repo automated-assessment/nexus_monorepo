@@ -24,8 +24,16 @@
     <div class="course-controls">
       <% if current_user.admin? %>
         <%= link_to edit_mark_for_submission_path(id: @submission.id) do %>
-        <button type="button" name="button" class="btn btn-sm btn-danger"><%= icon 'exclamation' %> Override Mark</button>
+          <button type="button" name="button" class="btn btn-sm btn-danger"><%= icon 'exclamation' %> Override Mark</button>
         <% end %>
+        <% unless @submission.studentrepo %>
+          <%= link_to @submission.repourl.gsub!(/.git\z/, '').concat("/commit/#{@submission.commithash}") do %>
+            <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'github-square' %> Show in GHE</button>
+          <% end %>
+        <% end %>
+        <br>
+        <h6>Clone command:</h6>
+        <input type="text" class="form-control cloneurl-field" value="git clone <%= @submission.augmented_clone_url %>" readonly></input>
       <% end %>
     </div>
   </div>

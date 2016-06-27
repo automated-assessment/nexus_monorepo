@@ -57,6 +57,18 @@ class Submission < ActiveRecord::Base
     save!
   end
 
+  def augmented_clone_url
+    url = repourl
+    if studentrepo
+      auth = user.githubtoken
+      url.insert(url.index('//') + 2, "#{auth}@")
+    else
+      auth = "#{Rails.configuration.ghe_user}:#{Rails.configuration.ghe_password}"
+      url.insert(url.index('//') + 2, "#{auth}@")
+    end
+    url
+  end
+
   def log(body, level = 'info')
     AuditItem.create!(submission: self,
                       body: body,
