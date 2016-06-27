@@ -1,15 +1,7 @@
 <div class="page-header">
   <h2>
-    <%= current_user.name %> <small><%= current_user.student_id %></small>
+    <%= current_user.name %>
     <div class="right-gravatar"><%= gravatar_for current_user, 60 %></div>
   </h2>
-  <div class="table user-info">
-    <table cellpadding="5">
-      <tr>
-        <td align="right">Level:</td>
-        <td><%= user_icon_for current_user %> <%= current_user.level_string %></td>
-      </tr>
-    </table>
-  </div>
 </div>
 <%= render partial: 'audit_item/panel', locals: { items: current_user.audit_items } %>
