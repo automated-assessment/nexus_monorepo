@@ -12,7 +12,7 @@ app.controller('ConfigCtrl', function($scope, $http, toastr){
 	th.testTotal = 0;
 	th.inputArray = ["Hello, World!"];
 	th.outputArray = ["Hello, World!"];
-	th.descriptionArray = ["Hello, World! should be print it with no new-line"];
+	th.descriptionArray = ["Hello, World! should be printed with no new-line"];
 	th.startProcess = true;
 	th.loading = false; //loading value for when verify button is clicked
 	th.compileError = false;
@@ -60,7 +60,7 @@ app.controller('ConfigCtrl', function($scope, $http, toastr){
 			$http.post("/check-educator-code", obj).success(function(response) {
 				th.loading = false;
 				th.startProcess = false;
-				console.log(response.resultsArray);
+				console.log(response);
 
 				if (response.compiled.bool == false) {
 					th.compileError = true;
