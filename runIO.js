@@ -50,7 +50,7 @@ app.post('/check-educator-code', function(req, res) {
 
 ///////////////////////////////////////////STUDENT HTTP Requests: BEGIN////////////////////////////
 //Student check-code POST REQUEST. 
-// TO RETURN: mark, array of results(passed/not) + feedback
+
 app.post('/check-student-code', function(req, res) {
 	//Variables to be given by Nexus
 	var url = "https://github.com/GeorgeRaduta/IO-Tool-Repo-Test";
@@ -64,25 +64,27 @@ app.post('/check-student-code', function(req, res) {
 		},
 		resultsArray: []
 	}
-	var objToReturn = cloneGitRepo()
+	// var objToReturn = cloneGitRepo()
 
-	res.json(results);
+	res.json("ceva");
 });
-cloneGitRepo("https://github.com/GeorgeRaduta/IO-Tool-Repo-Test.git", "sources");
+// cloneGitRepo("https://github.com/GeorgeRaduta/IO-Tool-Repo-Test.git", "sources");
 ///////////////////////////////////////////STUDENT HTTP Requests: END////////////////////////////
+
+//////////////////////////////////////////Functions to run for HTTP
 function cloneGitRepo(url, pathToClone) {
 	var test = "clone https://github.com/GeorgeRaduta/IO-Tool-Repo-Test.git";
-	var gitClone = spawnSync('git clone', [url], 
+	var gitClone = spawnSync('git', ['clone', url], 
 		{
-			
+			cwd:'TestingEnvironment',
 			timeout:2000
 		});
-
+	
 	if (!(gitClone.status == 0)) {
 		//get errors to the user
-		// if (!(gitClone.stderr.toString() == "")) {
-			// console.log(gitClone.stderr.toString());
-		if (!(gitClone.error == null)) {
+		if (!(gitClone.stderr.toString() == "")) {
+			console.log(gitClone.stderr.toString());
+		} else if (!(gitClone.error == null)) {
 			console.log(gitClone.error);
 		} 
 		else {
@@ -92,6 +94,15 @@ function cloneGitRepo(url, pathToClone) {
 		console.log("Done");
 	}
 }
+
+function deleteRepo(name) {
+	var deleteRepo = spawnSync('rm', ['-r', '-f', name],
+	{
+		cwd: 'TestingEnvironment',
+		timeout: 5000
+	});
+}
+
 function createJavaFile(code, className, nameOfExtension) {
 	var nameOfFileExtension = className + nameOfExtension;
 	fs.writeFileSync('TestingEnvironment/' + nameOfFileExtension, code);
@@ -194,28 +205,3 @@ function executeCode(arrayOfInput, arrayOfOutput, code, className, path, objToRe
 	}
 	return objToReturn;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-//Functions to deal with evaluation
-//TODO Queue implementation
-function readPath() {
-	fs.readFileSync('sourcesPath', 'utf8', function (err,data) {
-		if (err) {
-			return console.log(err);
-		}
-  		// -1 to eliminate \n from the end
-  		console.log("ceva");
-  		console.log(data.substring(0, data.length - 1));
-  	});
-}
-

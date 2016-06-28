@@ -80,4 +80,15 @@ app.controller('ConfigCtrl', function($scope, $http, toastr){
 	th.cancel = function() {
 		alert("Nothing to do for that");
 	}
+
+
+	th.checkRepo = function() {
+		alert("da");
+		var obj = "";
+		$http.post("/check-student-code", obj).success(function(response) {
+			alert(response);
+		}).error(function(status) {
+			toastr.error("Error - HTTP Post Request");
+		});
+	}
 });
