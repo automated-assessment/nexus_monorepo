@@ -39,7 +39,7 @@ app.post('/check-educator-code', function(req, res) {
 	objToReturn = compileSource('TestingEnvironment', className, objToReturn);
 	
 	//Evaluate source
-	objToReturn = executeCode(input, output, code, className, 'TestingEnvironment', objToReturn);
+	objToReturn = executeCode(input, output, className, 'TestingEnvironment', objToReturn);
 
 	//Delete Files (java + class) 
 	deleteFiles('TestingEnvironment' , className);
@@ -54,8 +54,11 @@ app.post('/check-educator-code', function(req, res) {
 app.post('/check-student-code', function(req, res) {
 	//Variables to be given by Nexus
 	var url = "https://github.com/GeorgeRaduta/IO-Tool-Repo-Test";
-	var path = "sources";
+	var path = "TestingEnvironment/IO-Tool-Repo-Test/sources";
+	var repoName = "IO-Tool-Repo-Test";
+	var className = "HelloWorld";
 	//
+	cloneGitRepo("https://github.com/GeorgeRaduta/IO-Tool-Repo-Test.git", "sources");
 
 	var objToReturn = {
 		compiled: {
@@ -64,12 +67,20 @@ app.post('/check-student-code', function(req, res) {
 		},
 		resultsArray: []
 	}
-	// var objToReturn = cloneGitRepo()
+	//Compile source from repo
+	objToReturn = compileSource(path, className, objToReturn);
+	
+	//Run and compare results
+	objToReturn = executeCode(inputTest, outputTest, className, path, objToReturn);
+
+	console.log(objToReturn);
+	deleteRepo(repoName);
 
 	res.json("ceva");
 });
-// cloneGitRepo("https://github.com/GeorgeRaduta/IO-Tool-Repo-Test.git", "sources");
 ///////////////////////////////////////////STUDENT HTTP Requests: END////////////////////////////
+var outputTest = ["Hello, World\n", "HelloWorld"];
+var inputTest = ["Hello", "YourName"];
 
 //////////////////////////////////////////Functions to run for HTTP
 function cloneGitRepo(url, pathToClone) {
@@ -125,18 +136,17 @@ function compileSource(path, className, objToReturn) {
 	var javacExecute = spawnSync('javac', [className + '.java'], {cwd:path, timeout:2000});
 	if (!(javacExecute.status == 0)) {
 		//get errors to the user
-		if (!(javacExecute.stderr.toString() == "")) {
+		 if (!(javacExecute.error == null)) {
+			objToReturn.compiled.bool = false;
+			objToReturn.compiled.error = javacExecute.error; 
+			return objToReturn;
+			// printErrors(javaExecute.error, 'compiling');
+		} else if (!(javacExecute.stderr.toString() == "")) {
 			objToReturn.compiled.bool = false;
 			objToReturn.compiled.error = javacExecute.stderr.toString(); 
 			return objToReturn;
 			// printErrors(javacExecute.stderr.toString(), 'compiling');
-		} else if (!(javacExecute.error == null)) {
-			objToReturn.compiled.bool = false;
-			objToReturn.compiled.error = javaExecute.error; 
-			return objToReturn;
-			// printErrors(javaExecute.error, 'compiling');
-		} 
-		else {
+		} else {
 			objToReturn.compiled.bool = false;
 			objToReturn.compiled.error = 'Unkwown Error';
 			return objToReturn;
@@ -146,7 +156,7 @@ function compileSource(path, className, objToReturn) {
 	}
 }
 
-function executeCode(arrayOfInput, arrayOfOutput, code, className, path, objToReturn) {
+function executeCode(arrayOfInput, arrayOfOutput, className, path, objToReturn) {
 	var numberOfTestsPassed = 0;
 	//To execute for every single test provided by the educator
 	for (var i = 0; i < arrayOfInput.length; ++i) {
@@ -154,24 +164,23 @@ function executeCode(arrayOfInput, arrayOfOutput, code, className, path, objToRe
 
 		var javaExecute = spawnSync('java', [className], {
 			input: inputTest,
-			cwd:'TestingEnvironment', 
+			cwd: path, 
 			timeout:2000
 		}); 
 
 		if (!(javaExecute.status == 0)) {
 		//get errors to the user
-			if (!(javaExecute.stderr.toString() == "")) {
-				objToReturn.resultsArray[i] = {
-					error: true,
-					message: javaExecute.stderr.toString()
-				}
-			} else if (!(javaExecute.error == null)) {
+			if (!(javaExecute.error == null)) {
 				objToReturn.resultsArray[i] = {
 					error: true,
 					message: javaExecute.error
 				}
-			} 
-			else {
+			} else if (!(javaExecute.stderr.toString() == "")) {
+				objToReturn.resultsArray[i] = {
+					error: true,
+					message: javaExecute.stderr.toString()
+				}
+			} else {
 				objToReturn.resultsArray[i] = {
 					error:true,
 					message: "Unknown Error"
