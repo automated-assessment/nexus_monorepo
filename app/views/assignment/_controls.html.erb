@@ -9,5 +9,9 @@
     <%= link_to(edit_assignment_path(id: @assignment.id)) do %>
       <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'edit' %> Edit Assignment</button>
     <% end %>
+
+    <%= link_to(assignment_export_submissions_data_path(id: @assignment.id, format: :csv)) do %>
+      <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'table' %> Export Submissions Data</button>
+    <% end %>
   </div>
 <% end %>
