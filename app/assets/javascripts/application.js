@@ -5,3 +5,5 @@ $(function () {
 $('#startfield').datetimepicker();
 
 $('#deadlinefield').datetimepicker();
+
+$('#latedeadlinefield').datetimepicker();

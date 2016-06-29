@@ -19,15 +19,14 @@
         <h5>Deadline: <%= strftime_uk @assignment.deadline %> </h5>
       <% end %>
       <% if @assignment.allow_late? %>
-        <h5>Late submissions <span class="text-success">are</span> allowed, but will be capped at <span class="text-danger"><%= @assignment.late_cap %>%</span></h5>
+        <h5>Late submissions <span class="text-success">are</span> allowed until <span class="text-success"><%= strftime_uk @assignment.latedeadline %></span>, but will be capped at <span class="text-danger"><%= @assignment.late_cap %>%</span></h5>
       <% else %>
       <h5>Late submissions are <span class="text-danger">not</span> allowed</h5>
       <% end %>
-      <h5>Maximum attempts: <%= @assignment.max_attempts %></h5>
+      <h5><%= @assignment.max_attempts > 0 ? "Maximum attempts: #{@assignment.max_attempts}" : '' %></h5>
     </div>
   </div>
   <div class="col-md-4">
     <%= render 'controls' %>
   </div>
 </div>
-<hr />

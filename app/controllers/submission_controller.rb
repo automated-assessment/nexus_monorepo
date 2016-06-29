@@ -89,10 +89,29 @@ class SubmissionController < ApplicationController
   private
 
   def allowed_to_submit
-    if user_can_submit_to(@submission.assignment)
+    within_max_attempts && on_time
+  end
+
+  def within_max_attempts
+    if @submission.assignment.max_attempts == 0 || (Submission.where(assignment: @submission.assignment, user: current_user).size < @submission.assignment.max_attempts)
       return true
     else
-      redirect_to(@submission.assignment, flash: { warning: 'You have reached the maximum amount of attempts for this assignment.' })
+      redirect_to(@submission.assignment, flash: { danger: 'You have reached the maximum amount of attempts for this assignment.' })
+      return false
+    end
+  end
+
+  def on_time
+    return true if DateTime.now.utc < @submission.assignment.deadline
+    if @submission.assignment.allow_late
+      if DateTime.now.utc < @submission.assignment.latedeadline
+        return true
+      else
+        redirect_to(@submission.assignment, flash: { danger: 'The deadline for late submissions for this assignment has passed.' })
+        return false
+      end
+    else
+      redirect_to(@submission.assignment, flash: { danger: 'The deadline for this assignment has passed and it does not allow late submissions.' })
       return false
     end
   end
