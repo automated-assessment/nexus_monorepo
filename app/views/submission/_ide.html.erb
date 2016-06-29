@@ -1,2 +1,4 @@
+<input id="submiturl" type="hidden" value="<%= create_ide_submission_url %>">
+<input id="submission-aid" type="hidden" value="<%= @submission.assignment.id %>">
 <div id="web-ide-mount-node"></div>
 <%= javascript_include_tag "/assets/web-ide.bundle.js" %>

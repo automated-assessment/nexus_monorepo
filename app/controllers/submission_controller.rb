@@ -65,6 +65,42 @@ class SubmissionController < ApplicationController
     redirect_to action: 'show', id: @submission.id
   end
 
+  def create_ide
+    @assignment = Assignment.find(params[:aid])
+    @submission = Submission.new(assignment: @assignment)
+    @submission.user = current_user
+    return unless allowed_to_submit
+
+    @submission.studentrepo = false
+    @submission.save!
+
+    submitted_files = params[:data]
+
+    output_path = Rails.root.join('var', 'submissions', 'code', "#{@submission.id}")
+    Dir.mkdir output_path unless File.exist? output_path
+
+    submitted_files.each do |file|
+      filename = file[:filename]
+      code = file[:code]
+
+      File.open(File.join(output_path, filename), 'w') do |f|
+        f.puts code
+      end
+    end
+
+    if Submission.where(user: @submission.user).where(repourl: @submission.assignment.repourl).empty?
+      GitUtils.first_time_push!(@submission)
+    else
+      GitUtils.subsequent_push!(@submission)
+    end
+
+    SubmissionUtils.notify_tools!(@submission)
+
+    render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
+  rescue
+    render json: { data: 'Error!' }, status: 500, content_type: 'text/json'
+  end
+
   def edit_mark
     return unless allowed_to_override
     @submission = Submission.find(params[:id])

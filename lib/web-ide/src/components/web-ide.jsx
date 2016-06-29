@@ -1,4 +1,5 @@
 import React from 'react';
+import XHR from 'promised-xhr';
 import brace from 'brace';
 import AceEditor from 'react-ace';
 import FileEditor from './FileEditor';
@@ -8,6 +9,9 @@ import 'brace/theme/github';
 
 export default class NexusWebIDE extends React.Component {
   static propTypes = {
+    formAuthenticityToken: React.PropTypes.string.isRequired,
+    submitURL: React.PropTypes.string.isRequired,
+    assignmentID: React.PropTypes.string.isRequired,
     defaultCode: React.PropTypes.string
   };
   static defaultProps = {
@@ -52,7 +56,18 @@ export default class NexusWebIDE extends React.Component {
   }
 
   handleSubmit() {
-    console.log(JSON.stringify(this.state.data));
+    XHR.post(this.props.submitURL, {
+      data: {
+        authenticity_token: this.props.formAuthenticityToken,
+        aid: this.props.assignmentID,
+        data: this.state.data
+      }
+    }).then((res) => {
+      console.log(`OK!`);
+      window.location.replace(res.body.redirect);
+    }).catch((res) => {
+      console.log(`Error! ${JSON.stringify(res)}`);
+    });
   }
 
   render() {
