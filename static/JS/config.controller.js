@@ -4,7 +4,7 @@ var initialString = "public class HelloWorld { \n\n\t" +
 "public static void main(String[] args) { \n\n\t\t" + 
 "System.out.println(\"Hello, World\");\n \n\t}\n\n}";
 
-app.controller('ConfigCtrl', function($scope, $http, toastr){
+app.controller('ConfigCtrl', function($scope, $http, $location, toastr){
 	var th = $scope;
 
 	//Initializations
@@ -51,6 +51,7 @@ app.controller('ConfigCtrl', function($scope, $http, toastr){
 		} else {
 			//TODO HTTP Request
 			var obj = {
+				assignmentId: $location.search().aid.toString(),
 				input : th.inputArray,
 				output : th.outputArray,
 				description : th.descriptionArray,
@@ -83,8 +84,9 @@ app.controller('ConfigCtrl', function($scope, $http, toastr){
 
 
 	th.checkRepo = function() {
-		var obj = "";
+		var obj="";
 		$http.post("/check-student-code", obj).success(function(response) {
+		
 		}).error(function(status) {
 			toastr.error("Error - HTTP Post Request");
 		});

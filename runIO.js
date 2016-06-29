@@ -24,6 +24,8 @@ app.post('/check-educator-code', function(req, res) {
 	var output = req.body.output;
 	var code = req.body.code;
 	var className = "HelloWorld";
+	
+	console.log(req.body.assignmentId);
 
 	var objToReturn = {
 		compiled: {
@@ -53,13 +55,11 @@ app.post('/check-educator-code', function(req, res) {
 
 app.post('/check-student-code', function(req, res) {
 	//Variables to be given by Nexus
-	var url = "https://github.com/GeorgeRaduta/IO-Tool-Repo-Test";
+	var url = "https://github.com/GeorgeRaduta/IO-Tool-Repo-Test.git";
 	var path = "TestingEnvironment/IO-Tool-Repo-Test/sources";
 	var repoName = "IO-Tool-Repo-Test";
 	var className = "HelloWorld";
-	//
-	cloneGitRepo("https://github.com/GeorgeRaduta/IO-Tool-Repo-Test.git", "sources");
-
+	
 	var objToReturn = {
 		compiled: {
 			bool: true,
@@ -67,13 +67,16 @@ app.post('/check-student-code', function(req, res) {
 		},
 		resultsArray: []
 	}
+
+	//
+	cloneGitRepo(url, path);
+
 	//Compile source from repo
 	objToReturn = compileSource(path, className, objToReturn);
 	
 	//Run and compare results
 	objToReturn = executeCode(inputTest, outputTest, className, path, objToReturn);
 
-	console.log(objToReturn);
 	deleteRepo(repoName);
 
 	res.json("ceva");
