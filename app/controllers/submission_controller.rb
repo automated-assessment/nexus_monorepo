@@ -19,7 +19,6 @@ class SubmissionController < ApplicationController
     @submission = Submission.new(submission_params)
     @submission.user = current_user
     return unless allowed_to_submit
-    return unless on_time
 
     @submission.studentrepo = false
 
@@ -57,7 +56,6 @@ class SubmissionController < ApplicationController
     @submission = Submission.new(submission_params)
     @submission.user = current_user
     return unless allowed_to_submit
-    return unless on_time
 
     @submission.studentrepo = true
     @submission.save!
@@ -91,16 +89,21 @@ class SubmissionController < ApplicationController
   private
 
   def allowed_to_submit
-    if user_can_submit_to(@submission.assignment)
+    within_max_attempts && on_time
+  end
+
+  def within_max_attempts
+    if @submission.assignment.max_attempts == 0 || (Submission.where(assignment: @submission.assignment, user: current_user).size < @submission.assignment.max_attempts)
       return true
     else
-      redirect_to(@submission.assignment, flash: { warning: 'You have reached the maximum amount of attempts for this assignment.' })
+      redirect_to(@submission.assignment, flash: { danger: 'You have reached the maximum amount of attempts for this assignment.' })
       return false
     end
   end
 
   def on_time
-    if (DateTime.now.utc > @submission.assignment.deadline) && @submission.assignment.allow_late
+    return true if DateTime.now.utc < @submission.assignment.deadline
+    if @submission.assignment.allow_late
       if DateTime.now.utc < @submission.assignment.latedeadline
         return true
       else

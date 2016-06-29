@@ -25,6 +25,7 @@
       <%= f.label :start, class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
         <%= f.datetime_field :start, class: 'form-control', id: 'startfield', value: DateTime.now.utc.strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
+        <p>All times are <strong>UTC</strong>.</p>
       </div>
     </div>
 
@@ -32,6 +33,7 @@
       <%= f.label :deadline, class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
         <%= f.datetime_field :deadline, class: 'form-control', id: 'deadlinefield', value: (DateTime.now.utc + 1.week).strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
+        <p>All times are <strong>UTC</strong>.</p>
       </div>
     </div>
 
@@ -67,7 +69,8 @@
     <div class="form-group">
       <%= f.label 'Deadline (Late Submissions)', class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
-        <%= f.datetime_field :latedeadline, class: 'form-control', id: 'deadlinefield', value: (DateTime.now.utc + 8.days).strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
+        <%= f.datetime_field :latedeadline, class: 'form-control', id: 'latedeadlinefield', value: (DateTime.now.utc + 8.days).strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
+        <p>All times are <strong>UTC</strong>.</p>
       </div>
     </div>
 

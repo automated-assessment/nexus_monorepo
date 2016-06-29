@@ -3,11 +3,6 @@ module ApplicationHelper
     redirect_to '/401', status: :unauthorized unless current_user.admin?
   end
 
-  def user_can_submit_to(assignment, user = current_user)
-    return true if assignment.max_attempts == 0
-    Submission.where(assignment: assignment, user: user).size < assignment.max_attempts
-  end
-
   def distance_from_now_string(datetime)
     s = distance_of_time_in_words_to_now(datetime)
     s << ' ago' if datetime.past?
@@ -15,7 +10,7 @@ module ApplicationHelper
   end
 
   def strftime_uk(datetime)
-    datetime.strftime('%A, %d %b %Y %H:%M')
+    datetime.strftime('%A, %d %b %Y %H:%M').concat(' (UTC)')
   end
 
   def pretty_datetime(datetime)

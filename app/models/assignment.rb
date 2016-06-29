@@ -51,7 +51,8 @@ class Assignment < ActiveRecord::Base
   end
 
   def highest_mark_for(u = current_user)
-    submissions.where(user: u).where.not(mark: nil).reorder(mark: :desc).first.mark
+    return 'n/a' if submissions.where(user: u).where.not(mark: nil).empty?
+    "#{submissions.where(user: u).where.not(mark: nil).reorder(mark: :desc).first.mark}%"
   end
 
   def log(body, level = 'info')

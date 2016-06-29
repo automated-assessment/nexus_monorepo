@@ -31,16 +31,12 @@
     </tbody>
   </table>
   <p>
-    Highest mark: <%= @assignment.highest_mark_for(current_user) %>%
+    Highest mark: <%= @assignment.highest_mark_for(current_user) %>
   </p>
 <% end %>
 
 <div class="center-controls">
-  <% if user_can_submit_to(@assignment) %>
-    <%= link_to(new_submission_path(aid: @assignment.id)) do %>
-      <button type="button" class="btn btn-success">Upload New Submission</button>
-    <% end %>
-  <% else %>
-    You have reached the maximum amount of attempts for this assignment.
+  <%= link_to(new_submission_path(aid: @assignment.id)) do %>
+    <button type="button" class="btn btn-success">Upload New Submission</button>
   <% end %>
 </div>
