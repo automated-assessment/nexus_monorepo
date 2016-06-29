@@ -1,12 +1,17 @@
 var	fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
+var request = require('request');
 
 //Library for linux commands. e.g javac
 var spawn = require('child_process').spawn;
 var spawnSync = require('child_process').spawnSync;
 var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
+
+//MongoDB
+var MongoClient = require('mongodb').MongoClient;
+var assert = require('assert');
 
 //Server
 var app = express();
@@ -81,6 +86,30 @@ app.post('/check-student-code', function(req, res) {
 
 	res.json("ceva");
 });
+
+
+
+app.post('/mark', function(req, res) {
+	var url = 'http://localhost:3000/report_mark/1/iotools';
+	
+	var body = {mark:100};
+
+	var reqOptions = {
+		url,
+		method: 'POST',
+		headers: {
+			'Nexus-Access-Token': 'Wae+4XX+92fFFPqmcaydlRjys/oYR6hQHBXmZFdCz5M='
+    	},
+    	json: true,
+    	body
+	};
+
+	request(reqOptions, function (error, response, body) {
+
+	});
+	res.json(body);
+});
+
 ///////////////////////////////////////////STUDENT HTTP Requests: END////////////////////////////
 var outputTest = ["Hello, World\n", "HelloWorld"];
 var inputTest = ["Hello", "YourName"];

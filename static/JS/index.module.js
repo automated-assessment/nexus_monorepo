@@ -1,7 +1,7 @@
-var app = angular.module('IndexModule',['ngRoute', 'ui.codemirror', 'toastr', 'TestMod']);
+var app = angular.module('IndexModule',['ngRoute', 'ui.codemirror', 'toastr', 'ConfigModule', 'SubmissionModule']);
 
 
-app.config(['$routeProvider', function($routeProvider) {
+app.config(['$routeProvider', function($routeProvider, $location) {
 	$routeProvider.
 	when('/config', {
 		templateUrl: '/config.html',
@@ -9,6 +9,21 @@ app.config(['$routeProvider', function($routeProvider) {
 	}).
 	when('/404', {
 		templateUrl: '404.html'
+	}).
+	when('/mark', {
+		resolve: {
+			redirect: function ($route, $location, $http) {
+				var obj={
+					id: "mama"
+				};
+				
+				$http.post("/mark", obj).success(function(response) {
+					
+				}).error(function(status) {
+
+				});
+			}
+		}
 	}).
 	otherwise({
 		redirectTo: '/404'

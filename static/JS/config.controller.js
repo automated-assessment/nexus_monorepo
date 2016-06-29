@@ -1,4 +1,4 @@
-var app = angular.module('TestMod',['ngRoute', 'ui.codemirror', 'toastr']);
+var app = angular.module('ConfigModule',['ngRoute', 'ui.codemirror', 'toastr']);
 
 var initialString = "public class HelloWorld { \n\n\t" + 
 "public static void main(String[] args) { \n\n\t\t" + 
