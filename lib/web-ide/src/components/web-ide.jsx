@@ -22,7 +22,9 @@ export default class NexusWebIDE extends React.Component {
       super(props);
       this.state = {
         data: new Array({'filename': 'File1.java', 'code': this.props.defaultCode}),
-        count: 1
+        count: 1,
+        submitting: false,
+        errorFlag: false
       };
 
       this.addFile = this.addFile.bind(this);
@@ -56,6 +58,7 @@ export default class NexusWebIDE extends React.Component {
   }
 
   handleSubmit() {
+    this.setState({ submitting: true });
     XHR.post(this.props.submitURL, {
       data: {
         authenticity_token: this.props.formAuthenticityToken,
@@ -63,10 +66,9 @@ export default class NexusWebIDE extends React.Component {
         data: this.state.data
       }
     }).then((res) => {
-      console.log(`OK!`);
       window.location.replace(res.body.redirect);
     }).catch((res) => {
-      console.log(`Error! ${JSON.stringify(res)}`);
+      this.setState({ errorFlag: true });
     });
   }
 
@@ -87,7 +89,11 @@ export default class NexusWebIDE extends React.Component {
           })
         }
         <button className="btn btn-success" onClick={this.addFile}><i className="fa fa-plus"></i> Add File</button>
-        <button className="btn btn-primary" onClick={this.handleSubmit} style={{float: 'right'}}>Submit</button>
+        <button className="btn btn-primary" onClick={this.handleSubmit} style={{float: 'right'}} disabled={this.state.submitting}>Submit</button>
+        {
+          this.state.errorFlag &&
+          <div className="alert alert-danger" role="alert"><strong>An error occured!</strong></div>
+        }
       </div>
     );
   }

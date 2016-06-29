@@ -83,6 +83,8 @@ class SubmissionController < ApplicationController
       filename = file[:filename]
       code = file[:code]
 
+      @submission.log("Creating file '#{filename}' from Web IDE...")
+
       File.open(File.join(output_path, filename), 'w') do |f|
         f.puts code
       end
