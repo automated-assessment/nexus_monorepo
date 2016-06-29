@@ -22,6 +22,7 @@ export default class NexusWebIDE extends React.Component {
       };
 
       this.addFile = this.addFile.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   addFile() {
@@ -50,6 +51,10 @@ export default class NexusWebIDE extends React.Component {
     this.setState({data: newData});
   }
 
+  handleSubmit() {
+    console.log(JSON.stringify(this.state.data));
+  }
+
   render() {
     return (
       <div>
@@ -67,7 +72,7 @@ export default class NexusWebIDE extends React.Component {
           })
         }
         <button className="btn btn-success" onClick={this.addFile}><i className="fa fa-plus"></i> Add File</button>
-        <button className="btn btn-primary" style={{float: 'right'}}>Submit</button>
+        <button className="btn btn-primary" onClick={this.handleSubmit} style={{float: 'right'}}>Submit</button>
       </div>
     );
   }
