@@ -7,13 +7,18 @@ import 'brace/mode/java';
 import 'brace/theme/github';
 
 export default class NexusWebIDE extends React.Component {
-  static propTypes = {};
-  static defaultProps = {};
+  static propTypes = {
+    defaultCode: React.PropTypes.string
+  };
+  static defaultProps = {
+    defaultCode: '// Your code goes here'
+  };
 
   constructor(props) {
       super(props);
       this.state = {
-        data: new Array({'filename': 'File.java', 'code': '// body'})
+        data: new Array({'filename': 'File1.java', 'code': this.props.defaultCode}),
+        count: 1
       };
 
       this.addFile = this.addFile.bind(this);
@@ -21,19 +26,25 @@ export default class NexusWebIDE extends React.Component {
 
   addFile() {
     const newData = this.state.data;
-    newData.push({'filename': 'File.java', 'code': '// body'});
+    const newCount = this.state.count + 1;
+    newData.push({'filename': `File${newCount}.java`, 'code': this.props.defaultCode});
+    this.setState({data: newData, count: newCount});
+  }
+
+  removeFile(i, e) {
+    const newData = this.state.data;
+    newData.splice(i, 1)
     this.setState({data: newData});
+    this.forceUpdate();
   }
 
   handleFilenameUpdate(i, e) {
-    console.log(`filename changed: ${i}, ${e.target.value}`);
     let newData = this.state.data;
     newData[i].filename = e.target.value;
     this.setState({data: newData});
   }
 
   handleCodeUpdate(i, e) {
-    console.log(`code changed: ${i}, ${e}`);
     let newData = this.state.data;
     newData[i].code = e;
     this.setState({data: newData});
@@ -47,8 +58,9 @@ export default class NexusWebIDE extends React.Component {
             return <FileEditor
                       key={i}
                       id={`ace-${i}`}
-                      defaultFilename={file.filename}
-                      defaultCode={file.code}
+                      filename={file.filename}
+                      code={file.code}
+                      handleRemove={this.removeFile.bind(this, i)}
                       updateFilename={this.handleFilenameUpdate.bind(this, i)}
                       updateCode={this.handleCodeUpdate.bind(this, i)}
                     />;
