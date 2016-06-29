@@ -6,6 +6,7 @@ class SubmissionUtils
   class << self
     def build_json_payload(submission)
       payload = {
+        student: submission.user.name,
         sid: submission.id,
         aid: submission.assignment.id,
         cloneurl: submission.augmented_clone_url,
