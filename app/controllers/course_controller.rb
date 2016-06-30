@@ -15,16 +15,17 @@ class CourseController < ApplicationController
   end
 
   def enrolment_list
+    return unless authenticate_admin!
     @course = Course.find(params[:id])
   end
 
   def new
-    authenticate_staff!
+    return unless authenticate_admin!
     @course = Course.new
   end
 
   def create
-    authenticate_staff!
+    return unless authenticate_admin!
     @course = Course.new(course_params)
     @course.teacher = current_user
 
@@ -36,10 +37,12 @@ class CourseController < ApplicationController
   end
 
   def edit
+    return unless authenticate_admin!
     @course = Course.find(params[:id])
   end
 
   def update
+    return unless authenticate_admin!
     @course = Course.find(params[:id])
     if @course.update_attributes(course_params)
       flash[:success] = 'Course updated'

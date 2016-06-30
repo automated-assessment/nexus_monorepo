@@ -1,9 +1,8 @@
 <div class="center-controls">
   <% unless current_user.enrolled_in?(@course.id) %>
-    <hr />
     <p><strong>You are not currently enrolled in this course.</strong></p>
     <%= link_to(enrol_path, id: @course.id) do %>
-      <button type="button" class="btn btn-primary">Enrol</button>
+      <button type="button" class="btn btn-primary"><%= icon 'sign-in' %> Enrol</button>
     <% end %>
   <% end %>
 </div>

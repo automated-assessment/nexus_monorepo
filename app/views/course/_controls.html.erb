@@ -14,7 +14,7 @@
 
     <% if !current_user.eql? @course.teacher %>
       <%= link_to(unenrol_path, id: @course.id) do %>
-        <%= icon 'sign-out' %> Unenrol
+        <button type="button" class="btn btn-primary"><%= icon 'sign-out' %> Unenrol</button>
       <% end %>
   <% end %>
   </div>

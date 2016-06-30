@@ -104,13 +104,12 @@ class SubmissionController < ApplicationController
   end
 
   def edit_mark
-    return unless allowed_to_override
+    return unless authenticate_admin!
     @submission = Submission.find(params[:id])
   end
 
   def override
-    return unless allowed_to_override
-
+    return unless authenticate_admin!
     @submission = Submission.find(params[:id])
     if @submission.update_attributes(submission_override_params)
       flash[:success] = 'Mark overridden successfully'
@@ -150,15 +149,6 @@ class SubmissionController < ApplicationController
       end
     else
       redirect_to(@submission.assignment, flash: { danger: 'The deadline for this assignment has passed and it does not allow late submissions.' })
-      return false
-    end
-  end
-
-  def allowed_to_override
-    if current_user.admin?
-      return true
-    else
-      redirect_to '/404', status: :not_found
       return false
     end
   end
