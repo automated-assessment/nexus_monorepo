@@ -41,7 +41,7 @@ class SubmissionController < ApplicationController
 
     SubmissionUtils.unzip!(@submission)
 
-    if Submission.where(user: @submission.user).where(repourl: @submission.assignment.repourl).empty?
+    if Submission.where(user: @submission.user, repourl: @submission.assignment.repourl).empty?
       GitUtils.first_time_push!(@submission)
     else
       GitUtils.subsequent_push!(@submission)

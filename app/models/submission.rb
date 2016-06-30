@@ -58,7 +58,7 @@ class Submission < ActiveRecord::Base
   end
 
   def augmented_clone_url
-    url = repourl
+    url = repourl.dup
     if studentrepo
       auth = user.githubtoken
       url.insert(url.index('//') + 2, "#{auth}@")

@@ -25,18 +25,19 @@ class GitUtils
     end
 
     def first_time_push!(submission)
+      # binding.pry
       # init repo; checkout new branch; add all files; commit; push
       repo = init_gitobj(submission)
       branch_name = gen_branch_name(submission)
       repo.checkout(branch_name, new_branch: true)
       repo.add(all: true)
       repo.commit(gen_commit_msg(submission))
-      repo.add_remote('origin', submission.assignment.repourl)
+      submission.repourl = submission.assignment.repourl
+      repo.add_remote('origin', submission.augmented_clone_url)
       repo.push('origin', branch_name)
 
       submission.log('Submission stored on GHE (new branch created)', 'success')
       submission.gitbranch = branch_name
-      submission.repourl = submission.assignment.repourl
       submission.commithash = repo.log[0].sha.to_s
       submission.save!
     end
@@ -52,7 +53,8 @@ class GitUtils
       # init repo; pull remote branch; rm all; add all; commit; push
       repo = init_gitobj(submission)
       branch_name = gen_branch_name(submission)
-      repo.add_remote('origin', submission.assignment.repourl)
+      submission.repourl = submission.assignment.repourl
+      repo.add_remote('origin', submission.augmented_clone_url)
       repo.pull('origin', branch_name)
       repo.checkout(branch_name)
       repo.remove('.', recursive: true)
@@ -66,7 +68,6 @@ class GitUtils
 
       submission.log('Submission stored on GHE (used existing branch)', 'success')
       submission.gitbranch = branch_name
-      submission.repourl = submission.assignment.repourl
       submission.commithash = repo.log[0].sha.to_s
       submission.save!
     end
