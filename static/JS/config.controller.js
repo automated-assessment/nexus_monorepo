@@ -13,11 +13,13 @@ app.controller('ConfigCtrl', function($scope, $http, $location, toastr){
 	th.inputArray = ["Hello, World!"];
 	th.outputArray = ["Hello, World!"];
 	th.descriptionArray = ["Hello, World! should be printed with no new-line"];
+	th.class_name = "";
 	th.startProcess = true;
 	th.loading = false; //loading value for when verify button is clicked
 	th.compileError = false;
 	th.ranError = false;
 	th.allPassed=  false;
+
 
 	//Add a new set of I/O Test cases;
 	th.addTest = function() {
@@ -55,7 +57,8 @@ app.controller('ConfigCtrl', function($scope, $http, $location, toastr){
 				input : th.inputArray,
 				output : th.outputArray,
 				description : th.descriptionArray,
-				code: th.areaTextValue
+				code: th.areaTextValue,
+				className: th.class_name
 			};
 
 			$http.post("/check-educator-code", obj).success(function(response) {

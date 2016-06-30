@@ -10,8 +10,8 @@ var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
 
 //MongoDB
-var MongoClient = require('mongodb').MongoClient;
-var assert = require('assert');
+var mongojs = require('mongojs');
+var dbAssignments = mongojs('assignments',['assignments']);
 
 //Server
 var app = express();
@@ -28,9 +28,7 @@ app.post('/check-educator-code', function(req, res) {
 	var input = req.body.input;
 	var output = req.body.output;
 	var code = req.body.code;
-	var className = "HelloWorld";
-	
-	console.log(req.body.assignmentId);
+	var className = req.body.className;
 
 	var objToReturn = {
 		compiled: {
@@ -46,7 +44,9 @@ app.post('/check-educator-code', function(req, res) {
 	objToReturn = compileSource('TestingEnvironment', className, objToReturn);
 	
 	//Evaluate source
-	objToReturn = executeCode(input, output, className, 'TestingEnvironment', objToReturn);
+	objToReturn = executeEducatorCode(input, output, className, 'TestingEnvironment', objToReturn);
+
+	//Save in DB if ok
 
 	//Delete Files (java + class) 
 	deleteFiles('TestingEnvironment' , className);
@@ -95,13 +95,23 @@ app.post('/mark', function(req, res) {
     var body = {
         mark: 100
     };
-    console.log(req.body.sid);
+
+    var objDb = {
+    	sid: req.body.sid,
+    	aid: req.body.aid,
+    	cloneUrl: req.body.cloneUrl,
+    	branch: req.body.branch,
+    	sha: req.body.sha
+    };
+
+    //TODO REPLACE WITH ENV
     var url = 'http://localhost:3000/report_mark/' + req.body.sid + '/iot';
 
     var requestOptions = {
       url,
       method: 'POST',
       headers: {
+      	//REPLACE WIH ENV
         'Nexus-Access-Token': 's9hxagBT7UxACWxg/uZtf4/0STcxkpid1xeSnOotdCU='
       },
       json: true,
@@ -113,25 +123,10 @@ app.post('/mark', function(req, res) {
         console.log(JSON.stringify(res));
     });
 });
-
-// function test() {
-// 	console.log("test");
-// 	var url = "http://g4devel.fnal.gov:8080/ValidationWebAPI/webresources/validationWebapi/json/result/230";
-// 	var reqOptions = {
-// 		url,
-// 		method: 'GET',
-// 		json: true	
-// 	}
-// 	request(reqOptions, function (error, response, body) {
-// 		console.log(response.body);
-// 	});
-// }
-// test();
 ///////////////////////////////////////////STUDENT HTTP Requests: END////////////////////////////
-var outputTest = ["Hello, World\n", "HelloWorld"];
-var inputTest = ["Hello", "YourName"];
 
-//////////////////////////////////////////Functions to run for HTTP
+
+//////////////////////////////////////////Functions to run for Evaluation
 function cloneGitRepo(url, pathToClone) {
 	var test = "clone https://github.com/GeorgeRaduta/IO-Tool-Repo-Test.git";
 	var gitClone = spawnSync('git', ['clone', url], 
@@ -163,8 +158,8 @@ function deleteRepo(name) {
 	});
 }
 
-function createJavaFile(code, className, nameOfExtension) {
-	var nameOfFileExtension = className + nameOfExtension;
+function createJavaFile(code, className) {
+	var nameOfFileExtension = className + '.java';
 	fs.writeFileSync('TestingEnvironment/' + nameOfFileExtension, code);
 }
 
@@ -184,17 +179,14 @@ function deleteFiles(path, className) {
 function compileSource(path, className, objToReturn) {
 	var javacExecute = spawnSync('javac', [className + '.java'], {cwd:path, timeout:2000});
 	if (!(javacExecute.status == 0)) {
-		//get errors to the user
 		 if (!(javacExecute.error == null)) {
 			objToReturn.compiled.bool = false;
 			objToReturn.compiled.error = javacExecute.error; 
 			return objToReturn;
-			// printErrors(javaExecute.error, 'compiling');
 		} else if (!(javacExecute.stderr.toString() == "")) {
 			objToReturn.compiled.bool = false;
 			objToReturn.compiled.error = javacExecute.stderr.toString(); 
 			return objToReturn;
-			// printErrors(javacExecute.stderr.toString(), 'compiling');
 		} else {
 			objToReturn.compiled.bool = false;
 			objToReturn.compiled.error = 'Unkwown Error';
@@ -205,7 +197,7 @@ function compileSource(path, className, objToReturn) {
 	}
 }
 
-function executeCode(arrayOfInput, arrayOfOutput, className, path, objToReturn) {
+function executeEducatorCode(arrayOfInput, arrayOfOutput, className, path, objToReturn) {
 	var numberOfTestsPassed = 0;
 	//To execute for every single test provided by the educator
 	for (var i = 0; i < arrayOfInput.length; ++i) {
@@ -263,3 +255,5 @@ function executeCode(arrayOfInput, arrayOfOutput, className, path, objToReturn) 
 	}
 	return objToReturn;
 }
+
+

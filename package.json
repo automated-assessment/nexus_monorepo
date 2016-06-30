@@ -16,6 +16,8 @@
     "body-parser": "^1.15.1",
     "express": "^4.13.4",
     "mongodb": "^2.1.18",
+    "mongojs": "^2.4.0",
+    "mongos": "0.0.0",
     "nodegit": "^0.14.1",
     "request": "^2.72.0"
   }
