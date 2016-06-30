@@ -48,13 +48,14 @@ COPY Gemfile.lock $APP_DIR/
 RUN bundle install --without development test
 
 COPY package.json $APP_DIR/
+COPY lib $APP_DIR/
 RUN npm install --production --silent
 
 COPY . $APP_DIR/
 
 RUN mkdir -p $APP_DIR/tmp/pids && mkdir -p $APP_DIR/var/submissions/code && mkdir $APP_DIR/var/submissions/uploads
 
-RUN $(npm bin)/webpack -p
+RUN npm run build
 
 ENV RAILS_ENV production
 

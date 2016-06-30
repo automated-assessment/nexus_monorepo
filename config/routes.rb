@@ -36,6 +36,7 @@ Rails.application.routes.draw do
   get 'submissions/:id' => 'submission#show', as: :submission
   post 'submissions/create/zip' => 'submission#create_zip', as: :create_zip_submission
   post 'submissions/create/git' => 'submission#create_git', as: :create_git_submission
+  post 'submissions/create/ide' => 'submission#create_ide', as: :create_ide_submission
   get 'submissions/new/:aid' => 'submission#new', as: :new_submission
   get 'submissions/:id/edit_mark' => 'submission#edit_mark', as: :edit_mark_for_submission
   patch 'submissions/:id/override' => 'submission#override', as: :override_submission

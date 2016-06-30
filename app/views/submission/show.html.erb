@@ -27,13 +27,13 @@
           <button type="button" name="button" class="btn btn-sm btn-danger"><%= icon 'exclamation' %> Override Mark</button>
         <% end %>
         <% unless @submission.studentrepo %>
-          <%= link_to @submission.repourl.gsub!(/.git\z/, '').concat("/commit/#{@submission.commithash}") do %>
+          <%= link_to @submission.repourl.dup.gsub!(/.git\z/, '').concat("/commit/#{@submission.commithash}"), target: '_blank' do %>
             <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'github-square' %> Show in GHE</button>
           <% end %>
         <% end %>
         <br>
         <h6>Clone command:</h6>
-        <input type="text" class="form-control cloneurl-field" value="git clone <%= @submission.augmented_clone_url %>" readonly></input>
+        <input type="text" class="form-control cloneurl-field" value="git clone --branch <%= @submission.gitbranch %> --single-branch <%= @submission.augmented_clone_url %> submission<%= @submission.id%>" readonly></input>
       <% end %>
     </div>
   </div>

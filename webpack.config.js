@@ -37,6 +37,11 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+          warnings: false
+      }
+    }),
     new ExtractTextPlugin("bundle.css", { allChunks: true }),
     new webpack.ProvidePlugin({
       $: "jquery",

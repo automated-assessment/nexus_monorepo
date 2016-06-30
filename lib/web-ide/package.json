@@ -16,6 +16,7 @@
     "brace": "^0.8.0",
     "expose-loader": "^0.7.1",
     "extract-text-webpack-plugin": "^0.9.1",
+    "promised-xhr": "1.1.0",
     "react": "^0.14.2",
     "react-ace": "^3.4.1",
     "react-dom": "^0.14.2",

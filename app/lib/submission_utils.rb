@@ -34,8 +34,8 @@ class SubmissionUtils
     def notify_tools!(submission)
       submission.assignment.marking_tools.each do |mt|
         begin
-          submission.log("Notifying #{mt.name} at #{uri}...")
           uri = URI.parse(mt.url)
+          submission.log("Notifying #{mt.name} at #{uri}...")
 
           http = Net::HTTP.new(uri.host, uri.port)
           req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
