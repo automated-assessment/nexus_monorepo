@@ -8,5 +8,11 @@ class PagesController < ApplicationController
     return unless authenticate_admin!
     @access_tokens = AccessToken.all
     @marking_tools = MarkingTool.all
+    @user_count = User.all.count
+  end
+
+  def user_list
+    return unless authenticate_admin!
+    @users = User.all
   end
 end

@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   ### Users
   get 'user/enrol/:id' => 'user#enrol', as: :enrol
   get 'user/unenrol/:id' => 'user#unenrol', as: :unenrol
+  get 'userlist' => 'pages#user_list', as: :user_list
 
   ### Courses
   get 'courses' => 'course#mine', as: :my_courses
