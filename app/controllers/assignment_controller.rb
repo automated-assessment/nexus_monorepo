@@ -11,6 +11,11 @@ class AssignmentController < ApplicationController
     @assignment = Assignment.find(params[:id])
   end
 
+  def show_deadline_extensions
+    return unless authenticate_admin!
+    @assignment = Assignment.find(params[:id])
+  end
+
   def quick_config_confirm
     return unless authenticate_admin!
     @assignment = Assignment.find(params[:id])

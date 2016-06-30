@@ -34,6 +34,7 @@ Rails.application.routes.draw do
   get 'assignments/:id/edit' => 'assignment#edit', as: :edit_assignment
   patch 'assignments/:id' => 'assignment#update', as: :update_assignment
   get 'assignments/:id/export_submissions_data' => 'assignment#export_submissions_data', as: :assignment_export_submissions_data
+  get 'assignments/:id/deadline_extensions' => 'assignment#show_deadline_extensions', as: :assignment_deadline_extensions
 
   ### Submissions
   get 'submissions' => 'submission#mine', as: :my_submissions

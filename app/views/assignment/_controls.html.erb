@@ -13,5 +13,14 @@
     <%= link_to(assignment_export_submissions_data_path(id: @assignment.id, format: :csv)) do %>
       <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'table' %> Export Submissions Data</button>
     <% end %>
+
+    <%= link_to(assignment_deadline_extensions_path id: @assignment.id) do %>
+      <button type="button" name="button" class="btn btn-sm btn-primary">
+        <%= icon 'clock-o' %> Manage Deadline Extensions
+        <% unless @assignment.deadline_extensions.empty? %>
+          <span class="label label-default"><%= @assignment.deadline_extensions.count.size %></span>
+        <% end %>
+      </button>
+    <% end %>
   </div>
 <% end %>
