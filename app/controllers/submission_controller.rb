@@ -14,11 +14,11 @@ class SubmissionController < ApplicationController
     @submission.assignment = Assignment.find(params[:aid])
     return unless allowed_to_submit
 
-    client = Octokit::Client.new(access_token: current_user.githubtoken)
+    @client = Octokit::Client.new(access_token: current_user.githubtoken)
 
     @repo_list = []
 
-    client.repos.each do |r|
+    @client.repos(nil, sort: 'updated', per_page: '100').each do |r|
       @repo_list << [r.full_name, r.clone_url]
     end
   end
