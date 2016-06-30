@@ -11,7 +11,6 @@
       <%= render 'layouts/navbar' %>
       <%= render 'layouts/flashes' %>
       <%= yield %>
-      <%= debug(params) if Rails.env.development? %>
     </div>
     <%= javascript_include_tag "/assets/bundle.js" %>
   </body>
