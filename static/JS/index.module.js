@@ -18,7 +18,7 @@ app.config(['$routeProvider', function($routeProvider, $location) {
 				};
 				
 				$http.post("/mark", obj).success(function(response) {
-					
+					console.log(response);
 				}).error(function(status) {
 
 				});

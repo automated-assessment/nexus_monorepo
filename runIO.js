@@ -90,26 +90,43 @@ app.post('/check-student-code', function(req, res) {
 
 
 app.post('/mark', function(req, res) {
-	var url = 'http://localhost:3000/report_mark/1/iotools';
-	
-	var body = {mark:100};
+    res.status(200).send('OK!');
 
-	var reqOptions = {
-		url,
-		method: 'POST',
-		headers: {
-			'Nexus-Access-Token': 'Wae+4XX+92fFFPqmcaydlRjys/oYR6hQHBXmZFdCz5M='
-    	},
-    	json: true,
-    	body
-	};
+    var body = {
+        mark: 100
+    };
+    console.log(req.body.sid);
+    var url = 'http://localhost:3000/report_mark/' + req.body.sid + '/iot';
 
-	request(reqOptions, function (error, response, body) {
+    var requestOptions = {
+      url,
+      method: 'POST',
+      headers: {
+        'Nexus-Access-Token': 's9hxagBT7UxACWxg/uZtf4/0STcxkpid1xeSnOotdCU='
+      },
+      json: true,
+      body
+    };
 
-	});
-	res.json(body);
+    request(requestOptions, function(err, res, body) {
+        console.log(err);
+        console.log(JSON.stringify(res));
+    });
 });
 
+// function test() {
+// 	console.log("test");
+// 	var url = "http://g4devel.fnal.gov:8080/ValidationWebAPI/webresources/validationWebapi/json/result/230";
+// 	var reqOptions = {
+// 		url,
+// 		method: 'GET',
+// 		json: true	
+// 	}
+// 	request(reqOptions, function (error, response, body) {
+// 		console.log(response.body);
+// 	});
+// }
+// test();
 ///////////////////////////////////////////STUDENT HTTP Requests: END////////////////////////////
 var outputTest = ["Hello, World\n", "HelloWorld"];
 var inputTest = ["Hello", "YourName"];
