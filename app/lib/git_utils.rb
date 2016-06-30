@@ -83,6 +83,8 @@ class GitUtils
                                       description: repo_desc)
       assignment.repourl = res.clone_url
       assignment.save!
+
+      assignment.log("Created GHE repo for assignment (#{assignment.repourl})", 'success')
     end
   end
 end
