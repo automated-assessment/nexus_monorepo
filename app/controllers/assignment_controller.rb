@@ -12,12 +12,12 @@ class AssignmentController < ApplicationController
   end
 
   def quick_config_confirm
-    return unless can_administrate
+    return unless authenticate_admin!
     @assignment = Assignment.find(params[:id])
   end
 
   def configure_tools
-    return unless can_administrate
+    return unless authenticate_admin!
     @assignment = Assignment.find(params[:id])
 
     # augment template URLs with parameters
@@ -31,14 +31,14 @@ class AssignmentController < ApplicationController
   end
 
   def new
-    return unless can_administrate
+    return unless authenticate_admin!
     @assignment = Assignment.new
     @assignment.course = Course.find(params[:cid])
     @assignment.marking_tool_contexts.build
   end
 
   def create
-    return unless can_administrate
+    return unless authenticate_admin!
     @assignment = Assignment.new(assignment_params)
     @assignment.save!
 
@@ -52,12 +52,12 @@ class AssignmentController < ApplicationController
   end
 
   def edit
-    return unless can_administrate
+    return unless authenticate_admin!
     @assignment = Assignment.find(params[:id])
   end
 
   def update
-    return unless can_administrate
+    return unless authenticate_admin!
     @assignment = Assignment.find(params[:id])
     if @assignment.update_attributes(assignment_params)
       flash[:success] = 'Assignment updated'
@@ -68,21 +68,13 @@ class AssignmentController < ApplicationController
   end
 
   def export_submissions_data
-    return unless can_administrate
+    return unless authenticate_admin!
     @assignment = Assignment.find(params[:id])
     headers['Content-Disposition'] = "attachment; filename=\"submissions-data-export.csv\""
     headers['Content-Type'] ||= 'text/csv'
   end
 
   private
-
-  def can_administrate
-    if current_user.admin?
-      return true
-    else
-      redirect_to '/401'
-    end
-  end
 
   def assignment_params
     params.require(:assignment).permit(:title,
