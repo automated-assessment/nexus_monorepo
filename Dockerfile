@@ -48,8 +48,9 @@ COPY Gemfile.lock $APP_DIR/
 RUN bundle install --without development test
 
 COPY package.json $APP_DIR/
-COPY lib $APP_DIR/
+COPY lib $APP_DIR/lib
 RUN npm install --production --silent
+RUN cd lib/web-ide && npm install --production --silent
 
 COPY . $APP_DIR/
 
