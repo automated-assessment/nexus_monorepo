@@ -7,9 +7,9 @@
   <br />
 
   <div class="form-group">
-    <%= f.label 'Repo clone URL', class: 'col-lg-2 control-label' %>
+    <%= f.label 'Repo', class: 'col-lg-2 control-label' %>
     <div class="col-lg-10">
-      <%= f.text_field :repourl, class: 'form-control', required: true %>
+      <%= f.select :repourl, @repo_list, {}, class: 'form-control' %>
     </div>
   </div>
 
