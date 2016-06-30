@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   get 'assignments/new/:cid' => 'assignment#new', as: :new_assignment
   get 'assignments/:id/edit' => 'assignment#edit', as: :edit_assignment
   patch 'assignments/:id' => 'assignment#update', as: :update_assignment
+  get 'assignments/:id/export_submissions_data' => 'assignment#export_submissions_data', as: :assignment_export_submissions_data
 
   ### Submissions
   get 'submissions' => 'submission#mine', as: :my_submissions

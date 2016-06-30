@@ -1,0 +1,5 @@
+<%- headers = ['Student Name', 'Submitted', 'Late?', 'Pending?', 'Mark', 'Original Filename', 'Attempt #', 'Saved Filename', 'Extraction Error?', 'Repo URL', 'Authed Repo URL', 'Commit Hash', 'Git Branch', 'Student Repo?', 'Mark overridden?'] -%>
+<%= CSV.generate_line headers -%>
+<%- @assignment.submissions.each do |s| -%>
+<%= CSV.generate_line([s.user.name, s.submitted, s.late, s.pending?, s.mark, s.original_filename, s.attempt_number, s.saved_filename, s.extraction_error, s.repourl, s.augmented_clone_url, s.commithash, s.gitbranch, s.studentrepo, s.mark_override]) -%>
+<%- end -%>
