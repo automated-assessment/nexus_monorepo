@@ -54,7 +54,7 @@ RUN cd lib/web-ide && npm install --production --silent
 
 COPY . $APP_DIR/
 
-RUN mkdir -p $APP_DIR/tmp/pids && mkdir -p $APP_DIR/var/submissions/code && mkdir $APP_DIR/var/submissions/uploads
+RUN mkdir -p $APP_DIR/tmp/pids && mkdir -p $APP_DIR/var/submissions/code && mkdir $APP_DIR/var/submissions/uploads && mkdir $APP_DIR/var/submissions/tmp
 
 RUN npm run build
 
