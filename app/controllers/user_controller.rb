@@ -28,6 +28,7 @@ class UserController < ApplicationController
 
     flash[:error] = 'Error making user admin' if @user.errors.any?
 
+    flash[:success] = "#{@user.name} is now an admin!"
     redirect_to user_list_path
   end
 
@@ -44,6 +45,7 @@ class UserController < ApplicationController
 
     flash[:error] = 'Error revoking admin priviliges' if @user.errors.any?
 
+    flash[:success] = "#{@user.name} is no longer an admin!"
     redirect_to user_list_path
   end
 end
