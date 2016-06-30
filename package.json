@@ -6,8 +6,7 @@
   "scripts": {
     "build-assets": "webpack",
     "build-web-ide": "cd lib/web-ide && webpack",
-    "build": "npm run build-assets & npm run build-web-ide",
-    "install": "cd lib/web-ide && npm install"
+    "build": "npm run build-assets & npm run build-web-ide"
   },
   "dependencies": {
     "babel-core": "^5.8.33",
