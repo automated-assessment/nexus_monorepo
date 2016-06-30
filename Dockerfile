@@ -50,6 +50,7 @@ RUN bundle install --without development test
 COPY package.json $APP_DIR/
 COPY lib $APP_DIR/
 RUN npm install --production --silent
+RUN npm run install-webide
 
 COPY . $APP_DIR/
 
