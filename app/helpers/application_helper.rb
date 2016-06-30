@@ -1,9 +1,9 @@
 module ApplicationHelper
   def authenticate_admin!
-    if current_user.admin?
+    if current_user && current_user.admin?
       return true
     else
-      redirect_to '/401' unless current_user.admin?
+      redirect_to '/401'
       return false
     end
   end
