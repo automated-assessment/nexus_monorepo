@@ -6,7 +6,7 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th>UID</th>
+      <th>uid</th>
       <th>Email</th>
       <th>Admin?</th>
       <th>Controls</th>
@@ -23,7 +23,7 @@
           <% if user.admin? %>
             <% unless user.eql?(current_user) %>
               <%= link_to user_revoke_admin_path(id: user.id) do %>
-                <button type="button" name="button" class="btn btn-xs btn-info"><%= icon 'ban' %> Revoke Admin</button>
+                <button type="button" name="button" class="btn btn-xs btn-danger"><%= icon 'ban' %> Revoke Admin</button>
               <% end %>
             <% end %>
           <% else %>
