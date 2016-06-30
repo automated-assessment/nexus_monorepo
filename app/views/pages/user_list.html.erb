@@ -1,0 +1,38 @@
+<div class="page-header">
+  <h2>User List</h2>
+</div>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>uid</th>
+      <th>Email</th>
+      <th>Admin?</th>
+      <th>Controls</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <th scope="row"><%= user.name %></th>
+        <td><%= user.uid %></td>
+        <td><%= user.email %></td>
+        <td><%= boolean_icon user.admin? %></td>
+        <td>
+          <% if user.admin? %>
+            <% unless user.eql?(current_user) %>
+              <%= link_to user_revoke_admin_path(id: user.id) do %>
+                <button type="button" name="button" class="btn btn-xs btn-danger"><%= icon 'ban' %> Revoke Admin</button>
+              <% end %>
+            <% end %>
+          <% else %>
+            <%= link_to user_grant_admin_path(id: user.id) do %>
+              <button type="button" name="button" class="btn btn-xs btn-warning"><%=icon 'user-md' %> Grant Admin</button>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
