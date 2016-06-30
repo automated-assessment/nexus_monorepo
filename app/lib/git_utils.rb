@@ -85,6 +85,9 @@ class GitUtils
       assignment.save!
 
       assignment.log("Created GHE repo for assignment (#{assignment.repourl})", 'success')
+      return true
+    rescue Octokit::ClientError
+      return false
     end
   end
 end

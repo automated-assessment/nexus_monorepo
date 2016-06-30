@@ -42,7 +42,12 @@ class AssignmentController < ApplicationController
     @assignment = Assignment.new(assignment_params)
     @assignment.save!
 
-    GitUtils.setup_remote_assignment_repo!(@assignment)
+    unless GitUtils.setup_remote_assignment_repo!(@assignment)
+      flash[:error] = 'Error creating repository for assignment!'
+      redirect_to action: 'new', cid: @assignment.course.id
+      @assignment.destroy
+      return
+    end
 
     if @assignment.marking_tools.configurable.any?
       redirect_to action: 'quick_config_confirm', id: @assignment.id
