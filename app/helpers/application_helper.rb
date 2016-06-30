@@ -37,11 +37,15 @@ module ApplicationHelper
     content_tag('i', '', class: "fa fa-#{name}")
   end
 
-  def boolean_icon(bool)
-    if bool
-      content_tag('i', '', class: 'fa fa-check', style: 'color:green')
+  def boolean_icon(b)
+    if b
+      content_tag 'p', class: 'text-success' do
+        content_tag('i', '', class: 'fa fa-check')
+      end
     else
-      content_tag('i', '', class: 'fa fa-times', style: 'color:darkred')
+      content_tag 'p', class: 'text-danger' do
+        content_tag('i', '', class: 'fa fa-times')
+      end
     end
   end
 
