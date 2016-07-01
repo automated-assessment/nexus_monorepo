@@ -33,6 +33,11 @@ gem 'octokit', '~> 4.0'
 # Markdown rendering
 gem 'redcarpet'
 
+group :production do
+  # postgres adapter
+  gem 'pg'
+end
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
