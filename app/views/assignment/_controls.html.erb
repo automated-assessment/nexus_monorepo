@@ -18,7 +18,7 @@
       <button type="button" name="button" class="btn btn-sm btn-primary">
         <%= icon 'clock-o' %> Manage Deadline Extensions
         <% unless @assignment.deadline_extensions.empty? %>
-          <span class="label label-default"><%= @assignment.deadline_extensions.count.size %></span>
+          <span class="label label-warning"><%= @assignment.deadline_extensions.count %></span>
         <% end %>
       </button>
     <% end %>
