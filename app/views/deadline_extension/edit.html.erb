@@ -1,0 +1,33 @@
+<div class="well">
+  <h2>Edit Deadline Extension</h2>
+  <hr />
+  <%= form_for(@deadline_extension, url: update_deadline_extension_path, html: { class: 'form-horizontal' }) do |f| %>
+
+    <%= f.hidden_field :assignment_id, value: @deadline_extension.assignment.id %>
+    <%= f.hidden_field :user_id, value: @deadline_extension.user.id %>
+
+    <p>
+      For <%= @deadline_extension.user.name%> on <%= @deadline_extension.assignment.title %>
+    </p>
+
+    <div class="col-lg-10 col-lg-offset-2">
+      <p>
+        The regular deadline for <%= @deadline_extension.assignment.title %> is currently <%= @deadline_extension.assignment.deadline.strftime('%d %b %Y %H:%M') %> (UTC).
+      </p>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Extend to', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.datetime_field :extendeddeadline, class: 'form-control', id: 'deadlinefield', value: (@deadline_extension.extendeddeadline).strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
+        <p>All times are <strong>UTC</strong>.</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <%= f.submit 'Update', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
+</div>
