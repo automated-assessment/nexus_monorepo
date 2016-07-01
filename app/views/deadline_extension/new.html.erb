@@ -3,6 +3,14 @@
   <hr />
   <%= form_for(@deadline_extension, url: create_deadline_extension_path, html: { class: 'form-horizontal' }) do |f| %>
 
+    <% if @deadline_extension.errors.any? %>
+      <div class="form-errors">
+        <% @deadline_extension.errors.full_messages.each do |msg| %>
+          <div class="alert alert-danger"><%= msg %></div>
+        <% end %>
+      </div>
+    <% end %>
+
     <%= f.hidden_field :assignment_id, value: @deadline_extension.assignment.id %>
 
     <div class="form-group">

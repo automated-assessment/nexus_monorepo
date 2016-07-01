@@ -8,9 +8,9 @@ class DeadlineExtensionController < ApplicationController
     if @deadline_extension.save
       flash[:success] = 'Deadline extension created!'
       redirect_to assignment_deadline_extensions_path(id: @deadline_extension.assignment.id)
+      @deadline_extension.assignment.log("Deadline Extension created for #{@deadline_extension.user.name} until #{strftime_uk @deadline_extension.extendeddeadline}")
     else
-      flash[:error] = 'Error creating deadline extension'
-      redirect_to action: 'new'
+      render 'new'
     end
   end
 
@@ -24,6 +24,7 @@ class DeadlineExtensionController < ApplicationController
     if @deadline_extension.update_attributes(deadline_extension_params)
       flash[:success] = 'Deadline extension updated'
       redirect_to assignment_deadline_extensions_path(id: @deadline_extension.assignment.id)
+      @deadline_extension.assignment.log("Deadline Extension updated for #{@deadline_extension.user.name} until #{strftime_uk @deadline_extension.extendeddeadline}")
     else
       render 'edit'
     end
@@ -33,14 +34,15 @@ class DeadlineExtensionController < ApplicationController
     return unless authenticate_admin!
     @deadline_extension = DeadlineExtension.find(params[:id])
 
-    @aid = @deadline_extension.assignment.id
+    @assignment = @deadline_extension.assignment
 
     if @deadline_extension.destroy
       flash[:success] = 'Deadline extension revoked'
+      @assignment.log("Deadline Extension revoked for #{@deadline_extension.user.name}")
     else
       flash[:error] = 'Error revoking deadline extension'
     end
-    redirect_to assignment_deadline_extensions_path(id: @aid)
+    redirect_to assignment_deadline_extensions_path(id: @assignment.id)
   end
 
   def new
