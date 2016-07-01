@@ -15,7 +15,7 @@ class Submission < ActiveRecord::Base
   before_create do
     @de = DeadlineExtension.find_by(assignment: assignment, user: user)
     if @de.present?
-      self.late = false if DateTime.now.utc < @de.extendeddeadline
+      self.late = @de.extendeddeadline.past?
     else
       self.late = assignment.deadline.past?
     end
