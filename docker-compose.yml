@@ -1,0 +1,11 @@
+version: '2'
+services:
+  db:
+    image: postgres:9.5.3
+  web:
+    build: nexus/
+    env_file: .env.list
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
