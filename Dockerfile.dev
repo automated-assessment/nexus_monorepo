@@ -58,9 +58,11 @@ RUN mkdir -p $APP_DIR/tmp/pids && mkdir -p $APP_DIR/var/submissions/code && mkdi
 
 RUN npm run build
 
-ENV RAILS_ENV production
+ENV RAILS_ENV development
 
 ENV SECRET_KEY_BASE $(dd if=/dev/random bs=64 count=1 2>/dev/null | od -An -tx1 | tr -d ' \t\n')
+
+RUN bundle exec rake db:setup
 
 RUN chown -R app:app $HOME
 
