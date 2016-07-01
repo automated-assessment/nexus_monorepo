@@ -4,7 +4,7 @@ class DeadlineExtension < ActiveRecord::Base
 
   validates :extendeddeadline, presence: true
   validate :extension_must_be_temporally_after_deadline
-  validate :not_duplicate?
+  validate :not_duplicate?, on: :create
 
   def extension_must_be_temporally_after_deadline
     errors.add(:extendeddeadline, 'Must be after the regular deadline') if extendeddeadline < assignment.deadline

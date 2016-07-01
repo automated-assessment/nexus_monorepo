@@ -20,6 +20,8 @@ Metrics/LineLength:
   Enabled: false
 Metrics/MethodLength:
   Enabled: false
+Metrics/PerceivedComplexity:
+  Enabled: false
 Rails/HasAndBelongsToMany:
   Enabled: false
 Style/ClassAndModuleChildren:
