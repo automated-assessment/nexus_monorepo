@@ -150,7 +150,21 @@ class SubmissionController < ApplicationController
   end
 
   def on_time
+    # check for any extensions
+    @de = DeadlineExtension.find_by(assignment: @submission.assignment, user: current_user)
+    if @de.present?
+      if DateTime.now.utc < @de.extendeddeadline
+        return true
+      else
+        redirect_to(@submission.assignment, flash: { danger: 'Your deadline extension for this assignment has passed.' })
+        return false
+      end
+    end
+
+    # check if before regular deadline
     return true if DateTime.now.utc < @submission.assignment.deadline
+
+    # check if late submissions are allowed and we are still within the late deadline
     if @submission.assignment.allow_late
       if DateTime.now.utc < @submission.assignment.latedeadline
         return true

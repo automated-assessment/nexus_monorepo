@@ -23,6 +23,7 @@
       <%= f.label :start, class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
         <%= f.datetime_field :start, class: 'form-control', id: 'startfield', value: @assignment.start.strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
+        <p>All times are <strong>UTC</strong>.</p>
       </div>
     </div>
 
@@ -30,6 +31,7 @@
       <%= f.label :deadline, class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
         <%= f.datetime_field :deadline, class: 'form-control', id: 'deadlinefield', value: @assignment.deadline.strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
+        <p>All times are <strong>UTC</strong>.</p>
       </div>
     </div>
 

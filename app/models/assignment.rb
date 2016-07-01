@@ -3,6 +3,7 @@ class Assignment < ActiveRecord::Base
   has_many :submissions
   has_many :marking_tool_contexts
   has_many :marking_tools, through: :marking_tool_contexts
+  has_many :deadline_extensions
   has_many :audit_items
 
   accepts_nested_attributes_for :marking_tool_contexts, reject_if: proc { |attributes| attributes[:marking_tool_id].blank? }

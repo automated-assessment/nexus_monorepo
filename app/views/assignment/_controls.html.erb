@@ -1,4 +1,4 @@
-<% if current_user.eql?(@assignment.course.teacher) %>
+<% if current_user.admin? %>
   <div class="course-controls">
     <% if @assignment.configurable_tools? %>
       <%= link_to assignment_configure_tools_path(id: @assignment.id) do %>
@@ -12,6 +12,15 @@
 
     <%= link_to(assignment_export_submissions_data_path(id: @assignment.id, format: :csv)) do %>
       <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'table' %> Export Submissions Data</button>
+    <% end %>
+
+    <%= link_to(assignment_deadline_extensions_path id: @assignment.id) do %>
+      <button type="button" name="button" class="btn btn-sm btn-primary">
+        <%= icon 'clock-o' %> Manage Deadline Extensions
+        <% unless @assignment.deadline_extensions.empty? %>
+          <span class="label label-warning"><%= @assignment.deadline_extensions.count %></span>
+        <% end %>
+      </button>
     <% end %>
   </div>
 <% end %>

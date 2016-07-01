@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160629182403) do
+ActiveRecord::Schema.define(version: 20160630172317) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -74,6 +74,17 @@ ActiveRecord::Schema.define(version: 20160629182403) do
 
   add_index "courses_users", ["course_id"], name: "index_courses_users_on_course_id"
   add_index "courses_users", ["user_id"], name: "index_courses_users_on_user_id"
+
+  create_table "deadline_extensions", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "assignment_id"
+    t.datetime "extendeddeadline"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "deadline_extensions", ["assignment_id"], name: "index_deadline_extensions_on_assignment_id"
+  add_index "deadline_extensions", ["user_id"], name: "index_deadline_extensions_on_user_id"
 
   create_table "feedback_items", force: :cascade do |t|
     t.text     "body"

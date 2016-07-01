@@ -13,8 +13,14 @@ class Submission < ActiveRecord::Base
   default_scope { order(:submitted).reverse_order }
 
   before_create do
+    @de = DeadlineExtension.find_by(assignment: assignment, user: user)
+    if @de.present?
+      self.late = @de.extendeddeadline.past?
+    else
+      self.late = assignment.deadline.past?
+    end
+
     self.submitted = DateTime.now.utc
-    self.late = assignment.deadline.past?
     self.attempt_number = user.submissions_for(assignment.id).count + 1
   end
 

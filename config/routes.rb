@@ -34,6 +34,14 @@ Rails.application.routes.draw do
   get 'assignments/:id/edit' => 'assignment#edit', as: :edit_assignment
   patch 'assignments/:id' => 'assignment#update', as: :update_assignment
   get 'assignments/:id/export_submissions_data' => 'assignment#export_submissions_data', as: :assignment_export_submissions_data
+  get 'assignments/:id/deadline_extensions' => 'assignment#show_deadline_extensions', as: :assignment_deadline_extensions
+
+  ### Deadline Extensions
+  get 'assignments/:aid/deadline_extensions/new' => 'deadline_extension#new', as: :new_deadline_extension
+  post 'deadline_extensions/create' => 'deadline_extension#create', as: :create_deadline_extension
+  get 'deadline_extensions/:id/edit' => 'deadline_extension#edit', as: :edit_deadline_extension
+  patch 'deadline_extensions/:id/update' => 'deadline_extension#update', as: :update_deadline_extension
+  get 'deadline_extensions/:id/destroy' => 'deadline_extension#destroy', as: :destroy_deadline_extension
 
   ### Submissions
   get 'submissions' => 'submission#mine', as: :my_submissions
