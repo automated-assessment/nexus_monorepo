@@ -33,6 +33,7 @@ app.post('/mark', (req, res, next) => {
 
   // clone repo
   const childGitClone = execSync(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`);
+  const childGitCheckout = execSync(`git checkout ${sha}`, { cwd: sourceDir });
 
   try {
     // find .java files and cat to 'sources.txt'
