@@ -1,3 +1,6 @@
 [submodule "nexus"]
 	path = nexus
 	url = https://github.kcl.ac.uk/automated-assessment/nexus
+[submodule "javac-tool"]
+	path = javac-tool
+	url = https://github.kcl.ac.uk/automated-assessment/javac-tool
