@@ -22,7 +22,6 @@ As a minimum, `NEXUS_ACCESS_TOKEN` and `SUBMISSIONS_DIRECTORY` are required, alt
 
 #### Environment Variables
 - `NEXUS_ACCESS_TOKEN`: valid access token registered with Nexus **(required)**
-- `SUBMISSIONS_DIRECTORY`: path (relative or absolute) to the directory where (extracted) submissions can be accessed **(required)**
 - `NEXUS_BASE_URL`: the base URL (without trailing `/`) of Nexus  _(default: `http://localhost:3000`)_
 - `NEXUS_TOOL_CANONICAL_NAME`: the canonical (unique) name that Nexus associates with this tool _(default: `javac`)_
 - `PORT`: _(default: `5000`)_

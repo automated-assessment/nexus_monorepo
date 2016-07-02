@@ -12,11 +12,6 @@ if (!process.env.NEXUS_ACCESS_TOKEN) {
   process.exit(1);
 }
 
-if (!process.env.SUBMISSIONS_DIRECTORY) {
-  console.log('Error: Specify SUBMISSIONS_DIRECTORY in environment');
-  process.exit(1);
-}
-
 const app = express();
 
 app.use(bodyParser.json());
@@ -26,18 +21,19 @@ app.use(errorhandler({
 }));
 
 app.post('/mark', (req, res, next) => {
-  if (!req.query.sid || isNaN(req.query.sid)) {
-    res.status(400).send('Invalid sid (submission ID)');
-    return next();
-  }
+  const submissionID = req.body.sid;
+  const cloneURL = req.body.cloneurl;
+  const branch = req.body.branch;
+  const sha = req.body.sha;
+  const sourceDir = `cloned-submission-${submissionID}`;
+
   let output = '';
-  const submissionID = req.query.sid;
   console.log(`Request to mark submission ${submissionID} received.`);
   res.sendStatus(200);
 
-  // resolve submission directory
-  const sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, submissionID);
-  console.log(`Using directory: ${sourceDir}`);
+  // clone repo
+  const childGitClone = execSync(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`);
+  const childGitCheckout = execSync(`git checkout ${sha}`, { cwd: sourceDir });
 
   try {
     // find .java files and cat to 'sources.txt'
