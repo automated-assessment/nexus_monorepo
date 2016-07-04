@@ -18,7 +18,11 @@ class GitUtils
 
     def init_gitobj(submission)
       repo_path = gen_repo_path(submission)
-      repo = Git.init(repo_path.to_s)
+      Dir.chdir(repo_path) do
+        git_init_out = `git init`
+        submission.log("Output from git init command: #{git_init_out}", 'Debug')
+      end
+      repo = Git.open(repo_path.to_s)
       repo.config('user.name', 'Nexus')
       repo.config('user.email', 'nexus@nexus')
       repo
