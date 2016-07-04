@@ -18,7 +18,7 @@ class GitUtils
 
     def init_gitobj(submission)
       repo_path = gen_repo_path(submission)
-      repo = Git.init(repo_path.to_s)
+      repo = Git.init(repo_path.to_s, 'git-dir': repo_path)
       repo.config('user.name', 'Nexus')
       repo.config('user.email', 'nexus@nexus')
       repo
