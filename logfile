@@ -1,0 +1,6 @@
+LOG:  database system was shut down at 2016-07-04 16:21:33 BST
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  database system is ready to accept connections
+LOG:  autovacuum launcher started
+ERROR:  database "postgres" already exists
+STATEMENT:  CREATE DATABASE postgres;

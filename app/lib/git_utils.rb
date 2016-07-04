@@ -40,6 +40,12 @@ class GitUtils
       submission.gitbranch = branch_name
       submission.commithash = repo.log[0].sha.to_s
       submission.save!
+    rescue StandardError
+      submission.log("Git process failed: #{$ERROR_INFO.message}", 'Error')
+      submission.repourl = 'ERR'
+      submission.gitbranch = 'ERR'
+      submission.commithash = 'ERR'
+      submission.save!
     end
 
     def subsequent_push!(submission)
@@ -69,6 +75,12 @@ class GitUtils
       submission.log('Submission stored on GHE (used existing branch)', 'success')
       submission.gitbranch = branch_name
       submission.commithash = repo.log[0].sha.to_s
+      submission.save!
+    rescue StandardError
+      submission.log("Git process failed: #{$ERROR_INFO.message}", 'Error')
+      submission.repourl = 'ERR'
+      submission.gitbranch = 'ERR'
+      submission.commithash = 'ERR'
       submission.save!
     end
 
