@@ -20,7 +20,7 @@ class SubmissionMsg
   def submit!
     @submission.log("Submitting to queue for marking with #{@marking_tool.name}")
 
-    ch = mq_connection.create_channel
+    ch = SubmissionMsg.mq_connection.create_channel
     q  = ch.queue(QUEUE_NAME, :durable => true, :auto_delete => false)
     x  = ch.default_exchange
 
@@ -125,9 +125,9 @@ class SubmissionMsg
     @@conn
   end
 
-  def self.initialise_consumers!(con)
+  def self.initialise_consumers!(conn)
     (1..Rails.configuration.number_consumers).each do
-      initialise_consumer!(con)
+      initialise_consumer!(conn)
     end
   end
 
