@@ -70,3 +70,5 @@ group :test do
   # CircleCI metadata collection
   gem 'rspec_junit_formatter', '0.2.2'
 end
+
+gem 'bunny'
