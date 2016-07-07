@@ -22,9 +22,11 @@ class SubmissionUtils
 
     def notify_tools!(submission)
       submission.assignment.marking_tools.each do |mt|
+        begin
           SubmissionMsg.new(submission, mt).submit!
         rescue StandardError => e
           submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", "Error")
+        end
       end
     end
   end

@@ -6,7 +6,7 @@ class SubmissionMsg
 
   QUEUE_NAME = Rails.configuration.rabbit_mq_qname
 
-  def initialize(sumbission,marking_tool,retry_cnt=0)
+  def initialize (submission, marking_tool, retry_cnt=0)
     submission.log("Creating submission message for sending to #{marking_tool.name} at retry count #{retry_cnt}")
     @submission = submission
     @marking_tool = marking_tool
