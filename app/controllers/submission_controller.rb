@@ -110,8 +110,9 @@ class SubmissionController < ApplicationController
     SubmissionUtils.notify_tools!(@submission)
 
     render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
-  rescue
+  rescue StandardError => e
     render json: { data: 'Error!' }, status: 500, content_type: 'text/json'
+    @submission.log("Error creating submission: #{e.class} #{e.message}")
   end
 
   def edit_mark
