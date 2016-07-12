@@ -72,4 +72,4 @@ group :test do
 end
 
 gem 'bunny'
-gem 'sneakers'
+gem 'sneakers', '2.3.5'

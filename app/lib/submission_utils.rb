@@ -2,7 +2,6 @@ require 'zip'
 
 class SubmissionUtils
   #require_relative "submission_msg"
-  require_relative "../jobs/send_submission_job"
 
   class << self
 
