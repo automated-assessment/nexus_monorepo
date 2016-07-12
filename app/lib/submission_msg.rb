@@ -2,6 +2,9 @@ require 'bunny'
 require 'net/http'
 require 'uri'
 
+# FIXME This isn't working as we cannot consume from Rails directly. Need to send this to some other thread. Consider using ActiveJob instead.
+# See http://guides.rubyonrails.org/active_job_basics.html for details
+
 class SubmissionMsg
 
   QUEUE_NAME = Rails.configuration.rabbit_mq_qname
@@ -32,8 +35,6 @@ class SubmissionMsg
   rescue StandardError => e
     @submission.log("Error submitting to queue for marking with #{@marking_tool.name}: #{e.class} #{e.message}", "Error")
   end
-
-  private
 
   def process!
     return if @processed
@@ -111,18 +112,18 @@ class SubmissionMsg
   # Get a connection to use to send SubmissionMsg instances through.
   # If needed, first initialise the bunny framework and connect to rabbitmq
   def self.mq_connection
-    unless (@@conn) then
+    unless (@conn) then
       # Create the connection if we haven't got one yet.
-      @@conn = Bunny.new(:host => Rails.configuration.rabbit_mq_host,
+      @conn = Bunny.new(:host => Rails.configuration.rabbit_mq_host,
                          :port => Rails.configuration.rabbit_mq_port)
-      @@conn.start
+      @conn.start
 
       # TODO: When do we close the connection?
 
-      initialise_consumers!(@@conn)
+      initialise_consumers!(@conn)
     end
 
-    @@conn
+    @conn
   end
 
   def self.initialise_consumers!(conn)
@@ -137,6 +138,7 @@ class SubmissionMsg
     x  = ch.default_exchange
 
     q.subscribe(:manual_ack => true) do |delivery_info, metadata, payload|
+      puts "Starting to handle submission message"
       msg = SubmissionMessage.from_json(payload)
 
       msg.process!

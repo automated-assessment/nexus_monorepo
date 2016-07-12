@@ -72,3 +72,4 @@ group :test do
 end
 
 gem 'bunny'
+gem 'sneakers'
