@@ -55,17 +55,5 @@ module Fyp
     config.number_consumers = ENV['RABBIT_MQ_NUM_CONSUMERS'] || 1
 
     config.max_submission_retries = ENV['MAX_SUBMISSION_RETRIES'] || 3
-
-    # Configuring queue manager
-    config.active_job.queue_adapter = :sneakers
-
-    opts = {
-      amqp: "amqp://#{config.rabbit_mq_host}:#{config.rabbit_mq_port}",
-      #vhost: 'guest',
-      exchange: 'sneakers',
-      exchange_type: :direct
-    }
-
-    Sneakers.configure(opts)
   end
 end
