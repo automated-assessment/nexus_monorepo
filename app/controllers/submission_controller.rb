@@ -9,6 +9,11 @@ class SubmissionController < ApplicationController
     @submission = Submission.find(params[:id])
   end
 
+  def list_failed
+    return unless authenticate_admin!
+    @submissions = Submission.where(failed: true)
+  end
+
   def new
     @submission = Submission.new
     @submission.failed = false
