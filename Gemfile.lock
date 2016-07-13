@@ -53,11 +53,12 @@ GEM
     concurrent-ruby (1.0.2)
     daemons (1.2.3)
     debug_inspector (0.0.2)
-    devise (4.2.0)
+    devise (3.5.2)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
-      railties (>= 4.1.0, < 5.1)
+      railties (>= 3.2.6, < 5)
       responders
+      thread_safe (~> 0.1)
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
     erubis (2.7.0)
@@ -253,12 +254,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bunny
   byebug
   cocoon
   colorize
   daemons
-  devise
+  devise (= 3.5.2)
   factory_girl_rails
   faker
   git
@@ -278,7 +278,7 @@ DEPENDENCIES
   rubocop-rspec
   rubyzip (>= 1.0.0)
   sdoc (~> 0.4.0)
-  sneakers (= 2.3.5)
+  sneakers
   spring
   sqlite3
   unicorn-rails
