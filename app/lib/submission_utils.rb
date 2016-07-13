@@ -23,7 +23,6 @@ class SubmissionUtils
     def notify_tools!(submission)
       submission.assignment.marking_tools.each do |mt|
         begin
-          #SubmissionMsg.new(submission, mt).submit!
           SendSubmissionJob.perform_later submission.id, mt.id
         rescue StandardError => e
           submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", "Error")
