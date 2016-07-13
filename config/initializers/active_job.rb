@@ -10,3 +10,4 @@ opts = {
 }
 
 Sneakers.configure(opts)
+Sneakers.logger.level = Logger::INFO
