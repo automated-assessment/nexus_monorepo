@@ -2,7 +2,7 @@ require 'net/http'
 require 'uri'
 
 class SendSubmissionJob < ActiveJob::Base
-  queue_as :nexus_submissions
+  queue_as Rails.configuration.rabbit_mq_qname
 
   def perform(submission_id, marking_tool_id)
     @submission = Submission.find(submission_id)
