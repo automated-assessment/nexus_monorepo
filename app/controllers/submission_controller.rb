@@ -9,11 +9,6 @@ class SubmissionController < ApplicationController
     @submission = Submission.find(params[:id])
   end
 
-  def list_failed
-    return unless authenticate_admin!
-    @submissions = Submission.where(failed: true)
-  end
-
   def new
     @submission = Submission.new
     @submission.failed = false
@@ -118,7 +113,7 @@ class SubmissionController < ApplicationController
     render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
   rescue StandardError => e
     render json: { data: 'Error!' }, status: 500, content_type: 'text/json'
-    @submission.log("Error creating submission: #{e.class} #{e.message}")
+    @submission.log("Error creating submission: #{e.class} #{e.message}", "Error")
   end
 
   def edit_mark
@@ -139,6 +134,35 @@ class SubmissionController < ApplicationController
     @submission.save!
 
     @submission.log("Mark overridden to #{@submission.mark}% by #{current_user.name}")
+  end
+
+  def list_failed
+    return unless authenticate_admin!
+    @submissions = Submission.where(failed: true)
+  end
+
+  def resend
+    return unless authenticate_admin!
+    @submission = Submission.find(params[:id])
+
+    # Pretend it's no longer a failed submission
+    @submission.failed = false
+    @submission.save!
+
+    @submission.log("Resending submission to all marking tools at request of #{current_user.name}.")
+
+    SubmissionUtils.notify_tools!(@submission)
+
+    redirect_to action: 'show', id: @submission.id
+
+  rescue  => e
+    @submission.log("Error resending submission: #{e.class} #{e.message}", "Error")
+    # Remember that this submission is still failed after all
+    @submission.failed = true
+    @submission.save!
+
+    redirect_to action: 'list_failed'
+
   end
 
   private
