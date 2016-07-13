@@ -9,7 +9,7 @@ class SendSubmissionJob < ActiveJob::Base
     @marking_tool = MarkingTool.find(marking_tool_id)
 
     uri = URI.parse(@marking_tool.url)
-    @submission.log("Notifying #{@marking_tool.name} at #{uri}...")
+    @submission.log("Notifying #{@marking_tool.name} at #{uri}...", "Debug")
 
     http = Net::HTTP.new(uri.host, uri.port)
     req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
@@ -23,11 +23,12 @@ class SendSubmissionJob < ActiveJob::Base
       @submission.log("Received #{res.code} #{res.message} from #{@marking_tool.name}", "Sucess")
     else
       @submission.log("Received #{res.code} #{res.message} from #{@marking_tool.name}", "Error")
+      record_fail!
     end
 
   rescue => e
     @submission.log("Error notifying #{@marking_tool.name}: #{e.class} #{e.message}", 'Error')
-    # TODO Handle this issue so that either the job is enqueued again or the submission is marked as in need of resending
+    record_fail!
   end
 
   private
@@ -42,5 +43,13 @@ class SendSubmissionJob < ActiveJob::Base
       sha: @submission.commithash
     }
     payload.to_json
+  end
+
+  def record_fail!
+    if (@submission) then
+      @submission.log("Recording failure of submission", "Debug")
+      @submission.failed = true
+      @submission.save!
+    end
   end
 end

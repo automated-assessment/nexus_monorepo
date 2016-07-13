@@ -11,6 +11,7 @@ class SubmissionController < ApplicationController
 
   def new
     @submission = Submission.new
+    @submission.failed = false
     @submission.assignment = Assignment.find(params[:aid])
     return unless allowed_to_submit
 
