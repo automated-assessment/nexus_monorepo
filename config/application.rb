@@ -48,12 +48,5 @@ module Fyp
     config.ghe_user = ENV['NEXUS_GITHUB_USER']
     config.ghe_password = ENV['NEXUS_GITHUB_TOKEN']
     config.ghe_org = ENV['NEXUS_GITHUB_ORG'] || 'ppa-dev'
-
-    config.rabbit_mq_host = ENV['RABBIT_MQ_HOST'] || 'localhost'
-    config.rabbit_mq_port = ENV['RABBIT_MQ_PORT'] || 5672
-    config.rabbit_mq_qname = ENV['RABBIT_MQ_QNAME'] || "nexus.submissions_to_tools"
-    config.number_consumers = ENV['RABBIT_MQ_NUM_CONSUMERS'] || 1
-
-    config.max_submission_retries = ENV['MAX_SUBMISSION_RETRIES'] || 3
   end
 end

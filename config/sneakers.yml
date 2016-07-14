@@ -1,0 +1,20 @@
+# Configuration for sneakers per environment
+# AMQP URL will be constructed from environment variables in any case
+
+development:
+  exchange: sneakers
+  exchange_type: direct
+  durable: true
+  ack: true
+
+production:
+  exchange: sneakers
+  exchange_type: direct
+  durable: true
+  ack: true
+
+test:
+  exchange: sneakers
+  exchange_type: direct
+  durable: true
+  ack: true
