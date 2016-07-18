@@ -25,11 +25,12 @@ console.log("Server running on http://localhost:3001/");
 ///////////////////////////////////////////EDUCATOR HTTP Requests: BEGIN////////////////////////////
 //Educator check-code POST REQUEST
 app.post('/check-educator-code', function(req, res) {
+	var rawPath = 'TestingEnvironment/';
 	var input = req.body.input;
 	var output = req.body.output;
-	var code = req.body.code;
-	var className = req.body.className;
-
+	var dataFilesArray = req.body.filesArray;
+	var id = "test";
+	
 	var objToReturn = {
 		compiled: {
 			bool: true,
@@ -37,35 +38,60 @@ app.post('/check-educator-code', function(req, res) {
 		},
 		resultsArray: []
 	}
-	//Create Java File
-	createJavaFile(code, className, '.java');
 
-	//Compile source
-	objToReturn = compileSource('TestingEnvironment', className, objToReturn);
+	//Create Educator Directory
+	var mkdir = spawnSync('mkdir', [id], {cwd:rawPath, timeout:2000});
+
+	var path = rawPath + id + '/';
+	//Create Files with specified extension
+	createFiles(dataFilesArray, '.java', id);
+
+	//Get All Files with .extension Java
+	var childFind = execSync('find . -name "*.java" > sources.txt', { cwd: path });
 	
-	//Evaluate source
-	objToReturn = executeEducatorCode(input, output, className, 'TestingEnvironment', objToReturn);
+	//Compile source (path) using SpawnSync
+	objToReturn = compileAllSources(path,objToReturn);
+
+	//Evaluate main source
+	objToReturn = executeEducatorCode(input, output, dataFilesArray[0], path, objToReturn);
 
 	//Save in DB if ok
-
+	if (objToReturn.allPassed == true) {
+		//Insert in DB
+		var assignment = {
+			// aid: req.body.assignmentId,
+			inputArray: input,
+			outputArray: output,
+			dataFilesArray: dataFilesArray
+		}
+		dbAssignments.assignments.insert(assignment, function(err,docs) {});
+	} else {
+		//Do nothing
+	}
 	//Delete Files (java + class) 
-	deleteFiles('TestingEnvironment' , className);
+	deleteFolder(path);
 
 	res.json(objToReturn);
 });
 ///////////////////////////////////////////EDUCATOR HTTP Requests: END////////////////////////////
 
 ///////////////////////////////////////////STUDENT HTTP Requests: BEGIN////////////////////////////
-//Student check-code POST REQUEST. 
+function simulate() {
+	var body = {
+        mark: -1
+    };
+	console.log("mark called");
 
-app.post('/check-student-code', function(req, res) {
-	//Variables to be given by Nexus
-	var url = "https://github.com/GeorgeRaduta/IO-Tool-Repo-Test.git";
-	var path = "TestingEnvironment/IO-Tool-Repo-Test/sources";
-	var repoName = "IO-Tool-Repo-Test";
-	var className = "HelloWorld";
-	
-	var objToReturn = {
+	//Data for MongoDB
+    // var objDb = {
+    // 	sid: "1",
+    // 	aid: "1",
+    // 	cloneUrl: req.body.cloneUrl,
+    // 	branch: req.body.branch,
+    // 	sha: req.body.sha
+    // };
+    //Data to store on MongoDB
+    var objToReturn = {
 		compiled: {
 			bool: true,
 			error: ""
@@ -73,46 +99,108 @@ app.post('/check-student-code', function(req, res) {
 		resultsArray: []
 	}
 
-	//
-	cloneGitRepo(url, path);
+    var pathToClone = "TestingEnvironment";
+    var path = "TestingEnvironment/IO-Tool-Repo-Test/sources";
+    // var cloneUrl = req.body.cloneUrl;
+    var repoName = "";
+    var className = "HelloWorld";
 
-	//Compile source from repo
-	objToReturn = compileSource(path, className, objToReturn);
-	
-	//Run and compare results
-	objToReturn = executeCode(inputTest, outputTest, className, path, objToReturn);
+    //Clone Repo
+    // cloneGitRepo(cloneUrl, pathToClone);
+    cloneGitRepo("test", "Test");
 
-	deleteRepo(repoName);
+    //Comopile Source from repo
+	objToReturn = compileSource("TestingEnvironment/IO-Tool-Repo-Test/sources", "HelloWorld", objToReturn);
+	var aid = "1";
+	dbAssignments.assignments.findOne({aid : aid.toString()}, function(err, docs) {
+		//Run and compare results	
+		// console.log(docs);
+		objToReturn = executeEducatorCode(docs.inputArray, docs.outputArray, className, path, objToReturn);
+		body.mark = objToReturn.numberOfTestsPassed;
+		deleteRepo("IO-Tool-Repo-Test");
+		console.log(body);
+		
+	});
 
-	res.json("ceva");
-});
 
+    //Delete repo from Testing environment
+    
+    // //Send Mark and Feedback to Nexus
+    // //TODO REPLACE WITH ENV
+    // var url = 'http://localhost:3000/report_mark/' + req.body.sid + '/iot';
+    // var requestOptions = {
+    //   url,
+    //   method: 'POST',
+    //   headers: {
+    //   	//REPLACE WIH ENV
+    //     'Nexus-Access-Token': 'LbMYPcNKz/0Amp7EhEWwFJvJ5+2GXpa4kxwjOo9oYRk='
+    //   },
+    //   json: true,
+    //   body
+    // };
 
+    // request(requestOptions, function(err, res, body) {
+    //     console.log(err);
+    //     console.log(JSON.stringify(res));
+    // });
+}
 
+// simulate();
 app.post('/mark', function(req, res) {
     res.status(200).send('OK!');
 
     var body = {
         mark: 100
     };
+	console.log("mark called");
 
+	//Data for MongoDB
     var objDb = {
     	sid: req.body.sid,
     	aid: req.body.aid,
-    	cloneUrl: req.body.cloneUrl,
+    	cloneUrl: req.body.cloneurl,
     	branch: req.body.branch,
     	sha: req.body.sha
     };
+    //Data to store on MongoDB
+    var objToReturn = {
+		compiled: {
+			bool: true,
+			error: ""
+		},
+		resultsArray: []
+	}
+	console.log(objDb);
 
+    var pathToClone = "TestingEnvironment";
+    var path = pathToClone;
+    var cloneUrl = req.body.cloneurl;
+    var repoName = "";
+    var className = "HelloWorld";
+    console.log("Clonging" + cloneUrl);
+    //Clone Repo
+    cloneGitRepo(cloneUrl, pathToClone);
+
+    //Comopile Source from repo
+	// objToReturn = compileSource(path, className, objToReturn);
+	
+	// dbAssignments.assignments.findOne({aid : aid.toString()}, function(err, docs) {
+		//Run and compare results	
+		// objToReturn = executeEducatorCode(docs.inputArray, outputArray, className, path, objToReturn);
+	// });
+
+    //Delete repo from Testing environment
+    // deleteRepo(repoName);
+
+    //Send Mark and Feedback to Nexus
     //TODO REPLACE WITH ENV
     var url = 'http://localhost:3000/report_mark/' + req.body.sid + '/iot';
-
     var requestOptions = {
       url,
       method: 'POST',
       headers: {
       	//REPLACE WIH ENV
-        'Nexus-Access-Token': 's9hxagBT7UxACWxg/uZtf4/0STcxkpid1xeSnOotdCU='
+        'Nexus-Access-Token': 'L+vKIwPO/OFp8gMQYXItot3AQbgnUip5eMyPnbaoW0Y='
       },
       json: true,
       body
@@ -125,10 +213,8 @@ app.post('/mark', function(req, res) {
 });
 ///////////////////////////////////////////STUDENT HTTP Requests: END////////////////////////////
 
-
 //////////////////////////////////////////Functions to run for Evaluation
 function cloneGitRepo(url, pathToClone) {
-	var test = "clone https://github.com/GeorgeRaduta/IO-Tool-Repo-Test.git";
 	var gitClone = spawnSync('git', ['clone', url], 
 		{
 			cwd:'TestingEnvironment',
@@ -158,24 +244,35 @@ function deleteRepo(name) {
 	});
 }
 
-function createJavaFile(code, className) {
-	var nameOfFileExtension = className + '.java';
-	fs.writeFileSync('TestingEnvironment/' + nameOfFileExtension, code);
-}
-
-function deleteFiles(path, className) {
-	try {
-		fs.unlinkSync('TestingEnvironment/' + className + '.class');
-	} catch(err) {
-		console.log(err);
-	}	
-	try {
-		fs.unlinkSync('TestingEnvironment/' + className + '.java');
-	} catch(err) {
-		console.log(err);
+function createFiles(dataFilesArray, extension, userId) {
+	for (var i = 0; i < dataFilesArray.length; ++i) {
+		var nameOfFileExtension = dataFilesArray[i].class_name + extension;
+		fs.writeFileSync('TestingEnvironment/'+userId+'/' + nameOfFileExtension, dataFilesArray[i].code);
 	}
 }
 
+function deleteFolder(path) {
+	console.log(path);
+	try {
+		var childRemove = execSync('rm -r ' + path, {timeout: 60000 });	
+	} catch(err) {
+		console.log(err);
+	}	
+}
+
+
+//COMPILEEEEEE
+function compileAllSources(path, objToReturn) {
+	try {
+		var childJavac = execSync('javac -Xlint:all @sources.txt 2>&1', { cwd: path, timeout: 60000 });	
+		objToReturn.compiled = true;
+		objToReturn.error = "";
+	} catch (error) {
+		objToReturn.compiled = false;
+		objToReturn.error = error;
+	}
+	return objToReturn;
+}
 function compileSource(path, className, objToReturn) {
 	var javacExecute = spawnSync('javac', [className + '.java'], {cwd:path, timeout:2000});
 	if (!(javacExecute.status == 0)) {
@@ -197,8 +294,10 @@ function compileSource(path, className, objToReturn) {
 	}
 }
 
-function executeEducatorCode(arrayOfInput, arrayOfOutput, className, path, objToReturn) {
+function executeEducatorCode(arrayOfInput, arrayOfOutput, dataFileArray, path, objToReturn) {
+
 	var numberOfTestsPassed = 0;
+	var className = dataFileArray.class_name;
 	//To execute for every single test provided by the educator
 	for (var i = 0; i < arrayOfInput.length; ++i) {
 		var inputTest = arrayOfInput[i];
@@ -253,7 +352,7 @@ function executeEducatorCode(arrayOfInput, arrayOfOutput, className, path, objTo
 	} else {
 		objToReturn.allPassed = false;
 	}
+	objToReturn.numberOfTestsPassed = numberOfTestsPassed;
 	return objToReturn;
 }
-
 
