@@ -1,4 +1,4 @@
-<div class="col-lg-2">
+<div class="col-lg-2 col-md-0 col-sm-0">
 </div>
 <div class="col-lg-8 col-md-12 col-sm-12 " >
 	<div class="panel panel-primary">
@@ -6,59 +6,62 @@
 			<h3>Configure IO Assignment</h3>
 		</div>
 		<div class="panel-body">
-			<!-- BEGIN: Labels -->
-			<div id="labelsFiles" class="text-center">
-				<label class="col-lg-6 control-label" style="padding-left:0px;">Select Input Files
-				</label>
-				<label class="control-label col-lg-6" style="padding-left:0px;">Select Output Files
-				</label>
-			</div>
-			<!-- END: Labels -->
-			<div ng-repeat="n in listOfIOTests" class="container col-lg-12 col-md-12 col-sm-12 panel panel-info" style="padding-left:0px; padding-right:0px;">
-				<div class="col-lg-12 col-md-12 col-sm-12 panel-heading">
-					<label> Test #{{n}}</label>	
-					<button type="button" class="btn btn-default btn-sm pull-right" data-toggle="collapse" data-target="#test{{$index}}"><i class="fa fa-expand" aria-hidden="true"></i>
-</button>				
+			<form>
+				<!-- BEGIN: Labels -->
+				<div id="labelsFiles" class="text-center col-lg-12 col-md-12">
+					<label class="col-lg-6 col-md-6 control-label" style="padding-left:0px;">Select Input Files
+					</label>
+					<label class="control-label col-lg-6 col-md-6" style="padding-left:0px;">Select Output Files
+					</label>
 				</div>
-				<div class="panel-body col-lg-12 collapse in" id="test{{$index}}">
-					<div class="col-lg-6 col-md-12 col-sm-12">
-						<textarea placeholder="Input #{{n}}" class="form-control" rows=2 ng-model="inputArray[n]"></textarea>
-					</div>
-					<div class="col-lg-6 col-md-12 col-sm-12">
-						<textarea placeholder="Output #{{n}}" class="form-control" rows=2 ng-model="outputArray[n]"></textarea>
-					</div>
-					<div class="col-lg-12 col-md-12 col-sm-12">
-						<textarea placeholder="Description of Test #{{n}} (e.g Special Cases, Guiding Steps, etc.)" class="form-control" rows=3  ng-model="descriptionArray[n]" style="margin-top:10px;"></textarea>
+				<!-- END: Labels -->
+				<div ng-repeat="n in listOfIOTests" class="col-lg-12 col-md-12">
+					<div class="col-lg-12 col-md-12 col-sm-12 panel panel-info" style="padding-left:0px; padding-right:0px;">
+						<div class="col-lg-12 col-md-12 col-sm-12 panel-heading">
+							<label> Test #{{n}}</label>	
+							<button type="button" class="btn btn-default btn-sm pull-right" data-toggle="collapse" data-target="#test{{$index}}"><i class="fa fa-expand" aria-hidden="false"></i>
+							</button>				
+						</div>
+						<div class="panel-body col-lg-12 col-md-12 collapse in form-group" id="test{{$index}}">
+							<div class="col-lg-6 col-md-6 col-sm-12 ">
+								<textarea placeholder="Input #{{n}}" class="form-control" rows=2 ng-model="inputArray[n]"></textarea>
+							</div>
+							<div class="col-lg-6 col-md-6 col-sm-12">
+								<textarea placeholder="Output #{{n}}" class="form-control" rows=2 ng-model="outputArray[n]"></textarea>
+							</div>
+							<div class="col-lg-12 col-md-12 col-sm-12">
+								<textarea placeholder="Description of Test #{{n}} (e.g Special Cases, Guiding Steps, etc.)" class="form-control" rows=3  ng-model="descriptionArray[n]" style="margin-top:10px;"></textarea>
+							</div>
+						</div>
 					</div>
 				</div>
-				<hr>
-			</div>
-			<div class="col-lg-12" style="margin-top:10;">
-				<label> <a href="" class="fa fa-plus-circle" ng-click="addTest()">&nbsp;Add I/O test </a></label>
-			</div> 
+				<div class="col-lg-12 col-md-12 col-sm-12" style="margin-top:10;">
+					<label> <a href="" class="fa fa-plus-circle" ng-click="addTest()">&nbsp;Add I/O test </a></label>
+				</div> 
 
-			<label class="control-label col-lg-12" style="padding:10px;">Select Skeleton File/Files </label>
-			<!-- BEGIN: CodeMirror TextArea -->
-			<div class="panel panel-success col-lg-12" ng-repeat="m in editorOptionsArray" style="padding-left:0px; padding-right:0px;">
-				<div class="panel-heading col-lg-12">
-					<label class="control-label">File {{$index}}</label>
-					<button type="button" class="btn btn-default btn-sm pull-right" data-toggle="collapse" data-target="#file{{$index}}"><i class="fa fa-expand" aria-hidden="true"></i>
-</button>		
-				</div>
-				<div class="panel-body col-lg-12 collapse in" id="file{{$index}}">
-					<input class="col-lg-6" placeholder="Class Name" ng-model="m.class_name"></input>
+				<label class="control-label col-lg-12" style="padding:10px;">Select Skeleton File/Files </label>
+				<!-- BEGIN: CodeMirror TextArea -->
+				<div class="panel panel-success col-lg-12" ng-repeat="m in editorOptionsArray" style="padding-left:0px; padding-right:0px;">
+					<div class="panel-heading col-lg-12">
+						<label class="control-label">File {{$index}}</label>
+						<button type="button" class="btn btn-default btn-sm pull-right" data-toggle="collapse" data-target="#file{{$index}}"><i class="fa fa-expand" aria-hidden="true"></i>
+						</button>		
+					</div>
+					<div class="panel-body col-lg-12 collapse in" id="file{{$index}}">
+						<input class="col-lg-6" placeholder="Class Name" ng-model="m.class_name"></input>
 
-					<input class="col-lg-6" type="file" on-read-file="displayCodeContents($index, contents)"/>
-					<!-- BEGIN : Java Text Area-->
-					<ui-codemirror class="col-lg-12" ui-codemirror-opts="m.editorOptions" ng-model="m.areaText" style="padding-left:0px; padding-right:0px;"></ui-codemirror>
-					<!-- END : Java Text Area-->
+						<input class="col-lg-6" type="file" on-read-file="displayCodeContents($index, contents)"/>
+						<!-- BEGIN : Java Text Area-->
+						<ui-codemirror class="col-lg-12" ui-codemirror-opts="m.editorOptions" ng-model="m.areaText" style="padding-left:0px; padding-right:0px;"></ui-codemirror>
+						<!-- END : Java Text Area-->
+					</div>
 				</div>
+				<div class="col-lg-12" style="margin-top:10;">
+					<label> <a href="" class="fa fa-plus-circle" ng-click="addFile()">&nbsp;Add a new Java File </a></label>
+				</div> 
+				<!-- END: CodeMirror TextArea -->
 			</div>
-			<div class="col-lg-12" style="margin-top:10;">
-				<label> <a href="" class="fa fa-plus-circle" ng-click="addFile()">&nbsp;Add a new Java File </a></label>
-			</div> 
-			<!-- END: CodeMirror TextArea -->
-		</div>
+		</form>
 		<div class="panel-footer text-right clearfix">
 			<div ng-hide="loading">
 				<button class="btn btn-danger" type="button" ng-click="cancel()"> Cancel </button>

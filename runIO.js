@@ -29,7 +29,7 @@ app.post('/check-educator-code', function(req, res) {
 	var input = req.body.input;
 	var output = req.body.output;
 	var dataFilesArray = req.body.filesArray;
-	var id = "test";
+	var id = req.body.assignmentId;
 	
 	var objToReturn = {
 		compiled: {
@@ -59,7 +59,7 @@ app.post('/check-educator-code', function(req, res) {
 	if (objToReturn.allPassed == true) {
 		//Insert in DB
 		var assignment = {
-			// aid: req.body.assignmentId,
+			aid: req.body.assignmentId,
 			inputArray: input,
 			outputArray: output,
 			dataFilesArray: dataFilesArray

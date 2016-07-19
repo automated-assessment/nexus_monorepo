@@ -88,7 +88,7 @@ app.controller('ConfigCtrl', function($scope, $http, $location, toastr){
 		// } else {
 			//TODO HTTP Request
 			var obj = {
-				// assignmentId: $location.search().aid.toString(),
+				assignmentId: $location.search().aid.toString(),
 				input : th.inputArray,
 				output : th.outputArray,
 				description : th.descriptionArray,
@@ -98,8 +98,6 @@ app.controller('ConfigCtrl', function($scope, $http, $location, toastr){
 			$http.post("/check-educator-code", obj).success(function(response) {
 				th.loading = false;
 				th.startProcess = false;
-				console.log(readeresponse);
-				toastr.error("Assignment was successfully added.");
 				if (response.compiled.bool == false) {
 					th.compileError = true;
 					toastr.error("Error. Please see bottom of the page for details");
