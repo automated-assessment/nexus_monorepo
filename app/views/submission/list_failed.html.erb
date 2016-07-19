@@ -6,9 +6,9 @@
   <div class="col-md-4">
     <div class="course-controls">
       <% if !@submissions.empty? %>
-        <%#= link_to assignment_configure_tools_path(id: @assignment.id) do %>
+        <%= link_to resend_all_submissions_path do %>
           <button type="button" name="button" class="btn btn-sm btn-primary">Resend all</button>
-        <%# end %>
+        <% end %>
       <% end %>
     </div>
   </div>
