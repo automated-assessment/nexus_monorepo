@@ -1,4 +1,17 @@
 <div class="page-header">
   <h2>Failed Submissions</h2>
 </div>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="course-controls">
+      <% if !@submissions.empty? %>
+        <%#= link_to assignment_configure_tools_path(id: @assignment.id) do %>
+          <button type="button" name="button" class="btn btn-sm btn-primary">Resend all</button>
+        <%# end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
 <%= render 'failed_submissions_table' %>
