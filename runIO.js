@@ -28,6 +28,7 @@ app.post('/check-educator-code', function(req, res) {
 	var rawPath = 'TestingEnvironment/';
 	var input = req.body.input;
 	var output = req.body.output;
+	var feedback = req.body.description;
 	var dataFilesArray = req.body.filesArray;
 	var id = req.body.assignmentId;
 	
@@ -62,6 +63,7 @@ app.post('/check-educator-code', function(req, res) {
 			aid: req.body.assignmentId,
 			inputArray: input,
 			outputArray: output,
+			feedbackArray: feedback,
 			dataFilesArray: dataFilesArray
 		}
 		dbAssignments.assignments.insert(assignment, function(err,docs) {});
@@ -76,83 +78,13 @@ app.post('/check-educator-code', function(req, res) {
 ///////////////////////////////////////////EDUCATOR HTTP Requests: END////////////////////////////
 
 ///////////////////////////////////////////STUDENT HTTP Requests: BEGIN////////////////////////////
-function simulate() {
-	var body = {
-        mark: -1
-    };
-	console.log("mark called");
 
-	//Data for MongoDB
-    // var objDb = {
-    // 	sid: "1",
-    // 	aid: "1",
-    // 	cloneUrl: req.body.cloneUrl,
-    // 	branch: req.body.branch,
-    // 	sha: req.body.sha
-    // };
-    //Data to store on MongoDB
-    var objToReturn = {
-		compiled: {
-			bool: true,
-			error: ""
-		},
-		resultsArray: []
-	}
-
-    var pathToClone = "TestingEnvironment";
-    var path = "TestingEnvironment/IO-Tool-Repo-Test/sources";
-    // var cloneUrl = req.body.cloneUrl;
-    var repoName = "";
-    var className = "HelloWorld";
-
-    //Clone Repo
-    // cloneGitRepo(cloneUrl, pathToClone);
-    cloneGitRepo("test", "Test");
-
-    //Comopile Source from repo
-	objToReturn = compileSource("TestingEnvironment/IO-Tool-Repo-Test/sources", "HelloWorld", objToReturn);
-	var aid = "1";
-	dbAssignments.assignments.findOne({aid : aid.toString()}, function(err, docs) {
-		//Run and compare results	
-		// console.log(docs);
-		objToReturn = executeEducatorCode(docs.inputArray, docs.outputArray, className, path, objToReturn);
-		body.mark = objToReturn.numberOfTestsPassed;
-		deleteRepo("IO-Tool-Repo-Test");
-		console.log(body);
-		
-	});
-
-
-    //Delete repo from Testing environment
-    
-    // //Send Mark and Feedback to Nexus
-    // //TODO REPLACE WITH ENV
-    // var url = 'http://localhost:3000/report_mark/' + req.body.sid + '/iot';
-    // var requestOptions = {
-    //   url,
-    //   method: 'POST',
-    //   headers: {
-    //   	//REPLACE WIH ENV
-    //     'Nexus-Access-Token': 'LbMYPcNKz/0Amp7EhEWwFJvJ5+2GXpa4kxwjOo9oYRk='
-    //   },
-    //   json: true,
-    //   body
-    // };
-
-    // request(requestOptions, function(err, res, body) {
-    //     console.log(err);
-    //     console.log(JSON.stringify(res));
-    // });
-}
-
-// simulate();
 app.post('/mark', function(req, res) {
     res.status(200).send('OK!');
 
     var body = {
-        mark: 100
+        mark: 0
     };
-	console.log("mark called");
 
 	//Data for MongoDB
     var objDb = {
@@ -170,78 +102,86 @@ app.post('/mark', function(req, res) {
 		},
 		resultsArray: []
 	}
-	console.log(objDb);
+	var cloneUrl = req.body.cloneurl;
+	var userKNumber = cloneUrl.substring(8,16);
+	var assignmentName = cloneUrl.substring(cloneUrl.indexOf('assignment'), cloneUrl.indexOf('.git'));
 
-    var pathToClone = "TestingEnvironment";
-    var path = pathToClone;
-    var cloneUrl = req.body.cloneurl;
-    var repoName = "";
-    var className = "HelloWorld";
-    console.log("Clonging" + cloneUrl);
+	var rawPath = "TestingEnvironment/";
+    var path = rawPath + userKNumber;
+    var pathAssingment = path + "/" + assignmentName;
+
+    //Create folder only for this user in which we will create one for the assignment submission
+    var mkdir = spawnSync('mkdir', [userKNumber], {cwd:rawPath, timeout:2000});
+
     //Clone Repo
-    cloneGitRepo(cloneUrl, pathToClone);
+    cloneGitRepo(cloneUrl, path);
 
-    //Comopile Source from repo
-	// objToReturn = compileSource(path, className, objToReturn);
-	
-	// dbAssignments.assignments.findOne({aid : aid.toString()}, function(err, docs) {
+    //Get All Files with .extension Java
+	var childFind = execSync('find . -name "*.java" > sources.txt', { cwd: pathAssingment });
+    
+    //Comopile All Sources from repo
+	objToReturn = compileAllSources(pathAssingment,objToReturn);
+
+	//Search for assignment in db
+	dbAssignments.assignments.findOne({aid : objDb.aid.toString()}, function(err, docs) {
 		//Run and compare results	
-		// objToReturn = executeEducatorCode(docs.inputArray, outputArray, className, path, objToReturn);
-	// });
+		objToReturn = executeStudentCode(docs.inputArray, docs.outputArray, docs.feedbackArray, docs.dataFilesArray[0].class_name, pathAssingment, objToReturn);
+		
+		//Delete repo from Testing environment
+	    deleteFolder(pathAssingment);
 
-    //Delete repo from Testing environment
-    // deleteRepo(repoName);
+	    //Send Mark to Nexus
+	    //TODO REPLACE WITH ENV
+	    body.mark = 100*objToReturn.numberOfTestsPassed / objToReturn.resultsArray.length;
+		var url = 'http://localhost:3000/report_mark/' + req.body.sid + '/iotool';
+	    sendRequest(url, body);
 
-    //Send Mark and Feedback to Nexus
-    //TODO REPLACE WITH ENV
-    var url = 'http://localhost:3000/report_mark/' + req.body.sid + '/iot';
-    var requestOptions = {
-      url,
-      method: 'POST',
-      headers: {
-      	//REPLACE WIH ENV
-        'Nexus-Access-Token': 'L+vKIwPO/OFp8gMQYXItot3AQbgnUip5eMyPnbaoW0Y='
-      },
-      json: true,
-      body
-    };
+	    //Send Feedback to Nexus
+	    var bodyF = '';
+	    var urlF = 'http://localhost:3000/report_feedback/' + req.body.sid + '/iotool';
+	    if (body.mark == 100) {
+		    bodyF = '<div class="javac-feedback"><p class="text-info" style="color:green"><b><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>All tests passed correctly. Congrats!</b></p></div>';
+		} else {
+			bodyF = '<div class="javac-feedback">';
+			for (var i = 0; i < docs.feedbackArray.length; ++i) {
+				if (objToReturn.resultsArray[i].passed == false) {
+					bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Failed</label></p>';
+					bodyF += '<p class="text-info"><i>' + docs.feedbackArray[i] + '</i></p>'; 
+				} else {
+					bodyF += '<p class="text-info" style="color:green"><label><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Passed</label></p>';
+				}
+			}
+			bodyF += '</div>';
+		}
+		sendRequest(urlF, {body: bodyF});
 
-    request(requestOptions, function(err, res, body) {
-        console.log(err);
-        console.log(JSON.stringify(res));
-    });
+	});
 });
 ///////////////////////////////////////////STUDENT HTTP Requests: END////////////////////////////
 
 //////////////////////////////////////////Functions to run for Evaluation
 function cloneGitRepo(url, pathToClone) {
+
 	var gitClone = spawnSync('git', ['clone', url], 
 		{
-			cwd:'TestingEnvironment',
+			cwd:pathToClone,
 			timeout:2000
 		});
 	
 	if (!(gitClone.status == 0)) {
 		//get errors to the user
+		if (!(gitClone.error == null)) {
+			console.log(gitClone.error);
+		} else
 		if (!(gitClone.stderr.toString() == "")) {
 			console.log(gitClone.stderr.toString());
-		} else if (!(gitClone.error == null)) {
-			console.log(gitClone.error);
 		} 
 		else {
-			console.log("UE");
+			console.log("Unkwond Error");
 		}
 	} else {
 		console.log("Done");
 	}
-}
-
-function deleteRepo(name) {
-	var deleteRepo = spawnSync('rm', ['-r', '-f', name],
-	{
-		cwd: 'TestingEnvironment',
-		timeout: 5000
-	});
 }
 
 function createFiles(dataFilesArray, extension, userId) {
@@ -252,7 +192,6 @@ function createFiles(dataFilesArray, extension, userId) {
 }
 
 function deleteFolder(path) {
-	console.log(path);
 	try {
 		var childRemove = execSync('rm -r ' + path, {timeout: 60000 });	
 	} catch(err) {
@@ -260,8 +199,6 @@ function deleteFolder(path) {
 	}	
 }
 
-
-//COMPILEEEEEE
 function compileAllSources(path, objToReturn) {
 	try {
 		var childJavac = execSync('javac -Xlint:all @sources.txt 2>&1', { cwd: path, timeout: 60000 });	
@@ -356,3 +293,84 @@ function executeEducatorCode(arrayOfInput, arrayOfOutput, dataFileArray, path, o
 	return objToReturn;
 }
 
+function executeStudentCode(arrayOfInput, arrayOfOutput, arrayOfFeedback, mainClassName, path, objToReturn) {
+	var numberOfTestsPassed = 0;
+	var className = mainClassName;
+
+	//To execute for every single test provided by the educator
+	for (var i = 0; i < arrayOfInput.length; ++i) {
+		var inputTest = arrayOfInput[i];
+
+		var javaExecute = spawnSync('java', [className], {
+			input: inputTest,
+			cwd: path, 
+			timeout:2000
+		}); 
+
+		if (!(javaExecute.status == 0)) {
+		//get errors to the user
+			if (!(javaExecute.error == null)) {
+				objToReturn.resultsArray[i] = {
+					error: true,
+					message: javaExecute.error
+				}
+			} else if (!(javaExecute.stderr.toString() == "")) {
+				objToReturn.resultsArray[i] = {
+					error: true,
+					message: javaExecute.stderr.toString()
+				}
+			} else {
+				objToReturn.resultsArray[i] = {
+					error:true,
+					message: "Unknown Error"
+				}
+			}
+		} else {
+			// No Errors Branch
+			// Compare user's input with educator's input and provide feedback
+			if (arrayOfOutput[i].localeCompare(javaExecute.stdout.toString()) == 0) {
+				objToReturn.resultsArray[i] = {
+					error: false,
+					passed: true,
+					output: javaExecute.stdout.toString(),
+					expectedOutput: arrayOfOutput[i],
+					feedback: "Test Passed. Good Job !"
+				}
+				numberOfTestsPassed++;
+			} else {
+				objToReturn.resultsArray[i] = {
+					error: false,
+					passed: false,
+					output: javaExecute.stdout.toString(),
+					expectedOutput: arrayOfOutput[i],
+					feedback: arrayOfFeedback[i]
+				}
+			}
+		}
+	}
+	if (numberOfTestsPassed == arrayOfInput.length) {
+		objToReturn.allPassed = true;
+	} else {
+		objToReturn.allPassed = false;
+	}
+	objToReturn.numberOfTestsPassed = numberOfTestsPassed;
+	return objToReturn;
+}
+
+function sendRequest(url, body) {
+	var requestOptions = {
+	      url,
+	      method: 'POST',
+	      headers: {
+	      	//REPLACE WIH ENV
+	        'Nexus-Access-Token': 'sPKFtXUBkEdAp00Zqu2Hr0F5YAi4ECtbSoztr2NO4iE='
+	      },
+	      json: true,
+	      body
+	    };
+
+	request(requestOptions, function(err, res, body) {
+		console.log(err);
+		// console.log(JSON.stringify(res));
+	});	
+}
