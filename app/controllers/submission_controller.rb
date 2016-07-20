@@ -145,24 +145,22 @@ class SubmissionController < ApplicationController
     return unless authenticate_admin!
     @submission = Submission.find(params[:id])
 
-    # Pretend it's no longer a failed submission
-    @submission.failed = false
-    @submission.save!
+    if (SubmissionUtils.re_notify_tools!(@submission, current_user)) then
+      redirect_to action: 'show', id: @submission.id
+    else
+      redirect_to action: 'list_failed'
+    end
+  end
 
-    @submission.log("Resending submission to all marking tools at request of #{current_user.name}.")
+  def resend_all
+    return unless authenticate_admin!
 
-    SubmissionUtils.notify_tools!(@submission)
-
-    redirect_to action: 'show', id: @submission.id
-
-  rescue  => e
-    @submission.log("Error resending submission: #{e.class} #{e.message}", "Error")
-    # Remember that this submission is still failed after all
-    @submission.failed = true
-    @submission.save!
+    submissions = Submission.where(failed: true)
+    submissions.each do |sub|
+      SubmissionUtils.re_notify_tools!(sub, current_user)
+    end
 
     redirect_to action: 'list_failed'
-
   end
 
   private

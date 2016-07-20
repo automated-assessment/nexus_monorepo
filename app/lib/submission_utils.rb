@@ -24,10 +24,24 @@ class SubmissionUtils
       submission.assignment.marking_tools.each do |mt|
         begin
           SendSubmissionJob.perform_later submission.id, mt.id
-        rescue StandardError => e
+        rescue => e
           submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", "Error")
+          submission.failed = true
+          submission.save!
         end
       end
+    end
+
+    def re_notify_tools!(submission, user)
+      # Pretend it's no longer a failed submission
+      submission.failed = false
+      submission.save!
+
+      submission.log("Resending submission to all marking tools at request of #{user.name}.")
+
+      SubmissionUtils.notify_tools!(submission)
+
+      !submission.failed?
     end
   end
 end
