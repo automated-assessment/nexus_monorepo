@@ -36,6 +36,21 @@ _Full documentation can be found in the [Wiki](https://github.kcl.ac.uk/automate
 ##### `NEXUS_GITHUB_ORG`
 - Name of the organisation to create repos and upload student's submissions to (defaults to `ppa-dev`)
 
+##### `RABBIT_MQ_USER`
+- User name for RabbitMQ (defaults to `guest`)
+
+##### `RABBIT_MQ_PWD`
+- Password for RabbitMQ (defaults to `guest`)
+
+##### `RABBIT_MQ_HOST`
+- Hostname for RabbitMQ server (defaults to `localhost`, for use of docker-based rabbitmq should probably be 172.17.0.2)
+
+##### `RABBIT_MQ_PORT`
+- Port for RabbitMQ server (defaults to 5672)
+
+##### `RABBIT_MQ_QNAME`
+- Queue name to use on RabbitMQ (defaults to `nexus.submissions_to_tools`)
+
 #### Quick-start
 0. Ensure environment variables are set up (see above) - using a `.env` file is probably best
 1. Clone the repo
@@ -43,10 +58,12 @@ _Full documentation can be found in the [Wiki](https://github.kcl.ac.uk/automate
 3. Install Node.js deps: `$ npm install`
 4. Compile static assets: `$ npm-exec webpack -d`*
 5. Set up database: `$ bundle exec rake db:setup`
-6. Start Nexus: `$ rails server`
-7. [http://localhost:3000](http://localhost:3000)
-8. Sample admin user details can be found in `db/seeds.rb`
-9. To use this account, go to Manual Login, which can be found at `/users/login`
+6. Start RabbitMQ (either directly or via docker)
+7. Start sneakers worker: `$ rake sneakers:work` (configuration in `config/sneakers.yml`)
+8. Start Nexus: `$ rails server`
+9. [http://localhost:3000](http://localhost:3000)
+10. Sample admin user details can be found in `db/seeds.rb`
+11. To use this account, go to Manual Login, which can be found at `/users/login`
 
 
 \* `npm-exec` executes the local version of a node module, rather than a globally installed version: `alias npm-exec='PATH=$(npm bin):$PATH'`
