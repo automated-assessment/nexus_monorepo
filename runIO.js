@@ -158,14 +158,13 @@ app.post('/mark', function(req, res) {
 		objToReturn = executeStudentCode(docs.inputArray, docs.outputArray, docs.feedbackArray, docs.dataFilesArray[0].class_name, pathAssingment, objToReturn);
 		
 		//Delete repo from Testing environment
-	    // deleteFolder(pathAssingment);
+	    deleteFolder(pathAssingment);
 
 	    //Send Mark to Nexus
 	    body.mark = 100*objToReturn.numberOfTestsPassed / objToReturn.resultsArray.length;
 
 		var url = NEXUS_URL + 'report_mark/'+ req.body.sid + '/' + IOTOOL_ID;
 	    sendRequest(url, body);
-	    console.log(objToReturn);
 
 	    //Send Feedback to Nexus
 	    var bodyF = '';
@@ -175,11 +174,13 @@ app.post('/mark', function(req, res) {
 		} else {
 			bodyF = '<div class="javac-feedback">';
 			for (var i = 0; i < docs.feedbackArray.length; ++i) {
-				if (objToReturn.resultsArray[i].passed == false) {
+				if (objToReturn.resultsArray[i].passed == false && objToReturn.resultsArray[i].error == false) {
 					bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Failed</label></p>';
 					bodyF += '<p class="text-info"><i>' + docs.feedbackArray[i] + '</i></p>'; 
-				} else {
+				} else if (objToReturn.resultsArray[i].passed == true && objToReturn.resultsArray[i].error == false){
 					bodyF += '<p class="text-info" style="color:green"><label><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Passed</label></p>';
+				} else {
+					bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Source did NOT RUN</label></p>';
 				}
 			}
 			bodyF += '</div>';
@@ -281,16 +282,19 @@ function executeEducatorCode(arrayOfInput, arrayOfOutput, dataFileArray, path, o
 			if (!(javaExecute.error == null)) {
 				objToReturn.resultsArray[i] = {
 					error: true,
+					passed: false,
 					message: javaExecute.error
 				}
 			} else if (!(javaExecute.stderr.toString() == "")) {
 				objToReturn.resultsArray[i] = {
 					error: true,
+					passsed: false,
 					message: javaExecute.stderr.toString()
 				}
 			} else {
 				objToReturn.resultsArray[i] = {
 					error:true,
+					passed: false,
 					message: "Unknown Error"
 				}
 			}
@@ -343,16 +347,19 @@ function executeStudentCode(arrayOfInput, arrayOfOutput, arrayOfFeedback, mainCl
 			if (!(javaExecute.error == null)) {
 				objToReturn.resultsArray[i] = {
 					error: true,
+					passed: false,
 					message: javaExecute.error
 				}
 			} else if (!(javaExecute.stderr.toString() == "")) {
 				objToReturn.resultsArray[i] = {
 					error: true,
+					passed: false,
 					message: javaExecute.stderr.toString()
 				}
 			} else {
 				objToReturn.resultsArray[i] = {
 					error:true,
+					passed: false,
 					message: "Unknown Error"
 				}
 			}
