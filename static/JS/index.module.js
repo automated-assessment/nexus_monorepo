@@ -7,6 +7,10 @@ app.config(['$routeProvider', function($routeProvider, $location) {
 		templateUrl: '/config.html',
 		controller: 'ConfigCtrl'
 	}).
+	when('/config-complex', {
+		templateUrl: '/io-assignment.html',
+		controller: 'EduCreateIoAssignmentCtrl'
+	}).
 	when('/404', {
 		templateUrl: '404.html'
 	}).

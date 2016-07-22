@@ -8,6 +8,7 @@ app.controller('ConfigCtrl', function($scope, $http, $location, toastr){
 	var th = $scope;
 
 	//Initializations
+	
 	th.listOfIOTests = [0];
 	th.testTotal = 0;
 	th.inputArray = ["Hello, World!"];

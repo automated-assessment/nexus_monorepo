@@ -2,7 +2,7 @@ var	fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
-
+var envVar = require('dotenv').config();
 //Library for linux commands. e.g javac
 var spawn = require('child_process').spawn;
 var spawnSync = require('child_process').spawnSync;
@@ -19,13 +19,21 @@ app.use(express.static(__dirname + "/static/"));
 
 //HTTP Requests
 app.use(bodyParser.json());
-app.listen(3001);
 
-console.log("Server running on http://localhost:3001/");
+app.listen(process.env.PORT);
+
+//GLOBAL VARIABLES 
+var PORT = process.env.PORT || 3001;
+var RAW_PATH = process.env.RAW_PATH || 'TestingEnvironment';
+var NEXUS_URL = process.env.NEXUS_URL;
+var IOTOOL_ID = process.env.IOTOOL_ID;
+var NEXUS_ACCESS_TOKEN = process.env.NEXUS_ACCESS_TOKEN;
+
+console.log("Server running on http://localhost:" + PORT + "/");
 ///////////////////////////////////////////EDUCATOR HTTP Requests: BEGIN////////////////////////////
 //Educator check-code POST REQUEST
 app.post('/check-educator-code', function(req, res) {
-	var rawPath = 'TestingEnvironment/';
+	var rawPath = RAW_PATH + '/';
 	var input = req.body.input;
 	var output = req.body.output;
 	var feedback = req.body.description;
@@ -75,13 +83,35 @@ app.post('/check-educator-code', function(req, res) {
 
 	res.json(objToReturn);
 });
+
+app.get('/get-dictionaries', function(req,res) {
+	dbDict.dictionary.find(function(err, docs){
+		res.json(docs);
+	});
+});
+
+app.post('/add-new-dictionary', function(req, res) {
+	dbDict.dictionary.insert(req.body.dictionary, function(err, docs) {
+				if (err == null) {
+					created = true;
+					res.json("success");
+					var textToAdd = "!-> NEW_DICTIONARY: " + req.body.knumber + " at " + getDate() + "<-!\n";
+					fs.appendFile('activitylog-edu.txt', textToAdd , function (err) {
+					});
+				} else {
+					res.json("database-error");
+					var textToAdd = "!-> ERROR NEW_DICTIONARY DATABASE: " + req.body.knumber + " at " + getDate() + "<-!\n";
+					fs.appendFile('activitylog.txt', textToAdd , function (err) {
+					});
+				}
+			});
+});
 ///////////////////////////////////////////EDUCATOR HTTP Requests: END////////////////////////////
 
 ///////////////////////////////////////////STUDENT HTTP Requests: BEGIN////////////////////////////
 
 app.post('/mark', function(req, res) {
     res.status(200).send('OK!');
-
     var body = {
         mark: 0
     };
@@ -101,12 +131,12 @@ app.post('/mark', function(req, res) {
 			error: ""
 		},
 		resultsArray: []
-	}
+	};
 	var cloneUrl = req.body.cloneurl;
 	var userKNumber = cloneUrl.substring(8,16);
 	var assignmentName = cloneUrl.substring(cloneUrl.indexOf('assignment'), cloneUrl.indexOf('.git'));
 
-	var rawPath = "TestingEnvironment/";
+	var rawPath = RAW_PATH + "/";
     var path = rawPath + userKNumber;
     var pathAssingment = path + "/" + assignmentName;
 
@@ -128,17 +158,18 @@ app.post('/mark', function(req, res) {
 		objToReturn = executeStudentCode(docs.inputArray, docs.outputArray, docs.feedbackArray, docs.dataFilesArray[0].class_name, pathAssingment, objToReturn);
 		
 		//Delete repo from Testing environment
-	    deleteFolder(pathAssingment);
+	    // deleteFolder(pathAssingment);
 
 	    //Send Mark to Nexus
-	    //TODO REPLACE WITH ENV
 	    body.mark = 100*objToReturn.numberOfTestsPassed / objToReturn.resultsArray.length;
-		var url = 'http://localhost:3000/report_mark/' + req.body.sid + '/iotool';
+
+		var url = NEXUS_URL + 'report_mark/'+ req.body.sid + '/' + IOTOOL_ID;
 	    sendRequest(url, body);
+	    console.log(objToReturn);
 
 	    //Send Feedback to Nexus
 	    var bodyF = '';
-	    var urlF = 'http://localhost:3000/report_feedback/' + req.body.sid + '/iotool';
+	    var urlF = NEXUS_URL + 'report_feedback/' + req.body.sid + '/' + IOTOOL_ID;
 	    if (body.mark == 100) {
 		    bodyF = '<div class="javac-feedback"><p class="text-info" style="color:green"><b><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>All tests passed correctly. Congrats!</b></p></div>';
 		} else {
@@ -187,7 +218,7 @@ function cloneGitRepo(url, pathToClone) {
 function createFiles(dataFilesArray, extension, userId) {
 	for (var i = 0; i < dataFilesArray.length; ++i) {
 		var nameOfFileExtension = dataFilesArray[i].class_name + extension;
-		fs.writeFileSync('TestingEnvironment/'+userId+'/' + nameOfFileExtension, dataFilesArray[i].code);
+		fs.writeFileSync(RAW_PATH + '/' + userId + '/' + nameOfFileExtension, dataFilesArray[i].code);
 	}
 }
 
@@ -363,7 +394,7 @@ function sendRequest(url, body) {
 	      method: 'POST',
 	      headers: {
 	      	//REPLACE WIH ENV
-	        'Nexus-Access-Token': 'sPKFtXUBkEdAp00Zqu2Hr0F5YAi4ECtbSoztr2NO4iE='
+	        'Nexus-Access-Token': NEXUS_ACCESS_TOKEN
 	      },
 	      json: true,
 	      body
