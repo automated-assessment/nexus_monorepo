@@ -20,15 +20,15 @@ app.use(express.static(__dirname + "/static/"));
 //HTTP Requests
 app.use(bodyParser.json());
 
-app.listen(process.env.PORT);
-
 //GLOBAL VARIABLES 
 var PORT = process.env.PORT || 3001;
 var RAW_PATH = process.env.RAW_PATH || 'TestingEnvironment';
-var NEXUS_URL = process.env.NEXUS_URL;
-var IOTOOL_ID = process.env.IOTOOL_ID;
+var NEXUS_URL = process.env.NEXUS_URL || 'http://localhost:3000/';
+var IOTOOL_ID = process.env.IOTOOL_ID || 'iotool';
 var NEXUS_ACCESS_TOKEN = process.env.NEXUS_ACCESS_TOKEN;
 
+
+app.listen(PORT);
 console.log("Server running on http://localhost:" + PORT + "/");
 ///////////////////////////////////////////EDUCATOR HTTP Requests: BEGIN////////////////////////////
 //Educator check-code POST REQUEST
@@ -48,6 +48,8 @@ app.post('/check-educator-code', function(req, res) {
 		resultsArray: []
 	}
 
+	//Create the Testing environment Folder
+	var mkdir = spawnSync('mkdir', [RAW_PATH], {timeout:2000});
 	//Create Educator Directory
 	var mkdir = spawnSync('mkdir', [id], {cwd:rawPath, timeout:2000});
 
@@ -140,6 +142,9 @@ app.post('/mark', function(req, res) {
     var path = rawPath + userKNumber;
     var pathAssingment = path + "/" + assignmentName;
 
+
+    //Create the Testing environment Folder
+	var mkdir = spawnSync('mkdir', [RAW_PATH], {timeout:2000});
     //Create folder only for this user in which we will create one for the assignment submission
     var mkdir = spawnSync('mkdir', [userKNumber], {cwd:rawPath, timeout:2000});
 
@@ -200,7 +205,7 @@ function cloneGitRepo(url, pathToClone) {
 			timeout:2000
 		});
 	
-	if (!(gitClone.status == 0)) {
+	if (!(gitClone.status == 0)) {e
 		//get errors to the user
 		if (!(gitClone.error == null)) {
 			console.log(gitClone.error);
@@ -241,26 +246,6 @@ function compileAllSources(path, objToReturn) {
 		objToReturn.error = error;
 	}
 	return objToReturn;
-}
-function compileSource(path, className, objToReturn) {
-	var javacExecute = spawnSync('javac', [className + '.java'], {cwd:path, timeout:2000});
-	if (!(javacExecute.status == 0)) {
-		 if (!(javacExecute.error == null)) {
-			objToReturn.compiled.bool = false;
-			objToReturn.compiled.error = javacExecute.error; 
-			return objToReturn;
-		} else if (!(javacExecute.stderr.toString() == "")) {
-			objToReturn.compiled.bool = false;
-			objToReturn.compiled.error = javacExecute.stderr.toString(); 
-			return objToReturn;
-		} else {
-			objToReturn.compiled.bool = false;
-			objToReturn.compiled.error = 'Unkwown Error';
-			return objToReturn;
-		}
-	} else {
-		return objToReturn;
-	}
 }
 
 function executeEducatorCode(arrayOfInput, arrayOfOutput, dataFileArray, path, objToReturn) {
