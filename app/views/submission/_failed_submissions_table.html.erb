@@ -6,7 +6,7 @@
       <tr>
         <th>Submitted</th>
         <th width="20%">Assignment</th>
-        <th>Resend</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -24,7 +24,7 @@
           </td>
           <td>
             <%= link_to resend_submission_path(id: s.id) do %>
-              <button type="button" name="button" class="btn btn-primary">Resend</button>
+              <button type="button" name="button" class="btn btn-xs btn-primary">Resend</button>
             <% end %>
           </td>
         </tr>
