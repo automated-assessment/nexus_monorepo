@@ -12,6 +12,7 @@ var execSync = require('child_process').execSync;
 //MongoDB
 var mongojs = require('mongojs');
 var dbAssignments = mongojs('assignments',['assignments']);
+var dbDict = mongojs('dictionary', ['dictionary']);
 
 //Server
 var app = express();
@@ -94,19 +95,13 @@ app.get('/get-dictionaries', function(req,res) {
 
 app.post('/add-new-dictionary', function(req, res) {
 	dbDict.dictionary.insert(req.body.dictionary, function(err, docs) {
-				if (err == null) {
-					created = true;
-					res.json("success");
-					var textToAdd = "!-> NEW_DICTIONARY: " + req.body.knumber + " at " + getDate() + "<-!\n";
-					fs.appendFile('activitylog-edu.txt', textToAdd , function (err) {
-					});
-				} else {
-					res.json("database-error");
-					var textToAdd = "!-> ERROR NEW_DICTIONARY DATABASE: " + req.body.knumber + " at " + getDate() + "<-!\n";
-					fs.appendFile('activitylog.txt', textToAdd , function (err) {
-					});
-				}
-			});
+		if (err == null) {
+			created = true;
+			res.json("success");
+		} else {
+			res.json("database-error");
+		}
+	});
 });
 ///////////////////////////////////////////EDUCATOR HTTP Requests: END////////////////////////////
 

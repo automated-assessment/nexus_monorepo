@@ -1,10 +1,10 @@
-var app = angular.module('EduCreateIoAssignment', ['toastr', 'ui.codemirror', 'ngSanitize']);
+var app = angular.module('EduCreateIoAssignment', ['toastr']);
 
 var initialString = "public class HelloWorld { \n\n\t" + 
 "public static void main(String[] args) { \n\n\t\t" + 
 "System.out.println(\"Hello, World\");\n \n\t}\n\n}";
 
-app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, $cookies, $location, toastr){
+app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, toastr){
 	var th = $scope;
 	//INITIALIZATIONS
 	th.assingmentTitle = "";
@@ -16,6 +16,7 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, $cookies, $l
 		toastr.error("Could not retrieve dictionaries.");
 	});
 
+	th.knumber = 'k1332897';
 	th.requirement = "";
 	th.previewRequirement = "";
 	th.newDictName = "";
@@ -29,9 +30,18 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, $cookies, $l
 	th.outputText = "";
 	th.outputExample = "";
 
+	th.typeOfAssignment = "";
+
 	//CodeMirror
 	th.class_name = "";
 
+	//I/O Testing
+	th.listOfIOTests = [0];
+	th.testTotal = 0;
+	th.inputArray = ["Hello, World!"];
+	th.outputArray = ["Hello, World!"];
+	th.descriptionArray = ["Hello, World! should be printed with no new-line"];
+	
 	// BEGIN : TextEditor for JAVA
 	th.areaTextArray = [initialString];
 	th.editorOptionsArray = [
@@ -50,8 +60,8 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, $cookies, $l
 	];
 
 	//TODO GET FROM USER
-	th.formula = "knumber mod 50"
-	
+	th.formula = th.knumber.substring(1,th.knumber.length) + " mod 50";
+
 	///////////////////////////////////////////////BEGIN: FUNCTIONS For Dictionary
 	th.addDictionary = function(dictionary) {
 		var newobj = {
@@ -71,11 +81,11 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, $cookies, $l
 	th.parseWords = function(textToParse) {
 		th.listOfWordsParsed = textToParse.split(",");
 		th.parsedOk = true;
-	}
+	};
 
 	th.addNewDictionary = function() {
 		var obj = {
-			knumber: $cookies.get('harena-id'),
+			knumber: th.knumber,
 			dictionary:{
 				name: th.newDictName,
 				values: th.listOfWordsParsed
@@ -93,8 +103,16 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, $cookies, $l
 		}).error(function(status) {
 			toastr.error("ERROR - HTTP Request");
 		}); 
-	}
-	///////////////////////////////////////////////END: FUNCTIONS For Dictionary
+	};
+	//Add a new set of I/O Test cases;
+	th.addTest = function() {
+		th.testTotal += 1;
+		th.listOfIOTests.push(th.listOfIOTests.length);
+		th.inputArray.push("");
+		th.outputArray.push("");
+		th.descriptionArray.push("");
+		console.log(th.listOfIOTests);
+	};
 
 	///////////////////////////////////////////////BEGIN: FUNCTIONS For CodeMirror TextArea
     th.addFile = function() {
@@ -139,36 +157,60 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, $cookies, $l
 			var re = new RegExp(hash,'g');
 			th.previewRequirement = th.previewRequirement.replace(re, th.listOfDictSelected[i].dictionary.values[formula] );
 		}
-		$('#previewModal').modal('show');
+
+		//TYPE !
+		if (!th.checkUseOutput && !th.checkUseInput) {
+			th.typeOfAssignment = "Compile and Run users files with no input/output verification."
+			toastr.warning("In this way only compilation and run will be tested with no verification on results. Please wait for modal to appear.");
+			var objToSend = {
+				dataFilesArray: th.filesArray,
+				id: $cookies.get('harena-id'),
+			};
+			console.log(objToSend);
+			// //Check Educator's Code
+			// $http.post("/check-educator-code-no-input-no-output", objToSend).success(function(response) {
+			// 	th.response = response;
+
+			// 	$('#previewModal').modal('show');
+			// }).error(function(status) {
+			// 	toastr.error("ERROR - HTTP Request");
+			// }); 
+		} else if (!th.checkUseInput){
+			////TYPE 2
+			th.typeOfAssignment = "Compile, Run and Output Verification "
+			toastr.warning("Results based on dictionary will be tested.");
+
+		} else if (th.checkUseInput && th.checkUseOutput){
+			//////TYPE 3
+			toastr.warning("I/O + Unique Assignments Tested");
+			th.typeOfAssignment = "Compile and Run based on I/O testing.";
+
+			var objToSend = {
+				id: $cookies.get('harena-id'),
+				inputArray: th.inputArray,
+				outputArray: th.outputArray,
+				descriptionArray: th.descriptionArray,
+				dictionariesArray: th.listOfDictSelected,
+				dataFilesArray: th.filesArray,
+				formula: th.formula
+			};
+
+			//Check Educator's Code
+			$http.post("/check-educator-code-io", objToSend).success(function(response) {
+				th.response = response;
+
+				$('#previewModal').modal('show');
+			}).error(function(status) {
+				toastr.error("ERROR - HTTP Request");
+			});
+		} else {
+			//ERROR TYPE
+			toastr.error("You cannot select ONLY Input Format");
+		}
 	}
 
 	th.addAssignment = function() {
 		console.log("Adding");
 	}
 	///////////////////////////////////////////////END: FUNCTIONS for creating and verifying assignments
-});
-
-app.directive('onReadFile', function ($parse) {
-    return {
-        restrict: 'A',
-        scope: false,
-        link: function(scope, element, attrs) {
-            element.bind('change', function(e) {
-
-                var onFileReadFn = $parse(attrs.onReadFile);
-                var reader = new FileReader();
-                
-                reader.onload = function() {
-                    var fileContents = reader.result;
-
-                    scope.$apply(function() {
-                        onFileReadFn(scope, {
-                            'contents' : fileContents
-                        });
-                    });
-                };
-                reader.readAsText(element[0].files[0]);
-            });
-        }
-    };
 });
