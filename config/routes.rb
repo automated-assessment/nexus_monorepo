@@ -52,6 +52,9 @@ Rails.application.routes.draw do
   get 'submissions/new/:aid' => 'submission#new', as: :new_submission
   get 'submissions/:id/edit_mark' => 'submission#edit_mark', as: :edit_mark_for_submission
   patch 'submissions/:id/override' => 'submission#override', as: :override_submission
+  get 'submissions/list/failed' => 'submission#list_failed', as: :failed_submissions_list
+  get 'submissions/:id/resend' => 'submission#resend', as: :resend_submission
+  get 'submissions/resend/all' => 'submission#resend_all', as: :resend_all_submissions
 
   ### Access Tokens
   get 'tokens/new' => 'access_token#new', as: :new_access_token

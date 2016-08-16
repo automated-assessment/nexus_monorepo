@@ -1,20 +1,9 @@
 require 'zip'
-require 'net/http'
-require 'uri'
 
 class SubmissionUtils
+  #require_relative "submission_msg"
+
   class << self
-    def build_json_payload(submission)
-      payload = {
-        student: submission.user.name,
-        sid: submission.id,
-        aid: submission.assignment.id,
-        cloneurl: submission.augmented_clone_url,
-        branch: submission.gitbranch,
-        sha: submission.commithash
-      }
-      payload.to_json
-    end
 
     def unzip!(submission)
       output_path = Rails.root.join('var', 'submissions', 'code', "#{submission.id}")
@@ -34,25 +23,25 @@ class SubmissionUtils
     def notify_tools!(submission)
       submission.assignment.marking_tools.each do |mt|
         begin
-          uri = URI.parse(mt.url)
-          submission.log("Notifying #{mt.name} at #{uri}...")
-
-          http = Net::HTTP.new(uri.host, uri.port)
-          req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
-
-          req.body = build_json_payload(submission)
-
-          res = http.request(req)
-
-          submission.log("Received #{res.code} #{res.message} from #{mt.name}")
-        rescue Net::ReadTimeout => e
-          submission.log("Error notifying #{mt.name}: #{e.class} #{e.message}", 'Error')
-        rescue SocketError => e
-          submission.log("Error notifying #{mt.name}: #{e.class} #{e.message}", 'Error')
-        rescue StandardError => e
-          submission.log("Error notifying #{mt.name}: #{e.class} #{e.message}", 'Error')
+          SendSubmissionJob.perform_later submission.id, mt.id
+        rescue => e
+          submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", "Error")
+          submission.failed = true
+          submission.save!
         end
       end
+    end
+
+    def re_notify_tools!(submission, user)
+      # Pretend it's no longer a failed submission
+      submission.failed = false
+      submission.save!
+
+      submission.log("Resending submission to all marking tools at request of #{user.name}.")
+
+      SubmissionUtils.notify_tools!(submission)
+
+      !submission.failed?
     end
   end
 end

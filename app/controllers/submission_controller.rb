@@ -11,6 +11,7 @@ class SubmissionController < ApplicationController
 
   def new
     @submission = Submission.new
+    @submission.failed = false
     @submission.assignment = Assignment.find(params[:aid])
     return unless allowed_to_submit
 
@@ -110,8 +111,9 @@ class SubmissionController < ApplicationController
     SubmissionUtils.notify_tools!(@submission)
 
     render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
-  rescue
+  rescue StandardError => e
     render json: { data: 'Error!' }, status: 500, content_type: 'text/json'
+    @submission.log("Error creating submission: #{e.class} #{e.message}", "Error")
   end
 
   def edit_mark
@@ -132,6 +134,33 @@ class SubmissionController < ApplicationController
     @submission.save!
 
     @submission.log("Mark overridden to #{@submission.mark}% by #{current_user.name}")
+  end
+
+  def list_failed
+    return unless authenticate_admin!
+    @submissions = Submission.where(failed: true)
+  end
+
+  def resend
+    return unless authenticate_admin!
+    @submission = Submission.find(params[:id])
+
+    if (SubmissionUtils.re_notify_tools!(@submission, current_user)) then
+      redirect_to action: 'show', id: @submission.id
+    else
+      redirect_to action: 'list_failed'
+    end
+  end
+
+  def resend_all
+    return unless authenticate_admin!
+
+    submissions = Submission.where(failed: true)
+    submissions.each do |sub|
+      SubmissionUtils.re_notify_tools!(sub, current_user)
+    end
+
+    redirect_to action: 'list_failed'
   end
 
   private

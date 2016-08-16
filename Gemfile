@@ -11,7 +11,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use Unicorn as the app server
 gem 'unicorn-rails'
 # Devise for users/auth
-gem 'devise'
+gem 'devise', '3.5.2'
 # Datetime validations
 gem 'validates_timeliness', '~> 4.0'
 # Handling of ZIP archives
@@ -70,3 +70,7 @@ group :test do
   # CircleCI metadata collection
   gem 'rspec_junit_formatter', '0.2.2'
 end
+
+#gem 'bunny'
+#gem 'sneakers', '2.3.5'
+gem 'sneakers'

@@ -11,5 +11,7 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.for(:sign_up) do |u|
       u.permit(:email, :first_name, :last_name, :student_id, :password, :password_confirmation)
     end
+    # Use the below instead for devise versions > 4.1
+    #devise_parameter_sanitizer.permit(:sign_up, keys: [:email, :first_name, :last_name, :student_id, :password, :password_confirmation])
   end
 end

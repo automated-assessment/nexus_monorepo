@@ -66,7 +66,7 @@ RUN chown -R app:app $HOME
 
 EXPOSE 3000
 
-COPY docker-entrypoint.sh /entrypoint.sh
+COPY docker-entrypoint.dev.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 

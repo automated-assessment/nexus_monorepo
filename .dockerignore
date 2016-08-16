@@ -1,5 +1,6 @@
 .bundle
 node_modules
+/lib/web-ide/node_modules
 log
 tmp
 var
@@ -10,3 +11,4 @@ reports
 /public/assets
 /db/*.sqlite3
 /db/*.sqlite3-journal
+.git
