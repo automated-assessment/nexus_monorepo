@@ -1,11 +1,19 @@
 module ApplicationHelper
   def authenticate_admin!
-    if current_user && current_user.admin?
+    if is_admin?
       return true
     else
       redirect_to '/401'
       return false
     end
+  end
+
+  def is_admin?
+    current_user && current_user.admin?
+  end
+
+  def is_user? (user)
+    current_user && (current_user.id == user.id)
   end
 
   def distance_from_now_string(datetime)
