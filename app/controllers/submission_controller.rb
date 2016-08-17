@@ -7,6 +7,12 @@ class SubmissionController < ApplicationController
 
   def show
     @submission = Submission.find(params[:id])
+    # Only allow original submitter or admin users to see a submission
+    unless (is_admin? || (is_user? @submission.user))
+      @submission.log("Illegal attempt to access submission by user #{current_user.name} when submitting user was #{@submission.user.name}. Refusing access.", "Warning")
+      redirect_to '/401'
+      return
+    end
   end
 
   def new
