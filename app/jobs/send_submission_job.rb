@@ -18,7 +18,7 @@ class SendSubmissionJob < ActiveJob::Base
 
     res = http.request(req)
 
-    if ((res.code >= 200) && (res.code < 300)) then
+    if (res.code =~ /2../) then
       # Successfully handed submission over to tool
       @submission.log("Received #{res.code} #{res.message} from #{@marking_tool.name}", "Sucess")
     else
