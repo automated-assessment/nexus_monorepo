@@ -56,7 +56,7 @@
             </table>
           </td>
           <td>
-            <%# TODO: Show highest mark achieved by this user so far %>
+            <%= @assignment.highest_mark_for(u) %>
           </td>
         </tr>
       <% end %>
