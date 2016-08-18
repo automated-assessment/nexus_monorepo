@@ -84,6 +84,14 @@ class AssignmentController < ApplicationController
     headers['Content-Type'] ||= 'text/csv'
   end
 
+  def list_submissions
+    return unless authenticate_admin!
+
+    @assignment = Assignment.find(params[:id])
+    # Get all users who have made submissions to this assignment
+    @users = User.joins(:submissions).where(submissions: {assignment_id: params[:id]}).distinct.order(:name) || {}
+  end
+
   private
 
   def assignment_params
