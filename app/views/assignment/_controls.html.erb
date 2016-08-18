@@ -13,9 +13,9 @@
     <%= link_to(assignment_export_submissions_data_path(id: @assignment.id, format: :csv)) do %>
       <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'cloud-download' %> Export Submissions Data</button>
     <% end %>
-    <%#= link_to(assignment_export_submissions_data_path(id: @assignment.id, format: :csv)) do %>
+    <%= link_to(assignment_list_submissions_path(id: @assignment.id)) do %>
       <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'table' %> View All Submissions</button>
-    <%# end %>
+    <% end %>
 
 
     <%= link_to(assignment_deadline_extensions_path id: @assignment.id) do %>
