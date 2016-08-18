@@ -25,7 +25,35 @@
             <%= u.name %>
           </th>
           <td>
-            <%# TODO: Show all submissions for this user %>
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Submitted</th>
+                  <th>Attempt</th>
+                  <th>Mark</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% u.submissions_for(@assignment.id).each do |s| %>
+                  <tr>
+                    <th>
+                      <%= link_to s do %>
+                      <%= pretty_datetime s.submitted %>
+                      <% end %>
+                      <% if s.late %>
+                      <span class="label label-danger">Late</span>
+                      <% end %>
+                    </th>
+                    <td>
+                      <%= link_to s do %>
+                        #<%= s.attempt_number %>
+                      <% end %>
+                    </td>
+                    <td><%= display_final_mark s %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
           </td>
           <td>
             <%# TODO: Show highest mark achieved by this user so far %>
