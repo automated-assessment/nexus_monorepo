@@ -105,5 +105,23 @@ class GitUtils
     rescue Octokit::ClientError
       return false
     end
+
+    def has_valid_repo?(submission)
+      if (submission.studentrepo)
+        aug_url = submission.augmented_clone_url
+        refs = Git.ls_remote(aug_url)
+        unless (refs['branches'].nil?)
+          # Check the branch mentioned exists
+          return !refs['branches'][submission.gitbranch].nil?
+          # TODO Really should also be checking commit SHA existence, but I cannot seem to figure out how to do this without a full-fletched fetch of the branch, which I would prefer to avoid :-)
+        else
+          # No branches exist at all in remote repo
+          return false
+        end
+      else
+        # We've constructed the repo ourselves so this should be OK by default
+        return true
+      end
+    end
   end
 end

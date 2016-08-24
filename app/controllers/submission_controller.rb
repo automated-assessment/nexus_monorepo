@@ -73,9 +73,16 @@ class SubmissionController < ApplicationController
   def create_git
     @submission = Submission.new(submission_params)
     @submission.user = current_user
+    @submission.studentrepo = true
+
     return unless allowed_to_submit
 
-    @submission.studentrepo = true
+    unless (GitUtils.has_valid_repo?(@submission))
+      redirect_to new_submission_path(aid: @submission.assignment.id)
+      flash[:error] = "Branch or SHA don't exist in Git repository indicated. Please make sure you provide the correct information."
+      return
+    end
+
     @submission.save!
 
     SubmissionUtils.notify_tools!(@submission)
