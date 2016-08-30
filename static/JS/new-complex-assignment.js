@@ -6,6 +6,7 @@ var initialString = "public class HelloWorld { \n\n\t" +
 
 app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, toastr){
 	var th = $scope;
+
 	//INITIALIZATIONS
 	th.assingmentTitle = "";
 	th.listOfDictionaries = [];
@@ -111,7 +112,6 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, toastr){
 		th.inputArray.push("");
 		th.outputArray.push("");
 		th.descriptionArray.push("");
-		console.log(th.listOfIOTests);
 	};
 
 	///////////////////////////////////////////////BEGIN: FUNCTIONS For CodeMirror TextArea
@@ -158,35 +158,36 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, toastr){
 			th.previewRequirement = th.previewRequirement.replace(re, th.listOfDictSelected[i].dictionary.values[formula] );
 		}
 
-		//TYPE !
+		//TYPE 1
 		if (!th.checkUseOutput && !th.checkUseInput) {
-			th.typeOfAssignment = "Compile and Run users files with no input/output verification."
+			th.typeOfAssignment = "Compile and Run users files with NO input/output verification."
 			toastr.warning("In this way only compilation and run will be tested with no verification on results. Please wait for modal to appear.");
 			var objToSend = {
 				dataFilesArray: th.filesArray,
-				id: $cookies.get('harena-id'),
+				id: 'k1332897',
 			};
-			console.log(objToSend);
-			// //Check Educator's Code
-			// $http.post("/check-educator-code-no-input-no-output", objToSend).success(function(response) {
-			// 	th.response = response;
-
-			// 	$('#previewModal').modal('show');
-			// }).error(function(status) {
-			// 	toastr.error("ERROR - HTTP Request");
-			// }); 
-		} else if (!th.checkUseInput){
-			////TYPE 2
+			//Check Educator's Code
+			$http.post("/check-educator-code-no-input-no-output", objToSend).success(function(response) {
+				th.response = response;
+				console.log(response);
+				$('#previewModal').modal('show');
+			}).error(function(status) {
+				toastr.error("ERROR - HTTP Request");
+			}); 
+		} 
+		//TYPE 2
+		else if (!th.checkUseInput){
 			th.typeOfAssignment = "Compile, Run and Output Verification "
 			toastr.warning("Results based on dictionary will be tested.");
 
-		} else if (th.checkUseInput && th.checkUseOutput){
-			//////TYPE 3
+		} 
+		//Type 3
+		else if (th.checkUseInput && th.checkUseOutput){
 			toastr.warning("I/O + Unique Assignments Tested");
 			th.typeOfAssignment = "Compile and Run based on I/O testing.";
-
+			console.log(th.previewRequirement);
 			var objToSend = {
-				id: $cookies.get('harena-id'),
+				id: 'k1332897',
 				inputArray: th.inputArray,
 				outputArray: th.outputArray,
 				descriptionArray: th.descriptionArray,
@@ -196,9 +197,8 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, toastr){
 			};
 
 			//Check Educator's Code
-			$http.post("/check-educator-code-io", objToSend).success(function(response) {
+			$http.post("/check-educator-code-io-input-output", objToSend).success(function(response) {
 				th.response = response;
-
 				$('#previewModal').modal('show');
 			}).error(function(status) {
 				toastr.error("ERROR - HTTP Request");

@@ -1,4 +1,5 @@
-var app = angular.module('IndexModule',['ngRoute', 'ui.codemirror', 'toastr', 'ConfigModule', 'EduCreateIoAssignment']);
+var app = angular.module('IndexModule',['ngRoute', 'ui.codemirror', 'toastr', 'ConfigModule', 
+	'EduCreateIoAssignment', 'AssignmentModule']);
 
 
 app.config(['$routeProvider', function($routeProvider, $location) {
@@ -13,6 +14,14 @@ app.config(['$routeProvider', function($routeProvider, $location) {
 	}).
 	when('/404', {
 		templateUrl: '404.html'
+	}).
+	when('/complex', {
+		templateUrl: '/io-assignment.html',
+		controller: 'EduCreateIoAssignmentCtrl'
+	}).
+	when('/test/?', {
+		templateUrl: '/view-assignment.html',
+		controller: 'AssignmentCtrl'
 	}).
 	otherwise({
 		redirectTo: '/404'

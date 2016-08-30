@@ -103,12 +103,114 @@ app.post('/add-new-dictionary', function(req, res) {
 		}
 	});
 });
+
+
+//Requests for Complex IO
+app.post('/check-educator-code-no-input-no-output', function(req,res) {
+	//HTTP POST Request that only tests if the file provided by the educator compiles and runs
+	var rawPath = RAW_PATH + '/';
+	var dataFilesArray = req.body.dataFilesArray;
+	var id = req.body.id;
+	
+	var objToReturn = {
+		compiled: {
+			bool: false,
+			error: ""
+		},
+		results: {
+			ran: false,
+			error: ""
+		}
+	}
+
+	// Create Educator Directory
+	var mkdir = spawnSync('mkdir', [id], {cwd:rawPath, timeout:2000});
+
+	var path = rawPath + id + '/';
+	//Create Files with specified extension
+	createFiles(dataFilesArray, '.java', id);
+
+	//Get All Files with .extension Java
+	var childFind = execSync('find . -name "*.java" > sources.txt', { cwd: path });
+	
+	//Compile source (path) using SpawnSync
+	objToReturn = compileAllSources(path,objToReturn);
+
+	if (objToReturn.compiled) {
+		//Evaluate main source if all sources compiled
+		objToReturn = executeNiNoEducatorCode(dataFilesArray[0], path, objToReturn);
+
+		//Save in DB
+	} 
+	
+	//Delete Files (java + class) 
+	deleteFolder(path);
+
+	res.json(objToReturn);
+});
+
+app.post('/check-educator-code-io-input-output', function(req,res) {
+	var rawPath = RAW_PATH + '/';
+
+	var knumber = req.body.id;
+	var id = req.body.id;
+	var inputArray = req.body.inputArray;
+	var outputArray = req.body.outputArray;
+	var correctOutputArray = outputArray;
+	var descriptionArray = req.body.descriptionArray;
+	var dictionariesArray = req.body.dictionariesArray;
+	var dataFilesArray = req.body.dataFilesArray;
+
+	//Obtain the proper output to compare
+	for (var j = 0; j < correctOutputArray.length; ++j) {
+		for (var i = 0; i < dictionariesArray.length; ++i) {
+			var hash = "#" + (i+1);
+			var re = new RegExp(hash,'g');
+			correctOutputArray[j] = correctOutputArray[j].replace(re, dictionariesArray[i].dictionary.values[2]);
+		}
+	}
+
+	var objToReturn = {
+		compiled: {
+			bool: false,
+			error: ""
+		},
+		resultsArray: [],
+		allPassed: false,
+		numberOfTestsPassed: 0
+	}
+
+	// Create Educator Directory
+	var mkdir = spawnSync('mkdir', [id], {cwd:rawPath, timeout:2000});
+
+	var path = rawPath + id + '/';
+	//Create Files with specified extension
+	createFiles(dataFilesArray, '.java', id);
+
+	//Get All Files with .extension Java
+	var childFind = execSync('find . -name "*.java" > sources.txt', { cwd: path });
+	
+	//Compile source (path) using SpawnSync
+	objToReturn = compileAllSources(path,objToReturn);
+
+	if (objToReturn.compiled) {
+		//Evaluate main source if all sources compiled
+		objToReturn = executeEducatorCode(inputArray, outputArray, dataFilesArray[0], path, objToReturn);
+		//Save in DB
+	} 
+
+	//Delete Files (java + class) 
+	deleteFolder(path);
+
+	res.json(objToReturn);
+
+});
 ///////////////////////////////////////////EDUCATOR HTTP Requests: END////////////////////////////
 
 ///////////////////////////////////////////STUDENT HTTP Requests: BEGIN////////////////////////////
 
 app.post('/mark', function(req, res) {
-    res.status(200).send('OK!');
+    
     var body = {
         mark: 0
     };
@@ -153,40 +255,44 @@ app.post('/mark', function(req, res) {
 	objToReturn = compileAllSources(pathAssingment,objToReturn);
 
 	//Search for assignment in db
-	dbAssignments.assignments.findOne({aid : objDb.aid.toString()}, function(err, docs) {
-		//Run and compare results	
-		objToReturn = executeStudentCode(docs.inputArray, docs.outputArray, docs.feedbackArray, docs.dataFilesArray[0].class_name, pathAssingment, objToReturn);
-		
-		//Delete repo from Testing environment
-	    deleteFolder(pathAssingment);
-
-	    //Send Mark to Nexus
-	    body.mark = 100*objToReturn.numberOfTestsPassed / objToReturn.resultsArray.length;
-
-		var url = NEXUS_URL + 'report_mark/'+ req.body.sid + '/' + IOTOOL_ID;
-	    sendRequest(url, body);
-
-	    //Send Feedback to Nexus
-	    var bodyF = '';
-	    var urlF = NEXUS_URL + 'report_feedback/' + req.body.sid + '/' + IOTOOL_ID;
-	    if (body.mark == 100) {
-		    bodyF = '<div class="javac-feedback"><p class="text-info" style="color:green"><b><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>All tests passed correctly. Congrats!</b></p></div>';
+	dbAssignments.assignments2.findOne({aid : objDb.aid.toString()}, function(err, docs) {
+		if (err) {
+			sendRequest(urlF, {body: "error"});
 		} else {
-			bodyF = '<div class="javac-feedback">';
-			for (var i = 0; i < docs.feedbackArray.length; ++i) {
-				if (objToReturn.resultsArray[i].passed == false && objToReturn.resultsArray[i].error == false) {
-					bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Failed</label></p>';
-					bodyF += '<p class="text-info"><i>' + docs.feedbackArray[i] + '</i></p>'; 
-				} else if (objToReturn.resultsArray[i].passed == true && objToReturn.resultsArray[i].error == false){
-					bodyF += '<p class="text-info" style="color:green"><label><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Passed</label></p>';
-				} else {
-					bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Source did NOT RUN</label></p>';
-				}
-			}
-			bodyF += '</div>';
-		}
-		sendRequest(urlF, {body: bodyF});
+			//Run and compare results	
+			objToReturn = executeStudentCode(docs.inputArray, docs.outputArray, docs.feedbackArray, docs.dataFilesArray[0].class_name, pathAssingment, objToReturn);
+			
+			//Delete repo from Testing environment
+		    deleteFolder(pathAssingment);
 
+		    //Send Mark to Nexus
+		    body.mark = 100*objToReturn.numberOfTestsPassed / objToReturn.resultsArray.length;
+
+			var url = NEXUS_URL + 'report_mark/'+ req.body.sid + '/' + IOTOOL_ID;
+		    sendRequest(url, body);
+
+		    //Send Feedback to Nexus
+		    var bodyF = '';
+		    var urlF = NEXUS_URL + 'report_feedback/' + req.body.sid + '/' + IOTOOL_ID;
+		    if (body.mark == 100) {
+			    bodyF = '<div class="javac-feedback"><p class="text-info" style="color:green"><b><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>All tests passed correctly. Congrats!</b></p></div>';
+			} else {
+				bodyF = '<div class="javac-feedback">';
+				for (var i = 0; i < docs.feedbackArray.length; ++i) {
+					if (objToReturn.resultsArray[i].passed == false && objToReturn.resultsArray[i].error == false) {
+						bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Failed</label></p>';
+						bodyF += '<p class="text-info"><i>' + docs.feedbackArray[i] + '</i></p>'; 
+					} else if (objToReturn.resultsArray[i].passed == true && objToReturn.resultsArray[i].error == false){
+						bodyF += '<p class="text-info" style="color:green"><label><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Passed</label></p>';
+					} else {
+						bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Source did NOT RUN</label></p>';
+					}
+				}
+				bodyF += '</div>';
+			}	
+			res.status(200).send('OK!');
+			sendRequest(urlF, {body: bodyF});
+		}
 	});
 });
 ///////////////////////////////////////////STUDENT HTTP Requests: END////////////////////////////
@@ -239,6 +345,45 @@ function compileAllSources(path, objToReturn) {
 	} catch (error) {
 		objToReturn.compiled = false;
 		objToReturn.error = error;
+	}
+	return objToReturn;
+}
+
+function executeNiNoEducatorCode(dataFileArray, path, objToReturn){
+	var className = dataFileArray.class_name;
+	//To execute for every single test provided by the educator
+	var javaExecute = spawnSync('java', [className], {
+		cwd: path, 
+		timeout:2000
+	}); 
+
+	if (!(javaExecute.status == 0)) {
+		//get errors to the user
+		if (!(javaExecute.error == null)) {
+			objToReturn.results = {
+				error: true,
+				ran: false,
+				message: javaExecute.error
+			};
+		} else if (!(javaExecute.stderr.toString() == "")) {
+			objToReturn.results = {
+				error: true,
+				ran: false,
+				message: javaExecute.stderr.toString()
+			};
+		} else {
+			objToReturn.results = {
+				error:true,
+				ran: false,
+				message: "Unknown Error"
+			};
+		}
+	} else {
+		objToReturn.results = {
+			error: false,
+			ran:true
+		};
+		objToReturn.allPassed = true;
 	}
 	return objToReturn;
 }

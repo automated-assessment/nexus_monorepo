@@ -146,9 +146,11 @@
 				<!-- END: INPUT/OUTPUT Tests -->
 				
 				<!-- BEGIN: CodeMirror TextArea -->
-				<span class="col-lg-12 label label-primary"><h4>Part C - Skeleton Code Files</h4></span>
+				<span class="col-lg-12 label label-primary">
+					<h4>Part C - Skeleton Code Files</h4>
+				</span>
 				<div class="panel panel-success col-lg-12 col-md-12" ng-repeat="m in editorOptionsArray"  style="margin-top:10px;">
-					<div class="panel-heading col-lg-12">
+					<div class="panel-heading">
 						<label class="control-label">File {{$index}}</label>
 						<button type="button" class="btn btn-default btn-sm pull-right" data-toggle="collapse" data-target="#file{{$index}}"><i class="fa fa-expand" aria-hidden="true"></i>
 						</button>		
@@ -198,7 +200,8 @@
 							<i># have been substitued with words from dictionary based on formula with you Knumber</i>
 						</small>
 					</p>
-					<pre ng-bind-html="previewRequirement"></pre>
+					<!-- <pre ng-bind-html="previewRequirement"></pre> -->
+					<pre>{{previewRequirement}}</pre>
 				</div>
 				<div class="col-lg-12">
 					<b>Formula to be used:</b>
@@ -222,8 +225,11 @@
 				<div class="col-lg-12">
 					<div>
 						<p>
+							<b ng-hide="checkUseOutput">NO </b>
 							<b>Output:</b>
-							<div>
+							<b ng-show="checkUseOutput">:</b>
+							<b ng-hide="checkUseOutput">will be given to the students</b>
+							<div ng-show="checkUseOutput">
 								<pre>{{outputText}}</pre>
 								<b>Output Example</b>
 								<pre>{{outputExample}}</pre>
@@ -246,8 +252,8 @@
 					<p>
 						<b>Results:</b>
 						<h6>Compiled:&nbsp;
-							<i class="fa fa-circle-plus" style="color:green" ng-show="response.compiled.bool"> Passed</i>
-							<i class="fa fa-circle-times" style="color:red" ng-show="!response.compiled.bool"> Error</i>
+							<i class="fa fa-circle-plus" style="color:green" ng-show="response.compiled"> Passed</i>
+							<i class="fa fa-circle-times" style="color:red" ng-show="!response.compiled"> Error</i>
 						</h6>
 						<h6>Java Run:&nbsp;
 							<i class="fa fa-circle-plus" style="color:green" ng-show="response.results.ran"> Passed</i>
@@ -262,17 +268,18 @@
 					<p>
 						<b>Results:</b>
 						<h6>Compiled:&nbsp;
-							<i class="fa fa-circle-plus" style="color:green" ng-show="response.compiled.bool"> Passed</i>
-							<i class="fa fa-circle-times" style="color:red" ng-show="!response.compiled.bool"> Error</i>
+							<i class="fa fa-circle-plus" style="color:green" ng-show="response.compiled"> Passed</i>
+							<i class="fa fa-circle-times" style="color:red" ng-show="!response.compiled"> Error</i>
 						</h6>
 						<h6>Java Run:&nbsp;
-							<i class="fa fa-circle-plus" style="color:green" ng-show="response.allTestsPassed"> All Tests Passed</i>
-							<i class="fa fa-circle-times" style="color:red" ng-show="!response.allTestsPassed">Not All Tests Passed Verifications.</i>
+							<i class="fa fa-circle-plus" style="color:green" ng-show="response.allPassed"> All Tests Passed</i>
+							<i class="fa fa-circle-times" style="color:red" ng-show="!response.allPassed">Not All Tests Passed Verifications.</i>
 							<hr>
 							<div ng-repeat="test in response.resultsArray"> 
 								<i class="fa fa-check-circle" style="color:green" ng-show="test.passed" aria-hidden="true"> Test #{{$index}} Passed
 								</i>
-								<pre><i class="fa fa-times-circle" style="color:red" ng-show="!test.passed" aria-hidden="true"> Test #{{$index}} Error</i><i style="colour:black">Your Output{{test.output}}</i></pre>
+								<i class="fa fa-times-circle" style="color:red" ng-show="!test.passed" aria-hidden="true"> Test #{{$index}} Error</i>
+								<pre><i style="colour:black">Your Output: {{test.output}}</i></pre>
 							</div>
 						</h6>
 					</p>
