@@ -65,6 +65,8 @@ class SubmissionController < ApplicationController
       GitUtils.subsequent_push!(@submission)
     end
 
+    flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs." if @submission.ensure_enrolled!
+
     SubmissionUtils.notify_tools!(@submission)
 
     redirect_to action: 'show', id: @submission.id
@@ -84,6 +86,8 @@ class SubmissionController < ApplicationController
     end
 
     @submission.save!
+
+    flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs." if @submission.ensure_enrolled!
 
     SubmissionUtils.notify_tools!(@submission)
 
@@ -120,6 +124,8 @@ class SubmissionController < ApplicationController
     else
       GitUtils.subsequent_push!(@submission)
     end
+
+    flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs." if @submission.ensure_enrolled!
 
     SubmissionUtils.notify_tools!(@submission)
 
