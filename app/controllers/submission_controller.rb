@@ -65,9 +65,9 @@ class SubmissionController < ApplicationController
       GitUtils.subsequent_push!(@submission)
     end
 
-    SubmissionUtils.notify_tools!(@submission)
-
     @submission.ensure_enrolled!
+
+    SubmissionUtils.notify_tools!(@submission)
 
     redirect_to action: 'show', id: @submission.id
   end
@@ -87,9 +87,9 @@ class SubmissionController < ApplicationController
 
     @submission.save!
 
-    SubmissionUtils.notify_tools!(@submission)
-
     @submission.ensure_enrolled!
+
+    SubmissionUtils.notify_tools!(@submission)
 
     redirect_to action: 'show', id: @submission.id
   end
@@ -125,9 +125,9 @@ class SubmissionController < ApplicationController
       GitUtils.subsequent_push!(@submission)
     end
 
-    SubmissionUtils.notify_tools!(@submission)
-
     @submission.ensure_enrolled!
+
+    SubmissionUtils.notify_tools!(@submission)
 
     render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
   rescue StandardError => e
