@@ -78,6 +78,14 @@ class Submission < ActiveRecord::Base
     url
   end
 
+  def ensure_enrolled!
+    if (!current_user.enrolled_in?(assignment.course.id))
+      current_user.courses << assignment.course.id
+      flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs."
+      log("Auto-enrolling user #{current_user.name} to assignment.")
+    end
+  end
+
   def log(body, level = 'info')
     AuditItem.create!(submission: self,
                       body: body,
