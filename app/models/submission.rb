@@ -81,10 +81,11 @@ class Submission < ActiveRecord::Base
   def ensure_enrolled!
     if (!user.enrolled_in?(assignment.course.id))
       user.courses << assignment.course
-
-      flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs."
       log("Auto-enrolling user #{user.name} to assignment.")
+      true
     end
+
+    false
   end
 
   def log(body, level = 'info')
