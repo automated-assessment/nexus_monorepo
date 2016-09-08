@@ -20,6 +20,7 @@ An explanation of these vars can be found in the main Nexus repo
 - Initialise submodules: `git submodule init`
 - Fetch all submodules: `git submodule update`
 - Build: `docker-compose build`
+- Set up database: `docker-compose run nexus rake db:setup` (only needed first time or when schema has changed)
 - Run: `docker-compose up`
 
 ## References
