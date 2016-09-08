@@ -12,7 +12,8 @@ production:
   exchange_type: direct
   durable: true
   ack: true
-  daemonize: true        # Send to background
+  # Daemonizing somehow causes problems when actually running sneakers:work in docker environment.
+  #daemonize: true        # Send to background
   log: sneakers.log      # Log file
   pid_path: sneakers.pid # Pid file
 
