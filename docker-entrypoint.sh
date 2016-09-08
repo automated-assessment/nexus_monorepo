@@ -10,8 +10,6 @@ if [ "$1" = 'start-sneakers' ]; then
 fi
 
 if [ "$1" = 'init' ]; then
-	bundle install --without development test
-
 	npm install --production --silent
 
 	cd lib/web-ide

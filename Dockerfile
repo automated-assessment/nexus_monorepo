@@ -33,6 +33,11 @@ VOLUME $APP_DIR
 
 WORKDIR $APP_DIR
 
+# Initialise the bundles. Need to do this here because it would otherwise get lost at each run of init
+COPY Gemfile $APP_DIR/
+COPY Gemfile.lock $APP_DIR/
+RUN bundle install --without development test
+
 ENV RAILS_ENV production
 
 ENV SECRET_KEY_BASE $(dd if=/dev/random bs=64 count=1 2>/dev/null | od -An -tx1 | tr -d ' \t\n')
