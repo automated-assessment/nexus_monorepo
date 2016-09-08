@@ -48,4 +48,18 @@ class UserController < ApplicationController
     flash[:success] = "#{@user.name} is no longer an admin!"
     redirect_to user_list_path
   end
+
+  def delete
+    return unless authenticate_admin!
+    @user = User.find(params[:id])
+    if @user.eql?(current_user)
+      flash[:error] = 'You cannot delete yourself'
+      redirect_to user_list_path
+      return
+    end
+    @user.destroy
+
+    flash[:success] = "#{@user.name} has been removed"
+    redirect_to user_list_path    
+  end
 end

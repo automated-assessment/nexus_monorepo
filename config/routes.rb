@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get 'userlist' => 'pages#user_list', as: :user_list
   get 'user/grant_admin/:id' => 'user#grant_admin', as: :user_grant_admin
   get 'user/revoke_admin/:id' => 'user#revoke_admin', as: :user_revoke_admin
+  get 'user/delete/:id' => 'user#delete', as: :user_delete
 
   ### Courses
   get 'courses' => 'course#mine', as: :my_courses

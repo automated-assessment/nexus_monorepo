@@ -31,6 +31,11 @@
               <button type="button" name="button" class="btn btn-xs btn-warning"><%=icon 'user-md' %> Grant Admin</button>
             <% end %>
           <% end %>
+          <% unless user.eql?(current_user) %>
+            <%= link_to user_delete_path(id: user.id) do %>
+              <button type="button" name="button" class="btn btn-xs btn-danger"><%= icon 'trash-o' %> Delete</button>
+            <% end %>
+          <% end %>
         </td>
       </tr>
     <% end %>
