@@ -29,22 +29,9 @@ RUN curl -SLOk "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux
 ENV HOME /home/app
 ENV APP_DIR $HOME/src
 
+VOLUME $APP_DIR
+
 WORKDIR $APP_DIR
-
-COPY Gemfile $APP_DIR/
-COPY Gemfile.lock $APP_DIR/
-RUN bundle install --without development test
-
-COPY package.json $APP_DIR/
-COPY lib $APP_DIR/lib
-RUN npm install --production --silent
-RUN cd lib/web-ide && npm install --production --silent
-
-COPY . $APP_DIR/
-
-RUN mkdir -p $APP_DIR/tmp/pids && mkdir -p $APP_DIR/var/submissions/code && mkdir $APP_DIR/var/submissions/uploads && mkdir $APP_DIR/var/submissions/tmp
-
-RUN npm run build
 
 ENV RAILS_ENV production
 
@@ -52,8 +39,8 @@ ENV SECRET_KEY_BASE $(dd if=/dev/random bs=64 count=1 2>/dev/null | od -An -tx1 
 
 EXPOSE 3000
 
-COPY docker-entrypoint.dev.sh /entrypoint.sh
+COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD [ "start" ]
+CMD [ "start-rails" ]
