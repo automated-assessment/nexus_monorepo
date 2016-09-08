@@ -1,14 +1,5 @@
 FROM rails:4.2.4
 
-# grab gosu for easy step-down from root
-RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
-	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture)" \
-	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture).asc" \
-	&& gpg --verify /usr/local/bin/gosu.asc \
-	&& rm /usr/local/bin/gosu.asc \
-	&& chmod +x /usr/local/bin/gosu
-
 # install node
 # gpg keys listed at https://github.com/nodejs/node
 RUN set -ex \
@@ -38,36 +29,23 @@ RUN curl -SLOk "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux
 ENV HOME /home/app
 ENV APP_DIR $HOME/src
 
-RUN groupadd -r app && useradd -rmg app app
-RUN chown -R app:app $HOME
+VOLUME $APP_DIR
 
 WORKDIR $APP_DIR
 
+# Initialise the bundles. Need to do this here because it would otherwise get lost at each run of init
 COPY Gemfile $APP_DIR/
 COPY Gemfile.lock $APP_DIR/
 RUN bundle install --without development test
-
-COPY package.json $APP_DIR/
-COPY lib $APP_DIR/lib
-RUN npm install --production --silent
-RUN cd lib/web-ide && npm install --production --silent
-
-COPY . $APP_DIR/
-
-RUN mkdir -p $APP_DIR/tmp/pids && mkdir -p $APP_DIR/var/submissions/code && mkdir $APP_DIR/var/submissions/uploads && mkdir $APP_DIR/var/submissions/tmp
-
-RUN npm run build
 
 ENV RAILS_ENV production
 
 ENV SECRET_KEY_BASE $(dd if=/dev/random bs=64 count=1 2>/dev/null | od -An -tx1 | tr -d ' \t\n')
 
-RUN chown -R app:app $HOME
-
 EXPOSE 3000
 
-COPY docker-entrypoint.dev.sh /entrypoint.sh
+COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD [ "start" ]
+CMD [ "start-rails" ]

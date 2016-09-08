@@ -1,12 +1,28 @@
 #!/bin/bash
 set -e
 
-if [ "$1" = 'start' ]; then
-	# Start sneakers workers, expecting daemonize: true to be part of the production configuration
-	gosu app rake sneakers:work
+if [ "$1" = 'start-rails' ]; then
+	exec rails server -b 0.0.0.0
+fi
 
-	# Run the rails server
-	exec gosu app rails server -b 0.0.0.0
+if [ "$1" = 'start-sneakers' ]; then
+	exec rake sneakers:work
+fi
+
+if [ "$1" = 'init' ]; then
+	npm install --production --silent
+
+	cd lib/web-ide
+	npm install --production --silent
+	cd ../..
+
+	mkdir -p tmp/pids
+	mkdir -p var/submissions/code
+	mkdir -p var/submissions/uploads
+	mkdir -p var/submissions/tmp
+
+	npm run build
+	exec bundle exec rake db:setup
 fi
 
 exec "$@"
