@@ -2,6 +2,8 @@ version: '2'
 services:
   db:
     image: postgres:9.5.3
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
   nexus:
     build: nexus/
     volumes:
