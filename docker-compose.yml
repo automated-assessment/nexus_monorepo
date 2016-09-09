@@ -4,6 +4,8 @@ services:
     image: postgres:9.5.3
   nexus:
     build: nexus/
+    volumes:
+      - ./nexus:/home/app/src
     env_file: .env.list
     ports:
       - "3000:3000"
