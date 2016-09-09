@@ -12,6 +12,17 @@ NEXUS_GITHUB_TOKEN=
 NEXUS_GITHUB_ORG=
 ```
 
+For added security it is recommended that you also include a new user name and password for the rabbitmq server. These can be set using the following environment variables, also from `.env.list`:
+
+```
+RABBIT_MQ_USER=
+RABBITMQ_DEFAULT_USER=
+RABBIT_MQ_PWD=
+RABBITMQ_DEFAULT_PASS=
+```
+
+Note that the two user variables and the two password variables need to be set to the same values. Setting `RABBIT_MQ_HOST` or `RABBIT_MQ_PORT` will break the configuration. You can set `RABBIT_MQ_QNAME` if required.
+
 An explanation of these vars can be found in the main Nexus repo
 
 ## Getting Started
@@ -20,8 +31,10 @@ An explanation of these vars can be found in the main Nexus repo
 - Initialise submodules: `git submodule init`
 - Fetch all submodules: `git submodule update`
 - Build: `docker-compose build`
-- Set up database: `docker-compose run nexus rake db:setup` (only needed first time or when schema has changed)
+- Initialise: `docker-compose run nexus init` (only needed first time, when schema has changed, or when javascript component have been added or modified)
 - Run: `docker-compose up`
+
+This brings up the nexus server fully ready to run. The rabbitmq console can be found at `http://<hostname>:8081` using the user name and password as defined above.
 
 ## References
 - https://docs.docker.com/compose/overview/

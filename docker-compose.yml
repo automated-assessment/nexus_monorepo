@@ -2,10 +2,36 @@ version: '2'
 services:
   db:
     image: postgres:9.5.3
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
   nexus:
     build: nexus/
+    volumes_from:
+      - sneakers
     env_file: .env.list
+    environment:
+      RABBIT_MQ_HOST: rabbitmq
     ports:
       - "3000:3000"
     depends_on:
       - db
+      - rabbitmq
+  sneakers:
+    build: nexus/
+    command: start-sneakers
+    volumes:
+      - ./nexus:/home/app/src
+    env_file: .env.list
+    environment:
+      RABBIT_MQ_HOST: rabbitmq
+    depends_on:
+      - db
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "8081:15672" # mgt console
+    env_file: .env.list
+    volumes:
+      - ./rabbitmq_data:/var/lib/rabbitmq
+    depends_on:
+      - sneakers
