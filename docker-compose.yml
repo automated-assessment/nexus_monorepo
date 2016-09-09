@@ -6,10 +6,20 @@ services:
       - ./dbdata:/var/lib/postgresql/data
   nexus:
     build: nexus/
-    volumes:
-      - ./nexus:/home/app/src
+    volumes_from:
+      - sneakers
     env_file: .env.list
     ports:
       - "3000:3000"
     depends_on:
       - db
+      - sneakers
+  sneakers:
+    build: nexus/
+    command: start-sneakers
+    volumes:
+      - ./nexus:/home/app/src
+    env_file: .env.list
+    depends_on:
+      - db
+
