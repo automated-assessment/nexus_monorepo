@@ -34,6 +34,8 @@ An explanation of these vars can be found in the main Nexus repo
 - Initialise: `docker-compose run nexus init` (only needed first time, when schema has changed, or when javascript component have been added or modified)
 - Run: `docker-compose up`
 
+This brings up the nexus server fully ready to run. The rabbitmq console can be found at `http://<hostname>:8081` using the user name and password as defined above.
+
 ## References
 - https://docs.docker.com/compose/overview/
 - https://git-scm.com/book/en/v2/Git-Tools-Submodules
