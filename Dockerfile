@@ -1,6 +1,6 @@
 FROM node:4
 
-ENV PORT=3002
+ENV PORT=3000
 EXPOSE $PORT
 
 ENV HOME /home/app
