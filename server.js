@@ -11,7 +11,6 @@ const port = process.env.PORT || 5001;
 const app = express();
 
 app.use(bodyParser.json());
-app.use(express.json());
 app.use(errorhandler({
   dumpExceptions: true,
   showStack: true
