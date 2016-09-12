@@ -12,6 +12,7 @@ const configFile = 'config.json';
 
 const app = express();
 
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
@@ -19,6 +20,10 @@ app.use(errorhandler({
   dumpExceptions: true,
   showStack: true
 }));
+
+process.on('SIGINT', function() {
+    process.exit();
+});
 
 app.use('/static', express.static(path.resolve(__dirname, 'configPage', 'dist')));
 
@@ -56,16 +61,16 @@ app.post('/config', (req, res, next) => {
 });
 
 app.post('/mark', (req, res, next) => {
-  if (!req.query.sid || isNaN(req.query.sid)) {
+  if (!req.body.sid || isNaN(req.body.sid)) {
     res.status(400).send('Invalid sid (submission ID)');
     return next();
   }
-  if (!req.query.aid || isNaN(req.query.aid)) {
+  if (!req.body.aid || isNaN(req.body.aid)) {
     res.status(400).send('Invalid aid (assignment ID)');
     return next();
   }
-  const submissionID = req.query.sid;
-  const assignmentID = req.query.aid;
+  const submissionID = req.body.sid;
+  const assignmentID = req.body.aid;
   console.log(`Request to mark submission ${submissionID} (assignment ${assignmentID} received.`);
   res.sendStatus(200);
 
