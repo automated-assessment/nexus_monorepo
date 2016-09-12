@@ -25,6 +25,15 @@ Note that the two user variables and the two password variables need to be set t
 
 An explanation of these vars can be found in the main Nexus repo
 
+Additionally, the RNG tool that is now included in the docker-compose requires its own environment file called `.env.rng.list`. This should contain the following variables (as per the documentation in the rng repository):
+
+```
+NEXUS_TOOL_CANONICAL_NAME=
+NEXUS_ACCESS_TOKEN=
+```
+
+The access token must be valid for the nexus instance to be run.
+
 ## Getting Started
 - Clone the repo
 - Set up your `.env.list` - see above
