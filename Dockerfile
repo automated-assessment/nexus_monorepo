@@ -10,9 +10,11 @@ WORKDIR $APP_DIR
 
 COPY . $APP_DIR/
 
-RUN npm install --production --silent
+RUN npm install
 
-RUN cd configPage && npm install --production --silent
+RUN cd configPage && npm install
+
+RUN cd configPage && npm run build
 
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
