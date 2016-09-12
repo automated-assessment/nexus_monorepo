@@ -7,3 +7,6 @@
 [submodule "rng-tool"]
 	path = rng-tool
 	url = https://github.kcl.ac.uk/automated-assessment/rng-tool.git
+[submodule "sample-configurable-tool"]
+	path = sample-configurable-tool
+	url = https://github.kcl.ac.uk/automated-assessment/sample-configurable-tool.git
