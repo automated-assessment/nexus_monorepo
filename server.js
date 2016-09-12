@@ -16,6 +16,10 @@ app.use(errorhandler({
   showStack: true
 }));
 
+process.on('SIGINT', function() {
+    process.exit();
+});
+
 app.post('/mark', (req, res, next) => {
   if (!req.query.sid || isNaN(req.query.sid)) {
     res.status(400).send('Invalid sid (submission ID)');
