@@ -4,3 +4,6 @@
 [submodule "javac-tool"]
 	path = javac-tool
 	url = https://github.kcl.ac.uk/automated-assessment/javac-tool
+[submodule "rng-tool"]
+	path = rng-tool
+	url = https://github.kcl.ac.uk/automated-assessment/rng-tool.git
