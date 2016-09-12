@@ -11,6 +11,7 @@ const port = process.env.PORT || 5001;
 const app = express();
 
 app.use(bodyParser.json());
+app.use(express.json());
 app.use(errorhandler({
   dumpExceptions: true,
   showStack: true
@@ -21,11 +22,11 @@ process.on('SIGINT', function() {
 });
 
 app.post('/mark', (req, res, next) => {
-  if (!req.query.sid || isNaN(req.query.sid)) {
+  if (!req.body.sid || isNaN(req.body.sid)) {
     res.status(400).send('Invalid sid (submission ID)');
     return next();
   }
-  const submissionID = req.query.sid;
+  const submissionID = req.body.sid;
   console.log(`Request to mark submission ${submissionID} received.`);
   res.sendStatus(200);
 
