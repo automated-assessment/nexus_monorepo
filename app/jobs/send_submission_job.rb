@@ -20,7 +20,7 @@ class SendSubmissionJob < ActiveJob::Base
 
     if (res.code =~ /2../) then
       # Successfully handed submission over to tool
-      @submission.log("Received #{res.code} #{res.message} from #{@marking_tool.name}", "Sucess")
+      @submission.log("Received #{res.code} #{res.message} from #{@marking_tool.name}", "Success")
     else
       @submission.log("Received #{res.code} #{res.message} from #{@marking_tool.name}", "Error")
       record_fail!
