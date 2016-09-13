@@ -17,6 +17,10 @@ if (!process.env.SUBMISSIONS_DIRECTORY) {
   process.exit(1);
 }
 
+process.on('SIGINT', function() {
+    process.exit();
+});
+
 const app = express();
 
 app.use(bodyParser.json());
