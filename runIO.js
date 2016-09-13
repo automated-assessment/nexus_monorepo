@@ -13,6 +13,7 @@ var execSync = require('child_process').execSync;
 var mongojs = require('mongojs');
 var dbAssignments = mongojs('assignments',['assignments']);
 var dbDict = mongojs('dictionary', ['dictionary']);
+var dbTypeOne = mongojs('typeone', ['typeone']);
 
 //Server
 var app = express();
@@ -77,7 +78,9 @@ app.post('/check-educator-code', function(req, res) {
 			feedbackArray: feedback,
 			dataFilesArray: dataFilesArray
 		}
-		dbAssignments.assignments.insert(assignment, function(err,docs) {});
+		dbAssignments.assignments.insert(assignment, function(err,docs) {
+
+		});
 	} else {
 		//Do nothing
 	}
@@ -90,6 +93,16 @@ app.post('/check-educator-code', function(req, res) {
 app.get('/get-dictionaries', function(req,res) {
 	dbDict.dictionary.find(function(err, docs){
 		res.json(docs);
+	});
+});
+
+app.get('/get-assignments', function(req,res) {
+	objToReturn = {
+		typeone: []
+	}
+	dbTypeOne.typeone.find(function(err, docs) {
+		objToReturn.typeone = docs;
+		res.json(objToReturn);
 	});
 });
 
@@ -139,15 +152,43 @@ app.post('/check-educator-code-no-input-no-output', function(req,res) {
 	if (objToReturn.compiled) {
 		//Evaluate main source if all sources compiled
 		objToReturn = executeNiNoEducatorCode(dataFilesArray[0], path, objToReturn);
-
-		//Save in DB
+		res.json(objToReturn);
 	} 
-	
 	//Delete Files (java + class) 
 	deleteFolder(path);
-
-	res.json(objToReturn);
 });
+
+app.post('/save-assignment', function(req,res) {
+
+	if (req.body.type == 1) {
+		//Save in DB
+		var objToInsert = {
+			title: req.body.title,
+			requirement: req.body.requirement,
+			id: req.body.id,
+			dataFilesArray: req.body.dataFilesArray
+		}
+		dbTypeOne.typeone.insert(objToInsert, function(err,docs) {
+			if (err) {
+				objToSend = {
+					error: true,
+					message: "MongoDB-Error"
+				};
+				res.json(objToSend);
+			} else {
+				objToSend = {
+					error: false,
+					message: "Assignment added Successfully"
+				};
+				res.json(objToSend)
+			}
+		});
+	} else {
+		res.json("tea[a");
+	}
+
+});
+
 
 app.post('/check-educator-code-io-input-output', function(req,res) {
 	var rawPath = RAW_PATH + '/';

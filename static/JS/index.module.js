@@ -1,12 +1,20 @@
 var app = angular.module('IndexModule',['ngRoute', 'ui.codemirror', 'toastr', 'ConfigModule', 
-	'EduCreateIoAssignment', 'AssignmentModule']);
+	'EduCreateIoAssignment', 'AssignmentModule', 'HomeModule', 'ListAssignmentsModule']);
 
 
 app.config(['$routeProvider', function($routeProvider, $location) {
 	$routeProvider.
+	when('/', {
+		templateUrl: 'home.html',
+		controller: 'HomeCtrl'
+	}).
 	when('/config', {
-		templateUrl: '/config.html',
+		templateUrl: 'config.html',
 		controller: 'ConfigCtrl'
+	}).
+	when('/list-assignments', {
+		templateUrl: 'list_assignments.html',
+		controller: 'ListAssingmentsCtrl'
 	}).
 	when('/iotool', {
 		templateUrl: '/io-assignment.html',
@@ -19,7 +27,7 @@ app.config(['$routeProvider', function($routeProvider, $location) {
 		templateUrl: '/io-assignment.html',
 		controller: 'EduCreateIoAssignmentCtrl'
 	}).
-	when('/test/?', {
+	when('/assginment/?', {
 		templateUrl: '/view-assignment.html',
 		controller: 'AssignmentCtrl'
 	}).

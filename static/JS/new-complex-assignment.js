@@ -165,11 +165,12 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, toastr){
 			var objToSend = {
 				dataFilesArray: th.filesArray,
 				id: 'k1332897',
+				title: th.assingmentTitle,
+				requirement: th.requirement
 			};
 			//Check Educator's Code
 			$http.post("/check-educator-code-no-input-no-output", objToSend).success(function(response) {
 				th.response = response;
-				console.log(response);
 				$('#previewModal').modal('show');
 			}).error(function(status) {
 				toastr.error("ERROR - HTTP Request");
@@ -193,7 +194,8 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, toastr){
 				descriptionArray: th.descriptionArray,
 				dictionariesArray: th.listOfDictSelected,
 				dataFilesArray: th.filesArray,
-				formula: th.formula
+				formula: th.formula,
+				title: th.assingmentTitle
 			};
 
 			//Check Educator's Code
@@ -210,7 +212,26 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, toastr){
 	}
 
 	th.addAssignment = function() {
-		console.log("Adding");
+		if (!th.checkUseOutput && !th.checkUseInput) {
+			//TYPE 1
+			var objToSend = {
+				type: 1,
+				dataFilesArray: th.filesArray,
+				id: 'k1332897',
+				title: th.assingmentTitle,
+				requirement: th.requirement
+			};
+			$http.post("/save-assignment", objToSend).success(function(response) {
+				if (response.error) {
+					toastr.error(response.message);
+				} else {
+					toastr.success(response.message);
+				}
+				$('#previewModal').modal('hide');
+			}).error(function(status) {
+				toastr.error("ERROR - HTTP Request");
+			});	
+		}
 	}
 	///////////////////////////////////////////////END: FUNCTIONS for creating and verifying assignments
 });
