@@ -2,7 +2,8 @@
 set -e
 
 if [ "$1" = 'start' ]; then
-	exec gosu app node .
+  chown -R app:app /home/app/submissions
+  exec gosu app node .
 fi
 
 exec "$@"
