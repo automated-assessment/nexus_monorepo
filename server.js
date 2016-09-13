@@ -84,4 +84,4 @@ app.post('/mark', (req, res, next) => {
 
 app.listen(port, () => {
   console.log(`Tool listening on port ${port}!`);
-});A
+});
