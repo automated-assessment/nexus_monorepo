@@ -2,7 +2,7 @@
 set -e
 
 if [ "$1" = 'start' ]; then
-	exec gosu app npm "$@"
+	exec gosu app node .
 fi
 
 exec "$@"
