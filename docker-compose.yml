@@ -17,6 +17,7 @@ services:
       - db
       - rabbitmq
       - rng-tool # Need to include in dependencies or it won't get started
+      - config-tool # Need to include in dependencies or it won't get started
   sneakers:
     build: nexus/
     command: start-sneakers
@@ -43,3 +44,11 @@ services:
       NEXUS_BASE_URL: http://nexus:3000
     ports:
       - "3001:3000"
+  config-tool:
+    build: sample-configurable-tool/
+    env_file: .env.conf.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+    ports:
+      - "3002:3000"
+
