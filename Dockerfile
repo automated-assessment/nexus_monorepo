@@ -32,14 +32,14 @@ ENV APP_DIR $HOME/src
 # Set up submissions directory
 RUN mkdir -p /home/app/submissions
 ENV SUBMISSIONS_DIRECTORY $HOME/submissions
-VOLUME SUBMISSIONS_DIRECTORY # Not sure this is needed
+VOLUME ${SUBMISSIONS_DIRECTORY} # Not sure this is needed
 
 RUN groupadd -r app && useradd -rmg app app
 RUN chown -R app:app $HOME
 
 WORKDIR $APP_DIR
 
-COPY package.json $APP_DIR/
+COPY package.json $APP_DIR/A
 RUN npm install --production --silent
 
 COPY . $APP_DIR/
