@@ -18,6 +18,7 @@ services:
       - rabbitmq
       - rng-tool # Need to include in dependencies or it won't get started
       - config-tool # Need to include in dependencies or it won't get started
+      - javac-tool # Need to include in dependencies or it won't get started
   sneakers:
     build: nexus/
     command: start-sneakers
@@ -51,4 +52,12 @@ services:
       NEXUS_BASE_URL: http://nexus:3000
     ports:
       - "3002:3000"
-
+  javac-tool:
+    build: javac-tool/
+    env_file: .env.javac.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+    ports:
+      - "3003:5000"
+    volumes:
+      - ./javac_data:/home/app/submissions

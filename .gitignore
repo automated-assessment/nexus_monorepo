@@ -1,3 +1,4 @@
 .env*
 dbdata/
 rabbitmq_data/
+javac_data/
