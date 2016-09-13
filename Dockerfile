@@ -39,7 +39,7 @@ RUN chown -R app:app $HOME
 
 WORKDIR $APP_DIR
 
-COPY package.json $APP_DIR/A
+COPY package.json $APP_DIR/
 RUN npm install --production --silent
 
 COPY . $APP_DIR/
