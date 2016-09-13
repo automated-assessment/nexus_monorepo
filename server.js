@@ -12,6 +12,11 @@ if (!process.env.NEXUS_ACCESS_TOKEN) {
   process.exit(1);
 }
 
+if (!process.env.SUBMISSIONS_DIRECTORY) {
+  console.log('Error: Specify SUBMISSIONS_DIRECTORY in environment');
+  process.exit(1);
+}
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -25,7 +30,9 @@ app.post('/mark', (req, res, next) => {
   const cloneURL = req.body.cloneurl;
   const branch = req.body.branch;
   const sha = req.body.sha;
-  const sourceDir = `cloned-submission-${submissionID}`;
+
+  const sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
+  console.log (`Using directory ${sourceDir}.`);
 
   let output = '';
   console.log(`Request to mark submission ${submissionID} received.`);
@@ -73,4 +80,4 @@ app.post('/mark', (req, res, next) => {
 
 app.listen(port, () => {
   console.log(`Tool listening on port ${port}!`);
-});
+});A
