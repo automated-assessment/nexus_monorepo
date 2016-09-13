@@ -29,6 +29,11 @@ RUN \
 ENV HOME /home/app
 ENV APP_DIR $HOME/src
 
+# Set up submissions directory
+RUN mkdir -p /home/app/submissions
+ENV SUBMISSIONS_DIRECTORY $HOME/submissions
+VOLUME SUBMISSIONS_DIRECTORY # Not sure this is needed
+
 RUN groupadd -r app && useradd -rmg app app
 RUN chown -R app:app $HOME
 
@@ -48,4 +53,3 @@ RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["start"]
-
