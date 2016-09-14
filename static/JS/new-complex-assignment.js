@@ -186,7 +186,6 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, toastr){
 		else if (th.checkUseInput && th.checkUseOutput){
 			toastr.warning("I/O + Unique Assignments Tested");
 			th.typeOfAssignment = "Compile and Run based on I/O testing.";
-			console.log(th.previewRequirement);
 			var objToSend = {
 				id: 'k1332897',
 				inputArray: th.inputArray,
@@ -212,14 +211,36 @@ app.controller('EduCreateIoAssignmentCtrl', function($scope, $http, toastr){
 	}
 
 	th.addAssignment = function() {
+		//TYPE 1
 		if (!th.checkUseOutput && !th.checkUseInput) {
-			//TYPE 1
 			var objToSend = {
 				type: 1,
 				dataFilesArray: th.filesArray,
 				id: 'k1332897',
 				title: th.assingmentTitle,
 				requirement: th.requirement
+			};
+			$http.post("/save-assignment", objToSend).success(function(response) {
+				if (response.error) {
+					toastr.error(response.message);
+				} else {
+					toastr.success(response.message);
+				}
+				$('#previewModal').modal('hide');
+			}).error(function(status) {
+				toastr.error("ERROR - HTTP Request");
+			});	
+		} else if (th.checkUseOutput && th.checkUseInput) {
+			var objToSend = {
+				id: 'k1332897',
+				type: 3,
+				inputArray: th.inputArray,
+				outputArray: th.outputArray,
+				descriptionArray: th.descriptionArray,
+				dictionariesArray: th.listOfDictSelected,
+				dataFilesArray: th.filesArray,
+				formula: th.formula,
+				title: th.assingmentTitle
 			};
 			$http.post("/save-assignment", objToSend).success(function(response) {
 				if (response.error) {

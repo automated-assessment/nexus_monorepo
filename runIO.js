@@ -14,6 +14,8 @@ var mongojs = require('mongojs');
 var dbAssignments = mongojs('assignments',['assignments']);
 var dbDict = mongojs('dictionary', ['dictionary']);
 var dbTypeOne = mongojs('typeone', ['typeone']);
+var dbTypeTwo = mongojs('typetwo', ['typetwo']);
+var dbTypeThree = mongojs('typethree', ['typethree']);
 
 //Server
 var app = express();
@@ -98,12 +100,20 @@ app.get('/get-dictionaries', function(req,res) {
 
 app.get('/get-assignments', function(req,res) {
 	objToReturn = {
-		typeone: []
+		typeone: [],
+		typethree: []
 	}
 	dbTypeOne.typeone.find(function(err, docs) {
 		objToReturn.typeone = docs;
-		res.json(objToReturn);
+		dbTypeThree.typethree.find(function(err, docs) {
+			objToReturn.typethree = docs;
+			res.json(objToReturn);
+		});
 	});
+});
+
+app.get('/get-assignment-by-id', function(req, res) {
+	console.log(req.params);
 });
 
 app.post('/add-new-dictionary', function(req, res) {
@@ -153,6 +163,8 @@ app.post('/check-educator-code-no-input-no-output', function(req,res) {
 		//Evaluate main source if all sources compiled
 		objToReturn = executeNiNoEducatorCode(dataFilesArray[0], path, objToReturn);
 		res.json(objToReturn);
+	} else {
+		res.json(objToReturn);
 	} 
 	//Delete Files (java + class) 
 	deleteFolder(path);
@@ -183,8 +195,29 @@ app.post('/save-assignment', function(req,res) {
 				res.json(objToSend)
 			}
 		});
+	} else if (req.body.type == 3) {
+		var objToInsert = req.body;
+		dbTypeThree.typethree.insert(objToInsert, function(err,docs) {
+			if (err) {
+				objToSend = {
+					error: true,
+					message: "MongoDB-Error"
+				};
+				res.json(objToSend);
+			} else {
+				objToSend = {
+					error: false,
+					message: "Assignment added Successfully"
+				};
+				res.json(objToSend)
+			}
+		});
 	} else {
-		res.json("tea[a");
+		objToSend = {
+			error: true,
+			message: "Other Types missing"
+		};
+		res.json(objToSend);
 	}
 
 });
@@ -238,12 +271,14 @@ app.post('/check-educator-code-io-input-output', function(req,res) {
 		//Evaluate main source if all sources compiled
 		objToReturn = executeEducatorCode(inputArray, outputArray, dataFilesArray[0], path, objToReturn);
 		//Save in DB
-	} 
-
+		res.json(objToReturn);
+	} else {
+		res.json(objToReturn);
+	}
 	//Delete Files (java + class) 
 	deleteFolder(path);
 
-	res.json(objToReturn);
+	
 
 });
 ///////////////////////////////////////////EDUCATOR HTTP Requests: END////////////////////////////
