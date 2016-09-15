@@ -12,7 +12,7 @@ var execSync = require('child_process').execSync;
 //GLOBAL VARIABLES
 var PORT = process.env.PORT || 3001;
 var RAW_PATH = process.env.RAW_PATH || 'TestingEnvironment';
-var NEXUS_URL = process.env.NEXUS_URL || 'http://localhost:3000/';
+var NEXUS_BASE_URL = process.env.NEXUS_BASE_URL || 'http://localhost:3000';
 var IOTOOL_ID = process.env.IOTOOL_ID || 'iotool';
 var NEXUS_ACCESS_TOKEN = process.env.NEXUS_ACCESS_TOKEN;
 var MONGO_HOST = process.env.MONGO_HOST || 'localhost';
@@ -349,12 +349,12 @@ app.post('/mark', function(req, res) {
 		    //Send Mark to Nexus
 		    body.mark = 100*objToReturn.numberOfTestsPassed / objToReturn.resultsArray.length;
 
-			var url = NEXUS_URL + 'report_mark/'+ req.body.sid + '/' + IOTOOL_ID;
+			var url = NEXUS_BASE_URL + '/report_mark/'+ req.body.sid + '/' + IOTOOL_ID;
 		    sendRequest(url, body);
 
 		    //Send Feedback to Nexus
 		    var bodyF = '';
-		    var urlF = NEXUS_URL + 'report_feedback/' + req.body.sid + '/' + IOTOOL_ID;
+		    var urlF = NEXUS_BASE_URL + '/report_feedback/' + req.body.sid + '/' + IOTOOL_ID;
 		    if (body.mark == 100) {
 			    bodyF = '<div class="javac-feedback"><p class="text-info" style="color:green"><b><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>All tests passed correctly. Congrats!</b></p></div>';
 			} else {
