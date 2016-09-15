@@ -32,7 +32,7 @@ node runIO.js
 - **RAW_PATH** - Represents the folder in which sources will be tested (by default 'TestingEnvironment')
 - **IOTOOL_ID** - ID for the IOTOOL which is set in NEXUS (by default 'iotool')
 - **NEXUS_ACCESS_TOKEN** - TOKEN Required for validating HTTP Requests between NEXUS and IOTOOL
-- **NEXUS_URL** - Nexus base URL (By default _http://localhost:3000/_)
+- **NEXUS_BASE_URL** - Nexus base URL without final / (By default _http://localhost:3000_)
 - **MONGO_HOST** - host name for mongoDB server (defaults to _localhost_)
 
 ###HTTP Endpoints
