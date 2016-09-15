@@ -33,6 +33,7 @@ node runIO.js
 - **IOTOOL_ID** - ID for the IOTOOL which is set in NEXUS (by default 'iotool')
 - **NEXUS_ACCESS_TOKEN** - TOKEN Required for validating HTTP Requests between NEXUS and IOTOOL
 - **NEXUS_URL** - Nexus base URL (By default _http://localhost:3000/_)
+- **MONGO_HOST** - host name for mongoDB server (defaults to _localhost_)
 
 ###HTTP Endpoints
 ##### `POST /mark`

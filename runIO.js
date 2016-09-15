@@ -9,13 +9,21 @@ var spawnSync = require('child_process').spawnSync;
 var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
 
+//GLOBAL VARIABLES
+var PORT = process.env.PORT || 3001;
+var RAW_PATH = process.env.RAW_PATH || 'TestingEnvironment';
+var NEXUS_URL = process.env.NEXUS_URL || 'http://localhost:3000/';
+var IOTOOL_ID = process.env.IOTOOL_ID || 'iotool';
+var NEXUS_ACCESS_TOKEN = process.env.NEXUS_ACCESS_TOKEN;
+var MONGO_HOST = process.env.MONGO_HOST || 'localhost';
+
 //MongoDB
 var mongojs = require('mongojs');
-var dbAssignments = mongojs('assignments',['assignments']);
-var dbDict = mongojs('dictionary', ['dictionary']);
-var dbTypeOne = mongojs('typeone', ['typeone']);
-var dbTypeTwo = mongojs('typetwo', ['typetwo']);
-var dbTypeThree = mongojs('typethree', ['typethree']);
+var dbAssignments = mongojs(`${MONGO_HOST}/assignments`, ['assignments']);
+var dbDict = mongojs(`${MONGO_HOST}/dictionary`, ['dictionary']);
+var dbTypeOne = mongojs(`${MONGO_HOST}/typeone`, ['typeone']);
+var dbTypeTwo = mongojs(`${MONGO_HOST}/typetwo`, ['typetwo']);
+var dbTypeThree = mongojs(`${MONGO_HOST}/typethree`, ['typethree']);
 
 //Server
 var app = express();
@@ -28,14 +36,6 @@ app.use(bodyParser.json());
 process.on('SIGINT', function() {
     process.exit();
 });
-
-//GLOBAL VARIABLES 
-var PORT = process.env.PORT || 3001;
-var RAW_PATH = process.env.RAW_PATH || 'TestingEnvironment';
-var NEXUS_URL = process.env.NEXUS_URL || 'http://localhost:3000/';
-var IOTOOL_ID = process.env.IOTOOL_ID || 'iotool';
-var NEXUS_ACCESS_TOKEN = process.env.NEXUS_ACCESS_TOKEN;
-
 
 app.listen(PORT);
 console.log("Server running on http://localhost:" + PORT + "/");
