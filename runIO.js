@@ -24,6 +24,11 @@ app.use(express.static(__dirname + "/static/"));
 //HTTP Requests
 app.use(bodyParser.json());
 
+//Ensure correct reaction to Ctrl-C
+process.on('SIGINT', function() {
+    process.exit();
+});
+
 //GLOBAL VARIABLES 
 var PORT = process.env.PORT || 3001;
 var RAW_PATH = process.env.RAW_PATH || 'TestingEnvironment';
