@@ -387,7 +387,7 @@ function cloneGitRepo(url, pathToClone) {
 			timeout:2000
 		});
 	
-	if (!(gitClone.status == 0)) {e
+	if (!(gitClone.status == 0)) {
 		//get errors to the user
 		if (!(gitClone.error == null)) {
 			console.log(gitClone.error);
