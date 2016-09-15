@@ -336,7 +336,7 @@ app.post('/mark', function(req, res) {
 	objToReturn = compileAllSources(pathAssingment,objToReturn);
 
 	//Search for assignment in db
-	dbAssignments.assignments2.findOne({aid : objDb.aid.toString()}, function(err, docs) {
+	dbAssignments.assignments.findOne({aid : objDb.aid.toString()}, function(err, docs) {
 		if (err) {
 			sendRequest(urlF, {body: "error"});
 		} else {
