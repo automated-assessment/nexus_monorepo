@@ -2,7 +2,7 @@ var	fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
-var envVar = require('dotenv').config();
+var envVar = require('dotenv').config({silent: true});
 //Library for linux commands. e.g javac
 var spawn = require('child_process').spawn;
 var spawnSync = require('child_process').spawnSync;
@@ -23,6 +23,11 @@ app.use(express.static(__dirname + "/static/"));
 
 //HTTP Requests
 app.use(bodyParser.json());
+
+//Ensure correct reaction to Ctrl-C
+process.on('SIGINT', function() {
+    process.exit();
+});
 
 //GLOBAL VARIABLES 
 var PORT = process.env.PORT || 3001;
