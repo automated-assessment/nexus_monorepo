@@ -19,6 +19,7 @@ services:
       - rng-tool # Need to include in dependencies or it won't get started
       - config-tool # Need to include in dependencies or it won't get started
       - javac-tool # Need to include in dependencies or it won't get started
+      - io-tool # Need to include in dependencies or it won't get started
   sneakers:
     build: nexus/
     command: start-sneakers
@@ -61,3 +62,19 @@ services:
       - "3003:5000"
     volumes:
       - ./javac_data:/home/app/submissions
+  io-tool:
+    build: IO-tool/
+    env_file: .env.iotool.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+      MONGO_HOST: mongodb
+    ports:
+      - "3004:3001"
+    volumes:
+      - ./iotool_data:/home/app/submissions
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - ./mongodata:/data/db
