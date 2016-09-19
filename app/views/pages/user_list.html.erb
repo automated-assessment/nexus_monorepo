@@ -7,6 +7,7 @@
     <tr>
       <th>Name</th>
       <th>uid</th>
+      <th>GHE login</th>
       <th>Email</th>
       <th>Admin?</th>
       <th>Controls</th>
@@ -17,6 +18,7 @@
       <tr>
         <th scope="row"><%= user.name %></th>
         <td><%= user.uid %></td>
+        <td><%= user.ghe_login %></td>
         <td><%= user.email %></td>
         <td><%= boolean_icon user.admin? %></td>
         <td>
