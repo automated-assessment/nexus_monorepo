@@ -2,11 +2,11 @@
 <p>
   <%= markdown(@assignment.description) %>
   <hr />
-  <h4>Marking Tools</h4>
+  <h4>Marking Scheme</h4>
   <table class="table table-hover">
     <thead>
       <tr>
-        <th>Tool</th>
+        <th>Rubric</th>
         <th>Context</th>
         <% if !@assignment.feedback_only %>
         <th>Weight</th>
