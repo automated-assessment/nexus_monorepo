@@ -39,7 +39,9 @@
   </div>
 </div>
 
+<% if !@submission.assignment.feedback_only %>
 <h4>Final Mark: <%= display_final_mark @submission %></h4>
+<% end %>
 
 <br />
 
