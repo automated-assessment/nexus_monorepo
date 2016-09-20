@@ -34,7 +34,13 @@
               #<%= s.attempt_number %>
             <% end %>
           </td>
-          <td><%= display_final_mark s %></td>
+          <td>
+            <% if s.assignment.feedback_only %>
+              Not marked automatically
+            <% else %>
+              <%= display_final_mark s %>
+            <% end %>
+          </td>
         </tr>
       <% end %>
     </tbody>
