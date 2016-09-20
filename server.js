@@ -66,7 +66,7 @@ app.post('/mark', (req, res, next) => {
       sendMark(100, submissionID, (err, res, body) => {
         if (err) {
           console.log(`Error from request: ${err}`);
-          res.sendStatus(500);
+          res.status(500).send(`Error from Nexus mark request: ${err}`);
         }
       });
   
@@ -77,7 +77,7 @@ app.post('/mark', (req, res, next) => {
       sendMark(0, submissionID, (err, res, body) => {
         if (err) {
           console.log(`Error from request: ${err}`);
-          res.sendStatus(500);
+          res.status(500).send(`Error from Nexus mark request: ${err}`);
         }
       });
 
@@ -86,13 +86,13 @@ app.post('/mark', (req, res, next) => {
       // Send output as feedback
       sendFeedback(`<div class="javac-feedback">${output}</div>`, submissionID, (err, res, body) => {
         if (err) {
-          console.log(`Error from request: ${err}`);
+          console.log(`Error from Nexus feedback request: ${err}`);
         }
       });
     }
   } catch (e) {
     // Fix what request response we sent so that nexus knows something has gone wrong
-    res.sendStatus (500);
+    res.status (500).send(`Error in javac-tool: ${e.toString()},\n${e.output.toString()}`);
   }
   finally {
     return next();
