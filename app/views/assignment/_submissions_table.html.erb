@@ -6,7 +6,9 @@
       <tr>
         <th>Submitted</th>
         <th>Attempt</th>
+        <% if !@assignment.feedback_only %>
         <th>Mark</th>
+        <% end %>
       </tr>
     </thead>
     <tbody>
@@ -25,14 +27,18 @@
               #<%= s.attempt_number %>
             <% end %>
           </td>
+          <% if !@assignment.feedback_only %>
           <td><%= display_final_mark s %></td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>
   </table>
+  <% if !@assignment.feedback_only %>
   <p>
     Highest mark: <%= @assignment.highest_mark_for(current_user) %>
   </p>
+  <% end %>
 <% end %>
 
 <div class="center-controls">

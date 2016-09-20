@@ -8,7 +8,9 @@
       <tr>
         <th>Tool</th>
         <th>Context</th>
+        <% if !@assignment.feedback_only %>
         <th>Weight</th>
+        <% end %>
       </tr>
     </thead>
     <tbody>
@@ -16,7 +18,9 @@
         <tr>
           <th scope="row"><%= t.marking_tool.name %></th>
           <td><%= t.context %></td>
+          <% if !@assignment.feedback_only %>
           <td><%= t.weight %>%</td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>

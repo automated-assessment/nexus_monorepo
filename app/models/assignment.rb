@@ -12,6 +12,7 @@ class Assignment < ActiveRecord::Base
   validates :start, presence: true
   validates :deadline, presence: true
   validates :allow_late, inclusion: [true, false]
+  validates :feedback_only, inclusion: [true, false]
   validates :course, presence: true
 
   validate :valid_weightings
