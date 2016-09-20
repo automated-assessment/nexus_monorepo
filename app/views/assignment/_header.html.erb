@@ -6,6 +6,7 @@
     <h6>ZIP Submissions <%= boolean_icon @assignment.allow_zip %></h6>
     <h6>Git Submissions <%= boolean_icon @assignment.allow_git %></h6>
     <h6>IDE Submissions <%= boolean_icon @assignment.allow_ide %></h6>
+    <h6>Fully marked <%= boolean_icon !@assignment.feedback_only %></h6>
 
     <hr />
     <div class="assignment-dates">
