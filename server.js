@@ -30,54 +30,71 @@ app.use(errorhandler({
 }));
 
 app.post('/mark', (req, res, next) => {
-  const submissionID = req.body.sid;
-  const cloneURL = req.body.cloneurl;
-  const branch = req.body.branch;
-  const sha = req.body.sha;
-
-  const sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
-  console.log (`Using directory ${sourceDir}.`);
-
-  let output = '';
-  console.log(`Request to mark submission ${submissionID} received.`);
-  res.sendStatus(200);
-
-  // clone repo
-  const childGitClone = execSync(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`);
-  const childGitCheckout = execSync(`git checkout ${sha}`, { cwd: sourceDir });
-
   try {
+    const submissionID = req.body.sid;
+    const cloneURL = req.body.cloneurl;
+    const branch = req.body.branch;
+    const sha = req.body.sha;
+
+    const sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
+    console.log (`Using directory ${sourceDir}.`);
+
+    let output = '';
+    console.log(`Request to mark submission ${submissionID} received.`);
+
+    // clone repo
+    const childGitClone = execSync(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`);
+    const childGitCheckout = execSync(`git checkout ${sha}`, { cwd: sourceDir });
+
     // find .java files and cat to 'sources.txt'
     const childFind = execSync('find . -name "*.java" > sources.txt', { cwd: sourceDir });
     const childCat = execSync('cat sources.txt', { cwd: sourceDir });
+
     // append found files to html feedback
     output += '<p class="text-info">Java source files found:</p>';
     output += `<pre><code>${childCat.toString()}</code></pre>`;
-    output += '<p class="text-info">Compiler Output:</p>';
+
     // execute javac
-    const childJavac = execSync('javac -Xlint:all @sources.txt 2>&1', { cwd: sourceDir, timeout: 60000 });
-    output += `<pre><code>${childJavac.toString()}</code></pre>`;
-    // Success. Report 100 score
-    sendMark(100, submissionID, (err, res, body) => {
-      if (err) {
-        console.log(`Error from request: ${err}`);
-      }
-    });
+    output += '<p class="text-info">Compiler Output:</p>';
+    try {
+      const childJavac = execSync('javac -Xlint:all @sources.txt 2>&1', { cwd: sourceDir, timeout: 60000 });
+
+      output += '<p class="text-info">Java sources compiled successfully.</p>';
+      output += `<pre><code>${childJavac.toString()}</code></pre>`;
+
+      // Success. Report 100 score
+      sendMark(100, submissionID, (err, res, body) => {
+        if (err) {
+          console.log(`Error from request: ${err}`);
+          res.sendStatus(500);
+        }
+      });
+  
+      res.sendStatus(200);
+    } catch (e) {
+      output += `<pre><code>${e.toString()}\n${e.stdout.toString()}</code></pre>`;
+      // Error. Report 0 score
+      sendMark(0, submissionID, (err, res, body) => {
+        if (err) {
+          console.log(`Error from request: ${err}`);
+          res.sendStatus(500);
+        }
+      });
+
+      res.sendStatus(200);
+    } finally {
+      // Send output as feedback
+      sendFeedback(`<div class="javac-feedback">${output}</div>`, submissionID, (err, res, body) => {
+        if (err) {
+          console.log(`Error from request: ${err}`);
+        }
+      });
+    }
   } catch (e) {
-    output += `<pre><code>${e.toString()}\n${e.stdout.toString()}</code></pre>`;
-    // Error. Report 0 score
-    sendMark(0, submissionID, (err, res, body) => {
-      if (err) {
-        console.log(`Error from request: ${err}`);
-      }
-    });
-  } finally {
-    // Send output as feedback
-    sendFeedback(`<div class="javac-feedback">${output}</div>`, submissionID, (err, res, body) => {
-      if (err) {
-        console.log(`Error from request: ${err}`);
-      }
-    });
+    // Fix what request response we sent so that nexus knows something has gone wrong
+    res.sendStatus (500);
+  }
+  finally {
     return next();
   }
 });
