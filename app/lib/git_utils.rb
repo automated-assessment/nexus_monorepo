@@ -9,7 +9,7 @@ class GitUtils
     end
 
     def gen_branch_name(submission)
-      "submissions-u#{submission.user.uid}"
+      "submissions-u#{submission.user.uid}-l#{submission.user.ghe_login}"
     end
 
     def gen_commit_msg(submission)
