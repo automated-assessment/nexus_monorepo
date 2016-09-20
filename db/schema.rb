@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160907153335) do
+ActiveRecord::Schema.define(version: 20160920125800) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -27,8 +27,8 @@ ActiveRecord::Schema.define(version: 20160907153335) do
     t.datetime "deadline"
     t.boolean  "allow_late"
     t.integer  "course_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
     t.integer  "late_cap"
     t.boolean  "allow_zip"
     t.boolean  "allow_git"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 20160907153335) do
     t.string   "repourl"
     t.integer  "max_attempts"
     t.datetime "latedeadline"
+    t.boolean  "feedback_only", default: false
   end
 
   add_index "assignments", ["course_id"], name: "index_assignments_on_course_id"
