@@ -28,6 +28,14 @@ class GitUtils
       repo
     end
 
+    def push!(submission)
+      if Submission.where(user: submission.user, repourl: submission.assignment.repourl).empty?
+        first_time_push!(submission)
+      else
+        subsequent_push!(submission)
+      end
+    end
+
     def first_time_push!(submission)
       # binding.pry
       # init repo; checkout new branch; add all files; commit; push

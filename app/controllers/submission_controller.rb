@@ -61,11 +61,7 @@ class SubmissionController < ApplicationController
 
     SubmissionUtils.unzip!(@submission)
 
-    if Submission.where(user: @submission.user, repourl: @submission.assignment.repourl).empty?
-      GitUtils.first_time_push!(@submission)
-    else
-      GitUtils.subsequent_push!(@submission)
-    end
+    GitUtils.push!(@submission)
 
     flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs." if @submission.ensure_enrolled!
 
@@ -121,11 +117,7 @@ class SubmissionController < ApplicationController
       end
     end
 
-    if Submission.where(user: @submission.user).where(repourl: @submission.assignment.repourl).empty?
-      GitUtils.first_time_push!(@submission)
-    else
-      GitUtils.subsequent_push!(@submission)
-    end
+    GitUtils.push!(@submission)
 
     flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs." if @submission.ensure_enrolled!
 
