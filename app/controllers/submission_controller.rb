@@ -36,11 +36,7 @@ class SubmissionController < ApplicationController
   end
 
   def create_zip
-    @submission = Submission.new(submission_params)
-    @submission.user = current_user
-    return unless allowed_to_submit
-
-    @submission.studentrepo = false
+    return unless create_submission(false)
 
     uploaded_file = params[:submission][:code]
 
@@ -71,11 +67,7 @@ class SubmissionController < ApplicationController
   end
 
   def create_git
-    @submission = Submission.new(submission_params)
-    @submission.user = current_user
-    @submission.studentrepo = true
-
-    return unless allowed_to_submit
+    return unless create_submission(true)
 
     unless (GitUtils.has_valid_repo?(@submission))
       redirect_to new_submission_path(aid: @submission.assignment.id)
@@ -93,11 +85,8 @@ class SubmissionController < ApplicationController
   end
 
   def create_ide
-    @submission = Submission.new(submission_params)
-    @submission.user = current_user
-    return unless allowed_to_submit
+    return unless create_submission(false)
 
-    @submission.studentrepo = false
     @submission.save!
 
     submitted_files = params[:data]
@@ -176,6 +165,16 @@ class SubmissionController < ApplicationController
   end
 
   private
+
+  # Create a new submission from URL parameters, set its studentrepo field as
+  # per the param, and return whether the submission would be acceptable.
+  def create_submission(studentrepo)
+    @submission = Submission.new(submission_params)
+    @submission.user = current_user
+    @submission.studentrepo = studentrepo
+
+    return allowed_to_submit
+  end
 
   def allowed_to_submit
     within_max_attempts && on_time
