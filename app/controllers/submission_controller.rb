@@ -93,8 +93,7 @@ class SubmissionController < ApplicationController
   end
 
   def create_ide
-    @assignment = Assignment.find(params[:aid])
-    @submission = Submission.new(assignment: @assignment)
+    @submission = Submission.new(submission_params)
     @submission.user = current_user
     return unless allowed_to_submit
 
