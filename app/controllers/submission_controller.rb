@@ -59,7 +59,7 @@ class SubmissionController < ApplicationController
 
     GitUtils.push!(@submission)
 
-    flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs." if @submission.ensure_enrolled!
+    auto_enrol_if_needed!
 
     SubmissionUtils.notify_tools!(@submission)
 
@@ -77,7 +77,7 @@ class SubmissionController < ApplicationController
 
     @submission.save!
 
-    flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs." if @submission.ensure_enrolled!
+    auto_enrol_if_needed!
 
     SubmissionUtils.notify_tools!(@submission)
 
@@ -107,8 +107,8 @@ class SubmissionController < ApplicationController
 
     GitUtils.push!(@submission)
 
-    flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs." if @submission.ensure_enrolled!
-
+    auto_enrol_if_needed!
+    
     SubmissionUtils.notify_tools!(@submission)
 
     render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
@@ -165,6 +165,10 @@ class SubmissionController < ApplicationController
   end
 
   private
+
+  def auto_enrol_if_needed!
+    flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs." if @submission.ensure_enrolled!
+  end
 
   # Create a new submission from URL parameters, set its studentrepo field as
   # per the param, and return whether the submission would be acceptable.
