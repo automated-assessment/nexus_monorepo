@@ -41,9 +41,17 @@ The access token must be valid for the nexus instance to be run.
 - Fetch all submodules: `git submodule update`
 - Build: `docker-compose build`
 - Initialise: `docker-compose run nexus init` (only needed first time, when schema has changed, or when javascript component have been added or modified)
-- Run: `docker-compose up`
+- Run: `docker-compose up -d`
 
-This brings up the nexus server fully ready to run. The rabbitmq console can be found at `http://<hostname>:8081` using the user name and password as defined above.
+This brings up the nexus server fully ready to run and detaches it from the current console. 
+
+## Health checks
+
+The rabbitmq console can be found at `http://<hostname>:8081` using the user name and password as defined above. 
+
+Logs can be found in `logs/messages`. Use a command like `tail -f logs/messages` to keep on top of them.
+
+The health of all participant micro-services can be found by running `docker-compose ps`.
 
 ## References
 - https://docs.docker.com/compose/overview/
