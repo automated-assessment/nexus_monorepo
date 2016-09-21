@@ -21,15 +21,17 @@ class SubmissionController < ApplicationController
     @submission.assignment = Assignment.find(params[:aid])
     return unless allowed_to_submit
 
-    if current_user.githubtoken
-      @client = Octokit::Client.new(access_token: current_user.githubtoken)
-      @repo_list = []
-      @client.repos(current_user.ghe_login, sort: 'updated', per_page: '100').each do |r|
-        @repo_list << [r.full_name, r.clone_url]
+    if @submission.assignment.allow_git
+      if current_user.githubtoken
+        @client = Octokit::Client.new(access_token: current_user.githubtoken)
+        @repo_list = []
+        @client.repos(current_user.ghe_login, sort: 'updated', per_page: '100').each do |r|
+          @repo_list << [r.full_name, r.clone_url]
+        end
+      else
+        flash[:warning] = 'Git submission disabled as there is no GitHub token stored for your user'
+        @submission.assignment.allow_git = false
       end
-    else
-      flash[:warning] = 'Git submission disabled as there is no GitHub token stored for your user'
-      @submission.assignment.allow_git = false
     end
   end
 
