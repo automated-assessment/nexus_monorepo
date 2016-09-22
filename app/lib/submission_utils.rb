@@ -15,9 +15,11 @@ class SubmissionUtils
         end
       end
       submission.log('Extraction successful', 'Success')
+      return true
     rescue StandardError
       submission.log("Extraction failed: #{$ERROR_INFO.message}", 'Error')
       submission.report_extraction_error!
+      return false
     end
 
     def notify_tools!(submission)

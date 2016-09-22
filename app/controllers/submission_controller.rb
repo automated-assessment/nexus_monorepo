@@ -48,20 +48,19 @@ class SubmissionController < ApplicationController
     end
 
     @submission.original_filename = uploaded_file.original_filename
-    @submission.save!
 
     File.open(Rails.root.join('var', 'submissions', 'uploads', save_file_name(@submission)), 'wb') do |file|
       file.write(uploaded_file.read)
       @submission.saved_filename = save_file_name(@submission)
+      # From here, we will be able to recover the submission (assuming there is no inherent issue with the zip file)
+      # TODO: Still need to implement recovery from extraction issues
       @submission.save!
       @submission.log("Saved submission as #{save_file_name(@submission)} (original filename #{uploaded_file.original_filename})")
     end
 
-    SubmissionUtils.unzip!(@submission)
-
-    # TODO Currently we can recover from here forward, but are saving the submission much earlier
-
-    SubmissionUtils.push_and_notify_tools!(@submission, flash)
+    if (SubmissionUtils.unzip!(@submission))
+      SubmissionUtils.push_and_notify_tools!(@submission, flash)
+    end
 
     redirect_to action: 'show', id: @submission.id
   end
