@@ -53,7 +53,6 @@ class SubmissionController < ApplicationController
       file.write(uploaded_file.read)
       @submission.saved_filename = save_file_name(@submission)
       # From here, we will be able to recover the submission (assuming there is no inherent issue with the zip file)
-      # TODO: Still need to implement recovery from extraction issues
       @submission.save!
       @submission.log("Saved submission as #{save_file_name(@submission)} (original filename #{uploaded_file.original_filename})")
     end

@@ -44,6 +44,15 @@ class SubmissionUtils
           return re_notify_tools!(submission, user, flash)
         end
       else
+        if (submission.extraction_error)
+          # Need to first unzip the submission
+          submission.log("Reattempting to unzip submission files on behalf of #{user.name}.")
+          unless unzip!(submission)
+            flash[:warning] = "ZIP extraction still failing, there may be an issue with the ZIP file."
+            return false
+          end
+        end
+
         return re_git!(submission, user, flash)
       end
 
@@ -62,8 +71,6 @@ class SubmissionUtils
     end
 
     def re_git!(submission, user, flash)
-      # TODO May have to unzip files first for zip submissions
-
       submission.log("Reattempting to store submission files on Git on behalf of #{user.name}.")
 
       push_and_notify_tools!(submission, flash)
