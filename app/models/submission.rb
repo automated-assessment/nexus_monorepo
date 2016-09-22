@@ -66,9 +66,8 @@ class Submission < ActiveRecord::Base
   end
 
   def augmented_clone_url
-    return 'ERR' unless git_success
+    return 'ERR' if repourl.nil? || repourl.index('//').nil?
     url = repourl.dup
-    return 'ERR' if url.index('//').nil?
     if studentrepo
       auth = user.githubtoken
       url.insert(url.index('//') + 2, "#{auth}@")
