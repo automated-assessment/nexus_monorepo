@@ -62,17 +62,15 @@ class SubmissionUtils
       false
     end
 
-    def push_and_notify_tools!(submission)
+    def push_and_notify_tools!(submission, flash)
       GitUtils.push!(submission)
 
-      auto_enrol_if_needed!(submission)
+      auto_enrol_if_needed!(submission, flash)
 
       SubmissionUtils.notify_tools!(submission) if submission.git_success
     end
 
-    def auto_enrol_if_needed!(submission)
-      # TODO This isn't going to work, as the flash won't actuall do what we need...
-      # Probably want to move this all into the controller...
+    def auto_enrol_if_needed!(submission, flash)
       flash[:info] = "We've auto-enrolled you into course #{submission.assignment.course.id} to which this assignment belongs." if submission.ensure_enrolled!
     end
   end

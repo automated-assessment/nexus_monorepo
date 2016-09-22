@@ -59,7 +59,7 @@ class SubmissionController < ApplicationController
 
     SubmissionUtils.unzip!(@submission)
 
-    SubmissionUtils.push_and_notify_tools!(@submission)
+    SubmissionUtils.push_and_notify_tools!(@submission, flash)
 
     redirect_to action: 'show', id: @submission.id
   end
@@ -77,7 +77,7 @@ class SubmissionController < ApplicationController
     @submission.git_success = true
     @submission.save!
 
-    SubmissionUtils.auto_enrol_if_needed!(@submission)
+    SubmissionUtils.auto_enrol_if_needed!(@submission, flash)
 
     SubmissionUtils.notify_tools!(@submission) if @submission.git_success
 
@@ -105,7 +105,7 @@ class SubmissionController < ApplicationController
       end
     end
 
-    SubmissionUtils.push_and_notify_tools!(@submission)
+    SubmissionUtils.push_and_notify_tools!(@submission, flash)
 
     render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
   rescue StandardError => e
