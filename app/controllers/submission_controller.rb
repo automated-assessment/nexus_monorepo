@@ -61,7 +61,7 @@ class SubmissionController < ApplicationController
 
     auto_enrol_if_needed!
 
-    SubmissionUtils.notify_tools!(@submission)
+    SubmissionUtils.notify_tools!(@submission) if @submission.git_success
 
     redirect_to action: 'show', id: @submission.id
   end
@@ -75,11 +75,13 @@ class SubmissionController < ApplicationController
       return
     end
 
+    # Record the fact that we have a safe git copy
+    @submission.git_success = true
     @submission.save!
 
     auto_enrol_if_needed!
 
-    SubmissionUtils.notify_tools!(@submission)
+    SubmissionUtils.notify_tools!(@submission) if @submission.git_success
 
     redirect_to action: 'show', id: @submission.id
   end
@@ -108,8 +110,8 @@ class SubmissionController < ApplicationController
     GitUtils.push!(@submission)
 
     auto_enrol_if_needed!
-    
-    SubmissionUtils.notify_tools!(@submission)
+
+    SubmissionUtils.notify_tools!(@submission) if @submission.git_success
 
     render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
   rescue StandardError => e
@@ -176,6 +178,7 @@ class SubmissionController < ApplicationController
     @submission = Submission.new(submission_params)
     @submission.user = current_user
     @submission.studentrepo = studentrepo
+    @submission.git_success = false
 
     return allowed_to_submit
   end
