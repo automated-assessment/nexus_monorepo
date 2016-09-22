@@ -143,7 +143,7 @@ class SubmissionController < ApplicationController
 
   def list_failed
     return unless authenticate_admin!
-    @submissions = Submission.where(failed: true)
+    @submissions = Submission.where("failed = ? OR git_success = ?", true, false)
   end
 
   def resend
