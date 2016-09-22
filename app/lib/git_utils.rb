@@ -80,7 +80,8 @@ class GitUtils
       repo.add_remote('origin', submission.augmented_clone_url)
       repo.pull('origin', branch_name)
       repo.checkout(branch_name)
-      repo.remove('.', recursive: true)
+      # Remove all files, if any
+      repo.remove('.', recursive: true) unless Dir["#{repo_path}/*"].reject{|fname| fname == '.' || fname == '..'}.empty?
       # move files back
       FileUtils.cd(tmp_path) do
         FileUtils.mv Dir.glob('*'), repo_path
