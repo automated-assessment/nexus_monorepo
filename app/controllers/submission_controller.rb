@@ -59,11 +59,7 @@ class SubmissionController < ApplicationController
 
     SubmissionUtils.unzip!(@submission)
 
-    GitUtils.push!(@submission)
-
-    auto_enrol_if_needed!
-
-    SubmissionUtils.notify_tools!(@submission) if @submission.git_success
+    SubmissionUtils.push_and_notify_tools!(@submission)
 
     redirect_to action: 'show', id: @submission.id
   end
@@ -81,7 +77,7 @@ class SubmissionController < ApplicationController
     @submission.git_success = true
     @submission.save!
 
-    auto_enrol_if_needed!
+    SubmissionUtils.auto_enrol_if_needed!(@submission)
 
     SubmissionUtils.notify_tools!(@submission) if @submission.git_success
 
@@ -109,11 +105,7 @@ class SubmissionController < ApplicationController
       end
     end
 
-    GitUtils.push!(@submission)
-
-    auto_enrol_if_needed!
-
-    SubmissionUtils.notify_tools!(@submission) if @submission.git_success
+    SubmissionUtils.push_and_notify_tools!(@submission)
 
     render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
   rescue StandardError => e
@@ -170,17 +162,15 @@ class SubmissionController < ApplicationController
 
   private
 
-  def auto_enrol_if_needed!
-    flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs." if @submission.ensure_enrolled!
-  end
-
   # Create a new submission from URL parameters, set its studentrepo field as
   # per the param, and return whether the submission would be acceptable.
   def create_submission(studentrepo)
     @submission = Submission.new(submission_params)
     @submission.user = current_user
     @submission.studentrepo = studentrepo
+    # By default, assume things will go wrong
     @submission.git_success = false
+    @submission.failed = true
 
     return allowed_to_submit
   end

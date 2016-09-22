@@ -1,7 +1,7 @@
 require 'zip'
 
 class SubmissionUtils
-  #require_relative "submission_msg"
+  require_relative '../lib/git_utils'
 
   class << self
 
@@ -21,6 +21,10 @@ class SubmissionUtils
     end
 
     def notify_tools!(submission)
+      # Assume this is all going to go well
+      submission.failed = false
+      submission.save!
+
       submission.assignment.marking_tools.each do |mt|
         begin
           SendSubmissionJob.perform_later submission.id, mt.id
@@ -46,10 +50,6 @@ class SubmissionUtils
     end
 
     def re_notify_tools!(submission, user)
-      # Pretend it's no longer a failed submission
-      submission.failed = false
-      submission.save!
-
       submission.log("Resending submission to all marking tools at request of #{user.name}.")
 
       SubmissionUtils.notify_tools!(submission)
@@ -60,6 +60,20 @@ class SubmissionUtils
     def re_git!(submission, user)
       # TODO Implementation missing
       false
+    end
+
+    def push_and_notify_tools!(submission)
+      GitUtils.push!(submission)
+
+      auto_enrol_if_needed!(submission)
+
+      SubmissionUtils.notify_tools!(submission) if submission.git_success
+    end
+
+    def auto_enrol_if_needed!(submission)
+      # TODO This isn't going to work, as the flash won't actuall do what we need...
+      # Probably want to move this all into the controller...
+      flash[:info] = "We've auto-enrolled you into course #{submission.assignment.course.id} to which this assignment belongs." if submission.ensure_enrolled!
     end
   end
 end
