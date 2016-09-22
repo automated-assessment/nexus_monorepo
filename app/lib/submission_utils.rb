@@ -36,30 +36,39 @@ class SubmissionUtils
       end
     end
 
-    def resubmit!(submission, user)
+    def resubmit!(submission, user, flash)
       if submission.git_success
         if submission.failed
-          return re_notify_tools!(submission, user)
+          return re_notify_tools!(submission, user, flash)
         end
       else
-        return re_git!(submission, user)
+        return re_git!(submission, user, flash)
       end
 
       # We didn't know what to do with this submission, so let caller know this is still failed
       false
     end
 
-    def re_notify_tools!(submission, user)
+    def re_notify_tools!(submission, user, flash)
       submission.log("Resending submission to all marking tools at request of #{user.name}.")
 
-      SubmissionUtils.notify_tools!(submission)
+      notify_tools!(submission)
+
+      flash[:warning] = "Resending still caused failures." if submission.failed?
 
       !submission.failed?
     end
 
-    def re_git!(submission, user)
-      # TODO Implementation missing
-      false
+    def re_git!(submission, user, flash)
+      # TODO May have to unzip files first for zip submissions
+
+      submission.log("Reattempting to store submission files on Git on behalf of #{user.name}.")
+
+      push_and_notify_tools!(submission, flash)
+
+      flash[:warning] = "Failed to store submission in git again." unless submission.git_success
+
+      submission.git_success
     end
 
     def push_and_notify_tools!(submission, flash)

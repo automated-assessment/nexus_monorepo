@@ -142,7 +142,7 @@ class SubmissionController < ApplicationController
     return unless authenticate_admin!
     @submission = Submission.find(params[:id])
 
-    if (SubmissionUtils.resubmit!(@submission, current_user)) then
+    if (SubmissionUtils.resubmit!(@submission, current_user, flash)) then
       redirect_to action: 'show', id: @submission.id
     else
       redirect_to action: 'list_failed'
@@ -154,7 +154,7 @@ class SubmissionController < ApplicationController
 
     submissions = Submission.where("failed=? OR git_success=?",  true, false)
     submissions.each do |sub|
-      SubmissionUtils.resubmit!(sub, current_user)
+      SubmissionUtils.resubmit!(sub, current_user, flash)
     end
 
     redirect_to action: 'list_failed'
