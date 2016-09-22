@@ -101,26 +101,38 @@ class SubmissionController < ApplicationController
   def create_ide
     return unless create_submission(false)
 
-    submitted_files = params[:data]
-
-    output_path = Rails.root.join('var', 'submissions', 'code', "#{@submission.id}")
-    Dir.mkdir output_path unless File.exist? output_path
-
-    submitted_files.each do |file|
-      filename = file[:filename]
-      code = file[:code]
-
-      # Cannot log to submission yet, so just keep track on the console (which will make its way into a proper log)
-      puts "Creating file '#{filename}' from Web IDE for submission #{@submission.id}"
-
-      File.open(File.join(output_path, filename), 'w') do |f|
-        f.puts code
-      end
-    end
-
-    # We can recover from here onward, so it is safe to save the submission
+    # Need to save submission here so we can have an ID
+    # If things go wrong before the safe point, we need to destroy it again.
     @submission.save!
 
+    begin
+      submitted_files = params[:data]
+
+      output_path = Rails.root.join('var', 'submissions', 'code', "#{@submission.id}")
+      Dir.mkdir output_path unless File.exist? output_path
+
+      submitted_files.each do |file|
+        filename = file[:filename]
+        code = file[:code]
+
+        # Cannot log to submission yet, so just keep track on the console (which will make its way into a proper log)
+        puts "Creating file '#{filename}' from Web IDE for submission #{@submission.id} in #{output_path}"
+
+        File.open(File.join(output_path, filename), 'w') do |f|
+          f.puts code
+        end
+      end
+
+    rescue StandardError => e
+      # At this point, we need to remove the submission if anything goes wrong because we won't be able to recover yet
+      STDERR.puts "Error copying files from Web IDE: #{e.inspect}."
+
+      @submission.destroy
+      render json: { data: 'Error!' }, status: 500, content_type: 'text/json'
+      return
+    end
+
+    # We can recover from here onward, so it is safe to keep the submission
     SubmissionUtils.push_and_notify_tools!(@submission, flash)
 
     render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
