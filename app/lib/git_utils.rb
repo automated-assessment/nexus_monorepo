@@ -18,6 +18,9 @@ class GitUtils
 
     def init_gitobj(submission)
       repo_path = gen_repo_path(submission)
+      # Ensure this isn't a Git repo already (safety catch in case a previous push went wrong)
+      FileUtils.rm_rf(File.join(repo_path, ".git"), secure: true) if Dir.exists?(File.join(repo_path, ".git"))
+
       Dir.chdir(repo_path) do
         git_init_out = `git init`
         submission.log("Output from git init command: #{git_init_out}", 'Debug')
