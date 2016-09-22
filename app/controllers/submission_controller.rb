@@ -138,7 +138,7 @@ class SubmissionController < ApplicationController
 
   def list_failed
     return unless authenticate_admin!
-    @submissions = Submission.where("failed = ? OR git_success = ?", true, false)
+    @submissions = Submission.failed_submissions
   end
 
   def resend
@@ -155,7 +155,7 @@ class SubmissionController < ApplicationController
   def resend_all
     return unless authenticate_admin!
 
-    submissions = Submission.where("failed=? OR git_success=?",  true, false)
+    submissions = Submission.failed_submissions
     submissions.each do |sub|
       SubmissionUtils.resubmit!(sub, current_user, flash)
     end

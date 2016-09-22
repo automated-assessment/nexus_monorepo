@@ -94,4 +94,8 @@ class Submission < ActiveRecord::Base
                       body: body,
                       level: level)
   end
+
+  def self.failed_submissions
+    where("failed=? OR git_success=? OR extraction_error=?", true, false, true)
+  end
 end

@@ -9,8 +9,7 @@ class PagesController < ApplicationController
     @access_tokens = AccessToken.all
     @marking_tools = MarkingTool.all
     @user_count = User.all.count
-    # It would almost be worth bumping to Rails 5 just so we can use their or method
-    @failed_submissions_count = (Submission.where(failed: true).count + Submission.where(git_success: false).count)
+    @failed_submissions_count = Submission.failed_submissions.count
   end
 
   def user_list
