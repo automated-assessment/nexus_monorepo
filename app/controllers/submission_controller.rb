@@ -49,12 +49,26 @@ class SubmissionController < ApplicationController
 
     @submission.original_filename = uploaded_file.original_filename
 
-    File.open(Rails.root.join('var', 'submissions', 'uploads', save_file_name(@submission)), 'wb') do |file|
-      file.write(uploaded_file.read)
-      @submission.saved_filename = save_file_name(@submission)
-      # From here, we will be able to recover the submission (assuming there is no inherent issue with the zip file)
-      @submission.save!
-      @submission.log("Saved submission as #{save_file_name(@submission)} (original filename #{uploaded_file.original_filename})")
+    # Need to save the submission here so that save_file_name has access to its id
+    # But if doing so, need to delete the submission again if copying the upload file goes wrong
+    @submission.save!
+
+    begin
+      File.open(Rails.root.join('var', 'submissions', 'uploads', save_file_name(@submission)), 'wb') do |file|
+        file.write(uploaded_file.read)
+        @submission.saved_filename = save_file_name(@submission)
+        # From here, we will be able to recover the submission (assuming there is no inherent issue with the zip file)
+        @submission.save!
+        @submission.log("Saved submission as #{save_file_name(@submission)} (original filename #{uploaded_file.original_filename})")
+      end
+
+    rescue StandardError => e
+      # At this point, we need to remove the submission if anything goes wrong because we won't be able to recover yet
+      STDERR.puts "Error copying uploaded zip file: #{e.inspect}."
+      
+      @submission.destroy
+      redirect_to '/500'
+      return
     end
 
     if (SubmissionUtils.unzip!(@submission))
