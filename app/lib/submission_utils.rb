@@ -33,7 +33,16 @@ class SubmissionUtils
     end
 
     def resubmit!(submission, user)
-      re_notify_tools!(submission, user)
+      if submission.git_success
+        if submission.failed
+          return re_notify_tools!(submission, user)
+        end
+      else
+        return re_git!(submission, user)
+      end
+
+      # We didn't know what to do with this submission, so let caller know this is still failed
+      false
     end
 
     def re_notify_tools!(submission, user)
@@ -46,6 +55,11 @@ class SubmissionUtils
       SubmissionUtils.notify_tools!(submission)
 
       !submission.failed?
+    end
+
+    def re_git!(submission, user)
+      # TODO Implementation missing
+      false
     end
   end
 end
