@@ -66,6 +66,7 @@ class Submission < ActiveRecord::Base
   end
 
   def augmented_clone_url
+    return 'ERR' unless git_success
     url = repourl.dup
     return 'ERR' if url.index('//').nil?
     if studentrepo
