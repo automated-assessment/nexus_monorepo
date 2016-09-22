@@ -150,7 +150,7 @@ class SubmissionController < ApplicationController
     return unless authenticate_admin!
     @submission = Submission.find(params[:id])
 
-    if (SubmissionUtils.re_notify_tools!(@submission, current_user)) then
+    if (SubmissionUtils.resubmit!(@submission, current_user)) then
       redirect_to action: 'show', id: @submission.id
     else
       redirect_to action: 'list_failed'

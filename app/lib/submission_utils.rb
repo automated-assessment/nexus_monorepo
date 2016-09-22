@@ -32,6 +32,10 @@ class SubmissionUtils
       end
     end
 
+    def resubmit!(submission, user)
+      re_notify_tools!(submission, user)
+    end
+
     def re_notify_tools!(submission, user)
       # Pretend it's no longer a failed submission
       submission.failed = false
