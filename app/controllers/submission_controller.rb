@@ -13,6 +13,8 @@ class SubmissionController < ApplicationController
       redirect_to '/401'
       return
     end
+
+    flash[:error] = "There was a problem completely uploading your submission. Your files are likely still on the system and can be recovered. Please contact your course leader and tell them your submission id, which is #{@submission.id}." unless @submission.git_success
   end
 
   def new
