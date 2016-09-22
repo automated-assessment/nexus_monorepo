@@ -65,7 +65,7 @@ class SubmissionController < ApplicationController
     rescue StandardError => e
       # At this point, we need to remove the submission if anything goes wrong because we won't be able to recover yet
       STDERR.puts "Error copying uploaded zip file: #{e.inspect}."
-      
+
       @submission.destroy
       redirect_to '/500'
       return
@@ -126,7 +126,9 @@ class SubmissionController < ApplicationController
     render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
   rescue StandardError => e
     render json: { data: 'Error!' }, status: 500, content_type: 'text/json'
-    @submission.log("Error creating submission: #{e.class} #{e.message}", "Error")
+
+    @submission.log("Error creating submission: #{e.class} #{e.message}", "Error") if (@submission.persisted?)
+    STDERR.puts("Error creating submission: #{e.class} #{e.message}")
   end
 
   def edit_mark
