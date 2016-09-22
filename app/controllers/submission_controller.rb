@@ -59,6 +59,8 @@ class SubmissionController < ApplicationController
 
     SubmissionUtils.unzip!(@submission)
 
+    # TODO Currently we can recover from here forward, but are saving the submission much earlier
+
     SubmissionUtils.push_and_notify_tools!(@submission, flash)
 
     redirect_to action: 'show', id: @submission.id
@@ -104,6 +106,8 @@ class SubmissionController < ApplicationController
         f.puts code
       end
     end
+
+    # TODO Currently we can recover from here forward, but are saving the submission much earlier
 
     SubmissionUtils.push_and_notify_tools!(@submission, flash)
 
