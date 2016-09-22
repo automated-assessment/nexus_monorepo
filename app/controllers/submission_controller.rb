@@ -14,7 +14,7 @@ class SubmissionController < ApplicationController
       return
     end
 
-    flash[:error] = "There was a problem completely uploading your submission. Your files are likely still on the system and can be recovered. Please contact your course leader and tell them your submission id, which is #{@submission.id}." unless @submission.git_success
+    flash.now[:error] = "There was a problem completely uploading your submission. Your files are likely still on the system and can be recovered. Please contact your course leader and tell them your submission id, which is #{@submission.id}." unless @submission.git_success
   end
 
   def new
@@ -31,7 +31,7 @@ class SubmissionController < ApplicationController
           @repo_list << [r.full_name, r.clone_url]
         end
       else
-        flash[:warning] = 'Git submission disabled as there is no GitHub token stored for your user'
+        flash.now[:warning] = 'Git submission disabled as there is no GitHub token stored for your user'
         @submission.assignment.allow_git = false
       end
     end
