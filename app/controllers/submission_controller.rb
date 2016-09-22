@@ -89,8 +89,6 @@ class SubmissionController < ApplicationController
   def create_ide
     return unless create_submission(false)
 
-    @submission.save!
-
     submitted_files = params[:data]
 
     output_path = Rails.root.join('var', 'submissions', 'code', "#{@submission.id}")
@@ -100,14 +98,16 @@ class SubmissionController < ApplicationController
       filename = file[:filename]
       code = file[:code]
 
-      @submission.log("Creating file '#{filename}' from Web IDE...")
+      # Cannot log to submission yet, so just keep track on the console (which will make its way into a proper log)
+      puts "Creating file '#{filename}' from Web IDE for submission #{@submission.id}"
 
       File.open(File.join(output_path, filename), 'w') do |f|
         f.puts code
       end
     end
 
-    # TODO Currently we can recover from here forward, but are saving the submission much earlier
+    # We can recover from here onward, so it is safe to save the submission
+    @submission.save!
 
     SubmissionUtils.push_and_notify_tools!(@submission, flash)
 
