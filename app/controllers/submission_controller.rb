@@ -160,9 +160,9 @@ class SubmissionController < ApplicationController
   def resend_all
     return unless authenticate_admin!
 
-    submissions = Submission.where(failed: true)
+    submissions = Submission.where("failed=? OR git_success=?",  true, false)
     submissions.each do |sub|
-      SubmissionUtils.re_notify_tools!(sub, current_user)
+      SubmissionUtils.resubmit!(sub, current_user)
     end
 
     redirect_to action: 'list_failed'
