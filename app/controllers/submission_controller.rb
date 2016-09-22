@@ -171,6 +171,7 @@ class SubmissionController < ApplicationController
     @submission.user = current_user
     @submission.studentrepo = studentrepo
     # By default, assume things will go wrong
+    # TODO As a result of this, submissions might briefly show up in the fail queue even if they aren't failed, especially when we decide to switch to worker-based gitting
     @submission.git_success = false
     @submission.failed = true
 
