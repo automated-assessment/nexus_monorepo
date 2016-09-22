@@ -73,6 +73,7 @@ class GitUtils
       FileUtils.cd(repo_path) do
         FileUtils.mv Dir.glob('*'), tmp_path
       end
+      submission.log("Moved files to tmp directory: #{tmp_path}", "Debug")
       # init repo; pull remote branch; rm all; add all; commit; push
       repo = init_gitobj(submission)
       branch_name = gen_branch_name(submission)
@@ -86,6 +87,7 @@ class GitUtils
       FileUtils.cd(tmp_path) do
         FileUtils.mv Dir.glob('*'), repo_path
       end
+      submission.log("Moved files back to code directory: #{repo_path}", "Debug")
       repo.add(all: true)
       repo.commit(gen_commit_msg(submission), allow_empty: true)
       repo.push('origin', branch_name)
