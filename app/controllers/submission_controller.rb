@@ -116,7 +116,7 @@ class SubmissionController < ApplicationController
         code = file[:code]
 
         # Keep track on the console in case we will end up destroying the submission
-        puts "Creating file '#{filename}' from Web IDE for submission #{@submission.id} in #{output_path}"
+        logger.debug {"Creating file '#{filename}' from Web IDE for submission #{@submission.id} in #{output_path}"}
         @submission.log("Creating file '#{filename}' from Web IDE in #{output_path}", 'Debug')
 
         File.open(File.join(output_path, filename), 'w') do |f|
