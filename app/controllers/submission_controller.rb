@@ -64,7 +64,7 @@ class SubmissionController < ApplicationController
 
     rescue StandardError => e
       # At this point, we need to remove the submission if anything goes wrong because we won't be able to recover yet
-      logger.error "Error copying uploaded zip file: #{e.inspect}."
+      logger.error "Error copying uploaded zip file for #{current_user.name}: #{e.inspect}."
 
       @submission.destroy
       redirect_to '/500'
@@ -126,7 +126,7 @@ class SubmissionController < ApplicationController
 
     rescue StandardError => e
       # At this point, we need to remove the submission if anything goes wrong because we won't be able to recover yet
-      logger.error "Error copying files from Web IDE: #{e.inspect}."
+      logger.error "Error copying files from Web IDE for #{current_user.name}: #{e.inspect}."
 
       @submission.destroy
       render json: { data: 'Error!' }, status: 500, content_type: 'text/json'
