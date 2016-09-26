@@ -2,13 +2,15 @@
 <p>
   <%= markdown(@assignment.description) %>
   <hr />
-  <h4>Marking Scheme</h4>
+  <% unless @assignment.feedback_only %>
+    <h4>Marking Scheme</h4>
+  <% end %>
   <table class="table table-hover">
     <thead>
       <tr>
         <th>Rubric</th>
         <th>Context</th>
-        <% if !@assignment.feedback_only %>
+        <% unless @assignment.feedback_only %>
         <th>Weight</th>
         <% end %>
       </tr>
@@ -18,7 +20,7 @@
         <tr>
           <th scope="row"><%= t.marking_tool.name %></th>
           <td><%= t.context %></td>
-          <% if !@assignment.feedback_only %>
+          <% unless @assignment.feedback_only %>
           <td><%= t.weight %>%</td>
           <% end %>
         </tr>
