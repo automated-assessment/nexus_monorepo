@@ -66,8 +66,8 @@ class Submission < ActiveRecord::Base
   end
 
   def augmented_clone_url
+    return 'ERR' if repourl.nil? || repourl.index('//').nil?
     url = repourl.dup
-    return 'ERR' if url.index('//').nil?
     if studentrepo
       auth = user.githubtoken
       url.insert(url.index('//') + 2, "#{auth}@")
@@ -93,5 +93,9 @@ class Submission < ActiveRecord::Base
     AuditItem.create!(submission: self,
                       body: body,
                       level: level)
+  end
+
+  def self.failed_submissions
+    where("failed=? OR git_success=? OR extraction_error=?", true, false, true)
   end
 end

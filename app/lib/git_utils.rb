@@ -18,6 +18,9 @@ class GitUtils
 
     def init_gitobj(submission)
       repo_path = gen_repo_path(submission)
+      # Ensure this isn't a Git repo already (safety catch in case a previous push went wrong)
+      FileUtils.rm_rf(File.join(repo_path, ".git"), secure: true) if Dir.exists?(File.join(repo_path, ".git"))
+
       Dir.chdir(repo_path) do
         git_init_out = `git init`
         submission.log("Output from git init command: #{git_init_out}", 'Debug')
@@ -26,6 +29,14 @@ class GitUtils
       repo.config('user.name', 'Nexus')
       repo.config('user.email', 'nexus@nexus')
       repo
+    end
+
+    def push!(submission)
+      if Submission.where(user: submission.user, repourl: submission.assignment.repourl).empty?
+        first_time_push!(submission)
+      else
+        subsequent_push!(submission)
+      end
     end
 
     def first_time_push!(submission)
@@ -43,12 +54,14 @@ class GitUtils
       submission.log('Submission stored on GHE (new branch created)', 'success')
       submission.gitbranch = branch_name
       submission.commithash = repo.log[0].sha.to_s
+      submission.git_success = true
       submission.save!
     rescue StandardError
       submission.log("Git process failed: #{$ERROR_INFO.message}", 'Error')
       submission.repourl = 'ERR'
       submission.gitbranch = 'ERR'
       submission.commithash = 'ERR'
+      submission.git_success = false
       submission.save!
     end
 
@@ -60,6 +73,7 @@ class GitUtils
       FileUtils.cd(repo_path) do
         FileUtils.mv Dir.glob('*'), tmp_path
       end
+      submission.log("Moved files to tmp directory: #{tmp_path}", "Debug")
       # init repo; pull remote branch; rm all; add all; commit; push
       repo = init_gitobj(submission)
       branch_name = gen_branch_name(submission)
@@ -67,11 +81,13 @@ class GitUtils
       repo.add_remote('origin', submission.augmented_clone_url)
       repo.pull('origin', branch_name)
       repo.checkout(branch_name)
-      repo.remove('.', recursive: true)
+      # Remove all files, if any
+      repo.remove('.', recursive: true) unless Dir["#{repo_path}/*"].reject{|fname| fname == '.' || fname == '..'}.empty?
       # move files back
       FileUtils.cd(tmp_path) do
         FileUtils.mv Dir.glob('*'), repo_path
       end
+      submission.log("Moved files back to code directory: #{repo_path}", "Debug")
       repo.add(all: true)
       repo.commit(gen_commit_msg(submission), allow_empty: true)
       repo.push('origin', branch_name)
@@ -79,12 +95,14 @@ class GitUtils
       submission.log('Submission stored on GHE (used existing branch)', 'success')
       submission.gitbranch = branch_name
       submission.commithash = repo.log[0].sha.to_s
+      submission.git_success = true
       submission.save!
     rescue StandardError
       submission.log("Git process failed: #{$ERROR_INFO.message}", 'Error')
       submission.repourl = 'ERR'
       submission.gitbranch = 'ERR'
       submission.commithash = 'ERR'
+      submission.git_success = false
       submission.save!
     end
 

@@ -13,6 +13,8 @@ class SubmissionController < ApplicationController
       redirect_to '/401'
       return
     end
+
+    flash.now[:error] = "There was a problem completely uploading your submission. Your files are likely still on the system and can be recovered. Please contact your course leader and tell them your submission id, which is #{@submission.id}." unless @submission.git_success
   end
 
   def new
@@ -29,18 +31,14 @@ class SubmissionController < ApplicationController
           @repo_list << [r.full_name, r.clone_url]
         end
       else
-        flash[:warning] = 'Git submission disabled as there is no GitHub token stored for your user'
+        flash.now[:warning] = 'Git submission disabled as there is no GitHub token stored for your user'
         @submission.assignment.allow_git = false
       end
     end
   end
 
   def create_zip
-    @submission = Submission.new(submission_params)
-    @submission.user = current_user
-    return unless allowed_to_submit
-
-    @submission.studentrepo = false
+    return unless create_submission(false)
 
     uploaded_file = params[:submission][:code]
 
@@ -50,36 +48,38 @@ class SubmissionController < ApplicationController
     end
 
     @submission.original_filename = uploaded_file.original_filename
+
+    # Need to save the submission here so that save_file_name has access to its id
+    # But if doing so, need to delete the submission again if copying the upload file goes wrong
     @submission.save!
 
-    File.open(Rails.root.join('var', 'submissions', 'uploads', save_file_name(@submission)), 'wb') do |file|
-      file.write(uploaded_file.read)
-      @submission.saved_filename = save_file_name(@submission)
-      @submission.save!
-      @submission.log("Saved submission as #{save_file_name(@submission)} (original filename #{uploaded_file.original_filename})")
+    begin
+      File.open(Rails.root.join('var', 'submissions', 'uploads', save_file_name(@submission)), 'wb') do |file|
+        file.write(uploaded_file.read)
+        @submission.saved_filename = save_file_name(@submission)
+        # From here, we will be able to recover the submission (assuming there is no inherent issue with the zip file)
+        @submission.save!
+        @submission.log("Saved submission as #{save_file_name(@submission)} (original filename #{uploaded_file.original_filename})")
+      end
+
+    rescue StandardError => e
+      # At this point, we need to remove the submission if anything goes wrong because we won't be able to recover yet
+      logger.error "Error copying uploaded zip file for #{current_user.name}: #{e.inspect}."
+
+      @submission.destroy
+      redirect_to '/500'
+      return
     end
 
-    SubmissionUtils.unzip!(@submission)
-
-    if Submission.where(user: @submission.user, repourl: @submission.assignment.repourl).empty?
-      GitUtils.first_time_push!(@submission)
-    else
-      GitUtils.subsequent_push!(@submission)
+    if (SubmissionUtils.unzip!(@submission))
+      SubmissionUtils.push_and_notify_tools!(@submission, flash)
     end
-
-    flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs." if @submission.ensure_enrolled!
-
-    SubmissionUtils.notify_tools!(@submission)
 
     redirect_to action: 'show', id: @submission.id
   end
 
   def create_git
-    @submission = Submission.new(submission_params)
-    @submission.user = current_user
-    @submission.studentrepo = true
-
-    return unless allowed_to_submit
+    return unless create_submission(true)
 
     unless (GitUtils.has_valid_repo?(@submission))
       redirect_to new_submission_path(aid: @submission.assignment.id)
@@ -87,54 +87,61 @@ class SubmissionController < ApplicationController
       return
     end
 
+    # Record the fact that we have a safe git copy
+    @submission.git_success = true
     @submission.save!
 
-    flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs." if @submission.ensure_enrolled!
+    SubmissionUtils.auto_enrol_if_needed!(@submission, flash)
 
-    SubmissionUtils.notify_tools!(@submission)
+    SubmissionUtils.notify_tools!(@submission) if @submission.git_success
 
     redirect_to action: 'show', id: @submission.id
   end
 
   def create_ide
-    @assignment = Assignment.find(params[:aid])
-    @submission = Submission.new(assignment: @assignment)
-    @submission.user = current_user
-    return unless allowed_to_submit
+    return unless create_submission(false)
 
-    @submission.studentrepo = false
+    # Need to save submission here so we can have an ID
+    # If things go wrong before the safe point, we need to destroy it again.
     @submission.save!
 
-    submitted_files = params[:data]
+    begin
+      submitted_files = params[:data]
 
-    output_path = Rails.root.join('var', 'submissions', 'code', "#{@submission.id}")
-    Dir.mkdir output_path unless File.exist? output_path
+      output_path = Rails.root.join('var', 'submissions', 'code', "#{@submission.id}")
+      Dir.mkdir output_path unless File.exist? output_path
 
-    submitted_files.each do |file|
-      filename = file[:filename]
-      code = file[:code]
+      submitted_files.each do |file|
+        filename = file[:filename]
+        code = file[:code]
 
-      @submission.log("Creating file '#{filename}' from Web IDE...")
+        # Keep track on the console in case we will end up destroying the submission
+        logger.debug {"Creating file '#{filename}' from Web IDE for submission #{@submission.id} in #{output_path}"}
+        @submission.log("Creating file '#{filename}' from Web IDE in #{output_path}", 'Debug')
 
-      File.open(File.join(output_path, filename), 'w') do |f|
-        f.puts code
+        File.open(File.join(output_path, filename), 'w') do |f|
+          f.puts code
+        end
       end
+
+    rescue StandardError => e
+      # At this point, we need to remove the submission if anything goes wrong because we won't be able to recover yet
+      logger.error "Error copying files from Web IDE for #{current_user.name}: #{e.inspect}."
+
+      @submission.destroy
+      render json: { data: 'Error!' }, status: 500, content_type: 'text/json'
+      return
     end
 
-    if Submission.where(user: @submission.user).where(repourl: @submission.assignment.repourl).empty?
-      GitUtils.first_time_push!(@submission)
-    else
-      GitUtils.subsequent_push!(@submission)
-    end
-
-    flash[:info] = "We've auto-enrolled you into course #{assignment.course.id} to which this assignment belongs." if @submission.ensure_enrolled!
-
-    SubmissionUtils.notify_tools!(@submission)
+    # We can recover from here onward, so it is safe to keep the submission
+    SubmissionUtils.push_and_notify_tools!(@submission, flash)
 
     render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
   rescue StandardError => e
     render json: { data: 'Error!' }, status: 500, content_type: 'text/json'
-    @submission.log("Error creating submission: #{e.class} #{e.message}", "Error")
+
+    @submission.log("Error creating submission: #{e.class} #{e.message}", "Error") if (@submission.persisted?)
+    logger.error "Error creating submission: #{e.class} #{e.message}"
   end
 
   def edit_mark
@@ -159,14 +166,14 @@ class SubmissionController < ApplicationController
 
   def list_failed
     return unless authenticate_admin!
-    @submissions = Submission.where(failed: true)
+    @submissions = Submission.failed_submissions
   end
 
   def resend
     return unless authenticate_admin!
     @submission = Submission.find(params[:id])
 
-    if (SubmissionUtils.re_notify_tools!(@submission, current_user)) then
+    if (SubmissionUtils.resubmit!(@submission, current_user, flash)) then
       redirect_to action: 'show', id: @submission.id
     else
       redirect_to action: 'list_failed'
@@ -176,15 +183,29 @@ class SubmissionController < ApplicationController
   def resend_all
     return unless authenticate_admin!
 
-    submissions = Submission.where(failed: true)
+    submissions = Submission.failed_submissions
     submissions.each do |sub|
-      SubmissionUtils.re_notify_tools!(sub, current_user)
+      SubmissionUtils.resubmit!(sub, current_user, flash)
     end
 
     redirect_to action: 'list_failed'
   end
 
   private
+
+  # Create a new submission from URL parameters, set its studentrepo field as
+  # per the param, and return whether the submission would be acceptable.
+  def create_submission(studentrepo)
+    @submission = Submission.new(submission_params)
+    @submission.user = current_user
+    @submission.studentrepo = studentrepo
+    # By default, assume things will go wrong
+    # TODO As a result of this, submissions might briefly show up in the fail queue even if they aren't failed, especially when we decide to switch to worker-based gitting
+    @submission.git_success = false
+    @submission.failed = true
+
+    return allowed_to_submit
+  end
 
   def allowed_to_submit
     within_max_attempts && on_time

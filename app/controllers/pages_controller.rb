@@ -9,7 +9,7 @@ class PagesController < ApplicationController
     @access_tokens = AccessToken.all
     @marking_tools = MarkingTool.all
     @user_count = User.all.count
-    @failed_submissions_count = Submission.where(failed: true).count
+    @failed_submissions_count = Submission.failed_submissions.count
   end
 
   def user_list

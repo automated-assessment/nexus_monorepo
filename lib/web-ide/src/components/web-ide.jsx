@@ -62,7 +62,7 @@ export default class NexusWebIDE extends React.Component {
     XHR.post(this.props.submitURL, {
       data: {
         authenticity_token: this.props.formAuthenticityToken,
-        aid: this.props.assignmentID,
+        submission: { assignment_id: this.props.assignmentID },
         data: this.state.data
       }
     }).then((res) => {

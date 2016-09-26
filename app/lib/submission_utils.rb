@@ -1,7 +1,7 @@
 require 'zip'
 
 class SubmissionUtils
-  #require_relative "submission_msg"
+  require_relative '../lib/git_utils'
 
   class << self
 
@@ -15,12 +15,18 @@ class SubmissionUtils
         end
       end
       submission.log('Extraction successful', 'Success')
+      return true
     rescue StandardError
       submission.log("Extraction failed: #{$ERROR_INFO.message}", 'Error')
       submission.report_extraction_error!
+      return false
     end
 
     def notify_tools!(submission)
+      # Assume this is all going to go well
+      submission.failed = false
+      submission.save!
+
       submission.assignment.marking_tools.each do |mt|
         begin
           SendSubmissionJob.perform_later submission.id, mt.id
@@ -32,16 +38,58 @@ class SubmissionUtils
       end
     end
 
-    def re_notify_tools!(submission, user)
-      # Pretend it's no longer a failed submission
-      submission.failed = false
-      submission.save!
+    def resubmit!(submission, user, flash)
+      if submission.git_success
+        if submission.failed
+          return re_notify_tools!(submission, user, flash)
+        end
+      else
+        if (submission.extraction_error)
+          # Need to first unzip the submission
+          submission.log("Reattempting to unzip submission files on behalf of #{user.name}.")
+          unless unzip!(submission)
+            flash[:warning] = "ZIP extraction still failing, there may be an issue with the ZIP file. Check submission log for details."
+            return false
+          end
+        end
 
+        return re_git!(submission, user, flash)
+      end
+
+      # We didn't know what to do with this submission, so let caller know this is still failed
+      false
+    end
+
+    def re_notify_tools!(submission, user, flash)
       submission.log("Resending submission to all marking tools at request of #{user.name}.")
 
-      SubmissionUtils.notify_tools!(submission)
+      notify_tools!(submission)
+
+      flash[:warning] = "Resending still caused failures. Check submission log for details." if submission.failed?
 
       !submission.failed?
+    end
+
+    def re_git!(submission, user, flash)
+      submission.log("Reattempting to store submission files on Git on behalf of #{user.name}.")
+
+      push_and_notify_tools!(submission, flash)
+
+      flash[:warning] = "Failed to store submission in git again." unless submission.git_success
+
+      submission.git_success
+    end
+
+    def push_and_notify_tools!(submission, flash)
+      GitUtils.push!(submission)
+
+      auto_enrol_if_needed!(submission, flash)
+
+      SubmissionUtils.notify_tools!(submission) if submission.git_success
+    end
+
+    def auto_enrol_if_needed!(submission, flash)
+      flash[:info] = "We've auto-enrolled you into course #{submission.assignment.course.id} to which this assignment belongs." if submission.ensure_enrolled!
     end
   end
 end

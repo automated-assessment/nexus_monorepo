@@ -9,15 +9,17 @@
           <span class="label label-danger">Late</span>
         <% end %>
       </div>
-      <div class="repourl">
-        Remote URL: <code><%= @submission.repourl %></code>
-      </div>
-      <div class="gitbranch">
-        Branch: <code><%= @submission.gitbranch %></code>
-      </div>
-      <div class="sha">
-        Commit SHA: <code><%= @submission.commithash %></code>
-      </div>
+      <% if @submission.git_success %>
+        <div class="repourl">
+          Remote URL: <code><%= @submission.repourl %></code>
+        </div>
+        <div class="gitbranch">
+          Branch: <code><%= @submission.gitbranch %></code>
+        </div>
+        <div class="sha">
+          Commit SHA: <code><%= @submission.commithash %></code>
+        </div>
+      <% end %>
     </div>
   </div>
   <div class="col-md-4">
@@ -27,8 +29,10 @@
           <button type="button" name="button" class="btn btn-sm btn-danger"><%= icon 'exclamation' %> Override Mark</button>
         <% end %>
         <% unless @submission.studentrepo %>
-          <%= link_to @submission.repourl.dup.gsub(/.git\z/, '').concat("/commit/#{@submission.commithash}"), target: '_blank' do %>
-            <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'github-square' %> Show in GHE</button>
+          <% if @submission.git_success %>
+            <%= link_to @submission.repourl.dup.gsub(/.git\z/, '').concat("/commit/#{@submission.commithash}"), target: '_blank' do %>
+              <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'github-square' %> Show in GHE</button>
+            <% end %>
           <% end %>
         <% end %>
         <br>
