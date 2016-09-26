@@ -48,7 +48,7 @@ class SubmissionUtils
           # Need to first unzip the submission
           submission.log("Reattempting to unzip submission files on behalf of #{user.name}.")
           unless unzip!(submission)
-            flash[:warning] = "ZIP extraction still failing, there may be an issue with the ZIP file."
+            flash[:warning] = "ZIP extraction still failing, there may be an issue with the ZIP file. Check submission log for details."
             return false
           end
         end
@@ -65,7 +65,7 @@ class SubmissionUtils
 
       notify_tools!(submission)
 
-      flash[:warning] = "Resending still caused failures." if submission.failed?
+      flash[:warning] = "Resending still caused failures. Check submission log for details." if submission.failed?
 
       !submission.failed?
     end
