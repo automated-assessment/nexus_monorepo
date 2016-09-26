@@ -9,7 +9,7 @@ if [ "$1" = 'start-sneakers' ]; then
 	exec rake sneakers:work
 fi
 
-if [ "$1" = 'init-npm' ]; then
+if [ "$1" = 'init-js' ]; then
 	npm install --production --silent
 
 	cd lib/web-ide
