@@ -40,7 +40,7 @@ The access token must be valid for the nexus instance to be run.
 - Initialise submodules: `git submodule init`
 - Fetch all submodules: `git submodule update`
 - Build: `docker-compose build`
-- Initialise: `docker-compose run nexus init` (only needed first time, when schema has changed, or when javascript component have been added or modified)
+- Initialise: `docker-compose run nexus init` (only needed first time, when schema has changed, or when javascript component have been added or modified; partial initialisations `init-js`, `init-dirs`, and `init-db` are also available)
 - Run: `docker-compose up -d`
 
 This brings up the nexus server fully ready to run and detaches it from the current console. 
