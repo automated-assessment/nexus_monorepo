@@ -69,7 +69,7 @@ export default class NexusWebIDE extends React.Component {
     }).then((res) => {
       window.location.replace(res.body.redirect);
     }).catch((res) => {
-      this.setState({ errorFlag: true, errorMessage: res.body.message });
+      this.setState({ submitting: false, errorFlag: true, errorMessage: res.body.message });
     });
   }
 
