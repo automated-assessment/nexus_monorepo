@@ -93,7 +93,7 @@ export default class NexusWebIDE extends React.Component {
         <button className="btn btn-primary" onClick={this.handleSubmit} style={{float: 'right'}} disabled={this.state.submitting}>Submit</button>
         {
           this.state.errorFlag &&
-          <div className="alert alert-danger" role="alert"><strong>An error occured!</strong></div>
+          <div className="alert alert-danger" role="alert"><strong>{this.state.errorMessage}</strong></div>
         }
       </div>
     );
