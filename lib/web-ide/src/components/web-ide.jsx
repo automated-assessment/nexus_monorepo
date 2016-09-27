@@ -24,7 +24,8 @@ export default class NexusWebIDE extends React.Component {
         data: new Array({'filename': 'File1.java', 'code': this.props.defaultCode}),
         count: 1,
         submitting: false,
-        errorFlag: false
+        errorFlag: false,
+        errorMessage: ''
       };
 
       this.addFile = this.addFile.bind(this);
@@ -68,7 +69,7 @@ export default class NexusWebIDE extends React.Component {
     }).then((res) => {
       window.location.replace(res.body.redirect);
     }).catch((res) => {
-      this.setState({ errorFlag: true });
+      this.setState({ errorFlag: true, errorMessage: res.body.message });
     });
   }
 

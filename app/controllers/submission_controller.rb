@@ -137,7 +137,8 @@ class SubmissionController < ApplicationController
       logger.error "Error copying files from Web IDE for #{current_user.name}: #{e.inspect}."
 
       @submission.destroy
-      render json: { data: 'Error!' }, status: 500, content_type: 'text/json'
+      render json: { data: 'Error!', message: "There was an internal server error processing your uploaded files. Your submission could not be accepted at this time. Please contact your course leader." },
+             status: 500, content_type: 'text/json'
       return
     end
 
@@ -147,7 +148,7 @@ class SubmissionController < ApplicationController
     else
       logger.info "Rejecting empty submission #{@submission.id} from user #{current_user.name}."
       @submission.destroy
-      render json: { data: 'Error!' }, status: 422, content_type: 'text/json'
+      render json: { data: 'Error!', message: "You have attempted to make an empty submission. Please include at least one file in your submission." }, status: 422, content_type: 'text/json'
       return
     end
 
