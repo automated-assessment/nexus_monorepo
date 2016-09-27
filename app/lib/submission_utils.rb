@@ -91,5 +91,10 @@ class SubmissionUtils
     def auto_enrol_if_needed!(submission, flash)
       flash[:info] = "We've auto-enrolled you into course #{submission.assignment.course.id} to which this assignment belongs." if submission.ensure_enrolled!
     end
+
+    # Check if the given submission (which must be saved and not sent to Git yet) contains any files
+    def empty?(submission)
+      Dir.glob(File.join(GitUtils.gen_repo_path(submission), "**", "*")).reject { |fname| File.directory?(fname) }.empty?
+    end
   end
 end

@@ -72,7 +72,15 @@ class SubmissionController < ApplicationController
     end
 
     if (SubmissionUtils.unzip!(@submission))
-      SubmissionUtils.push_and_notify_tools!(@submission, flash)
+      unless (SubmissionUtils.empty?(@submission))
+        SubmissionUtils.push_and_notify_tools!(@submission, flash)
+      else
+        logger.info "Rejecting empty submission #{@submission.id} from user #{current_user.name}."
+        @submission.destroy
+        flash[:error] = "You have made an empty submission. Please ensure there is at least one file that is not a directory inside your ZIP file."
+        redirect_to '/422'
+        return
+      end
     end
 
     redirect_to action: 'show', id: @submission.id
@@ -134,7 +142,14 @@ class SubmissionController < ApplicationController
     end
 
     # We can recover from here onward, so it is safe to keep the submission
-    SubmissionUtils.push_and_notify_tools!(@submission, flash)
+    unless (SubmissionUtils.empty?(@submission))
+      SubmissionUtils.push_and_notify_tools!(@submission, flash)
+    else
+      logger.info "Rejecting empty submission #{@submission.id} from user #{current_user.name}."
+      @submission.destroy
+      render json: { data: 'Error!' }, status: 422, content_type: 'text/json'
+      return
+    end
 
     render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
   rescue StandardError => e
