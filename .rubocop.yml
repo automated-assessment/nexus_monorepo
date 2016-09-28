@@ -1,7 +1,8 @@
 require: rubocop-rspec
 
 AllCops:
-  RunRailsCops: true
+  Rails:
+    Enabled: true
   Exclude:
     - bin/**/*
     - db/migrate/**/*
