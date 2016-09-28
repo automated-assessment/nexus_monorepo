@@ -5,8 +5,9 @@ const NEXUS_SUB_DIR = process.env.NEXUS_SUB_DIR || '';
 const NEXUS_TOOL_CANONICAL_NAME = process.env.NEXUS_TOOL_CANONICAL_NAME || 'javac';
 
 function sendRequest(body, url, callback) {
+  const full_url = `${NEXUS_BASE_URL}${NEXUS_SUB_DIR}${url}`;
   const requestOptions = {
-    `${NEXUS_BASE_URL}${NEXUS_SUB_DIR}${url}`,
+    full_url,
     method: 'POST',
     headers: {
       'Nexus-Access-Token': process.env.NEXUS_ACCESS_TOKEN
