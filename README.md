@@ -51,6 +51,12 @@ _Full documentation can be found in the [Wiki](https://github.kcl.ac.uk/automate
 ##### `RABBIT_MQ_QNAME`
 - Queue name to use on RabbitMQ (defaults to `nexus.submissions_to_tools`)
 
+##### `RAILS_RELATIVE_URL_ROOT`
+- If set, Nexus will be hosted at a relative path from the host root, as specified. Useful when running behind a reverse proxy or similar.
+
+##### `NEXUS_BASE_HOST`
+- If set, this will be used as the request URI when doing OAuth authorisation requests. Useful when running behind a reverse proxy or similar. This option is only considered in production mode.
+
 #### Quick-start
 0. Ensure environment variables are set up (see above) - using a `.env` file is probably best
 1. Clone the repo
