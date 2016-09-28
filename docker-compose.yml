@@ -1,3 +1,4 @@
+# Requires Docker v 1.12 or above
 version: '2'
 services:
   syslog:
@@ -19,7 +20,7 @@ services:
       driver: syslog
       options:
         syslog-address: "udp://localhost:5514"
-        syslog-tag: "nexus"
+        tag: "nexus"
     depends_on:
       - db
       - syslog
@@ -36,7 +37,7 @@ services:
       driver: syslog
       options:
         syslog-address: "udp://localhost:5514"
-        syslog-tag: "postgres"
+        tag: "postgres"
     depends_on:
       - syslog
   sneakers:
@@ -51,7 +52,7 @@ services:
       driver: syslog
       options:
         syslog-address: "udp://localhost:5514"
-        syslog-tag: "nexus-sneakers"
+        tag: "nexus-sneakers"
     depends_on:
       - db
       - syslog
@@ -67,7 +68,7 @@ services:
       driver: syslog
       options:
         syslog-address: "udp://localhost:5514"
-        syslog-tag: "rabbitmq"
+        tag: "rabbitmq"
     depends_on:
       - syslog
   rng-tool:
@@ -81,7 +82,7 @@ services:
       driver: syslog
       options:
         syslog-address: "udp://localhost:5514"
-        syslog-tag: "rng"
+        tag: "rng"
     depends_on:
       - syslog
   config-tool:
@@ -95,7 +96,7 @@ services:
       driver: syslog
       options:
         syslog-address: "udp://localhost:5514"
-        syslog-tag: "config-tool"
+        tag: "config-tool"
     depends_on:
       - syslog
   javac-tool:
@@ -111,7 +112,7 @@ services:
       driver: syslog
       options:
         syslog-address: "udp://localhost:5514"
-        syslog-tag: "javac-tool"
+        tag: "javac-tool"
     depends_on:
       - syslog
   io-tool:
@@ -128,7 +129,7 @@ services:
       driver: syslog
       options:
         syslog-address: "udp://localhost:5514"
-        syslog-tag: "io-tool"
+        tag: "io-tool"
     depends_on:
       - syslog
       - mongodb
@@ -140,6 +141,6 @@ services:
       driver: syslog
       options:
         syslog-address: "udp://localhost:5514"
-        syslog-tag: "mongodb"
+        tag: "mongodb"
     depends_on:
       - syslog
