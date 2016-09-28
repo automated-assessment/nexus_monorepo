@@ -101,7 +101,7 @@ services:
       - syslog
   javac-tool:
     build: javac-tool/
-    env_file: .env.javac.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
+    env_file: .env.javac.list # NEXUS_TOOL_CANONICAL_NAME, NEXUS_ACCESS_TOKEN, and possibly NEXUS_SUB_DIR
     environment:
       NEXUS_BASE_URL: http://nexus:3000
     ports:
