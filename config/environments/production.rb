@@ -65,4 +65,9 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Allow production server to run behind proxy or load balancer, but let omniauth use correct callback URLs
+  if ENV['NEXUS_BASE_HOST'] 
+    OmniAuth.config.full_host = ENV['NEXUS_BASE_HOST']
+  end
 end
