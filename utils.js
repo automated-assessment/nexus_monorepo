@@ -4,10 +4,10 @@ const NEXUS_BASE_URL = process.env.NEXUS_BASE_URL || 'http://localhost:3000';
 const NEXUS_SUB_DIR = process.env.NEXUS_SUB_DIR || '';
 const NEXUS_TOOL_CANONICAL_NAME = process.env.NEXUS_TOOL_CANONICAL_NAME || 'javac';
 
-function sendRequest(body, url, callback) {
-  const full_url = `${NEXUS_BASE_URL}${NEXUS_SUB_DIR}${url}`;
+function sendRequest(body, url_end, callback) {
+  const url = `${NEXUS_BASE_URL}${NEXUS_SUB_DIR}${url_end}`;
   const requestOptions = {
-    full_url,
+    url,
     method: 'POST',
     headers: {
       'Nexus-Access-Token': process.env.NEXUS_ACCESS_TOKEN
