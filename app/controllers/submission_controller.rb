@@ -42,7 +42,8 @@ class SubmissionController < ApplicationController
 
     uploaded_file = params[:submission][:code]
 
-    if uploaded_file.content_type != 'application/zip'
+    unless zip_file?(uploaded_file)
+      logger.info "Rejecting supposed ZIP upload: #{uploaded_file.original_filename} of MIME type #{uploaded_file.content_type}"
       redirect_to(error_url '422')
       return
     end
@@ -207,6 +208,13 @@ class SubmissionController < ApplicationController
   end
 
   private
+
+  def zip_file?(file)
+    (file.content_type == 'application/zip') ||
+    (file.content_type == 'multipart/x-zip') ||
+    (file.content_type == 'application/x-zip-compressed') ||
+    (file.original_filename.end_with? ".zip" && (file.content_type == 'application/x-compressed'))
+  end
 
   # Create a new submission from URL parameters, set its studentrepo field as
   # per the param, and return whether the submission would be acceptable.
