@@ -1,9 +1,13 @@
 module ApplicationHelper
+  def error_url(code)
+    "#{ENV['RAILS_RELATIVE_URL_ROOT']}/#{code}"
+  end
+
   def authenticate_admin!
     if is_admin?
       return true
     else
-      redirect_to '/401'
+      redirect_to(error_url '401')
       return false
     end
   end
