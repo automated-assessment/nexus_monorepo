@@ -10,7 +10,7 @@ class SubmissionController < ApplicationController
     # Only allow original submitter or admin users to see a submission
     unless (is_admin? || (is_user? @submission.user))
       @submission.log("Illegal attempt to access submission by user #{current_user.name} when submitting user was #{@submission.user.name}. Refusing access.", "Warning")
-      redirect_to '/401'
+      redirect_to(error_url '401')
       return
     end
 
@@ -43,7 +43,7 @@ class SubmissionController < ApplicationController
     uploaded_file = params[:submission][:code]
 
     if uploaded_file.content_type != 'application/zip'
-      redirect_to '/422'
+      redirect_to(error_url '422')
       return
     end
 
@@ -67,7 +67,7 @@ class SubmissionController < ApplicationController
       logger.error "Error copying uploaded zip file for #{current_user.name}: #{e.inspect}."
 
       @submission.destroy
-      redirect_to '/500'
+      redirect_to(error_url '500')
       return
     end
 
@@ -78,7 +78,7 @@ class SubmissionController < ApplicationController
         logger.info "Rejecting empty submission #{@submission.id} from user #{current_user.name}."
         @submission.destroy
         flash[:error] = "You have made an empty submission. Please ensure there is at least one file that is not a directory inside your ZIP file."
-        redirect_to '/422'
+        redirect_to(error_url '422')
         return
       end
     end
