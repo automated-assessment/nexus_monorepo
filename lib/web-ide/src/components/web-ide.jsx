@@ -59,7 +59,7 @@ export default class NexusWebIDE extends React.Component {
   }
 
   handleSubmit() {
-    this.setState({ submitting: true });
+    this.setState({ submitting: true, errorFlag: false, errorMessage: '' });
     XHR.post(this.props.submitURL, {
       data: {
         authenticity_token: this.props.formAuthenticityToken,
