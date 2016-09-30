@@ -114,37 +114,37 @@ class SubmissionController < ApplicationController
     # If things go wrong before the safe point, we need to destroy it again.
     @submission.save!
 
-    begin
-      submitted_files = params[:data]
+    submitted_files = params[:data]
+    unless submitted_files.nil?
+        begin
+        output_path = Rails.root.join('var', 'submissions', 'code', "#{@submission.id}")
+        Dir.mkdir output_path unless File.exist? output_path
 
-      output_path = Rails.root.join('var', 'submissions', 'code', "#{@submission.id}")
-      Dir.mkdir output_path unless File.exist? output_path
+        submitted_files.each do |file|
+          filename = file[:filename]
+          code = file[:code]
 
-      submitted_files.each do |file|
-        filename = file[:filename]
-        code = file[:code]
+          # Keep track on the console in case we will end up destroying the submission
+          logger.debug {"Creating file '#{filename}' from Web IDE for submission #{@submission.id} in #{output_path}"}
+          @submission.log("Creating file '#{filename}' from Web IDE in #{output_path}", 'Debug')
 
-        # Keep track on the console in case we will end up destroying the submission
-        logger.debug {"Creating file '#{filename}' from Web IDE for submission #{@submission.id} in #{output_path}"}
-        @submission.log("Creating file '#{filename}' from Web IDE in #{output_path}", 'Debug')
-
-        File.open(File.join(output_path, filename), 'w') do |f|
-          f.puts code
+          File.open(File.join(output_path, filename), 'w') do |f|
+            f.puts code
+          end
         end
+
+      rescue StandardError => e
+        # At this point, we need to remove the submission if anything goes wrong because we won't be able to recover yet
+        logger.error "Error copying files from Web IDE for #{current_user.name}: #{e.inspect}."
+
+        @submission.destroy
+        render json: { data: 'Error!', message: "There was an internal server error processing your uploaded files. Your submission could not be accepted at this time. Please contact your course leader." },
+               status: 500, content_type: 'text/json'
+        return
       end
-
-    rescue StandardError => e
-      # At this point, we need to remove the submission if anything goes wrong because we won't be able to recover yet
-      logger.error "Error copying files from Web IDE for #{current_user.name}: #{e.inspect}."
-
-      @submission.destroy
-      render json: { data: 'Error!', message: "There was an internal server error processing your uploaded files. Your submission could not be accepted at this time. Please contact your course leader." },
-             status: 500, content_type: 'text/json'
-      return
     end
-
     # We can recover from here onward, so it is safe to keep the submission
-    unless (SubmissionUtils.empty?(@submission))
+    unless ((submitted_files.nil?) || (SubmissionUtils.empty?(@submission)))
       SubmissionUtils.push_and_notify_tools!(@submission, flash)
     else
       logger.info "Rejecting empty submission #{@submission.id} from user #{current_user.name}."
