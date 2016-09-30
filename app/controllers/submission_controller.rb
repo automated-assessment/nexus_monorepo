@@ -155,10 +155,10 @@ class SubmissionController < ApplicationController
 
     render json: { data: 'OK!', redirect: submission_url(id: @submission.id) }, status: 200, content_type: 'text/json'
   rescue StandardError => e
-    render json: { data: 'Error!' }, status: 500, content_type: 'text/json'
+    render json: { data: 'Error!', message: "An internal server error has occurred when processing your submission. Please contact the course leader." }, status: 500, content_type: 'text/json'
 
-    @submission.log("Error creating submission: #{e.class} #{e.message}", "Error") if (@submission.persisted?)
-    logger.error "Error creating submission: #{e.class} #{e.message}"
+    @submission.log("Error creating submission for user #{current_user.name}: #{e.class} #{e.message}", "Error") if (@submission.persisted?)
+    logger.error "Error creating submission for user #{current_user.name}: #{e.class} #{e.message}"
   end
 
   def edit_mark
