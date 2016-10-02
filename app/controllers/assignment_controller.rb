@@ -80,7 +80,7 @@ class AssignmentController < ApplicationController
   def export_submissions_data
     return unless authenticate_admin!
     @assignment = Assignment.find(params[:id])
-    headers['Content-Disposition'] = "attachment; filename=\"submissions-data-export.csv\""
+    headers['Content-Disposition'] = 'attachment; filename=\"submissions-data-export.csv\"'
     headers['Content-Type'] ||= 'text/csv'
   end
 
@@ -89,7 +89,7 @@ class AssignmentController < ApplicationController
 
     @assignment = Assignment.find(params[:id])
     # Get all users who have made submissions to this assignment
-    @users = User.joins(:submissions).where(submissions: {assignment_id: params[:id]}).distinct.order(:name) || {}
+    @users = User.joins(:submissions).where(submissions: { assignment_id: params[:id] }).distinct.order(:name) || {}
   end
 
   private
