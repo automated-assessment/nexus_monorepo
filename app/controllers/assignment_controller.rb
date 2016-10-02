@@ -45,7 +45,12 @@ class AssignmentController < ApplicationController
   def create
     return unless authenticate_admin!
     @assignment = Assignment.new(assignment_params)
-    @assignment.save!
+    unless @assignment.save
+      flash[:error] = @assignment.errors.full_messages[0]
+      redirect_to action: 'new', cid: @assignment.course.id
+      @assignment.destroy
+      return
+    end
 
     unless GitUtils.setup_remote_assignment_repo!(@assignment)
       flash[:error] = 'Error creating repository for assignment!'
@@ -73,6 +78,7 @@ class AssignmentController < ApplicationController
       flash[:success] = 'Assignment updated'
       redirect_to @assignment
     else
+      flash[:error] = @assignment.errors.full_messages[0]
       render 'edit'
     end
   end

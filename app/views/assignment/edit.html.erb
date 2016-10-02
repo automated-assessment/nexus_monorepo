@@ -56,7 +56,7 @@
     <div class="form-group">
       <%= f.label 'Deadline (Late Submissions)', class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
-        <%= f.datetime_field :latedeadline, class: 'form-control', id: 'latedeadlinefield', value: @assignment.latedeadline, 'data-date-format':'dd M yyyy hh:ii' %>
+        <%= f.datetime_field :latedeadline, class: 'form-control', id: 'latedeadlinefield', value: @assignment.latedeadline.strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
         <p>All times are <strong>UTC</strong>.</p>
       </div>
     </div>
