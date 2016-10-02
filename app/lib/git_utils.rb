@@ -120,8 +120,8 @@ class GitUtils
 
       assignment.log("Created GHE repo for assignment (#{assignment.repourl})", 'success')
       return true
-    rescue Octokit::ClientError => e
-      STDERR.puts "Error creating assignment repository for #{assignment.id}, #{assignment.title}: #{e.inspect}"
+    rescue StandardError => e
+      Rails.logger.error "Error creating assignment repository for assignment #{assignment.id}, #{assignment.title}: #{e.inspect}"
       assignment.log("Error creating assignment repository: #{e.inspect}", 'Error')
       return false
     end
