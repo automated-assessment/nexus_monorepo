@@ -10,8 +10,12 @@ class SubmissionUtils
       Dir.mkdir output_path unless File.exist? output_path
       Zip::File.open(Rails.root.join('var', 'submissions', 'uploads', "#{submission.user.id}_#{submission.id}.zip")) do |zip_file|
         zip_file.each do |entry|
-          submission.log("Extracted #{entry.name}", 'Debug')
-          entry.extract(output_path.join("#{entry.name}"))
+          files = entry.name.split(%r{(/)}i).each_slice(2).to_a.map(&:join)
+          current_file = files[files.size - 1]
+          next if ZIP_BAD_FILE_REGEX.match(current_file)
+          # TODO: From here only extract Java files
+          submission.log("Extracted #{current_file}", 'Debug')
+          entry.extract(output_path.join(current_file))
         end
       end
       submission.log('Extraction successful', 'Success')
