@@ -30,7 +30,7 @@
         <% end %>
         <% unless @submission.studentrepo %>
           <% if @submission.git_success %>
-            <%= link_to @submission.repourl.dup.gsub(/.git\z/, '').concat("/commit/#{@submission.commithash}"), target: '_blank' do %>
+            <%= link_to @submission.augmented_clone_url.dup.gsub(/.git\z/, '').concat("/commit/#{@submission.commithash}"), target: '_blank' do %>
               <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'github-square' %> Show in GHE</button>
             <% end %>
           <% end %>
