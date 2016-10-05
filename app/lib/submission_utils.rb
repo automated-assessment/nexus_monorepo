@@ -4,15 +4,25 @@ class SubmissionUtils
   require_relative '../lib/git_utils'
 
   class << self
+    file_blacklist = Regexp.union(
+      [
+        %r{(.*\/)?\.git(\/.*)?}, # i.e. **/.git/* possibly with nothing at the end
+        %r{(.*\/)?\.DS_Store(\/.*)?}, # i.e. **/.DS_Store/* possibly with nothing at the end
+        %r{(.*\/)?\.gitignore}, # i.e. **/.gitignore
+        %r{(.*\/)?\.gitmodules},
 
+        # IDE Config files
+        %r{(.*\/)?\w\.xml},
+        %r{(.*\/)?\w\.iml}
+      ]
+    )
     def unzip!(submission)
-      output_path = Rails.root.join('var', 'submissions', 'code', "#{submission.id}")
+      output_path = Rails.root.join('var', 'submissions', 'code', submission.id.to_s)
       Dir.mkdir output_path unless File.exist? output_path
       Zip::File.open(Rails.root.join('var', 'submissions', 'uploads', "#{submission.user.id}_#{submission.id}.zip")) do |zip_file|
         zip_file.each do |entry|
           files = entry.name.split(%r{(/)}i).each_slice(2).to_a.map(&:join)
-          current_file = files[files.size - 1]
-          next if ZIP_BAD_FILE_REGEX.match(current_file)
+          current_file = files.last
           # TODO: From here only extract Java files
           submission.log("Extracted #{current_file}", 'Debug')
           entry.extract(output_path.join(current_file))
