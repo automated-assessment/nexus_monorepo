@@ -4,25 +4,29 @@ class SubmissionUtils
   require_relative '../lib/git_utils'
 
   class << self
-    file_blacklist = Regexp.union(
-      [
-        %r{(.*\/)?\.git(\/.*)?}, # i.e. **/.git/* possibly with nothing at the end
-        %r{(.*\/)?\.DS_Store(\/.*)?}, # i.e. **/.DS_Store/* possibly with nothing at the end
-        %r{(.*\/)?\.gitignore}, # i.e. **/.gitignore
-        %r{(.*\/)?\.gitmodules},
-
-        # IDE Config files
-        %r{(.*\/)?\w\.xml},
-        %r{(.*\/)?\w\.iml}
-      ]
-    )
     def unzip!(submission)
+      file_blacklist = Regexp.union(
+        [
+          %r{(.*\/)?\.git(\/.*)?}, # i.e. **/.git/* possibly with nothing at the end
+          %r{(.*\/)?\.DS_Store(\/.*)?}, # i.e. **/.DS_Store/* possibly with nothing at the end
+          %r{(.*\/)?\.gitignore}, # i.e. **/.gitignore
+          %r{(.*\/)?\.gitmodules},
+          %r{(.*\/)?\.idea(\/.*)?},
+          %r{(.*\/)?__MACOSX(\/.*)?},
+          %r{(.*\/)?\w\.class}, # Java Class files
+          # IDE Config files
+          %r{(.*\/)?\w\.xml},
+          %r{(.*\/)?\w\.iml}
+        ]
+      )
+
       output_path = Rails.root.join('var', 'submissions', 'code', submission.id.to_s)
       Dir.mkdir output_path unless File.exist? output_path
       Zip::File.open(Rails.root.join('var', 'submissions', 'uploads', "#{submission.user.id}_#{submission.id}.zip")) do |zip_file|
         zip_file.each do |entry|
-          submission.log("Extracted #{current_file}", 'Debug')
-          entry.extract(output_path.join(current_file))
+          next if file_blacklist.match(entry.name)
+          submission.log("Extracted #{entry.name}", 'Debug')
+          entry.extract(output_path.join(entry.name))
         end
       end
       submission.log('Extraction successful', 'Success')
@@ -42,7 +46,7 @@ class SubmissionUtils
         begin
           SendSubmissionJob.perform_later submission.id, mt.id
         rescue => e
-          submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", "Error")
+          submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", 'Error')
           submission.failed = true
           submission.save!
         end
