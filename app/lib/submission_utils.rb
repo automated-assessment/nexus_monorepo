@@ -21,9 +21,6 @@ class SubmissionUtils
       Dir.mkdir output_path unless File.exist? output_path
       Zip::File.open(Rails.root.join('var', 'submissions', 'uploads', "#{submission.user.id}_#{submission.id}.zip")) do |zip_file|
         zip_file.each do |entry|
-          files = entry.name.split(%r{(/)}i).each_slice(2).to_a.map(&:join)
-          current_file = files.last
-          # TODO: From here only extract Java files
           submission.log("Extracted #{current_file}", 'Debug')
           entry.extract(output_path.join(current_file))
         end
