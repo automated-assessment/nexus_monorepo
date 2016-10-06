@@ -221,7 +221,9 @@ class SubmissionController < ApplicationController
     (file.content_type == 'application/zip') ||
     (file.content_type == 'multipart/x-zip') ||
     (file.content_type == 'application/x-zip-compressed') ||
-    ((file.original_filename.end_with?(".zip")) && (file.content_type == 'application/x-compressed'))
+    ((file.original_filename.end_with?(".zip")) &&
+      ((file.content_type == 'application/x-compressed') ||
+       (file.content_type == 'application/octet-stream'))) # In this last case, we'll leave it to ZIP::File to figure out if it really is a zip file.
   end
 
   # Create a new submission from URL parameters, set its studentrepo field as
