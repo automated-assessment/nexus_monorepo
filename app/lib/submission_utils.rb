@@ -4,14 +4,26 @@ class SubmissionUtils
   require_relative '../lib/git_utils'
 
   class << self
-
     def unzip!(submission)
-      output_path = Rails.root.join('var', 'submissions', 'code', "#{submission.id}")
+      file_blacklist = Regexp.union(
+        [
+          %r{(.*\/)?\.git(\/.*)?}, # i.e. **/.git/* possibly with nothing at the end
+          %r{(.*\/)?\.DS_Store(\/.*)?}, # i.e. **/.DS_Store/* possibly with nothing at the end
+          %r{(.*\/)?\.gitignore}, # i.e. **/.gitignore
+          %r{(.*\/)?\.gitmodules},
+          %r{(.*\/)?__MACOSX(\/.*)?}
+        ]
+      )
+      output_path = Rails.root.join('var', 'submissions', 'code', submission.id.to_s)
       Dir.mkdir output_path unless File.exist? output_path
       Zip::File.open(Rails.root.join('var', 'submissions', 'uploads', "#{submission.user.id}_#{submission.id}.zip")) do |zip_file|
         zip_file.each do |entry|
-          submission.log("Extracted #{entry.name}", 'Debug')
-          entry.extract(output_path.join("#{entry.name}"))
+          if file_blacklist.match(entry.name)
+            submission.log("Ignored #{entry.name} because of blacklisting", 'Debug')
+          else
+            submission.log("Extracted #{entry.name}", 'Debug')
+            entry.extract(output_path.join(entry.name))
+          end
         end
       end
       submission.log('Extraction successful', 'Success')
@@ -31,7 +43,7 @@ class SubmissionUtils
         begin
           SendSubmissionJob.perform_later submission.id, mt.id
         rescue => e
-          submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", "Error")
+          submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", 'Error')
           submission.failed = true
           submission.save!
         end
