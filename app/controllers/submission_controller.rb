@@ -42,6 +42,13 @@ class SubmissionController < ApplicationController
 
     uploaded_file = params[:submission][:code]
 
+    if (uploaded_file.nil?)
+      logger.info "Rejecting upload without a ZIP file for user #{current_user.name}."
+      flash[:error] = 'Please include a ZIP file in your submission.'
+      redirect_to(error_url '422')
+      return
+    end
+
     unless zip_file?(uploaded_file)
       logger.info "Rejecting supposed ZIP upload: #{uploaded_file.original_filename} of MIME type #{uploaded_file.content_type}"
       redirect_to(error_url '422')
