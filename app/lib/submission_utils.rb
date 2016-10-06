@@ -11,22 +11,19 @@ class SubmissionUtils
           %r{(.*\/)?\.DS_Store(\/.*)?}, # i.e. **/.DS_Store/* possibly with nothing at the end
           %r{(.*\/)?\.gitignore}, # i.e. **/.gitignore
           %r{(.*\/)?\.gitmodules},
-          %r{(.*\/)?\.idea(\/.*)?},
-          %r{(.*\/)?__MACOSX(\/.*)?},
-          %r{(.*\/)?\w\.class}, # Java Class files
-          # IDE Config files
-          %r{(.*\/)?\w\.xml},
-          %r{(.*\/)?\w\.iml}
+          %r{(.*\/)?__MACOSX(\/.*)?}
         ]
       )
-
       output_path = Rails.root.join('var', 'submissions', 'code', submission.id.to_s)
       Dir.mkdir output_path unless File.exist? output_path
       Zip::File.open(Rails.root.join('var', 'submissions', 'uploads', "#{submission.user.id}_#{submission.id}.zip")) do |zip_file|
         zip_file.each do |entry|
-          next if file_blacklist.match(entry.name)
-          submission.log("Extracted #{entry.name}", 'Debug')
-          entry.extract(output_path.join(entry.name))
+          if file_blacklist.match(entry.name)
+            submission.log("Ignored #{entry.name} because of blacklisting", 'Debug')
+          else
+            submission.log("Extracted #{entry.name}", 'Debug')
+            entry.extract(output_path.join(entry.name))
+          end
         end
       end
       submission.log('Extraction successful', 'Success')
