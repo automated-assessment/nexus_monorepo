@@ -17,8 +17,8 @@ if (!process.env.SUBMISSIONS_DIRECTORY) {
   process.exit(1);
 }
 
-process.on('SIGINT', function() {
-    process.exit();
+process.on('SIGINT', () => {
+  process.exit();
 });
 
 const app = express();
@@ -37,7 +37,7 @@ app.post('/mark', (req, res, next) => {
     const sha = req.body.sha;
 
     const sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
-    console.log (`Using directory ${sourceDir}.`);
+    console.log(`Using directory ${sourceDir}.`);
 
     let output = '';
     console.log(`Request to mark submission ${submissionID} received.`);
@@ -69,7 +69,7 @@ app.post('/mark', (req, res, next) => {
           res.status(500).send(`Error from Nexus mark request: ${err}`);
         }
       });
-  
+
       res.sendStatus(200);
     } catch (e) {
       output += `<pre><code>${e.toString()}\n${e.stdout.toString()}</code></pre>`;
@@ -92,9 +92,8 @@ app.post('/mark', (req, res, next) => {
     }
   } catch (e) {
     // Fix what request response we sent so that nexus knows something has gone wrong
-    res.status (500).send(`Error in javac-tool: ${e.toString()},\n${e.output.toString()}`);
-  }
-  finally {
+    res.status(500).send(`Error in javac-tool: ${e.toString()},\n${e.output.toString()}`);
+  } finally {
     return next();
   }
 });
