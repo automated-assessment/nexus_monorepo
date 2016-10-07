@@ -4,7 +4,12 @@ require 'uri'
 class SendSubmissionJob < ActiveJob::Base
   queue_as Rails.configuration.rabbit_mq_qname
 
+  rescue_from(StandardError) do |e|
+    Rails.logger.error "Encountered exception when trying to run submission job: #{e.inspect}."
+  end
+
   def perform(submission_id, marking_tool_id)
+    Rails.logger.debug "Actually inside SendSubmissionJob.perform."
     @submission = Submission.find(submission_id)
     @marking_tool = MarkingTool.find(marking_tool_id)
 
@@ -26,7 +31,8 @@ class SendSubmissionJob < ActiveJob::Base
       record_fail!
     end
 
-  rescue => e
+  rescue StandardError => e
+    Rails.logger.error "Error in SendSubmissionJob: #{e.class} #{e.message}"
     @submission.log("Error notifying #{@marking_tool.name}: #{e.class} #{e.message}", 'Error')
     record_fail!
   end
