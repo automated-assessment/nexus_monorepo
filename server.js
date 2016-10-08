@@ -71,7 +71,7 @@ app.post('/mark', (req, res, next) => {
       // send mark of 0 and feedback listing only those file names that have white space in them
       _sendMark(0, submissionID);
       output += '<p>You should not include whitespace in any java file names (or their paths) in your submission. Below are the files with problematic file names:</p>';
-      output += `<pre><code>${WHITESPACE_LINES}</code></pre>`;
+      output += `<pre><code>${WHITESPACE_LINES.join("\n")}</code></pre>`;
       res.sendStatus(200);
     } else {
       // execute javac
