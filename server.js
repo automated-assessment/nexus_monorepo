@@ -29,7 +29,7 @@ app.use(errorhandler({
   showStack: true
 }));
 
-const WHITESPACE_REGEX = /^(.+\s+.+)$/mg;
+const WHITESPACE_REGEX = /^(.+[ \t]+.+)$/mg;
 
 const _sendMark = (mark, submissionID) => {
   sendMark(mark, submissionID, (err, res, body) => {
