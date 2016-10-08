@@ -88,7 +88,7 @@ app.post('/mark', (req, res, next) => {
       } catch (e) {
         output += `<pre><code>${e.toString()}\n${e.stdout.toString()}</code></pre>`;
         // Error. Report 0 score
-        sendMark(0, submissionID);
+        _sendMark(0, submissionID);
         res.sendStatus(200);
       }
     }
