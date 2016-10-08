@@ -29,6 +29,8 @@ app.use(errorhandler({
   showStack: true
 }));
 
+const whitespace_regexp = /^.+\s+.+$/m;
+
 app.post('/mark', (req, res, next) => {
   try {
     const submissionID = req.body.sid;
@@ -53,6 +55,11 @@ app.post('/mark', (req, res, next) => {
     // append found files to html feedback
     output += '<p class="text-info">Java source files found:</p>';
     output += `<pre><code>${childCat.toString()}</code></pre>`;
+
+    // here test for occurrence of whitespace in set of file names
+    if (whitespace_regexp.test(childCat.toString())) {
+      // send mark of 0 and feedback listing only those file names that have white space in them
+    }
 
     // execute javac
     output += '<p class="text-info">Compiler Output:</p>';
