@@ -29,7 +29,7 @@ app.use(errorhandler({
   showStack: true
 }));
 
-const whitespace_regexp = /^.+\s+.+$/m;
+const WHITESPACE_REGEX = /^.+\s+.+$/m;
 
 app.post('/mark', (req, res, next) => {
   try {
@@ -57,8 +57,22 @@ app.post('/mark', (req, res, next) => {
     output += `<pre><code>${childCat.toString()}</code></pre>`;
 
     // here test for occurrence of whitespace in set of file names
-    if (whitespace_regexp.test(childCat.toString())) {
+    if (WHITESPACE_REGEX.test(childCat.toString())) {
+      const files = childCat.toString().split('\n');
       // send mark of 0 and feedback listing only those file names that have white space in them
+      output += '<p class="text-info">Please remove the whitespace from the following file names:</p>';
+      files.forEach((file) => {
+        if (WHITESPACE_REGEX.test(file)) {
+          output += `<pre><code>${file}</code></pre>`;
+        }
+      });
+      sendMark(0, submissionID, (err, res, body) => {
+        if (err) {
+          console.log(`Error from request: ${err}`);
+          res.status(500).send(`Error from Nexus mark request: ${err}`);
+        }
+      });
+      res.send(200);
     }
 
     // execute javac
