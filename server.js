@@ -29,7 +29,7 @@ app.use(errorhandler({
   showStack: true
 }));
 
-const whitespace_regexp = /^.+\s+.+$/m;
+const whitespace_regexp = /^(.+\s+.+)$/mg;
 
 app.post('/mark', (req, res, next) => {
   try {
@@ -57,30 +57,9 @@ app.post('/mark', (req, res, next) => {
     output += `<pre><code>${childCat.toString()}</code></pre>`;
 
     // here test for occurrence of whitespace in set of file names
-    if (whitespace_regexp.test(childCat.toString())) {
+    const whitespace_lines = childCat.toString().match(whitespace_regexp);
+    if (whitespace_lines != null) {
       // send mark of 0 and feedback listing only those file names that have white space in them
-    }
-
-    // execute javac
-    output += '<p class="text-info">Compiler Output:</p>';
-    try {
-      const childJavac = execSync('javac -Xlint:all @sources.txt 2>&1', { cwd: sourceDir, timeout: 60000 });
-
-      output += '<p class="text-info">Java sources compiled successfully.</p>';
-      output += `<pre><code>${childJavac.toString()}</code></pre>`;
-
-      // Success. Report 100 score
-      sendMark(100, submissionID, (err, res, body) => {
-        if (err) {
-          console.log(`Error from request: ${err}`);
-          res.status(500).send(`Error from Nexus mark request: ${err}`);
-        }
-      });
-
-      res.sendStatus(200);
-    } catch (e) {
-      output += `<pre><code>${e.toString()}\n${e.stdout.toString()}</code></pre>`;
-      // Error. Report 0 score
       sendMark(0, submissionID, (err, res, body) => {
         if (err) {
           console.log(`Error from request: ${err}`);
@@ -88,15 +67,48 @@ app.post('/mark', (req, res, next) => {
         }
       });
 
+      output += '<p>You should not include whitespace in any java file names (or their paths) in your submission. Below are the files with problematic file names:</p>';
+      output += `<pre><code>${whitespace_lines}</code></pre>`;
+
       res.sendStatus(200);
-    } finally {
-      // Send output as feedback
-      sendFeedback(`<div class="javac-feedback">${output}</div>`, submissionID, (err, res, body) => {
-        if (err) {
-          console.log(`Error from Nexus feedback request: ${err}`);
-        }
-      });
+    } else {
+      // execute javac
+      output += '<p class="text-info">Compiler Output:</p>';
+      try {
+        const childJavac = execSync('javac -Xlint:all @sources.txt 2>&1', { cwd: sourceDir, timeout: 60000 });
+
+        output += '<p class="text-info">Java sources compiled successfully.</p>';
+        output += `<pre><code>${childJavac.toString()}</code></pre>`;
+
+        // Success. Report 100 score
+        sendMark(100, submissionID, (err, res, body) => {
+          if (err) {
+            console.log(`Error from request: ${err}`);
+            res.status(500).send(`Error from Nexus mark request: ${err}`);
+          }
+        });
+
+        res.sendStatus(200);
+      } catch (e) {
+        output += `<pre><code>${e.toString()}\n${e.stdout.toString()}</code></pre>`;
+        // Error. Report 0 score
+        sendMark(0, submissionID, (err, res, body) => {
+          if (err) {
+            console.log(`Error from request: ${err}`);
+            res.status(500).send(`Error from Nexus mark request: ${err}`);
+          }
+        });
+
+        res.sendStatus(200);
+      }
     }
+
+    // Send output as feedback
+    sendFeedback(`<div class="javac-feedback">${output}</div>`, submissionID, (err, res, body) => {
+      if (err) {
+        console.log(`Error from Nexus feedback request: ${err}`);
+      }
+    });
   } catch (e) {
     // Fix what request response we sent so that nexus knows something has gone wrong
     res.status(500).send(`Error in javac-tool: ${e.toString()},\n${e.output.toString()}`);
