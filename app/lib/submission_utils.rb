@@ -31,6 +31,9 @@ class SubmissionUtils
         end
       end
       submission.log('Extraction successful', 'Success')
+      submission.extraction_error = false
+      submission.save!
+
       return true
     rescue StandardError
       submission.log("Extraction failed: #{$ERROR_INFO.message}", 'Error')
