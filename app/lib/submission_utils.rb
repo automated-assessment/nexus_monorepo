@@ -21,12 +21,19 @@ class SubmissionUtils
           if file_blacklist.match(entry.name)
             submission.log("Ignored #{entry.name} because of blacklisting", 'Debug')
           else
+            entry_name = output_path.join(entry.name)
+            # Ensure the target directory exists even for zip files which do not contain them as separate items
+            FileUtils.mkdir_p File.dirname(entry_name)
+
+            entry.extract(entry_name)
             submission.log("Extracted #{entry.name}", 'Debug')
-            entry.extract(output_path.join(entry.name))
           end
         end
       end
       submission.log('Extraction successful', 'Success')
+      submission.extraction_error = false
+      submission.save!
+
       return true
     rescue StandardError
       submission.log("Extraction failed: #{$ERROR_INFO.message}", 'Error')
