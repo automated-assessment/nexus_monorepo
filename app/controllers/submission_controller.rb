@@ -219,7 +219,9 @@ class SubmissionController < ApplicationController
     return unless authenticate_admin!
     @submission = Submission.find(params[:id])
 
-    SubmissionUtils.remark!(@submission, current_user, flash)
+    if SubmissionUtils.remark!(@submission, current_user, flash)
+      flash[:info] = 'Successfully sent submission for remarking.'
+    end
 
     redirect_to action: 'show', id: @submission.id
   end
