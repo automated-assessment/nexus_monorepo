@@ -220,7 +220,7 @@ class SubmissionController < ApplicationController
     @submission = Submission.find(params[:id])
 
     if SubmissionUtils.remark!(@submission, current_user, flash)
-      flash[:info] = 'Successfully sent submission for remarking.'
+      flash[:success] = 'Successfully sent submission for remarking.'
     end
 
     redirect_to action: 'show', id: @submission.id
