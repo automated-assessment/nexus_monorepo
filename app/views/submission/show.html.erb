@@ -35,6 +35,11 @@
             <% end %>
           <% end %>
         <% end %>
+        <% if @submission.failed_submission? %>
+          <%= link_to resend_submission_path(id: @submission.id) do %>
+            <button type="button" name="button" class="btn btn-sm btn-primary">Reprocess</button>
+          <% end %>
+        <% end %>
         <br>
         <h6>Clone command:</h6>
         <input type="text" class="form-control cloneurl-field" value="git clone --branch <%= @submission.gitbranch %> --single-branch <%= @submission.augmented_clone_url %> submission<%= @submission.id%>" readonly></input>

@@ -95,6 +95,10 @@ class Submission < ActiveRecord::Base
                       level: level)
   end
 
+  def failed_submission?
+    failed || (!git_success) || extraction_error
+  end
+
   def self.failed_submissions
     where("failed=? OR git_success=? OR extraction_error=?", true, false, true)
   end
