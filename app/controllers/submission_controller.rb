@@ -215,6 +215,15 @@ class SubmissionController < ApplicationController
     redirect_to action: 'list_failed'
   end
 
+  def remark
+    return unless authenticate_admin!
+    @submission = Submission.find(params[:id])
+
+    # TODO Trigger remarking of this submission
+
+    redirect_to action: 'show', id: @submission.id
+  end
+
   private
 
   def zip_file?(file)
