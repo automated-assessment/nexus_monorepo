@@ -219,7 +219,7 @@ class SubmissionController < ApplicationController
     return unless authenticate_admin!
     @submission = Submission.find(params[:id])
 
-    # TODO Trigger remarking of this submission
+    SubmissionUtils.remark!(@submission, current_user, flash)
 
     redirect_to action: 'show', id: @submission.id
   end
