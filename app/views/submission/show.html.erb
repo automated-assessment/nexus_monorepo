@@ -39,6 +39,10 @@
           <%= link_to resend_submission_path(id: @submission.id) do %>
             <button type="button" name="button" class="btn btn-sm btn-primary">Reprocess</button>
           <% end %>
+        <% else %>
+          <%#= link_to resend_submission_path(id: @submission.id) do %>
+            <button type="button" name="button" class="btn btn-sm btn-warning">Remark submission</button>
+          <% # end %>
         <% end %>
         <br>
         <h6>Clone command:</h6>
