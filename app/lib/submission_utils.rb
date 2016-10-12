@@ -68,15 +68,19 @@ class SubmissionUtils
 
       # Reset existing marks, if any
       submission.transaction do
-        submission.log("Resetting overall mark of #{submission.mark}", 'Info') unless submission.pending?
-        submission.mark = nil
-        submission.save!
+        unless submission.pending?
+          submission.log("Resetting overall mark of #{submission.mark}", 'Info')
+          submission.mark = nil
+          submission.save!
+        end
 
         submission.intermediate_marks.each do |im|
-          mktool_name = submission.assignment.marking_tool_contexts.find_by(marking_tool_id: im.marking_tool_id).name
-          submission.log("Resetting mark of #{submission.mark} for #{mktool_name}", 'Info') unless im.pending?
-          im.mark = nil
-          im.save!
+          unless im.pending?
+            mktool_name = submission.assignment.marking_tool_contexts.find_by(marking_tool_id: im.marking_tool_id).name
+            submission.log("Resetting mark of #{submission.mark} for #{mktool_name}", 'Info')
+            im.mark = nil
+            im.save!
+          end
         end
 
         submission.feedback_items.each do |fi|
