@@ -10,6 +10,7 @@
 <% if @assignment.submissions.empty? %>
   <p>No submissions have been made for this assignment yet.</p>
 <% else %>
+  <p> Received <%= @assignment.submissions.count %> submissions from <%= @users.count %> users.</p>
   <table class="table table-hover">
     <thead>
       <tr>
