@@ -14,7 +14,7 @@ class SendSubmissionJob < ActiveJob::Base
     @marking_tool = MarkingTool.find(marking_tool_id)
 
     uri = URI.parse(@marking_tool.url)
-    @submission.log("Notifying #{@marking_tool.name} at #{uri}...", "Debug")
+    @submission.log("Notifying #{@marking_tool.name} at #{uri}...", 'Debug')
 
     http = Net::HTTP.new(uri.host, uri.port)
     req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
@@ -25,15 +25,17 @@ class SendSubmissionJob < ActiveJob::Base
 
     if (res.code =~ /2../) then
       # Successfully handed submission over to tool
-      @submission.log("Received #{res.code} #{res.message} from #{@marking_tool.name}", "Success")
+      @submission.log("Received #{res.code} #{res.message} from #{@marking_tool.name}", 'Success')
     else
-      @submission.log("Received #{res.code} #{res.message} from #{@marking_tool.name}: #{res.body}", "Error")
+      @submission.log("Received #{res.code} #{res.message} from #{@marking_tool.name}: #{res.body}", 'Error')
       record_fail!
     end
 
   rescue StandardError => e
     Rails.logger.error "Error in SendSubmissionJob: #{e.class} #{e.message}"
-    @submission.log("Error notifying #{@marking_tool.name}: #{e.class} #{e.message}", 'Error')
+    unless (@submission.nil? || @marking_tool.nil?)
+      @submission.log("Error notifying #{@marking_tool.name}: #{e.class} #{e.message}", 'Error')
+    end
     record_fail!
   end
 
@@ -53,9 +55,11 @@ class SendSubmissionJob < ActiveJob::Base
 
   def record_fail!
     if (@submission) then
-      @submission.log("Recording failure of submission", "Debug")
+      @submission.log("Recording failure of submission", 'Debug')
       @submission.failed = true
       @submission.save!
+    else
+      Rails.logger.error 'Failed to record failure of submission.'
     end
   end
 end
