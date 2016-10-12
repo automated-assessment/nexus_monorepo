@@ -57,6 +57,51 @@ class SubmissionUtils
       end
     end
 
+    def remark!(submission, user, flash)
+      if (submission.mark_override)
+        submission.log("Request to remark by user #{user.name} refused as mark has been manually overridden.", 'Warning')
+        flash[:warning] = 'Mark manually overridden so no remarking initiated.'
+        return false
+      end
+
+      # Really, in this case we should reprocess :-)
+      if submission.failed_submission?
+        flash[:error] = 'Submission has a failure state, needs reprocessing.'
+        return false
+      end
+
+      submission.log("Submitting for remarking on behalf of #{user.name}.", 'Info')
+
+      # Reset existing marks, if any
+      submission.transaction do
+        unless submission.pending?
+          submission.log("Resetting overall mark of #{submission.mark}", 'Info')
+          submission.mark = nil
+          submission.save!
+        end
+
+        submission.intermediate_marks.each do |im|
+          unless im.pending?
+            mktool_name = submission.assignment.marking_tool_contexts.find_by(marking_tool_id: im.marking_tool_id).marking_tool.name
+            submission.log("Resetting mark of #{im.mark} for #{mktool_name}", 'Info')
+            im.mark = nil
+            im.save!
+          end
+        end
+
+        submission.feedback_items.destroy_all.each do |fi|
+          submission.log("Removing feedback from #{fi.marking_tool.name}. Feedback was #{fi.body}", 'Info')
+        end
+      end
+
+      # resubmit!
+      return re_notify_tools!(submission, user, flash)
+    rescue StandardError => e
+      Rails.logger.error{"Error remarking: #{e.inspect}."}
+      submission.log("Error remarking: #{e.inspect}.", 'Error')
+      return false
+    end
+
     def resubmit!(submission, user, flash)
       if submission.git_success
         if submission.failed

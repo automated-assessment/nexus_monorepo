@@ -3,9 +3,9 @@ require 'csv'
 class Submission < ActiveRecord::Base
   belongs_to :assignment
   belongs_to :user
-  has_many :intermediate_marks
-  has_many :feedback_items
-  has_many :audit_items
+  has_many :intermediate_marks, dependent: :destroy
+  has_many :feedback_items, dependent: :destroy
+  has_many :audit_items, dependent: :destroy
 
   validates :assignment, presence: true
   validates :user, presence: true
@@ -93,6 +93,10 @@ class Submission < ActiveRecord::Base
     AuditItem.create!(submission: self,
                       body: body,
                       level: level)
+  end
+
+  def failed_submission?
+    failed || (!git_success) || extraction_error
   end
 
   def self.failed_submissions
