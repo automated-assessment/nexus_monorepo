@@ -59,7 +59,7 @@ class SendSubmissionJob < ActiveJob::Base
       @submission.failed = true
       @submission.save!
     else
-      Rails.logger.error('Failed to record failure of submission.')
+      Rails.logger.error 'Failed to record failure of submission.'
     end
   end
 end
