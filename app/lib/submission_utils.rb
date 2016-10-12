@@ -76,15 +76,15 @@ class SubmissionUtils
 
         submission.intermediate_marks.each do |im|
           unless im.pending?
-            mktool_name = submission.assignment.marking_tool_contexts.find_by(marking_tool_id: im.marking_tool_id).name
-            submission.log("Resetting mark of #{submission.mark} for #{mktool_name}", 'Info')
+            mktool_name = submission.assignment.marking_tool_contexts.find_by(marking_tool_id: im.marking_tool_id).marking_tool.name
+            submission.log("Resetting mark of #{im.mark} for #{mktool_name}", 'Info')
             im.mark = nil
             im.save!
           end
         end
 
         submission.feedback_items.destroy_all.each do |fi|
-          submission.log("Removing feedback from #{fi.marking_tool.name}", 'Info')
+          submission.log("Removing feedback from #{fi.marking_tool.name}. Feedback was #{fi.body}", 'Info')
         end
       end
 
