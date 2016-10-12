@@ -83,9 +83,8 @@ class SubmissionUtils
           end
         end
 
-        submission.feedback_items.each do |fi|
+        submission.feedback_items.destroy_all.each do |fi|
           submission.log("Removing feedback from #{fi.marking_tool.name}", 'Info')
-          fi.destroy! # TODO This probably doesnt work as it leads to a concurrent collection modification. Need to check Ruby rules for this
         end
       end
 
