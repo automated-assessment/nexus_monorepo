@@ -67,21 +67,22 @@ class SubmissionUtils
       submission.log("Submitting for remarking on behalf of #{user.name}.", 'Info')
 
       # Reset existing marks, if any
-      # TODO Run this in a transaction, if possible
-      submission.log("Resetting overall mark of #{submission.mark}", 'Info') unless submission.pending?
-      submission.mark = nil
-      submission.save!
+      submission.transaction do
+        submission.log("Resetting overall mark of #{submission.mark}", 'Info') unless submission.pending?
+        submission.mark = nil
+        submission.save!
 
-      submission.intermediate_marks.each do |im|
-        mktool_name = submission.assignment.marking_tool_contexts.find_by(marking_tool_id: im.marking_tool_id).name
-        submission.log("Resetting mark of #{submission.mark} for #{mktool_name}", 'Info') unless im.pending?
-        im.mark = nil
-        im.save!
-      end
+        submission.intermediate_marks.each do |im|
+          mktool_name = submission.assignment.marking_tool_contexts.find_by(marking_tool_id: im.marking_tool_id).name
+          submission.log("Resetting mark of #{submission.mark} for #{mktool_name}", 'Info') unless im.pending?
+          im.mark = nil
+          im.save!
+        end
 
-      submission.feedback_items.each do |fi|
-        submission.log("Removing feedback from #{fi.marking_tool.name}", 'Info')
-        fi.destroy! # TODO This probably doesnt work as it leads to a concurrent collection modification. Need to check Ruby rules for this
+        submission.feedback_items.each do |fi|
+          submission.log("Removing feedback from #{fi.marking_tool.name}", 'Info')
+          fi.destroy! # TODO This probably doesnt work as it leads to a concurrent collection modification. Need to check Ruby rules for this
+        end
       end
 
       # resubmit!
