@@ -64,6 +64,12 @@ class SubmissionUtils
         return false
       end
 
+      # Really, in this case we should reprocess :-)
+      if submission.failed_submission?
+        flash[:error] = 'Submission has a failure state, needs reprocessing.'
+        return false
+      end
+
       submission.log("Submitting for remarking on behalf of #{user.name}.", 'Info')
 
       # Reset existing marks, if any
