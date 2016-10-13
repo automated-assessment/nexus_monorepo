@@ -43,7 +43,7 @@ The access token must be valid for the nexus instance to be run, so in the first
 - Initialise: `docker-compose run nexus init` (only needed first time, when schema has changed, or when javascript component have been added or modified; partial initialisations `init-js`, `init-dirs`, and `init-db` are also available)
 - Run: `docker-compose up -d`
 
-This brings up the nexus server fully ready to run and detaches it from the current console. 
+This brings up the nexus server fully ready to run and detaches it from the current console. You should be able to get to nexus by opening `localhost:3000` in your browser.
 
 ## Health checks
 
