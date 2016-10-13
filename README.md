@@ -25,20 +25,20 @@ Note that the two user variables and the two password variables need to be set t
 
 An explanation of these vars can be found in the main Nexus repo
 
-Additionally, the RNG tool that is now included in the docker-compose requires its own environment file called `.env.rng.list`. This should contain the following variables (as per the documentation in the rng repository):
+Additionally, the tools that are included in the docker-compose require their own environment file each. For the RNG tool this is called `.env.rng.list`. For other tools the names are similar, they can be found from `docker-compose.yml` by looking for `env-file` entries. Each file should contain the following variables (as per the documentation in the relevant tool repository):
 
 ```
 NEXUS_TOOL_CANONICAL_NAME=
 NEXUS_ACCESS_TOKEN=
 ```
 
-The access token must be valid for the nexus instance to be run.
+The access token must be valid for the nexus instance to be run, so in the first run set it to a random string, then replace it once you have generated an access token in nexus. Restart the docker-compose using `docker-compose restart` once you have updated all .env files.
 
 ## Getting Started
 - Clone the repo
-- Set up your `.env.list` - see above
 - Initialise submodules: `git submodule init`
 - Fetch all submodules: `git submodule update`
+- Set up your `.env.list` and other `.env` files - see above
 - Build: `docker-compose build`
 - Initialise: `docker-compose run nexus init` (only needed first time, when schema has changed, or when javascript component have been added or modified; partial initialisations `init-js`, `init-dirs`, and `init-db` are also available)
 - Run: `docker-compose up -d`
