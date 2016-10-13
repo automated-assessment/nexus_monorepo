@@ -2,7 +2,7 @@
 Super-repo (using Git submodules) with a docker-compose config, ready for deployment
 
 ## Env variables
-A `.env.list` file is expected in the root directory. Here is a template:
+A `.env.list` file is expected in the root directory. Here is a template (more details on how to get the values for these variables can be found in the Wiki for `nexus` under the heading "Docker"):
 
 ```
 NEXUS_GHE_OAUTH_ID=
