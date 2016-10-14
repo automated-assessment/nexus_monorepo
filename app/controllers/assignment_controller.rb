@@ -40,6 +40,20 @@ class AssignmentController < ApplicationController
     @assignment = Assignment.new
     @assignment.course = Course.find(params[:cid])
     @assignment.marking_tool_contexts.build
+
+    # Set default values
+    @assignment.start = DateTime.now
+    @assignment.deadline = (DateTime.now.utc + 1.week)
+    @assignment.latedeadline = (DateTime.now.utc + 8.days)
+
+    @assignment.max_attempts = 0
+
+    @assignment.allow_late = true
+    @assignment.late_cap = 40
+
+    @assignment.allow_zip = true
+    @assignment.allow_git = true
+    @assignment.allow_ide = true
   end
 
   def create
