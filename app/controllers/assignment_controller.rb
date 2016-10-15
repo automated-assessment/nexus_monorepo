@@ -8,22 +8,22 @@ class AssignmentController < ApplicationController
   end
 
   def show
-    @assignment = Assignment.find(params[:id])
+    @assignment = return_assignment
   end
 
   def show_deadline_extensions
     return unless authenticate_admin!
-    @assignment = Assignment.find(params[:id])
+    @assignment = return_assignment
   end
 
   def quick_config_confirm
     return unless authenticate_admin!
-    @assignment = Assignment.find(params[:id])
+    @assignment = return_assignment
   end
 
   def configure_tools
     return unless authenticate_admin!
-    @assignment = Assignment.find(params[:id])
+    @assignment = return_assignment
 
     # augment template URLs with parameters
     params = {
@@ -88,12 +88,12 @@ class AssignmentController < ApplicationController
 
   def edit
     return unless authenticate_admin!
-    @assignment = Assignment.find(params[:id])
+    @assignment = return_assignment
   end
 
   def update
     return unless authenticate_admin!
-    @assignment = Assignment.find(params[:id])
+    @assignment = return_assignment
     if @assignment.update_attributes(assignment_params)
       flash[:success] = 'Assignment updated'
       redirect_to @assignment
@@ -105,7 +105,7 @@ class AssignmentController < ApplicationController
 
   def export_submissions_data
     return unless authenticate_admin!
-    @assignment = Assignment.find(params[:id])
+    @assignment = return_assignment
     headers['Content-Disposition'] = 'attachment; filename=\"submissions-data-export.csv\"'
     headers['Content-Type'] ||= 'text/csv'
   end
@@ -135,5 +135,12 @@ class AssignmentController < ApplicationController
                                        :allow_git,
                                        :allow_ide,
                                        marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id])
+  end
+
+  def return_assignment
+    assignment = Assignment.find_by(id: params[:id])
+    return assignment if assignment
+    flash[:error] = 'Assignment with id ' + params[:id] + ' does not exist'
+    redirect_to my_assignments_path, status: 400
   end
 end
