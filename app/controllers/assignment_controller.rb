@@ -40,7 +40,7 @@ class AssignmentController < ApplicationController
     @assignment = Assignment.new
     course = Course.find_by(id: params[:cid])
     if course
-      @assignment.course = Course.find_by(id: params[:cid])
+      @assignment.course = course
       @assignment.marking_tool_contexts.build
 
       # Set default values
