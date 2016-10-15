@@ -4,6 +4,7 @@ RSpec.describe AssignmentController, type: :controller do
   let(:c) { create(:course) }
   let(:s) { create(:student) }
   let(:t) { create(:staff) }
+  let(:a) { create(:assignment) }
 
   describe 'GET #new' do
     describe 'without admin permissions' do
@@ -47,6 +48,7 @@ RSpec.describe AssignmentController, type: :controller do
   end
 
   describe 'POST #create' do
+
   end
 
   describe 'GET #edit' do
@@ -56,10 +58,20 @@ RSpec.describe AssignmentController, type: :controller do
   end
 
   describe 'GET #show' do
-    it 'shows the assignment with the given id' do
+    describe 'with a valid assignment id' do
+      it 'shows the assignment with the given id' do
+        sign_in s
+        get :show, id: a.id
+        expect(response).to have_http_status 200
+        expect(response).to render_template(:show)
+      end
     end
-
-    it 'doesn\'t show the assignment with an invalid id' do
+    describe 'with an invalid assignment id' do
+      it 'returns a 400 error code' do
+        sign_in s
+        get :show, id: a.id + 1
+        expect(response).to have_http_status 400
+      end
     end
   end
 
