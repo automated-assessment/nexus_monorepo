@@ -38,22 +38,28 @@ class AssignmentController < ApplicationController
   def new
     return unless authenticate_admin!
     @assignment = Assignment.new
-    @assignment.course = Course.find(params[:cid])
-    @assignment.marking_tool_contexts.build
+    course = Course.find_by(id: params[:cid])
+    if course
+      @assignment.course = Course.find_by(id: params[:cid])
+      @assignment.marking_tool_contexts.build
 
-    # Set default values
-    @assignment.start = DateTime.now
-    @assignment.deadline = (DateTime.now.utc + 1.week)
-    @assignment.latedeadline = (DateTime.now.utc + 8.days)
+      # Set default values
+      @assignment.start = DateTime.now
+      @assignment.deadline = (DateTime.now.utc + 1.week)
+      @assignment.latedeadline = (DateTime.now.utc + 8.days)
 
-    @assignment.max_attempts = 0
+      @assignment.max_attempts = 0
 
-    @assignment.allow_late = true
-    @assignment.late_cap = 40
+      @assignment.allow_late = true
+      @assignment.late_cap = 40
 
-    @assignment.allow_zip = true
-    @assignment.allow_git = true
-    @assignment.allow_ide = true
+      @assignment.allow_zip = true
+      @assignment.allow_git = true
+      @assignment.allow_ide = true
+    else
+      flash[:error] = 'Course with id ' + params[:cid] + ' does not exist'
+      redirect_to my_courses_path, status: 400
+    end
   end
 
   def create
