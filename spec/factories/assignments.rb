@@ -7,6 +7,9 @@ FactoryGirl.define do
     latedeadline { Faker::Time.between(deadline + 1.days, deadline + 7.days).beginning_of_hour }
     allow_late { rand > 0.2 }
     late_cap { 40 }
+    allow_zip { true }
+    allow_git { true }
+    allow_ide { true }
     course
   end
 end
