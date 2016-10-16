@@ -48,7 +48,46 @@ RSpec.describe AssignmentController, type: :controller do
   end
 
   describe 'POST #create' do
-
+    describe 'without admin permissions' do
+      it 'redirects and return a 302 status code' do
+        sign_in s
+        post :create, assignment: {
+          title: a.title,
+          description: a.description,
+          start: a.start,
+          deadline: a.deadline,
+          allow_late: a.allow_late,
+          late_cap: a.late_cap,
+          latedeadline: a.latedeadline,
+          course_id: c.id,
+          allow_zip: a.allow_zip,
+          allow_git: a.allow_git,
+          allow_ide: a.allow_ide
+        }
+        expect(response).to have_http_status 302
+      end
+    end
+    describe 'with admin permissions' do
+      it 'creates a new assignment and redirects to assignment page' do
+        sign_in t
+        post :create, assignment: {
+          title: a.title,
+          description: a.description,
+          start: a.start,
+          deadline: a.deadline,
+          allow_late: a.allow_late,
+          late_cap: a.late_cap,
+          latedeadline: a.latedeadline,
+          course_id: c.id,
+          allow_zip: a.allow_zip,
+          allow_git: a.allow_git,
+          allow_ide: a.allow_ide
+        }
+        expect(response).to have_http_status 302
+        assignment = Assignment.find_by(id: a.id)
+        expect(assignment).to be_truthy
+      end
+    end
   end
 
   describe 'GET #edit' do
