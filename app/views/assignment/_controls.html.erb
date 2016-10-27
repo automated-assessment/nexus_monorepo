@@ -16,10 +16,6 @@
     <%= link_to(assignment_list_submissions_path(id: @assignment.id)) do %>
       <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'table' %> View All Submissions</button>
     <% end %>
-    <%= link_to(assignment_list_ordered_submissions_path(id: @assignment.id)) do %>
-      <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'table' %> View Submissions by Date</button>
-    <% end %>
-
 
     <%= link_to(assignment_deadline_extensions_path id: @assignment.id) do %>
       <button type="button" name="button" class="btn btn-sm btn-primary">
