@@ -35,3 +35,27 @@
       <%= link_to(@assignment.repourl, @assignment.repourl)%>.</li>
   </ol>
 </div>
+
+<div class="well">
+  <%= form_for(@assignment, url: assignment_submission_repush_path, html: { class: 'form-horizontal' }) do |f| %>
+    <div class="form-group">
+      <%= f.label 'First submission id', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= select 'submissions', 'min-id', @assignment.submissions.reverse_order.collect {|s| s.id}, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Last submission id', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= select 'submissions', 'max-id', @assignment.submissions.reverse_order.collect {|s| s.id}, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <%= f.submit 'Repush', class: 'btn btn-danger' %>
+      </div>
+    </div>
+  <% end %>
+</div>

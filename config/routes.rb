@@ -39,6 +39,7 @@ Rails.application.routes.draw do
   get 'assignments/:id/list_ordered_submissions' => 'assignment#list_ordered_submissions', as: :assignment_list_ordered_submissions
   get 'assignments/:id/deadline_extensions' => 'assignment#show_deadline_extensions', as: :assignment_deadline_extensions
   get 'assignments/:id/repush_submissions' => 'assignment#prepare_submission_repush', as: :assignment_prepare_submission_repush
+  patch 'assignments/:id/repush_submissions' => 'assignment#submission_repush', as: :assignment_submission_repush
 
   ### Deadline Extensions
   get 'assignments/:aid/deadline_extensions/new' => 'deadline_extension#new', as: :new_deadline_extension
