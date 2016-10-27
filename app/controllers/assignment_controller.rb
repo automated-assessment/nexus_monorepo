@@ -118,6 +118,35 @@ class AssignmentController < ApplicationController
     @assignment = Assignment.find(params[:id])
   end
 
+  def prepare_submission_repush
+    return unless authenticate_admin!
+
+    @assignment = Assignment.find(params[:id])
+  end
+
+  def submission_repush
+    return unless authenticate_admin!
+
+    @assignment = Assignment.find(params[:id])
+
+    min_id = params[:submissions][:min_id].to_i
+    max_id = params[:submissions][:max_id].to_i
+
+    if (min_id <= max_id)
+      if (GitUtils.repush_submission_files!(@assignment, min_id, max_id))
+        flash[:success] = 'Successfully re-pushed to GHE.'
+      else
+        flash[:error] = 'Re-pushing to GHE failed.'
+      end
+
+      redirect_to @assignment
+    else
+      flash[:error] = 'First id cannot be greater than last id.'
+
+      redirect_to assignment_prepare_submission_repush_path(id: @assignment.id)
+    end
+  end
+
   private
 
   def assignment_params

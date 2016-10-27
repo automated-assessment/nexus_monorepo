@@ -1,0 +1,61 @@
+<%= render 'header' %>
+<p>
+  <%= markdown(@assignment.description) %>
+</p>
+
+<hr />
+
+<h2>Repushing to GHE</h2>
+
+<p>Below, select the range of submissions to be pushed out to GHE again. Note
+   that this will only push these submissions to GHE; it will not run any of
+   the marking tools.</p>
+
+<div class="alert alert-danger">
+  <p>
+    <strong>Only use this function if you know what you are doing!</strong>
+    Most submission processing errors can be fixed using the reprocessing or
+    remarking features. The functionality here should only be used if there has
+    been data loss in GHE.
+  </p>
+
+  <p>Before using this functionality, make sure:</p>
+
+  <ol>
+    <li>The original upload files are still on the nexus server and have been
+      unpacked to the correct directory in <code>var/submissions/code</code></li>
+    <li>If there are other submissions to this assignment from the same user
+      that Nexus has marked as having been successful already and that you are
+      <strong>not</strong> submitting for repushing, then there is a corresponding
+      branch for this user and assignment on GHE. This branch should be in
+      <%= link_to(@assignment.repourl, @assignment.repourl)%>.</li>
+    <li>If you <strong>are</strong> submitting all submissions by a user for
+      repushing, then there must not be a corresponding branch for this user
+      and assignment on GHE in the repository at
+      <%= link_to(@assignment.repourl, @assignment.repourl)%>.</li>
+  </ol>
+</div>
+
+<div class="well">
+  <%= form_for(@assignment, url: assignment_submission_repush_path, html: { class: 'form-horizontal' }) do |f| %>
+    <div class="form-group">
+      <%= f.label 'First submission id', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= select 'submissions', 'min_id', @assignment.submissions.reverse_order.collect {|s| s.id}, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Last submission id', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= select 'submissions', 'max_id', @assignment.submissions.reverse_order.collect {|s| s.id}, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <%= f.submit 'Repush', class: 'btn btn-danger' %>
+      </div>
+    </div>
+  <% end %>
+</div>
