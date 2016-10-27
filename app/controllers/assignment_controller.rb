@@ -133,6 +133,10 @@ class AssignmentController < ApplicationController
     max_id = params[:submissions][:max_id].to_i
 
     if (min_id <= max_id)
+      unless (GitUtils.repush_submission_files(@assignment, min_id, max_id))
+        flash[:error] = 'Repushing to GHE failed.'
+      end
+      
       redirect_to @assignment
     else
       flash[:error] = 'First id cannot be greater than last id.'
