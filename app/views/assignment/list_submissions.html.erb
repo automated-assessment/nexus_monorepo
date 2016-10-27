@@ -12,7 +12,7 @@
 <% else %>
   <p> Received <%= @assignment.submissions.count %> submissions from <%= @users.count %> users.</p>
   <%= link_to(assignment_list_ordered_submissions_path(id: @assignment.id)) do %>
-    <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'table' %> View Submissions by Date</button>
+    <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'sort-amount-desc' %> View Submissions by Date</button>
   <% end %>
 
   <table class="table table-hover">
