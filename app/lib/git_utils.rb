@@ -141,9 +141,11 @@ class GitUtils
 
         # Now need to iterate over all of these submissions and do a push for each one
         assignment.submissions.unscoped.order(:id).where("id >= ? AND id <= ?", min_id, max_id).each do |s|
+          Rails.logger.debug("Re-pushing submission #{s.id}.")
+          s.log('Repushing', 'info')
           push!(s)
 
-          raise "There was a problem re-pushing submission #{s.id}"
+          raise "There was a problem re-pushing submission #{s.id}" unless s.git_success
         end
 
         assignment.log("Successfully repushed submissions #{min_id}--#{max_id}.", 'success')
