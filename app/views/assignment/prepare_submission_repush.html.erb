@@ -41,14 +41,14 @@
     <div class="form-group">
       <%= f.label 'First submission id', class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
-        <%= select 'submissions', 'min-id', @assignment.submissions.reverse_order.collect {|s| s.id}, class: 'form-control' %>
+        <%= select 'submissions', 'min_id', @assignment.submissions.reverse_order.collect {|s| s.id}, class: 'form-control' %>
       </div>
     </div>
 
     <div class="form-group">
       <%= f.label 'Last submission id', class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
-        <%= select 'submissions', 'max-id', @assignment.submissions.reverse_order.collect {|s| s.id}, class: 'form-control' %>
+        <%= select 'submissions', 'max_id', @assignment.submissions.reverse_order.collect {|s| s.id}, class: 'form-control' %>
       </div>
     </div>
 
