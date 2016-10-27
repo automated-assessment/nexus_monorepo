@@ -126,6 +126,37 @@ class GitUtils
       return false
     end
 
+    # Danger, Will Robinson!
+    # Attempts to repush the files for all submissions to this assignment between the two ids given (incl)
+    # Lots of reasons why this could go wrong, but when GHE loses files due to storage crash and backup issues,
+    # what can you do...
+    def repush_submission_files!(assignment, min_id, max_id)
+      assignment.transaction do
+        assignment.log("Attempting to repush submissions #{min_id}--#{max_id}.", 'info')
+
+        assignment.log("Removing repourl markers.", 'debug')
+
+        # First need to reset repourl field for all submissions we are going to be treating
+        assignment.submissions.where("id >= ? AND id <= ?", min_id, max_id).update_all repourl: nil
+
+        # Now need to iterate over all of these submissions and do a push for each one
+        assignment.submissions.unscoped.order(:id).where("id >= ? AND id <= ?", min_id, max_id).each do |s|
+          push!(s)
+
+          raise "There was a problem re-pushing submission #{s.id}"
+        end
+
+        assignment.log("Successfully repushed submissions #{min_id}--#{max_id}.", 'success')
+      end
+
+      return true
+    rescue StandardError => e
+      Rails.logger.error("Couldn't repush: #{e.inspect}.")
+      assignment.log("Couldn't repush submissions #{min_id}--#{max_id}: #{e.inspect}.", 'error')
+
+      return false
+    end
+
     def has_valid_repo?(submission)
       if (submission.studentrepo)
         aug_url = submission.augmented_clone_url
