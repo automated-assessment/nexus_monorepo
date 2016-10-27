@@ -10,7 +10,7 @@
 <% if @assignment.submissions.empty? %>
   <p>No submissions have been made for this assignment yet.</p>
 <% else %>
-  <%= link_to(assignment_list_ordered_submissions_path(id: @assignment.id)) do %>
+  <%= link_to(assignment_prepare_submission_repush_path(id: @assignment.id)) do %>
     <button type="button" name="button" class="btn btn-sm btn-danger"><%= icon 'warning' %> Repush submissions</button>
   <% end %>
 

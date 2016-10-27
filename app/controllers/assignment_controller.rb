@@ -118,6 +118,12 @@ class AssignmentController < ApplicationController
     @assignment = Assignment.find(params[:id])
   end
 
+  def prepare_submission_repush
+    return unless authenticate_admin!
+
+    @assignment = Assignment.find(params[:id])
+  end
+
   private
 
   def assignment_params
