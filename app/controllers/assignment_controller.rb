@@ -112,6 +112,12 @@ class AssignmentController < ApplicationController
     @users = User.joins(:submissions).where(submissions: { assignment_id: params[:id] }).distinct.order(:name) || {}
   end
 
+  def list_ordered_submissions
+    return unless authenticate_admin!
+
+    @assignment = Assignment.find(params[:id])
+  end
+
   private
 
   def assignment_params

@@ -36,6 +36,7 @@ Rails.application.routes.draw do
   patch 'assignments/:id' => 'assignment#update', as: :update_assignment
   get 'assignments/:id/export_submissions_data' => 'assignment#export_submissions_data', as: :assignment_export_submissions_data
   get 'assignments/:id/list_submissions' => 'assignment#list_submissions', as: :assignment_list_submissions
+  get 'assignments/:id/list_ordered_submissions' => 'assignment#list_ordered_submissions', as: :assignment_list_ordered_submissions
   get 'assignments/:id/deadline_extensions' => 'assignment#show_deadline_extensions', as: :assignment_deadline_extensions
 
   ### Deadline Extensions
