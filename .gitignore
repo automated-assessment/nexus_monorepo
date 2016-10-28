@@ -1,3 +1,4 @@
 node_modules
 cloned-submission*
+.env.*
 npm-debug.log
