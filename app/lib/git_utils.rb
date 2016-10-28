@@ -131,30 +131,26 @@ class GitUtils
     # Lots of reasons why this could go wrong, but when GHE loses files due to storage crash and backup issues,
     # what can you do...
     def repush_submission_files!(assignment, min_id, max_id)
-      assignment.transaction do
-        assignment.log("Attempting to repush submissions #{min_id}--#{max_id}.", 'info')
+      assignment.log("Attempting to re-push submissions #{min_id}--#{max_id}.", 'info')
 
-        assignment.log("Removing repourl markers.", 'debug')
+      # First need to reset repourl field for all submissions we are going to be treating
+      assignment.log("Removing repourl markers.", 'debug')
+      assignment.submissions.where("id >= ? AND id <= ?", min_id, max_id).update_all repourl: nil
 
-        # First need to reset repourl field for all submissions we are going to be treating
-        assignment.submissions.where("id >= ? AND id <= ?", min_id, max_id).update_all repourl: nil
+      # Now need to iterate over all of these submissions and do a push for each one
+      assignment.submissions.unscoped.order(:id).where("id >= ? AND id <= ?", min_id, max_id).each do |s|
+        Rails.logger.debug("Re-pushing submission #{s.id}.")
+        s.log('Re-pushing', 'info')
+        push!(s)
 
-        # Now need to iterate over all of these submissions and do a push for each one
-        assignment.submissions.unscoped.order(:id).where("id >= ? AND id <= ?", min_id, max_id).each do |s|
-          Rails.logger.debug("Re-pushing submission #{s.id}.")
-          s.log('Repushing', 'info')
-          push!(s)
-
-          raise "There was a problem re-pushing submission #{s.id}" unless s.git_success
-        end
-
-        assignment.log("Successfully repushed submissions #{min_id}--#{max_id}.", 'success')
+        raise "There was a problem re-pushing submission #{s.id}" unless s.git_success
       end
 
+      assignment.log("Successfully re-pushed submissions #{min_id}--#{max_id}.", 'success')
       return true
     rescue StandardError => e
-      Rails.logger.error("Couldn't repush: #{e.inspect}.")
-      assignment.log("Couldn't repush submissions #{min_id}--#{max_id}: #{e.inspect}.", 'error')
+      Rails.logger.error("Couldn't re-push: #{e.inspect}.")
+      assignment.log("Couldn't re-push submissions #{min_id}--#{max_id}: #{e.inspect}.", 'error')
 
       return false
     end

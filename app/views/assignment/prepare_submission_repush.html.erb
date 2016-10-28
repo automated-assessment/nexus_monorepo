@@ -34,6 +34,18 @@
       and assignment on GHE in the repository at
       <%= link_to(@assignment.repourl, @assignment.repourl)%>.</li>
   </ol>
+
+  <p>Make sure you are watching the Nexus production log while re-pushing is
+    under way. It is entirely possible that the HTTP request times out,
+    especially when you are attempting to re-push many submissions. The process
+    will continue in the background, so do not re-issue the request again.
+  </p>
+
+  <p>Should things go wrong half-way through, all submissions up to that point
+    will have been pushed to GHE and will have been marked as such on Nexus.
+    After fixing the source of the re-push error, you should then be able to
+    restart the re-push from the submission that caused the problems.
+  </p>
 </div>
 
 <div class="well">
