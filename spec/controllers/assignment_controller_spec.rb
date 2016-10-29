@@ -91,9 +91,70 @@ RSpec.describe AssignmentController, type: :controller do
   end
 
   describe 'GET #edit' do
+    describe 'without admin permissions' do
+      it 'redirects and returns a 302 status code' do
+        sign_in s
+        get :edit, id: a.id
+        expect(response).to have_http_status 302
+        expect(@assignment).to be_nil
+      end
+    end
+    describe 'with admin permissions' do
+      describe 'with an assignment that doesn\'t exist' do
+        it 'sets error flash and returns a status 400 code' do
+          sign_in t
+          get :edit, id: a.id + 1
+          expect(flash[:error]).not_to be_nil
+          expect(@assignment).to be_nil
+          expect(response).to have_http_status 400
+        end
+      end
+      describe 'with an existing assignment' do
+        it 'returns the assignment to be edited' do
+          sign_in t
+          get :edit, id: a.id
+          expect(response).to have_http_status 200
+          expect(@assignment).to be_nil
+          expect(flash[:error]).to be_nil
+        end
+      end
+    end
   end
 
-  describe 'POST #update' do
+  describe 'PATCH #update' do
+    describe 'without admin permissions' do
+      it 'redirects and returns a 302 status code' do
+        sign_in s
+        patch :update, id: a.id, assignment:
+          {
+            title: 'New Assignment Title'
+          }
+        expect(response).to have_http_status 302
+
+        # Check value didn't update
+        assignment = Assignment.find_by(id: a.id)
+        expect(assignment.title).to eq a.title
+      end
+    end
+
+    describe 'with admin permissions' do
+      describe 'with an existing assignment' do
+        it 'updates the assignment and redirects to assignment page' do
+          sign_in t
+          new_title = 'New Assignment Title'
+          patch :update, id: a.id, assignment:
+            {
+              title: new_title
+            }
+          expect(response).to have_http_status 302
+          expect(flash[:error]).to be_nil
+
+          # Check the value updated
+          assignment = Assignment.find_by(id: a.id)
+          expect(assignment.title).to eq new_title
+        end
+      end
+    end
   end
 
   describe 'GET #show' do
