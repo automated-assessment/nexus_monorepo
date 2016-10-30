@@ -174,19 +174,4 @@ RSpec.describe AssignmentController, type: :controller do
       end
     end
   end
-
-  describe 'GET #show_deadline_extensions' do
-  end
-
-  describe 'GET #quick_config_confirm' do
-  end
-
-  describe 'GET #configure_tools' do
-  end
-
-  describe 'GET #export_submissions_data' do
-  end
-
-  describe 'GET #list_submissions' do
-  end
 end

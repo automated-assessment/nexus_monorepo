@@ -139,7 +139,6 @@ class AssignmentController < ApplicationController
 
   def return_assignment
     assignment = Assignment.find_by(id: params[:id])
-    puts assignment
     return assignment if assignment
     flash[:error] = 'Assignment with id ' + params[:id] + ' does not exist'
     redirect_to my_assignments_path, status: 400
