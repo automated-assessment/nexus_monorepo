@@ -36,12 +36,12 @@ RSpec.describe AssignmentController, type: :controller do
         end
       end
       describe 'with an invalid associated course' do
-        it 'returns a 400 status code' do
+        it 'returns a 404 status code' do
           sign_in t
           assignment = FactoryGirl.build(:assignment)
           allow(Assignment).to receive_message_chain(:new).and_return(assignment)
           get :new, cid: c.id + 1
-          expect(response).to have_http_status 400
+          expect(response).to have_http_status 404
         end
       end
     end
@@ -101,12 +101,12 @@ RSpec.describe AssignmentController, type: :controller do
     end
     describe 'with admin permissions' do
       describe 'with an assignment that doesn\'t exist' do
-        it 'sets error flash and returns a status 400 code' do
+        it 'sets error flash and returns a status 404 code' do
           sign_in t
           get :edit, id: a.id + 1
           expect(flash[:error]).not_to be_nil
           expect(@assignment).to be_nil
-          expect(response).to have_http_status 400
+          expect(response).to have_http_status 404
         end
       end
       describe 'with an existing assignment' do
@@ -167,10 +167,10 @@ RSpec.describe AssignmentController, type: :controller do
       end
     end
     describe 'with an invalid assignment id' do
-      it 'returns a 400 error code' do
+      it 'returns a 404 error code' do
         sign_in s
         get :show, id: a.id + 1
-        expect(response).to have_http_status 400
+        expect(response).to have_http_status 404
       end
     end
   end

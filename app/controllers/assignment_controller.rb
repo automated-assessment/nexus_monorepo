@@ -58,7 +58,7 @@ class AssignmentController < ApplicationController
       @assignment.allow_ide = true
     else
       flash[:error] = 'Course with id ' + params[:cid] + ' does not exist'
-      redirect_to my_courses_path, status: 400
+      render status: 404
     end
   end
 
@@ -93,7 +93,7 @@ class AssignmentController < ApplicationController
 
   def update
     return unless authenticate_admin!
-    @assignment = return_assignment
+    @assignment = Assignment.find_by(id: params[:id])
     if @assignment.update_attributes(assignment_params)
       flash[:success] = 'Assignment updated'
       redirect_to @assignment
@@ -113,7 +113,7 @@ class AssignmentController < ApplicationController
   def list_submissions
     return unless authenticate_admin!
 
-    @assignment = Assignment.find(params[:id])
+    @assignment = return_assignment
     # Get all users who have made submissions to this assignment
     @users = User.joins(:submissions).where(submissions: { assignment_id: params[:id] }).distinct.order(:name) || {}
   end
@@ -139,8 +139,10 @@ class AssignmentController < ApplicationController
 
   def return_assignment
     assignment = Assignment.find_by(id: params[:id])
-    return assignment if assignment
-    flash[:error] = 'Assignment with id ' + params[:id] + ' does not exist'
-    redirect_to my_assignments_path, status: 400
+    unless assignment
+      flash[:error] = "Assignment #{params[:id]} does not exist"
+      render 'mine', status: 404
+    end
+    assignment
   end
 end
