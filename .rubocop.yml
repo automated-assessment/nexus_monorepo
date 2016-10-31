@@ -27,3 +27,5 @@ Rails/HasAndBelongsToMany:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
+RSpec/ExampleLength:
+  Enabled: false
