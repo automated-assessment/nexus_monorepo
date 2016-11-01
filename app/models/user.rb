@@ -11,7 +11,8 @@ class User < ActiveRecord::Base
     if (user_by_uid.email != auth.info.email)
       # We assume that this is a login that was broken by GHE shutdown and try to recover it
       logger.tagged('user-login')
-            .debug { "Email mismatch detected: #{user_by_uid.uid}." }
+            .warn { "Email mismatch detected: #{user_by_uid.uid}." }
+      user_by_uid.log("Email mismatch detected: Email is #{user_by_uid.email}, but was expecting #{auth.info.email} from OAuth request.", 'error')
 
       return update_user_records(user_by_uid, auth)
     else
@@ -33,12 +34,14 @@ class User < ActiveRecord::Base
       # 3.1.1 Mark currently found user's user id as invalid
       logger.tagged('user-login')
             .warn { "Resetting uid of user #{user_by_uid.uid} (#{user_by_uid.name}) with email #{user_by_uid.email} to -1." }
+      user_by_uid.log("Resetting uid from #{user_by_uid.uid} to -1.", 'warning')
       user_by_uid.uid = -1
       user_by_uid.save!
 
       # 3.1.2 Update alternative user's user id with GHE data
       logger.tagged('user-login')
             .warn { "Changing uid of user #{user_by_email.uid} (#{user_by_email.name}) to #{auth.uid} to adjust to GHE data." }
+      user_by_email.log("Updating uid from #{user_by_email.uid} to #{auth.uid} to adjust to GHE data.", 'warning')
       user_by_email.uid = auth.uid
       user_by_email.save!
 
@@ -55,6 +58,7 @@ class User < ActiveRecord::Base
       # 3.2.1 Mark currently found user's user id as invalid
       logger.tagged('user-login')
             .warn { "Resetting uid of user #{user_by_uid.uid} (#{user_by_uid.name}) with email #{user_by_uid.email} to -1." }
+      user_by_uid.log("Resetting uid from #{user_by_uid.uid} to -1.", 'warning')
       user_by_uid.uid = -1
       user_by_uid.save!
 
