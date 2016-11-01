@@ -33,9 +33,9 @@ class User < ActiveRecord::Base
 
       # 3.1.1 Mark currently found user's user id as invalid
       logger.tagged('user-login')
-            .warn { "Resetting uid of user #{user_by_uid.uid} (#{user_by_uid.name}) with email #{user_by_uid.email} to -1." }
-      user_by_uid.log("Resetting uid from #{user_by_uid.uid} to -1.", 'warning')
-      user_by_uid.uid = -1
+            .warn { "Resetting uid of user #{user_by_uid.uid} (#{user_by_uid.name}) with email #{user_by_uid.email} to 'INCONSISTENT'." }
+      user_by_uid.log("Resetting uid from #{user_by_uid.uid} to 'INCONSISTENT'.", 'warning')
+      user_by_uid.uid = 'INCONSISTENT'
       user_by_uid.save!
 
       # 3.1.2 Update alternative user's user id with GHE data
@@ -57,9 +57,9 @@ class User < ActiveRecord::Base
 
       # 3.2.1 Mark currently found user's user id as invalid
       logger.tagged('user-login')
-            .warn { "Resetting uid of user #{user_by_uid.uid} (#{user_by_uid.name}) with email #{user_by_uid.email} to -1." }
-      user_by_uid.log("Resetting uid from #{user_by_uid.uid} to -1.", 'warning')
-      user_by_uid.uid = -1
+            .warn { "Resetting uid of user #{user_by_uid.uid} (#{user_by_uid.name}) with email #{user_by_uid.email} to 'INCONSISTENT'." }
+      user_by_uid.log("Resetting uid from #{user_by_uid.uid} to 'INCONSISTENT'.", 'warning')
+      user_by_uid.uid = 'INCONSISTENT'
       user_by_uid.save!
 
       # 3.2.2 Try creating a user again
