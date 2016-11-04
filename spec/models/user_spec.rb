@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'ostruct'
 RSpec.describe User, type: :model do
   describe 'model validations' do
     it 'has a valid factory' do
@@ -7,44 +8,55 @@ RSpec.describe User, type: :model do
     it 'is invalid without an email' do
       expect(build(:student, email: nil)).not_to be_valid
     end
-    it 'is invalid without a first name' do
-      expect(build(:student, first_name: nil)).not_to be_valid
-    end
-    it 'is invalid without a last name' do
-      expect(build(:student, last_name: nil)).not_to be_valid
-    end
-    it 'has a level defaulting to "student"' do
-      user = build(:student)
-      expect(user.level).to eq('student')
-    end
+    # TODO This should be here
+    #it 'is invalid without a name' do
+    #  expect(build(:student, name: nil)).not_to be_valid
+    #end
     it 'duplicate emails are invalid' do
       create(:student, email: 'alice@example.com')
       expect(build(:student, email: 'alice@example.com')).not_to be_valid
     end
-    it 'duplicate student IDs are invalid' do
-      create(:student, student_id: '12312312')
-      expect(build(:student, student_id: '12312312')).not_to be_valid
-    end
   end
+
   describe 'methods' do
-    describe '#full_name' do
-      it 'returns user\'s full name as a string' do
-        user = build(:student, first_name: 'Adam', last_name: 'Smith')
-        expect(user.name).to eq('Adam Smith')
+    describe '#from_omniauth' do
+      auth = OpenStruct.new({
+        provider: 'TEST',
+        uid: 42,
+        info: OpenStruct.new({
+          email: 'alice@example.com',
+          name:  'Alice'
+        }),
+        extra: OpenStruct.new({
+          raw_info: OpenStruct.new({
+            login: 'alice',
+            html_url: 'http://TEST/alice'
+          })
+        }),
+        credentials: OpenStruct.new({
+          token: 'ABC'
+        })
+      })
+
+      it 'correctly finds an existing user' do
+        s = create(:student, email: 'alice@example.com', uid: 42)
+        expect(User.from_omniauth(auth).equal?(s))
       end
-    end
-    describe '#level_string' do
-      it 'returns "Student" for level 0' do
-        user = build(:student)
-        expect(user.level_string).to eq('Student')
+
+      it 'correctly corrects inconsistent login data' do
+        s1 = create(:student, email: 'alice@example.com', uid: 45)
+        s2 = create(:student, email: 'bob@example.com', uid: 42)
+        expect(User.from_omniauth(auth).equal?(s1))
+        expect(s1.uid == 42)
+        expect(s2.uid == 42)
       end
-      it 'returns "Teaching Staff" for level 1' do
-        user = build(:staff)
-        expect(user.level_string).to eq('Teaching Staff')
-      end
-      it 'returns "Administrator" for level 2' do
-        user = build(:admin)
-        expect(user.level_string).to eq('Administrator')
+
+      it 'correctly creates a fresh user record' do
+        s = create(:student, email: 'bob@example.com', uid: 42)
+        u = User.from_omniauth(auth)
+        expect(!u.equal?(s))
+        expect(u.uid == 42)
+        expect(u.email == 'alice@example.com')
       end
     end
     describe '#enrolled_in?' do

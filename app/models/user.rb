@@ -3,7 +3,8 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :rememberable, :trackable, :validatable, :omniauthable
 
   def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+    # Now searching by email as this seems to be the more robust indicator of identity
+    user = where(provider: auth.provider, email: auth.info.email).first_or_create do |user|
       user.provider = auth.provider
       user.uid = auth.uid
       user.email = auth.info.email
@@ -13,6 +14,15 @@ class User < ActiveRecord::Base
       user.ghe_profile_url = auth.extra.raw_info.html_url if auth.extra.raw_info.html_url
       user.password = Devise.friendly_token[0, 20]
     end
+
+    # Update GHE information that might change over time
+    # Not updating ghe login, hoping that the first one will have the k number :-)
+    # uid might change if there's another data outage and backup mess-up
+    user.uid = auth.uid
+    # token might change if users revoke authorization on GHE and then re-authorize
+    user.githubtoken = auth.credentials.token
+
+    return user
   end
 
   has_and_belongs_to_many :courses
