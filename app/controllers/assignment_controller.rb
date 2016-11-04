@@ -184,7 +184,7 @@ class AssignmentController < ApplicationController
   def return_assignment!
     assignment = Assignment.find_by(id: params[:id])
     unless assignment
-      flash[:error] = "Assignment #{params[:id]} does not exist"
+      flash.now[:error] = "Assignment #{params[:id]} does not exist"
       render 'mine', status: 404
     end
     assignment
