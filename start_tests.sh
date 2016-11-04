@@ -1,2 +1,2 @@
 #!/bin/bash
-export $(cat .env.test.list | xargs) && rspec
+export $(cat .env.test.list | xargs) && rspec $@
