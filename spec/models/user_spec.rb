@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'ostruct'
 RSpec.describe User, type: :model do
   describe 'model validations' do
     it 'has a valid factory' do
@@ -18,6 +19,46 @@ RSpec.describe User, type: :model do
   end
 
   describe 'methods' do
+    describe '#from_omniauth' do
+      auth = OpenStruct.new({
+        provider: 'TEST',
+        uid: 42,
+        info: OpenStruct.new({
+          email: 'alice@example.com',
+          name:  'Alice'
+        }),
+        extra: OpenStruct.new({
+          raw_info: OpenStruct.new({
+            login: 'alice',
+            html_url: 'http://TEST/alice'
+          })
+        }),
+        credentials: OpenStruct.new({
+          token: 'ABC'
+        })
+      })
+
+      it 'correctly finds an existing user' do
+        s = create(:student, email: 'alice@example.com', uid: 42)
+        expect(User.from_omniauth(auth).equal?(s))
+      end
+
+      it 'correctly corrects inconsistent login data' do
+        s1 = create(:student, email: 'alice@example.com', uid: 45)
+        s2 = create(:student, email: 'bob@example.com', uid: 42)
+        expect(User.from_omniauth(auth).equal?(s1))
+        expect(s1.uid == 42)
+        expect(s2.uid == 42)
+      end
+
+      it 'correctly creates a fresh user record' do
+        s = create(:student, email: 'bob@example.com', uid: 42)
+        u = User.from_omniauth(auth)
+        expect(!u.equal?(s))
+        expect(u.uid == 42)
+        expect(u.email == 'alice@example.com')
+      end
+    end
     describe '#enrolled_in?' do
       it 'returns not nil if enrolled' do
         c = create(:course)
