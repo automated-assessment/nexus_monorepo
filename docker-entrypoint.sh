@@ -15,8 +15,7 @@ if [ "$1" = 'init-js' ]; then
 	cd lib/web-ide
 	npm install --production --silent
 	cd ../..
-	npm install webpack
-	npm rebuild node-sass
+
 	exec npm run build
 fi
 
@@ -38,8 +37,7 @@ if [ "$1" = 'init' ]; then
         cd lib/web-ide
         npm install --production --silent
         cd ../..
-				npm install webpack
-				npm rebuild node-sass
+
         npm run build
 
         mkdir -p tmp/pids
