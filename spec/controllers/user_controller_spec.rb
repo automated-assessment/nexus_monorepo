@@ -1,13 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe UserController, type: :controller do
-  describe 'GET #profile' do
-    it 'returns http success when logged in' do
-      sign_in
-      get :profile
-      expect(response).to have_http_status(:success)
-    end
-  end
   describe 'GET #enrol' do
     let(:s) { create(:student) }
     let(:c) { create(:course) }
