@@ -11,12 +11,12 @@ class CourseController < ApplicationController
   end
 
   def show
-    @course = Course.find(params[:id])
+    @course = return_course!
   end
 
   def enrolment_list
     return unless authenticate_admin!
-    @course = Course.find(params[:id])
+    @course = return_course!
   end
 
   def new
@@ -38,12 +38,12 @@ class CourseController < ApplicationController
 
   def edit
     return unless authenticate_admin!
-    @course = Course.find(params[:id])
+    @course = return_course!
   end
 
   def update
     return unless authenticate_admin!
-    @course = Course.find(params[:id])
+    @course = return_course!
     if @course.update_attributes(course_params)
       flash[:success] = 'Course updated'
       redirect_to @course
@@ -56,5 +56,14 @@ class CourseController < ApplicationController
 
   def course_params
     params.require(:course).permit(:title, :description)
+  end
+
+  def return_course!
+    course = Course.find_by(id: params[:id])
+    unless course
+      flash[:error] = "Course #{params[:id]} does not exist"
+      render 'mine', status: 404
+    end
+    course
   end
 end
