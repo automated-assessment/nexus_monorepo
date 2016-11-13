@@ -75,6 +75,10 @@ class Assignment < ActiveRecord::Base
   end
 
   def latedeadline_is_after_deadline
-    errors.add(:error, 'Late deadline must occur after normal deadline') if latedeadline <= deadline
+    if deadline && latedeadline
+      errors.add(:error, 'Late deadline must occur after normal deadline') if latedeadline <= deadline
+    else
+      errors.add(:error, 'Assignment must have a deadline and late deadline')
+    end
   end
 end
