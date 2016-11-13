@@ -19,7 +19,7 @@ class Course < ActiveRecord::Base
   end
 
   def teacher_cannot_be_student
-    errors.add(:teacher, 'teacher cannot be a student') unless teacher.admin?
+    errors.add(:error, 'teacher cannot be a student') unless teacher.admin?
   end
 
   def log(body, level = 'info')
