@@ -61,7 +61,7 @@ class CourseController < ApplicationController
   def return_course!
     course = Course.find_by(id: params[:id])
     unless course
-      flash[:error] = "Course #{params[:id]} does not exist"
+      flash.now[:error] = "Course #{params[:id]} does not exist"
       render 'mine', status: 404
     end
     course

@@ -11,6 +11,7 @@ class Assignment < ActiveRecord::Base
   validates :title, presence: true
   validates :start, presence: true
   validates :deadline, presence: true
+  validates :latedeadline, presence: true
   validates :allow_late, inclusion: [true, false]
   validates :feedback_only, inclusion: [true, false]
   validates :course, presence: true
@@ -18,6 +19,7 @@ class Assignment < ActiveRecord::Base
   validate :valid_weightings
 
   validates_datetime :deadline, after: :start
+  validates_datetime :latedeadline, after: :deadline
 
   default_scope { order(:start) }
   scope :started, -> { where('start < ?', Time.current).reorder(:deadline) }
@@ -75,10 +77,10 @@ class Assignment < ActiveRecord::Base
   end
 
   def latedeadline_is_after_deadline
-    if deadline && latedeadline
-      errors.add(:error, 'Late deadline must occur after normal deadline') if latedeadline <= deadline
-    else
-      errors.add(:error, 'Assignment must have a deadline and late deadline')
+    if allow_late
+      if deadline && latedeadline
+        errors.add(:error, 'Late deadline must occur after normal deadline') if latedeadline <= deadline
+      end
     end
   end
 end
