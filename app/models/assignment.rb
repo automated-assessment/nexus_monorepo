@@ -11,13 +11,14 @@ class Assignment < ActiveRecord::Base
   validates :title, presence: true
   validates :start, presence: true
   validates :deadline, presence: true
+  validates :latedeadline, presence: true, if: :allow_late
   validates :allow_late, inclusion: [true, false]
   validates :feedback_only, inclusion: [true, false]
   validates :course, presence: true
-  validate :latedeadline_is_after_deadline
   validate :valid_weightings
 
   validates_datetime :deadline, after: :start
+  validates_datetime :latedeadline, after: :deadline, if: :allow_late
 
   default_scope { order(:start) }
   scope :started, -> { where('start < ?', Time.current).reorder(:deadline) }
@@ -72,9 +73,5 @@ class Assignment < ActiveRecord::Base
       sum += c.weight
     end
     errors.add(:marking_tool_contexts, 'Weights do not add up to 100%') if sum != 100
-  end
-
-  def latedeadline_is_after_deadline
-    errors.add(:error, 'Late deadline must occur after normal deadline') if latedeadline <= deadline
   end
 end

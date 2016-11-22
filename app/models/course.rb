@@ -6,6 +6,7 @@ class Course < ActiveRecord::Base
 
   validates :title, presence: true
   validates :teacher, presence: true
+  validate :teacher_cannot_be_student
 
   default_scope { order(:title) }
 
@@ -18,7 +19,9 @@ class Course < ActiveRecord::Base
   end
 
   def teacher_cannot_be_student
-    errors.add(:teacher, 'teacher cannot be a student') unless teacher.admin?
+    if teacher
+      errors.add(:error, 'teacher cannot be a student') unless teacher.admin?
+    end
   end
 
   def log(body, level = 'info')

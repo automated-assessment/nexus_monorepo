@@ -8,54 +8,135 @@ RSpec.describe CourseController, type: :controller do
     it 'returns http success when logged in' do
       sign_in s
       get :index
-      expect(response).to have_http_status(:success)
+      expect(response).to have_http_status :success
     end
   end
   describe 'GET #mine' do
-    it 'returns http success when logged in' do
-      sign_in s
-      get :mine
-      expect(response).to have_http_status(:success)
+    describe 'when logged in as a student' do
+      it 'returns HTTP success' do
+        sign_in s
+        get :mine
+        expect(response).to have_http_status :success
+      end
+    end
+    describe 'when not logged in' do
+      it 'redirects to the log in page' do
+        get :mine
+        expect(response).to have_http_status :redirect
+        expect(response).to redirect_to new_user_session_path
+      end
     end
   end
+
   describe 'GET #show' do
-    it 'returns http success when logged in for a valid course' do
-      sign_in s
-      get :show, id: c.id
-      expect(response).to have_http_status(:success)
+    describe 'with a valid course' do
+      it 'returns HTTP success' do
+        sign_in s
+        get :show, id: c.id
+        expect(response).to have_http_status(:success)
+      end
+    end
+    describe 'with an invalid course' do
+      it 'returns HTTP not found' do
+        sign_in s
+        get :show, id: c.id + 1
+        expect(response).to have_http_status(:not_found)
+      end
     end
   end
 
   describe 'GET #enrolment_list' do
-    it 'returns http success when logged in for a valid course' do
-      sign_in s
-      get :enrolment_list, id: c.id
-      expect(response).to have_http_status(:success)
+    describe 'without admin permissions' do
+      it 'redirects and returns a 302 status code' do
+        sign_in s
+        get :enrolment_list, id: c.id
+        expect(response).to have_http_status :redirect
+      end
+    end
+
+    describe 'with admin permissions' do
+      describe 'with a valid course' do
+        it 'returns http success' do
+          sign_in t
+          get :enrolment_list, id: c.id
+          expect(response).to have_http_status :success
+        end
+      end
+
+      describe 'with an invalid course' do
+        it 'returns HTTP not found' do
+          sign_in t
+          get :enrolment_list, id: c.id + 1
+          expect(response).to have_http_status :not_found
+        end
+      end
     end
   end
 
   describe 'GET #new' do
-    it 'returns http success when logged in as a memeber of staff' do
-      sign_in t
-      get :new
-      expect(response).to have_http_status(:success)
+    describe 'with admin permissions' do
+      it 'returns HTTP success' do
+        sign_in t
+        get :new
+        expect(response).to have_http_status :success
+      end
     end
-    it 'returns http unauthorized when logged in as a student' do
-      sign_in s
-      get :new
-      expect(response).to have_http_status(:unauthorized)
+
+    describe 'without admin permissions' do
+      it 'redirects and returns a 302 status code' do
+        sign_in s
+        get :new
+        expect(response).to have_http_status :redirect
+      end
+    end
+  end
+
+  describe 'GET #edit' do
+    describe 'with admin permissions' do
+      describe 'with valid course id' do
+        it 'returns the associated course' do
+          sign_in t
+          get :edit, id: c.id
+          expect(response).to have_http_status :success
+        end
+      end
+
+      describe 'with invalid course' do
+        it 'sets the error flash and returns a 404 status code' do
+          sign_in t
+          get :edit, id: c.id + 1
+          expect(response).to have_http_status :not_found
+          expect(flash[:error]).not_to be_nil
+        end
+      end
+    end
+
+    describe 'without admin permissions' do
+      it 'redirects and returns a 302 status code' do
+        sign_in s
+        get :edit, id: c.id
+        expect(response).to have_http_status :redirect
+      end
     end
   end
 
   describe 'POST #create' do
-    it 'returns http found when authorized and with valid parameters' do
-      sign_in t
-      post :create, course: attributes_for(:course)
-      expect(response).to have_http_status(:found)
+    describe 'with admin permissions' do
+      describe 'with valid parameters' do
+        it 'returns HTTP found' do
+          sign_in t
+          post :create, course: attributes_for(:course)
+          expect(response).to have_http_status :found
+        end
+      end
     end
-    it 'raises error when logged in as a student' do
-      sign_in s
-      expect { post :create, course: attributes_for(:course) }.to raise_error(ActiveRecord::RecordInvalid)
+
+    describe 'without admin permissions' do
+      it 'redirects and returns a 302 status code' do
+        sign_in s
+        post :create, course: attributes_for(:course)
+        expect(response).to have_http_status :redirect
+      end
     end
   end
 end
