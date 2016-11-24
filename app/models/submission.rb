@@ -14,11 +14,11 @@ class Submission < ActiveRecord::Base
 
   before_create do
     @de = DeadlineExtension.find_by(assignment: assignment, user: user)
-    if @de.present?
-      self.late = @de.extendeddeadline.past?
-    else
-      self.late = assignment.deadline.past?
-    end
+    self.late = if @de.present?
+                  @de.extendeddeadline.past?
+                else
+                  assignment.deadline.past?
+                end
 
     self.submitted = DateTime.now.utc
     self.attempt_number = user.submissions_for(assignment.id).count + 1
@@ -38,7 +38,7 @@ class Submission < ActiveRecord::Base
   end
 
   def report_extraction_error!
-    #self.mark = 0
+    # self.mark = 0
     self.extraction_error = true
     save!
   end
@@ -68,18 +68,17 @@ class Submission < ActiveRecord::Base
   def augmented_clone_url
     return 'ERR' if repourl.nil? || repourl.index('//').nil?
     url = repourl.dup
-    if studentrepo
-      auth = user.githubtoken
-      url.insert(url.index('//') + 2, "#{auth}@")
-    else
-      auth = "#{Rails.configuration.ghe_user}:#{Rails.configuration.ghe_password}"
-      url.insert(url.index('//') + 2, "#{auth}@")
-    end
+    auth = if studentrepo
+             user.githubtoken
+           else
+             "#{Rails.configuration.ghe_user}:#{Rails.configuration.ghe_password}"
+           end
+    url.insert(url.index('//') + 2, "#{auth}@")
     url
   end
 
   def ensure_enrolled!
-    if (!user.enrolled_in?(assignment.course.id))
+    unless user.enrolled_in? assignment.course.id
       assignment.course.log("Auto-enrolling user #{user.name} on submission to assignment #{assignment.title}.")
 
       user.courses << assignment.course
@@ -96,10 +95,10 @@ class Submission < ActiveRecord::Base
   end
 
   def failed_submission?
-    failed || (!git_success) || extraction_error
+    failed || !git_success || extraction_error
   end
 
   def self.failed_submissions
-    where("failed=? OR git_success=? OR extraction_error=?", true, false, true)
+    where('failed=? OR git_success=? OR extraction_error=?', true, false, true)
   end
 end

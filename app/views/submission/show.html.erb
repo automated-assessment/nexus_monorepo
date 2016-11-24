@@ -19,6 +19,11 @@
         <div class="sha">
           Commit SHA: <code><%= @submission.commithash %></code>
         </div>
+        <div class="download-zip">
+          <%= link_to download_submission_path(id: @submission.id) do %>
+            <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'folder' %> Download Submission</button>
+          <% end %>
+        </div>
       <% end %>
     </div>
   </div>
