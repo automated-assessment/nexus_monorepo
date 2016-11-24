@@ -56,6 +56,7 @@ Rails.application.routes.draw do
   post 'submissions/create/ide' => 'submission#create_ide', as: :create_ide_submission
   get 'submissions/new/:aid' => 'submission#new', as: :new_submission
   get 'submissions/:id/edit_mark' => 'submission#edit_mark', as: :edit_mark_for_submission
+  get 'submissions/:id/download_submission' => 'submission#download_submission', as: :download_submission
   patch 'submissions/:id/override' => 'submission#override', as: :override_submission
   get 'submissions/list/failed' => 'submission#list_failed', as: :failed_submissions_list
   get 'submissions/:id/resend' => 'submission#resend', as: :resend_submission

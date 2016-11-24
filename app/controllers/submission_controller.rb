@@ -1,5 +1,6 @@
 class SubmissionController < ApplicationController
   include ApplicationHelper
+  require 'open-uri'
   require_relative '../lib/submission_utils'
   require_relative '../lib/git_utils'
 
@@ -89,6 +90,29 @@ class SubmissionController < ApplicationController
     end
 
     redirect_to action: 'show', id: @submission.id
+  end
+
+  def download_submission
+    submission = Submission.find_by(id: params[:id])
+    if submission
+      # Remove the git extension
+      augmented_url_base = submission.augmented_clone_url.chomp('.git')
+      uri = URI.parse("#{augmented_url_base}/archive/#{submission.commithash}.zip")
+
+      # Options needed for authentication. Credentials cannot be in URL
+      options = {
+        http_basic_authentication: [uri.user, uri.password]
+      }
+
+      # Reconstruct the URL using the appropriate fields from URI
+      download_url = "#{uri.scheme}://#{uri.host}/#{uri.path}"
+      open(download_url, options) do |f|
+        send_data f.read, disposition: 'attachment', filename: submission.gitbranch + '.zip'
+      end
+    else
+      flash.now[:error] = "Submission doesn't exist!"
+      render 'mine', status: 404
+    end
   end
 
   def create_git
