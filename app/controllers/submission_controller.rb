@@ -74,8 +74,7 @@ class SubmissionController < ApplicationController
       logger.error "Error copying uploaded zip file for #{current_user.name}: #{e.inspect}."
 
       @submission.destroy
-      redirect_to error_url('500')
-      return
+      redirect_to error_url('500') && return
     end
 
     if SubmissionUtils.unzip!(@submission)
@@ -95,6 +94,7 @@ class SubmissionController < ApplicationController
   def download_submission
     submission = Submission.find_by(id: params[:id])
     if submission
+      begin
       # Remove the git extension
       augmented_url_base = submission.augmented_clone_url.chomp('.git')
       uri = URI.parse("#{augmented_url_base}/archive/#{submission.commithash}.zip")
@@ -107,11 +107,17 @@ class SubmissionController < ApplicationController
       # Reconstruct the URL using the appropriate fields from URI
       download_url = "#{uri.scheme}://#{uri.host}/#{uri.path}"
       open(download_url, options) do |f|
-        send_data f.read, disposition: 'attachment', filename: submission.gitbranch + '.zip'
+        send_data f.read, type: f.content_type,
+                          disposition: 'attachment',
+                          filename: submission.gitbranch + '.zip'
       end
+    rescue StandardError => e
+      logger.error "Error downloading submission for #{current_user.name}: #{e.inspect}."
+      render 'errors/internal_server_error'
+    end
     else
       flash.now[:error] = "Submission doesn't exist!"
-      render 'mine', status: 404
+      render 'errors/file_not_found', status: 404
     end
   end
 
@@ -258,9 +264,9 @@ class SubmissionController < ApplicationController
     (file.content_type == 'application/zip') ||
       (file.content_type == 'multipart/x-zip') ||
       (file.content_type == 'application/x-zip-compressed') ||
-      (file.original_filename.end_with?('.zip') &&
-      ((file.content_type == 'application/x-compressed') ||
-      (file.content_type == 'application/octet-stream')))
+      (file.original_filename.end_with? '.zip') &&
+        ((file.content_type == 'application/x-compressed') ||
+        (file.content_type == 'application/octet-stream'))
     # In this last case, we'll leave it to ZIP::File
     # to figure out if it really is a zip file.
   end
@@ -296,22 +302,24 @@ class SubmissionController < ApplicationController
     # check for any extensions
     @de = DeadlineExtension.find_by(assignment: @submission.assignment, user: current_user)
     if @de.present?
-      return true if DateTime.now.utc < @de.extendeddeadline
-      redirect_to(@submission.assignment, flash: { danger: 'Your deadline extension for this assignment has passed.' })
-      return false
+      unless DateTime.now.utc < @de.extendeddeadline
+        redirect_to(@submission.assignment, flash: { danger: 'Your deadline extension for this assignment has passed.' })
+        return false
+      end
+      return true
     end
 
     # check if before regular deadline
     return true if DateTime.now.utc < @submission.assignment.deadline
 
     # check if late submissions are allowed and we are still within the late deadline
-    if @submission.assignment.allow_late
-      return true if DateTime.now.utc < @submission.assignment.latedeadline
+    if @submission.assignment.allow_late && DateTime.now.utc < @submission.assignment.latedeadline
       redirect_to(@submission.assignment, flash: { danger: 'The deadline for late submissions for this assignment has passed.' })
+      return true
     else
       redirect_to(@submission.assignment, flash: { danger: 'The deadline for this assignment has passed and it does not allow late submissions.' })
+      return false
     end
-    false
   end
 
   def save_file_name(submission)
