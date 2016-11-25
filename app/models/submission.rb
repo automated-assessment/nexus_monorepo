@@ -38,7 +38,6 @@ class Submission < ActiveRecord::Base
   end
 
   def report_extraction_error!
-    # self.mark = 0
     self.extraction_error = true
     save!
   end
