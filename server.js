@@ -2,6 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import errorhandler from 'errorhandler';
 import path from 'path';
+import fs from 'fs';
+import fsExtra from 'fs-extra';
 import { execSync } from 'child_process';
 import { sendMark, sendFeedback } from './utils';
 
@@ -40,15 +42,26 @@ const _sendMark = (mark, submissionID) => {
   });
 };
 
+const _removeDirectoryIfExists = (dir) => {
+  if (fs.existsSync(dir)) {
+    fsExtra.removeSync(dir);
+    console.log(`Cleaned up directory ${dir}.`);
+  }
+};
+
 app.post('/mark', (req, res, next) => {
+  let sourceDir = '';
   try {
     const submissionID = req.body.sid;
     const cloneURL = req.body.cloneurl;
     const branch = req.body.branch;
     const sha = req.body.sha;
 
-    const sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
+    sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
     console.log(`Using directory ${sourceDir}.`);
+
+    // Clean up repository directory in case it already exists for some reason
+    _removeDirectoryIfExists(sourceDir);
 
     let output = '';
     console.log(`Request to mark submission ${submissionID} received.`);
@@ -71,7 +84,7 @@ app.post('/mark', (req, res, next) => {
       // send mark of 0 and feedback listing only those file names that have white space in them
       _sendMark(0, submissionID);
       output += '<p>You should not include whitespace in any java file names (or their paths) in your submission. Below are the files with problematic file names:</p>';
-      output += `<pre><code>${WHITESPACE_LINES.join("\n")}</code></pre>`;
+      output += `<pre><code>${WHITESPACE_LINES.join('\n')}</code></pre>`;
       res.sendStatus(200);
     } else {
       // execute javac
@@ -103,6 +116,12 @@ app.post('/mark', (req, res, next) => {
     // Fix what request response we sent so that nexus knows something has gone wrong
     res.status(500).send(`Error in javac-tool: ${e.toString()},\n${e.output.toString()}`);
   } finally {
+    try {
+    // Clean up repository directory after us
+      _removeDirectoryIfExists(sourceDir);
+    } catch (e) {
+      console.log(`Error in javac-tool: ${e.toString()},\n${e.output.toString()}`);
+    }
     return next();
   }
 });
