@@ -45,7 +45,7 @@ class SubmissionUtils
       # Assume this is all going to go well
       submission.failed = false
       submission.save!
-
+      binding.pry
       submission.assignment.marking_tools.each do |mt|
         begin
           SendSubmissionJob.perform_later submission.id, mt.id
@@ -58,7 +58,7 @@ class SubmissionUtils
     end
 
     def remark!(submission, user, flash)
-      if (submission.mark_override)
+      if submission.mark_override
         submission.log("Request to remark by user #{user.name} refused as mark has been manually overridden.", 'Warning')
         flash[:warning] = 'Mark manually overridden so no remarking initiated.'
         return false
@@ -81,12 +81,11 @@ class SubmissionUtils
         end
 
         submission.intermediate_marks.each do |im|
-          unless im.pending?
-            mktool_name = submission.assignment.marking_tool_contexts.find_by(marking_tool_id: im.marking_tool_id).marking_tool.name
-            submission.log("Resetting mark of #{im.mark} for #{mktool_name}", 'Info')
-            im.mark = nil
-            im.save!
-          end
+          next if im.pending?
+          mktool_name = submission.assignment.marking_tool_contexts.find_by(marking_tool_id: im.marking_tool_id).marking_tool.name
+          submission.log("Resetting mark of #{im.mark} for #{mktool_name}", 'Info')
+          im.mark = nil
+          im.save!
         end
 
         submission.feedback_items.destroy_all.each do |fi|
@@ -97,22 +96,20 @@ class SubmissionUtils
       # resubmit!
       return re_notify_tools!(submission, user, flash)
     rescue StandardError => e
-      Rails.logger.error{"Error remarking: #{e.inspect}."}
+      Rails.logger.error { "Error remarking: #{e.inspect}." }
       submission.log("Error remarking: #{e.inspect}.", 'Error')
       return false
     end
 
     def resubmit!(submission, user, flash)
-      if submission.git_success
-        if submission.failed
-          return re_notify_tools!(submission, user, flash)
-        end
+      if submission.git_success && submission.failed
+        return re_notify_tools!(submission, user, flash)
       else
-        if (submission.extraction_error)
+        if submission.extraction_error
           # Need to first unzip the submission
           submission.log("Reattempting to unzip submission files on behalf of #{user.name}.")
           unless unzip!(submission)
-            flash[:warning] = "ZIP extraction still failing, there may be an issue with the ZIP file. Check submission log for details."
+            flash[:warning] = 'ZIP extraction still failing, there may be an issue with the ZIP file. Check submission log for details.'
             return false
           end
         end
@@ -129,7 +126,7 @@ class SubmissionUtils
 
       notify_tools!(submission)
 
-      flash[:warning] = "Resending still caused failures. Check submission log for details." if submission.failed?
+      flash[:warning] = 'Resending still caused failures. Check submission log for details.' if submission.failed?
 
       !submission.failed?
     end
@@ -139,7 +136,7 @@ class SubmissionUtils
 
       push_and_notify_tools!(submission, flash)
 
-      flash[:warning] = "Failed to store submission in git again." unless submission.git_success
+      flash[:warning] = 'Failed to store submission in git again.' unless submission.git_success
 
       submission.git_success
     end
@@ -158,7 +155,7 @@ class SubmissionUtils
 
     # Check if the given submission (which must be saved and not sent to Git yet) contains any files
     def empty?(submission)
-      Dir.glob(File.join(GitUtils.gen_repo_path(submission), "**", "*")).reject { |fname| File.directory?(fname) }.empty?
+      Dir.glob(File.join(GitUtils.gen_repo_path(submission), '**', '*')).reject { |fname| File.directory?(fname) }.empty?
     end
   end
 end

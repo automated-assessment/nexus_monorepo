@@ -44,13 +44,13 @@ class SubmissionController < ApplicationController
     uploaded_file = params[:submission][:code]
 
     if uploaded_file.nil?
-      logger.info "Rejecting upload without a ZIP file for user #{current_user.name}."
+      logger.info { "Rejecting upload without a ZIP file for user #{current_user.name}." }
       flash[:error] = 'Please include a ZIP file in your submission.'
       redirect_to error_url('422') && return
     end
 
     unless zip_file?(uploaded_file)
-      logger.info "Rejecting supposed ZIP upload: #{uploaded_file.original_filename} of MIME type #{uploaded_file.content_type}"
+      logger.info { "Rejecting supposed ZIP upload: #{uploaded_file.original_filename} of MIME type #{uploaded_file.content_type}" }
       redirect_to error_url('422') && return
     end
 
@@ -71,7 +71,7 @@ class SubmissionController < ApplicationController
 
     rescue StandardError => e
       # At this point, we need to remove the submission if anything goes wrong because we won't be able to recover yet
-      logger.error "Error copying uploaded zip file for #{current_user.name}: #{e.inspect}."
+      logger.error { "Error copying uploaded zip file for #{current_user.name}: #{e.inspect}." }
 
       @submission.destroy
       redirect_to error_url('500') && return
@@ -79,7 +79,7 @@ class SubmissionController < ApplicationController
 
     if SubmissionUtils.unzip!(@submission)
       if SubmissionUtils.empty?(@submission)
-        logger.info "Rejecting empty submission #{@submission.id} from user #{current_user.name}."
+        logger.info { "Rejecting empty submission #{@submission.id} from user #{current_user.name}." }
         @submission.destroy
         flash[:error] = 'You have made an empty submission. Please ensure there is at least one file that is not a directory inside your ZIP file.'
         redirect_to error_url('422') && return
@@ -112,7 +112,7 @@ class SubmissionController < ApplicationController
                           filename: submission.gitbranch + '.zip'
       end
     rescue StandardError => e
-      logger.error "Error downloading submission for #{current_user.name}: #{e.inspect}."
+      logger.error { "Error downloading submission for #{current_user.name}: #{e.inspect}." }
       render 'errors/internal_server_error'
     end
     else
@@ -168,7 +168,7 @@ class SubmissionController < ApplicationController
 
       rescue StandardError => e
         # At this point, we need to remove the submission if anything goes wrong because we won't be able to recover yet
-        logger.error "Error copying files from Web IDE for #{current_user.name}: #{e.inspect}."
+        logger.error { "Error copying files from Web IDE for #{current_user.name}: #{e.inspect}." }
 
         @submission.destroy
         render json: { data: 'Error!', message: 'There was an internal server error processing your uploaded files. Your submission could not be accepted at this time. Please contact your course leader.' },
@@ -178,7 +178,7 @@ class SubmissionController < ApplicationController
     end
     # We can recover from here onward, so it is safe to keep the submission
     if submitted_files.nil? || SubmissionUtils.empty?(@submission)
-      logger.info "Rejecting empty submission #{@submission.id} from user #{current_user.name}."
+      logger.info { "Rejecting empty submission #{@submission.id} from user #{current_user.name}." }
       @submission.destroy
       render json: {
         data: 'Error!',
@@ -197,7 +197,7 @@ class SubmissionController < ApplicationController
     }, status: 500, content_type: 'text/json'
 
     @submission.log("Error creating submission for user #{current_user.name}: #{e.class} #{e.message}", 'Error') if @submission.persisted?
-    logger.error "Error creating submission for user #{current_user.name}: #{e.class} #{e.message}"
+    logger.error { "Error creating submission for user #{current_user.name}: #{e.class} #{e.message}" }
   end
 
   def edit_mark
