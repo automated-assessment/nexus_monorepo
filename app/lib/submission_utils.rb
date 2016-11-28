@@ -45,7 +45,6 @@ class SubmissionUtils
       # Assume this is all going to go well
       submission.failed = false
       submission.save!
-      binding.pry
       submission.assignment.marking_tools.each do |mt|
         begin
           SendSubmissionJob.perform_later submission.id, mt.id
