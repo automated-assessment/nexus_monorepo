@@ -1,2 +1,2 @@
 #!/bin/bash
-export $(cat .env.list | xargs) && npm start
+export $(cat .env.javac.list | xargs) && npm start
