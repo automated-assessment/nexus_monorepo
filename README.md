@@ -47,14 +47,20 @@ This brings up the nexus server fully ready to run and detaches it from the curr
 
 ## Useful Commands
 - To attach into container to see terminal output, useful with Pry debugging
+
 1. Place your `binding.pry` command as normal where required. (Nexus)
 2. `docker restart nexusdeployment_nexus_1` to update changes in volume
 3. `docker attach <container name | id>` to use debugger when triggered
 
+
 - To attach into container with bash terminal, useful for accessing the `Rails Console`
+
 1. `docker exec -it nexusdeployment_nexus_1 bash`
+
 1.1 `-i (--interactive)` - Keeps STDIN open
+
 1.2 `-t (--tty)` - Allocate a pseudo-TTY
+
 2. The bash terminal will appear, starting you in the `app/src` directory
 3. Type `rails c` to gain access to the running rails console.
 4. Type `rake db:migrate` to migrate database without needing to rerun `docker-compose run nexus init-db` which wipes the database clean.
