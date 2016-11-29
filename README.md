@@ -45,9 +45,25 @@ The access token must be valid for the nexus instance to be run, so in the first
 
 This brings up the nexus server fully ready to run and detaches it from the current console. You should be able to get to nexus by opening `localhost:3000` in your browser.
 
+## Useful Commands
+- To attach into container to see terminal output, useful with Pry debugging
+1. Place your `binding.pry` command as normal where required. (Nexus)
+2. `docker restart nexusdeployment_nexus_1` to update changes in volume
+3. `docker attach <container name | id>` to use debugger when triggered
+
+- To attach into container with bash terminal, useful for accessing the `Rails Console`
+1. `docker exec -it nexusdeployment_nexus_1 bash`
+1.1 `-i (--interactive)` - Keeps STDIN open
+1.2 `-t (--tty)` - Allocate a pseudo-TTY
+2. The bash terminal will appear, starting you in the `app/src` directory
+3. Type `rails c` to gain access to the running rails console.
+4. Type `rake db:migrate` to migrate database without needing to rerun `docker-compose run nexus init-db` which wipes the database clean.
+
+N.B When in the bash console, you can do whatever you can do with un-dockerised application.
+
 ## Health checks
 
-The rabbitmq console can be found at `http://<hostname>:8081` using the user name and password as defined above. 
+The rabbitmq console can be found at `http://<hostname>:8081` using the user name and password as defined above.
 
 Logs can be found in `logs/messages`. Use a command like `tail -f logs/messages` to keep on top of them.
 
