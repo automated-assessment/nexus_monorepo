@@ -9,7 +9,7 @@ class SendSubmissionJob < ActiveJob::Base
   end
 
   def perform(submission_id, marking_tool_id)
-    Rails.logger.debug "Actually inside SendSubmissionJob.perform."
+    Rails.logger.debug 'Actually inside SendSubmissionJob.perform.'
     @submission = Submission.find(submission_id)
     @marking_tool = MarkingTool.find(marking_tool_id)
 
@@ -23,7 +23,7 @@ class SendSubmissionJob < ActiveJob::Base
 
     res = http.request(req)
 
-    if (res.code =~ /2../) then
+    if res.code =~ /2../
       # Successfully handed submission over to tool
       @submission.log("Received #{res.code} #{res.message} from #{@marking_tool.name}", 'Success')
     else
@@ -33,7 +33,7 @@ class SendSubmissionJob < ActiveJob::Base
 
   rescue StandardError => e
     Rails.logger.error "Error in SendSubmissionJob: #{e.class} #{e.message}"
-    unless (@submission.nil? || @marking_tool.nil?)
+    unless @submission.nil? || @marking_tool.nil?
       @submission.log("Error notifying #{@marking_tool.name}: #{e.class} #{e.message}", 'Error')
     end
     record_fail!
@@ -54,8 +54,8 @@ class SendSubmissionJob < ActiveJob::Base
   end
 
   def record_fail!
-    if (@submission) then
-      @submission.log("Recording failure of submission", 'Debug')
+    if @submission
+      @submission.log('Recording failure of submission', 'Debug')
       @submission.failed = true
       @submission.save!
     else
