@@ -43,9 +43,11 @@ const _sendMark = (mark, submissionID) => {
 };
 
 const _removeDirectoryIfExists = (dir) => {
-  if (fs.existsSync(dir)) {
-    fsExtra.removeSync(dir);
-    console.log(`Cleaned up directory ${dir}.`);
+  if (dir !== '') {    
+    if (fs.existsSync(dir)) {
+      fsExtra.removeSync(dir);
+      console.log(`Cleaned up directory ${dir}.`);
+    }
   }
 };
 
