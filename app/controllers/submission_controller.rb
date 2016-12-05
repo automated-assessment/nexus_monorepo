@@ -46,12 +46,14 @@ class SubmissionController < ApplicationController
     if uploaded_file.nil?
       logger.info { "Rejecting upload without a ZIP file for user #{current_user.name}." }
       flash[:error] = 'Please include a ZIP file in your submission.'
-      redirect_to error_url('422') && return
+      redirect_to error_url('422')
+      return
     end
 
     unless zip_file?(uploaded_file)
       logger.info { "Rejecting supposed ZIP upload: #{uploaded_file.original_filename} of MIME type #{uploaded_file.content_type}" }
-      redirect_to error_url('422') && return
+      redirect_to error_url('422')
+      return
     end
 
     @submission.original_filename = uploaded_file.original_filename
@@ -74,7 +76,8 @@ class SubmissionController < ApplicationController
       logger.error { "Error copying uploaded zip file for #{current_user.name}: #{e.inspect}." }
 
       @submission.destroy
-      redirect_to error_url('500') && return
+      redirect_to error_url('500')
+      return
     end
 
     if SubmissionUtils.unzip!(@submission)
@@ -82,7 +85,8 @@ class SubmissionController < ApplicationController
         logger.info { "Rejecting empty submission #{@submission.id} from user #{current_user.name}." }
         @submission.destroy
         flash[:error] = 'You have made an empty submission. Please ensure there is at least one file that is not a directory inside your ZIP file.'
-        redirect_to error_url('422') && return
+        redirect_to error_url('422')
+        return
       else
         SubmissionUtils.push_and_notify_tools!(@submission, flash)
       end
@@ -126,7 +130,8 @@ class SubmissionController < ApplicationController
 
     unless GitUtils.has_valid_repo?(@submission)
       flash[:error] = "Branch or SHA don't exist in Git repository indicated. Please make sure you provide the correct information."
-      redirect_to new_submission_path(aid: @submission.assignment.id) && return
+      redirect_to new_submission_path(aid: @submission.assignment.id)
+      return
     end
 
     # Record the fact that we have a safe git copy
