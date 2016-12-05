@@ -318,13 +318,15 @@ class SubmissionController < ApplicationController
     return true if DateTime.now.utc < @submission.assignment.deadline
 
     # check if late submissions are allowed and we are still within the late deadline
-    if @submission.assignment.allow_late && DateTime.now.utc < @submission.assignment.latedeadline
+    if @submission.assignment.allow_late
+      return true if DateTime.now.utc < @submission.assignment.latedeadline
+
       redirect_to(@submission.assignment, flash: { danger: 'The deadline for late submissions for this assignment has passed.' })
-      return true
     else
       redirect_to(@submission.assignment, flash: { danger: 'The deadline for this assignment has passed and it does not allow late submissions.' })
-      return false
     end
+
+    false
   end
 
   def save_file_name(submission)
