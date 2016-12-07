@@ -36,14 +36,24 @@ The access token must be valid for the nexus instance to be run, so in the first
 
 ## Getting Started
 - Clone the repo
-- Initialise submodules: `git submodule init`
-- Fetch all submodules: `git submodule update`
-- Set up your `.env.list` and other `.env` files - see above
-- Build: `docker-compose -f docker-compose.yml build` for production
-- Build `docker-compose -f docker-compose.yml -f docker-compose.dev.yml build` for development
+- `make init-files`
+  - Initialise submodules: `git submodule init`
+  - Fetch all submodules: `git submodule update`
+  - Set up your `.env.list` and other `.env` files - see above
+
+- `make build`
+  - Build: `docker-compose -f docker-compose.yml build` for production
+
+- `make build-dev`
+  - Build `docker-compose -f docker-compose.yml -f docker-compose.dev.yml build` for development
+
 - Initialise: `docker-compose run nexus init` (only needed first time, when schema has changed, or when javascript component have been added or modified; partial initialisations `init-js`, `init-dirs`, and `init-db` are also available)
-- Run: `docker-compose up -d` for production
-- Run: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d` for development
+
+- `make run`
+  - Run: `docker-compose up -d` for production
+
+- `make run-dev`
+  - Run: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d` for development
 
 This brings up the nexus server fully ready to run and detaches it from the current console. You should be able to get to nexus by opening `localhost:3000` in your browser.
 
