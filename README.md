@@ -52,7 +52,8 @@ This brings up the nexus server fully ready to run and detaches it from the curr
 
 1. Place your `binding.pry` command as normal where required. (Nexus)
 2. `docker restart nexus` to update changes in volume
-3. `docker attach <container name | id>` to use debugger when triggered
+3. `make debug`
+  3.1 `docker attach nexus_deployment_nexus_1` to use debugger when triggered
 
 
 - To attach into container with bash terminal, useful for accessing the `Rails Console`
