@@ -39,9 +39,11 @@ The access token must be valid for the nexus instance to be run, so in the first
 - Initialise submodules: `git submodule init`
 - Fetch all submodules: `git submodule update`
 - Set up your `.env.list` and other `.env` files - see above
-- Build: `docker-compose build`
+- Build: `docker-compose -f docker-compose.yml build` for production
+- Build `docker-compose -f docker-compose.yml -f docker-compose.dev.yml build` for development
 - Initialise: `docker-compose run nexus init` (only needed first time, when schema has changed, or when javascript component have been added or modified; partial initialisations `init-js`, `init-dirs`, and `init-db` are also available)
-- Run: `docker-compose up -d`
+- Run: `docker-compose up -d` for production
+- Run: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d` for development
 
 This brings up the nexus server fully ready to run and detaches it from the current console. You should be able to get to nexus by opening `localhost:3000` in your browser.
 
@@ -49,21 +51,16 @@ This brings up the nexus server fully ready to run and detaches it from the curr
 - To attach into container to see terminal output, useful with Pry debugging
 
 1. Place your `binding.pry` command as normal where required. (Nexus)
-2. `docker restart nexusdeployment_nexus_1` to update changes in volume
+2. `docker restart nexus` to update changes in volume
 3. `docker attach <container name | id>` to use debugger when triggered
 
 
 - To attach into container with bash terminal, useful for accessing the `Rails Console`
-
-1. `docker exec -it nexusdeployment_nexus_1 bash`
-
-1.1 `-i (--interactive)` - Keeps STDIN open
-
-1.2 `-t (--tty)` - Allocate a pseudo-TTY
-
+1. `docker exec nexus bash`
 2. The bash terminal will appear, starting you in the `app/src` directory
 3. Type `rails c` to gain access to the running rails console.
 4. Type `rake db:migrate` to migrate database without needing to rerun `docker-compose run nexus init-db` which wipes the database clean.
+4.1 From outside the container, can also use `docker-compose run nexus rake db:migrate`
 
 N.B When in the bash console, you can do whatever you can do with un-dockerised application.
 
