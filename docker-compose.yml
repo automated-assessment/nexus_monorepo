@@ -14,6 +14,7 @@ services:
     env_file: .env.list
     environment:
       RABBIT_MQ_HOST: rabbitmq
+      DOCKER: 1
     ports:
       - "3000:3000"
     logging:
