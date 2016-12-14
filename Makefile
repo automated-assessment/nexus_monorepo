@@ -112,4 +112,4 @@ restart-dev:
 	make run-dev
 
 debug:
-	docker attach nexus_deployment_nexus_1
+	docker attach nexusdeployment_nexus_1
