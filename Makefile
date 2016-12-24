@@ -95,7 +95,7 @@ restart-syslog:
 	docker restart syslog
 
 bash:
-	docker exec nexus bash
+	docker exec nexusdeployment_nexus_1 bash
 
 migrate-db:
 	docker-compose run nexus rake db:migrate
