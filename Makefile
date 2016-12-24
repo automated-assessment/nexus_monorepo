@@ -95,7 +95,7 @@ restart-syslog:
 	docker restart syslog
 
 bash:
-	docker exec nexus bash
+	docker exec nexusdeployment_nexus_1 bash
 
 migrate-db:
 	docker-compose run nexus rake db:migrate
@@ -112,4 +112,4 @@ restart-dev:
 	make run-dev
 
 debug:
-	docker attach nexus_deployment_nexus_1
+	docker attach nexusdeployment_nexus_1
