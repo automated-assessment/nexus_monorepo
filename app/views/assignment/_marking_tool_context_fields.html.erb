@@ -14,10 +14,24 @@
   </div>
 
   <div class="form-group">
-    <%= f.label :weight, 'Context', class: 'col-lg-2 control-label' %>
+    <%= f.label :condition, 'Condition (%)', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.number_field :condition, in: 0..100, step: 1, value: '0', class: 'form-control' %>
+      </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :context, 'Context', class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
         <%= f.text_field :context, class: 'form-control' %>
         <p>Describe how this tool is used for this assignment (optional)</p>
+      </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :depends_on, "Depends on", class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= collection_select("assignment[marking_tool_contexts_attributes][#{f.options[:child_index]}]", :depends_on, MarkingTool.all, :id, :name, { prompt: true }, { class: 'form-control' }) %>
       </div>
   </div>
 

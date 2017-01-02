@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160921235603) do
+ActiveRecord::Schema.define(version: 20170102201906) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -116,6 +116,8 @@ ActiveRecord::Schema.define(version: 20160921235603) do
     t.datetime "created_at",                      null: false
     t.datetime "updated_at",                      null: false
     t.boolean  "configured",      default: false
+    t.integer  "depends_on"
+    t.integer  "condition"
   end
 
   add_index "marking_tool_contexts", ["assignment_id"], name: "index_marking_tool_contexts_on_assignment_id"

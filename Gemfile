@@ -33,6 +33,8 @@ gem 'octokit', '~> 4.0'
 # Markdown rendering
 gem 'redcarpet'
 
+gem 'closure_tree'
+
 group :production do
   # postgres adapter
   gem 'pg'

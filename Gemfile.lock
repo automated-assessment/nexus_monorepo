@@ -47,6 +47,9 @@ GEM
     bunny (2.2.2)
       amq-protocol (>= 2.0.1)
     byebug (9.0.5)
+    closure_tree (6.2.0)
+      activerecord (>= 4.1.0)
+      with_advisory_lock (>= 3.0.0)
     cocoon (1.2.9)
     coderay (1.1.1)
     colorize (0.8.1)
@@ -249,12 +252,16 @@ GEM
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
       sprockets-rails (>= 2.0, < 4.0)
+    with_advisory_lock (3.0.0)
+      activerecord (>= 3.2)
+      thread_safe
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   byebug
+  closure_tree
   cocoon
   colorize
   daemons
@@ -286,4 +293,4 @@ DEPENDENCIES
   web-console (~> 2.0)
 
 BUNDLED WITH
-   1.12.5
+   1.13.1
