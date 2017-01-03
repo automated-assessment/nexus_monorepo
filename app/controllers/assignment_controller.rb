@@ -81,6 +81,32 @@ class AssignmentController < ApplicationController
       return
     end
 
+    @assignment.marking_tool_contexts.each do |mtc|
+      marking_tool = MarkingTool.find_by(id: mtc.marking_tool_id)
+      unless marking_tool
+        flash[:error] = 'One of the marking tools selected doesn\'t exist'
+        redirect_to action: 'new', cid: @assignment.course.id
+        @assignment.destroy
+        return nil
+      end
+      mtc.name = "#{@assignment.id}-#{marking_tool.uid}"
+      mtc.save!
+    end
+
+    @assignment.marking_tool_contexts.each do |mtc|
+      marking_tool = MarkingTool.find_by(id: mtc.marking_tool_id)
+      depends_on = MarkingTool.find_by(id: mtc.depends_on)
+      next unless depends_on
+      if marking_tool.uid.eql? depends_on.uid
+        flash[:error] = 'A marking service cannot depend on itself!'
+        redirect_to action: 'new', cid: @assignment.course.id
+        @assignment.destroy
+        return nil
+      end
+      parent_node = MarkingToolContext.find_by(name: "#{@assignment.id}-#{depends_on.uid}")
+      parent_node.add_child mtc
+    end
+
     if @assignment.marking_tools.configurable.any?
       redirect_to action: 'quick_config_confirm', id: @assignment.id
     else
@@ -187,5 +213,11 @@ class AssignmentController < ApplicationController
       render 'mine', status: 404
     end
     assignment
+  end
+
+  def delete_assignment_and_redirect_with_error!(assignment, err_message)
+    flash[:error] = err_message
+    redirect_to action: 'new', cid: assignment.course.id
+    assignment.destroy
   end
 end
