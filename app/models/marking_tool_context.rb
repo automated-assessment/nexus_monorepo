@@ -8,6 +8,8 @@ class MarkingToolContext < ActiveRecord::Base
 
   before_create :set_configured_flag
 
+  has_closure_tree
+
   def set_configured_flag
     self.configured = true unless marking_tool.requires_config?
   end
