@@ -220,10 +220,4 @@ class AssignmentController < ApplicationController
     end
     assignment
   end
-
-  def delete_assignment_and_redirect_with_error!(assignment, err_message)
-    flash[:error] = err_message
-    redirect_to action: 'new', cid: assignment.course.id
-    assignment.destroy
-  end
 end
