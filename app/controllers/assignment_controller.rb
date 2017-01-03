@@ -104,6 +104,12 @@ class AssignmentController < ApplicationController
         return nil
       end
       parent_node = MarkingToolContext.find_by(name: "#{@assignment.id}-#{depends_on.uid}")
+      unless parent_node
+        flash[:error] = "Please add the marking service #{depends_on.name} to the assignment before making #{marking_tool.name} dependant on it!"
+        redirect_to action: 'new', cid: @assignment.course.id
+        @assignment.destroy
+        return nil
+      end
       parent_node.add_child mtc
     end
 
