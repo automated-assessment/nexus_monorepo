@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170103201126) do
+ActiveRecord::Schema.define(version: 20170104031149) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -175,6 +175,7 @@ ActiveRecord::Schema.define(version: 20170103201126) do
     t.boolean  "mark_override",     default: false
     t.boolean  "failed"
     t.boolean  "git_success",       default: false
+    t.text     "workflow"
   end
 
   add_index "submissions", ["assignment_id"], name: "index_submissions_on_assignment_id"

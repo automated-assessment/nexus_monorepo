@@ -1,6 +1,8 @@
 require 'csv'
 
 class Submission < ActiveRecord::Base
+  serialize :workflow
+
   belongs_to :assignment
   belongs_to :user
   has_many :intermediate_marks, dependent: :destroy
