@@ -58,6 +58,8 @@ class SubmissionController < ApplicationController
 
     @submission.original_filename = uploaded_file.original_filename
 
+    # Get marking service workflow from assignment
+    @submission.workflow = get_marking_workflow(@submission)
     # Need to save the submission here so that save_file_name has access to its id
     # But if doing so, need to delete the submission again if copying the upload file goes wrong
     @submission.save!
@@ -147,7 +149,8 @@ class SubmissionController < ApplicationController
 
   def create_ide
     return unless create_submission(false)
-
+    # Get marking service workflow from assignment
+    @submission.workflow = get_marking_workflow(@submission)
     # Need to save submission here so we can have an ID
     # If things go wrong before the safe point, we need to destroy it again.
     @submission.save!
@@ -301,6 +304,11 @@ class SubmissionController < ApplicationController
       redirect_to(@submission.assignment, flash: { danger: 'You have reached the maximum amount of attempts for this assignment.' })
       return false
     end
+  end
+
+  def get_marking_workflow(submission)
+    marking_tool_contexts = submission.assignment.marking_tool_contexts
+    marking_tool_contexts.hash_tree
   end
 
   def on_time
