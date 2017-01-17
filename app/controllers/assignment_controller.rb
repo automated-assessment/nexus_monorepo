@@ -110,7 +110,7 @@ class AssignmentController < ApplicationController
         @assignment.destroy
         return nil
       end
-      parent_node.add_child mtc
+      parent_node.add_child mtc.name
     end
 
     if @assignment.marking_tools.configurable.any?

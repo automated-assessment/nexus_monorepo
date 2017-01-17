@@ -45,15 +45,19 @@ class SubmissionUtils
       # Assume this is all going to go well
       submission.failed = false
       submission.save!
-      submission.assignment.marking_tools.each do |mt|
-        begin
-          SendSubmissionJob.perform_later submission.id, mt.id
-        rescue => e
-          submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", 'Error')
-          submission.failed = true
-          submission.save!
-        end
-      end
+      # Get workflow
+      workflow = submission.workflow
+      binding.pry
+      # invoke each of the parentless nodes
+      # submission.assignment.marking_tools.each do |mt|
+      #   begin
+      #     SendSubmissionJob.perform_later submission.id, mt.id
+      #   rescue => e
+      #     submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", 'Error')
+      #     submission.failed = true
+      #     submission.save!
+      #   end
+      # end
     end
 
     def remark!(submission, user, flash)
