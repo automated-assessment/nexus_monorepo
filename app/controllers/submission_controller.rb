@@ -59,7 +59,8 @@ class SubmissionController < ApplicationController
     end
 
     @submission.original_filename = uploaded_file.original_filename
-
+    active_services = ActiveService.where(assignment_id: @submission.assignment.id).to_a
+    @submission.active_services = active_services.to_a
     # Need to save the submission here so that save_file_name has access to its id
     # But if doing so, need to delete the submission again if copying the upload file goes wrong
     @submission.save!

@@ -28,6 +28,18 @@
       </div>
   </div>
 
+  <div class="panel panel-default col-lg-10 col-lg-offset-2">
+    <div class="panel-heading">
+      <h3 class="panel-title"><%= icon 'ellipsis-v' %> Depends on</a></h3>
+    </div>
+    <divclass="panel-body">
+      <% MarkingTool.all.each do |mt| %>
+        <%= check_box("assignment[marking_tool_contexts_attributes][#{f.options[:child_index]}]", "depends_on", {:multiple => true}, mt.uid, nil) %>
+        <%= mt.name %>
+      <% end %>
+    </div>
+  </div>
+
   <%= link_to_remove_association f do |link| %>
     <div class="col-md-10 col-md-offset-2">
       <%= icon 'minus-circle' %> Remove

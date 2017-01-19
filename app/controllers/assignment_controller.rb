@@ -81,16 +81,31 @@ class AssignmentController < ApplicationController
       return
     end
 
-    prev_as = nil
+    tool_ids = @assignment.marking_tool_contexts.pluck(:marking_tool_id)
+    assignment_tools = MarkingTool.where(id: tool_ids).pluck(:uid)
+    contexts = params[:assignment][:marking_tool_contexts_attributes].to_a
+    i = 0
     @assignment.marking_tool_contexts.each do |mtc|
+      mtc.depends_on = contexts[i][1][:depends_on]
+      mtc.save
+      i += 1
       as = ActiveService.new
       as.assignment = @assignment
       mt = MarkingTool.find(mtc.marking_tool_id)
       as.marking_tool_uid = mt.uid
-      as.parents << prev_as if prev_as
       as.condition = mtc.condition
+
+      unless mtc.depends_on.empty?
+        unless (assignment_tools & mtc.depends_on).eql? mtc.depends_on
+          flash[:error] = "One or more tools that #{mt.name} depends on have not been added to the assignment"
+          redirect_to action: 'new', cid: @assignment.course.id
+          @assignment.destroy
+          return 1
+        end
+
+        as.parents = ActiveService.where(assignment_id: @assignment.id, marking_tool_uid: mtc.depends_on)
+      end
       as.save!
-      prev_as = as
     end
 
     if @assignment.marking_tools.configurable.any?
@@ -189,7 +204,7 @@ class AssignmentController < ApplicationController
                                        :allow_zip,
                                        :allow_git,
                                        :allow_ide,
-                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :condition])
+                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :condition, :depends_on])
   end
 
   def return_assignment!

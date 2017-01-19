@@ -1,4 +1,6 @@
 class MarkingToolContext < ActiveRecord::Base
+  serialize :depends_on, Array
+
   belongs_to :assignment
   belongs_to :marking_tool
 
