@@ -28,13 +28,6 @@
       </div>
   </div>
 
-  <div class="form-group">
-    <%= f.label :depends_on, "Depends on", class: 'col-lg-2 control-label' %>
-      <div class="col-lg-10">
-        <%= collection_select("assignment[marking_tool_contexts_attributes][#{f.options[:child_index]}]", :depends_on, MarkingTool.all, :id, :name, { prompt: true }, { class: 'form-control' }) %>
-      </div>
-  </div>
-
   <%= link_to_remove_association f do |link| %>
     <div class="col-md-10 col-md-offset-2">
       <%= icon 'minus-circle' %> Remove

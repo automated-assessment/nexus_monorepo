@@ -81,36 +81,16 @@ class AssignmentController < ApplicationController
       return
     end
 
+    prev_as = nil
     @assignment.marking_tool_contexts.each do |mtc|
-      marking_tool = MarkingTool.find_by(id: mtc.marking_tool_id)
-      unless marking_tool
-        flash[:error] = 'One of the marking tools selected doesn\'t exist'
-        redirect_to action: 'new', cid: @assignment.course.id
-        @assignment.destroy
-        return nil
-      end
-      mtc.name = "#{@assignment.id}-#{marking_tool.uid}"
-      mtc.save!
-    end
-
-    @assignment.marking_tool_contexts.each do |mtc|
-      marking_tool = MarkingTool.find_by(id: mtc.marking_tool_id)
-      depends_on = MarkingTool.find_by(id: mtc.depends_on)
-      next unless depends_on
-      if marking_tool.uid.eql? depends_on.uid
-        flash[:error] = 'A marking service cannot depend on itself!'
-        redirect_to action: 'new', cid: @assignment.course.id
-        @assignment.destroy
-        return nil
-      end
-      parent_node = MarkingToolContext.find_by(name: "#{@assignment.id}-#{depends_on.uid}")
-      unless parent_node
-        flash[:error] = "Please add the marking service #{depends_on.name} to the assignment before making #{marking_tool.name} dependant on it!"
-        redirect_to action: 'new', cid: @assignment.course.id
-        @assignment.destroy
-        return nil
-      end
-      parent_node.add_child mtc.name
+      as = ActiveService.new
+      as.assignment = @assignment
+      mt = MarkingTool.find(mtc.marking_tool_id)
+      as.marking_tool_uid = mt.uid
+      as.parents << prev_as if prev_as
+      as.condition = mtc.condition
+      as.save!
+      prev_as = as
     end
 
     if @assignment.marking_tools.configurable.any?
@@ -209,7 +189,7 @@ class AssignmentController < ApplicationController
                                        :allow_zip,
                                        :allow_git,
                                        :allow_ide,
-                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :depends_on, :condition])
+                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :condition])
   end
 
   def return_assignment!

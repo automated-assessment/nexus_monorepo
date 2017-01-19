@@ -46,7 +46,6 @@ class SubmissionUtils
       submission.failed = false
       submission.save!
       # Get workflow
-      workflow = submission.workflow
       binding.pry
       # invoke each of the parentless nodes
       # submission.assignment.marking_tools.each do |mt|
