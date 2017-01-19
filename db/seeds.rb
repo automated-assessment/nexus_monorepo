@@ -24,7 +24,7 @@ if ENV['DOCKER']
                      url: 'http://io-tool:3000/mark',
                      uid: 'iotool',
                      requires_config: true,
-                     config_url: 'http://io-tool:3000/#/static/config.html')
+                     config_url: 'http://io-tool:3000/#/static/config.html?aid=%{aid}')
 end
 
 if Rails.env.eql? 'development'
@@ -71,6 +71,6 @@ if Rails.env.eql? 'development'
                        url: 'http://localhost:3004/mark',
                        uid: 'iotool',
                        requires_config: true,
-                       config_url: 'http://localhost:3004/#/static/config.html')
+                       config_url: 'http://localhost:3004/#/static/config.html?aid=%{aid}')
   end
 end
