@@ -8,7 +8,9 @@ services:
     volumes:
       - ./logs:/var/log
   nexus:
-    build: nexus/
+    build:
+      context: nexus/
+      dockerfile: Dockerfile
     volumes_from:
       - sneakers
     env_file: .env.list
