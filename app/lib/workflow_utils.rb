@@ -30,6 +30,15 @@ class WorkflowUtils
         end
         as.save!
       end
+      nil
+    end
+
+    def next_services_to_invoke(submission)
+      return [] unless submission.valid?
+      submission.active_services.select { |as| as.parents.empty? }
+    end
+
+    def trim_workflow!(submission, marking_tool)
     end
   end
 end
