@@ -2,6 +2,7 @@ require 'zip'
 
 class SubmissionUtils
   require_relative '../lib/git_utils'
+  require_relative '../lib/workflow_utils'
 
   class << self
     def unzip!(submission)
@@ -45,18 +46,22 @@ class SubmissionUtils
       # Assume this is all going to go well
       submission.failed = false
       submission.save!
-      # Get workflow
-      binding.pry
+
       # invoke each of the parentless nodes
-      # submission.assignment.marking_tools.each do |mt|
-      #   begin
-      #     SendSubmissionJob.perform_later submission.id, mt.id
-      #   rescue => e
-      #     submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", 'Error')
-      #     submission.failed = true
-      #     submission.save!
-      #   end
-      # end
+      to_invoke = WorkflowUtils.next_services_to_invoke(submissions)
+      to_invoke.each do |service|
+        mt = MarkingTool.find_by(uid: service.marking_tool_uid)
+        begin
+          raise ActiveRecord::RecordNotFound, "#{service.marking_tool_uid} does not exist" unless mt
+
+          # TODO: Change back to perform_later when submitting project
+          SendSubmissionJob.perform_now submission.id, mt
+        rescue => e
+          submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", 'Error')
+          submission.failed = true
+          submission.save!
+        end
+      end
     end
 
     def remark!(submission, user, flash)
