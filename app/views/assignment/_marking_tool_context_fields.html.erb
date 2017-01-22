@@ -32,9 +32,9 @@
     <div class="panel-heading">
       <h3 class="panel-title"><%= icon 'ellipsis-v' %> Depends on</a></h3>
     </div>
-    <divclass="panel-body">
+    <div class="panel-body">
       <% MarkingTool.all.each do |mt| %>
-        <%= check_box("assignment[marking_tool_contexts_attributes][#{f.options[:child_index]}]", "depends_on", {:multiple => true}, mt.uid, nil) %>
+        <%= f.check_box(:depends_on, { multiple: true }, mt.uid, nil) %>
         <%= mt.name %>
       <% end %>
     </div>
