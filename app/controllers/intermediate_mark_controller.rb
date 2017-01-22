@@ -5,7 +5,7 @@ class IntermediateMarkController < ApplicationController
 
   def report
     (render_unauthorized_json && return) unless verify_access_token_header
-
+    binding.pry
     @submission = Submission.find(params[:sid])
     @marking_tool = MarkingTool.find_by!(uid: params[:tool_uid])
     @intermediate_mark = @submission.intermediate_marks.find_by!(marking_tool_id: @marking_tool.id)
@@ -24,4 +24,10 @@ class IntermediateMarkController < ApplicationController
     render json: { response: 'Could not find matching record(s) for request.' }.to_json,
            status: 404
   end
+
+  # TODO: BELOW
+  # Get next set of marking tools to invoke
+  # Invoke them if condition is met
+
+  # If condition not met, then set intermediate marks to 0 for rest of pending intermediate marks
 end
