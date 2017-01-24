@@ -16,7 +16,7 @@ class WorkflowUtils
         as.condition = mtc.condition
 
         unless mtc.depends_on.empty?
-          # Check that active service depends on itself
+          # Check if active service depends on itself
           if mtc.depends_on.include? mt.uid
             return "#{mt.name} cannot depend on itself!"
           end
@@ -38,7 +38,8 @@ class WorkflowUtils
       submission.active_services.select { |as| as.parents.empty? }
     end
 
-    def trim_workflow!(submission, marking_tool)
+    def trim_workflow!(submission, marking_tool_uid)
+      binding.pry
     end
   end
 end

@@ -48,7 +48,7 @@ class SubmissionUtils
       submission.save!
 
       # invoke each of the parentless nodes
-      to_invoke = WorkflowUtils.next_services_to_invoke(submissions)
+      to_invoke = WorkflowUtils.next_services_to_invoke(submission)
       to_invoke.each do |service|
         mt = MarkingTool.find_by(uid: service.marking_tool_uid)
         begin
