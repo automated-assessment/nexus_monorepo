@@ -22,8 +22,6 @@ class SubmissionController < ApplicationController
     @submission = Submission.new
     @submission.failed = false
     @submission.assignment = Assignment.find(params[:aid])
-    active_services = ActiveService.where(assignment_id: @submission.assignment.id).to_a
-    @submission.active_services = active_services.to_a
     return unless allowed_to_submit
 
     if @submission.assignment.allow_git
@@ -59,8 +57,9 @@ class SubmissionController < ApplicationController
     end
 
     @submission.original_filename = uploaded_file.original_filename
-    active_services = ActiveService.where(assignment_id: @submission.assignment.id).to_a
-    @submission.active_services = active_services.to_a
+    services = WorkflowUtils.get_first_services_to_invoke(@submission.assignment)
+    @submission.active_services = services
+
     # Need to save the submission here so that save_file_name has access to its id
     # But if doing so, need to delete the submission again if copying the upload file goes wrong
     @submission.save!
@@ -151,7 +150,8 @@ class SubmissionController < ApplicationController
   def create_ide
     return unless create_submission(false)
     # Get marking service workflow from assignment
-    @submission.workflow = get_marking_workflow(@submission)
+    services = WorkflowUtils.get_first_services_to_invoke(@submission.assignment)
+    @submission.active_services = services
     # Need to save submission here so we can have an ID
     # If things go wrong before the safe point, we need to destroy it again.
     @submission.save!

@@ -1,32 +1,35 @@
 class IntermediateMarkController < ApplicationController
   include ApplicationHelper
   require_relative '../lib/workflow_utils'
+  require_relative '../lib/submission_utils'
   skip_before_action :verify_authenticity_token, only: [:report]
 
   def report
     (render_unauthorized_json && return) unless verify_access_token_header
     @submission = Submission.find(params[:sid])
-    @marking_tool = MarkingTool.find_by!(uid: params[:tool_uid])
+    tool_uid = params[:tool_uid]
+    @marking_tool = MarkingTool.find_by!(uid: tool_uid)
+    @active_service = ActiveService.find_by(assignment_id: @submission.assignment.id,
+                                            marking_tool_uid: tool_uid)
     @intermediate_mark = @submission.intermediate_marks.find_by!(marking_tool_id: @marking_tool.id)
-
+    mark = params[:mark]
     if @intermediate_mark.pending?
       render json: { response: 'Mark received successfully!' }.to_json
 
-      @submission.log("Mark #{params[:mark]} received from #{@marking_tool.name}")
-      @intermediate_mark.mark = params[:mark]
+      @submission.log("Mark #{mark} received from #{@marking_tool.name}")
+      @intermediate_mark.mark = mark
       @intermediate_mark.save!
+      @submission.active_services.delete(@active_service)
+      if mark >= @active_service.condition
+        to_invoke = WorkflowUtils.next_services_to_invoke(@active_service)
+        to_invoke.each { |i| @submission.active_services << i }
+        @submission.save
+        SubmissionUtils.notify_tools!(@submission)
+      end
     else
       render json: { response: 'Mark for this tool and submission has already been received.' }.to_json,
              status: 409
     end
-    # TODO: if mark has been satisfied
-    #   WorkflowUtils.trim_workflow(submission, @marking_tool.uid)
-    #   Get next set of marking tools
-    #   Invoke them
-    # TODO: Else
-    # Set rest of pending intermediate marks on
-
-    # If condition not met, then set intermediate marks to 0 for rest of pending intermediate marks
   rescue ActiveRecord::RecordNotFound
     render json: { response: 'Could not find matching record(s) for request.' }.to_json,
            status: 404

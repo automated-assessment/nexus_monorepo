@@ -47,9 +47,7 @@ class SubmissionUtils
       submission.failed = false
       submission.save!
 
-      # invoke each of the parentless nodes
-      to_invoke = WorkflowUtils.next_services_to_invoke(submission)
-      to_invoke.each do |service|
+      submission.active_services.each do |service|
         mt = MarkingTool.find_by(uid: service.marking_tool_uid)
         begin
           raise ActiveRecord::RecordNotFound, "#{service.marking_tool_uid} does not exist" unless mt

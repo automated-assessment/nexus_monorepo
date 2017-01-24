@@ -33,13 +33,13 @@ class WorkflowUtils
       nil
     end
 
-    def next_services_to_invoke(submission)
-      return [] unless submission.valid?
-      submission.active_services.select { |as| as.parents.empty? }
+    def get_first_services_to_invoke(assignment)
+      active_services = ActiveService.where(assignment_id: assignment.id)
+      active_services.to_a.select { |as| as.parents.empty? }
     end
 
-    def trim_workflow!(submission, marking_tool_uid)
-      binding.pry
+    def next_services_to_invoke(active_service)
+      active_service.children.to_a
     end
   end
 end
