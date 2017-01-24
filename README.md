@@ -36,24 +36,30 @@ The access token must be valid for the nexus instance to be run, so in the first
 
 ## Getting Started
 - Clone the repo
-- Run `make init-files`
+- Run `make init-env-all`
   - This executes the following
   - Initialise submodules: `git submodule init`
   - Fetch all submodules: `git submodule update`
   - Set up your `.env.list` and other `.env` files - see above
 
+  - You will need to create a personal organistion to store your assignment repositories in development
+    - Name it - `NexusDev<YOUR FIRST NAME>`
+    - 
 
 - Run `make build` for production
   - Which runs: `docker-compose -f docker-compose.yml build`
+  - First time build will take a while
 
 
 - Run `make build-dev` for development
   - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml build`
+  - First time build will take a while
 
 
 - Initialise Nexus with `make init-nexus`
   - Only needed the first time to set up everything.
   - See `Useful Commands` for partial set up commands which handle updates
+  - Always takes time
 
 
 - Run `make run` for production
