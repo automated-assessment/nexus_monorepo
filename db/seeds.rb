@@ -1,10 +1,3 @@
-# Mock Users
-u = User.create(email: 'teacher@teacher.com',
-                password: '12345678',
-                password_confirmation: '12345678',
-                name: 'Professor Tesla (k0000000)',
-                admin: true)
-
 if ENV['DOCKER']
   puts 'Invoked by Docker'
   MarkingTool.create(name: 'Java Compilation',
@@ -31,10 +24,16 @@ if ENV['DOCKER']
                      url: 'http://io-tool:3000/mark',
                      uid: 'iotool',
                      requires_config: true,
-                     config_url: 'http://io-tool:3000/#/static/config.html')
+                     config_url: 'http://io-tool:3000/#/static/config.html?aid=%{aid}')
 end
 
 if Rails.env.eql? 'development'
+  u = User.create(email: 'teacher@teacher.com',
+                  password: '12345678',
+                  password_confirmation: '12345678',
+                  name: 'Professor Tesla (k0000000)',
+                  admin: true)
+
   Course.create(title: 'Course',
                 description: 'A Course',
                 teacher_id: u.id)
@@ -72,6 +71,6 @@ if Rails.env.eql? 'development'
                        url: 'http://localhost:3004/mark',
                        uid: 'iotool',
                        requires_config: true,
-                       config_url: 'http://localhost:3004/#/static/config.html')
+                       config_url: 'http://localhost:3004/#/static/config.html?aid=%{aid}')
   end
 end
