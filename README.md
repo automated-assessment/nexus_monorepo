@@ -35,38 +35,75 @@ NEXUS_ACCESS_TOKEN=
 The access token must be valid for the nexus instance to be run, so in the first run set it to a random string, then replace it once you have generated an access token in nexus. Restart the docker-compose using `docker-compose restart` once you have updated all .env files.
 
 ## Getting Started
-- Clone the repo
-- Run `make init-env-all`
-  - This executes the following
-  - Initialise submodules: `git submodule init`
-  - Fetch all submodules: `git submodule update`
-  - Set up your `.env.list` and other `.env` files - see above
+**1. Clone the repo and cd into it**
+  1. `git clone https://github.kcl.ac.uk/k1464330/nexus-deployment.git`
+  2. `cd <pathToRepo>/nexus-deployment`
 
-  - You will need to create a personal organistion to store your assignment repositories in development
-    - Name it - `NexusDev<YOUR FIRST NAME>`
-    - 
+**2. Run `make init-env-all`. This executes the following:**
+  1. Initialise submodules: `git submodule init`
+  2. Fetch all submodules: `git submodule update`
 
-- Run `make build` for production
+**3 Create an Organisation**
+  This keeps any repos created in development seperate from those created in production during actual use.
+  1. ![New Organisation](https://i.imgur.com/vUv2Gx1.png)
+  2. Give it the name `NexusDev<First Name>` where `<First Name>` is your first name
+  3. Set the email to be your university email `kXXXXXXX@kcl.ac.uk` or `name.surname@kcl.ac.uk`
+
+**4. Create and configure an OAuth Developer Application**
+  1. Go to your profile settings
+  2. ![Profile Settings](https://i.imgur.com/fwZmnHo.png)
+  5. Click `OAuth Applications` in the sidebar
+  6. Click the `Developer Applications` tab near the top of the page
+  7. Click `Register a new Application`
+  8. Set the following field values
+  ![OAuth Settings](https://i.imgur.com/5ombZSI.png)
+  9. Application Name: `nexus`
+  10. Homepage URL: `http://localhost:3000/`
+  11. Authorization Callback URL: `http://localhost:3000/users/auth/github/callback`
+  12. ... and then save it
+  13. You will be given a `Client ID` and a `Client Secret` unique to this application. Do not share these!
+  14. In your `.env.list` file. Set `NEXUS_GITHUB_ORG` to be equal to the name you gave to your organisation.
+  15. In your `.env.list` file. Set `NEXUS_GHE_OAUTH_ID` to be equal to the Client ID you were given.
+  16. In your `.env.list` file. Set `NEXUS_GHE_OAUTH_SECRET` to be equal to the Client Secret you were given.
+
+**5. Create a Personal Access Token**
+  1. Go to your profile settings as in step 4
+  2. Click `Personal Access Tokens` in the side bar
+  3. Click `Generate a New Token`
+  4. Give the Token a valid descriptor that makes sense to you. `i.e. Nexus`
+  5. Set the following permissions
+  6. ![PA Token Permissions](https://i.imgur.com/O4FsyJc.png)
+  7. Click `Generate Token`
+  8. **This will produce a token that will never be shown again. If you lose this token, you will need to repeat this step! Do not share this token with anyone!!!**
+  9. In your `.env.list` file. Set `NEXUS_GITHUB_USER` to be your `k number` with a lower case `k`
+  10. In your `.env.list` file. Set `NEXUS_GITHUB_TOKEN` to be your `Personal Access Token` github generated for you.
+  11. Make sure you save the `.env.list` file.
+
+**If you are building Nexus for production, go to Step 5 and skip Step 6.**
+
+**If you are doing a BSc or MSc final project, skip Step 5 and go to Step 6.**
+
+**5. Run `make build` for production only**
   - Which runs: `docker-compose -f docker-compose.yml build`
   - First time build will take a while
 
 
-- Run `make build-dev` for development
+**6. Run `make build-dev` for development only**
   - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml build`
   - First time build will take a while
 
 
-- Initialise Nexus with `make init-nexus`
+**7 Initialise Nexus with `make init-nexus`**
   - Only needed the first time to set up everything.
   - See `Useful Commands` for partial set up commands which handle updates
   - Always takes time
 
 
-- Run `make run` for production
+**8. Run `make run` for production only**
   - Which runs: `docker-compose up -d`
 
 
-- Run `make run-dev` for development
+**9. Run `make run-dev` for development only**
   - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
 
 
