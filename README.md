@@ -36,18 +36,114 @@ The access token must be valid for the nexus instance to be run, so in the first
 
 ## Getting Started
 - Clone the repo
-- Initialise submodules: `git submodule init`
-- Fetch all submodules: `git submodule update`
-- Set up your `.env.list` and other `.env` files - see above
-- Build: `docker-compose build`
-- Initialise: `docker-compose run nexus init` (only needed first time, when schema has changed, or when javascript component have been added or modified; partial initialisations `init-js`, `init-dirs`, and `init-db` are also available)
-- Run: `docker-compose up -d`
+- Run `make init-files`
+  - This executes the following
+  - Initialise submodules: `git submodule init`
+  - Fetch all submodules: `git submodule update`
+  - Set up your `.env.list` and other `.env` files - see above
+
+
+- Run `make build` for production
+  - Which runs: `docker-compose -f docker-compose.yml build`
+
+
+- Run `make build-dev` for development
+  - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml build`
+
+
+- Initialise Nexus with `make init-nexus`
+  - Only needed the first time to set up everything.
+  - See `Useful Commands` for partial set up commands which handle updates
+
+
+- Run `make run` for production
+  - Which runs: `docker-compose up -d`
+
+
+- Run `make run-dev` for development
+  - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
+
 
 This brings up the nexus server fully ready to run and detaches it from the current console. You should be able to get to nexus by opening `localhost:3000` in your browser.
 
+## Useful Commands
+- To attach into container to see terminal output, useful with Pry debugging
+1. Place your `binding.pry` command as normal where required. (Nexus)
+2. `make restart-nexus` to update changes in volume.
+3. `make debug` to use debugger when triggered.
+  3.1  which runs `docker attach nexus_deployment_nexus_1`
+
+- To attach into container with bash terminal, useful for accessing the `Rails Console`
+1. run `make bash`
+2. The bash terminal will appear, starting you in the `app/src` directory
+3. Type `rails c` to gain access to the running rails console.
+
+
+- To update database after migration
+1. run `make migrate-db`
+
+
+- To reset database run `make init-nexus-db`
+  - This will wipe all development records!
+
+
+- To update JS components when added to or modified run `make init-nexus-js`
+
+
+### Tools
+#### Restart Tools
+- Run `make restart`
+  - This stops the docker containers and re runs them in production mode
+
+
+- Run `make restart-dev`
+  - This stops the docker containers and re runs them in dev mode
+
+
+#### Individual Tools
+- Run `make restart-nexus`
+  - This restarts Nexus in the current environment
+
+
+- Run `make restart-javac`
+  - This restarts the Javac tool in the current environment
+
+
+- Run `make restart-rng`
+  - This restarts the rng tool in the current environment
+
+
+- Run `make restart-io`
+  - This restarts the io tool in the current environment
+
+
+- Run `make restart-config`
+  - This restarts the Config tool in the current environment
+
+
+- Run `make restart-db`
+  - This restarts the DB in the current environment
+
+
+- Run `make restart-mongodb`
+  - This restarts mongodb in the current environment
+
+
+- Run `make restart-sneakers`
+  - This restarts sneakers in the current environment
+
+
+- Run `make restart-rabbitmq`
+  - This restarts rabbitmq in the current environment
+
+
+- Run `make restart-syslog`
+  - This restarts Syslog in the current environment
+
+
 ## Health checks
 
-The rabbitmq console can be found at `http://<hostname>:8081` using the user name and password as defined above. 
+The rabbitmq console can be found at `http://<hostname>:8081` using the user name and password as defined above.
 
 Logs can be found in `logs/messages`. Use a command like `tail -f logs/messages` to keep on top of them.
 

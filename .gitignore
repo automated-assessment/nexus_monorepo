@@ -5,4 +5,4 @@ javac_data/
 iotool_data/
 mongodata/
 logs/
-
+npm-debug.log
