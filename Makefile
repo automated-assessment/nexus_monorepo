@@ -65,34 +65,34 @@ run-dev:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 restart-nexus:
-	docker restart nexus
+	docker restart nexusdeployment_nexus_1
 
 restart-javac:
-	docker restart javac-tool
+	docker restart nexusdeployment_javac-tool_1
 
 restart-rng:
-	docker restart rng-tool
+	docker restart nexusdeployment_rng-tool_1
 
 restart-io:
-	docker restart io-tool
+	docker restart nexusdeployment_io-tool_1
 
 restart-config:
-	docker restart config-tool
+	docker restart nexusdeployment_config-tool_1
 
 restart-db:
-	docker restart db
+	docker restart nexusdeployment_db_1
 
 restart-mongodb:
-	docker restart mongodb
+	docker restart nexusdeployment_mongodb_1
 
 restart-sneakers:
-	docker restart sneakers
+	docker restart nexusdeployment_sneakers_1
 
 restart-rabbitmq:
-	docker restart rabbitmq
+	docker restart nexusdeployment_rabbitmq_1
 
 restart-syslog:
-	docker restart syslog
+	docker restart nexusdeployment_syslog_1
 
 bash:
 	docker exec nexusdeployment_nexus_1 bash
