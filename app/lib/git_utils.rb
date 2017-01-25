@@ -40,7 +40,6 @@ class GitUtils
     end
 
     def first_time_push!(submission)
-      # binding.pry
       # init repo; checkout new branch; add all files; commit; push
       repo = init_gitobj(submission)
       branch_name = gen_branch_name(submission)

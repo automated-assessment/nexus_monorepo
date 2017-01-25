@@ -1,4 +1,6 @@
 class MarkingToolContext < ActiveRecord::Base
+  serialize :depends_on, Array
+
   belongs_to :assignment
   belongs_to :marking_tool
 
@@ -7,8 +9,6 @@ class MarkingToolContext < ActiveRecord::Base
   validates :weight, presence: true
 
   before_create :set_configured_flag
-
-  has_closure_tree
 
   def set_configured_flag
     self.configured = true unless marking_tool.requires_config?

@@ -1,7 +1,7 @@
 require 'csv'
 
 class Submission < ActiveRecord::Base
-  serialize :workflow
+  serialize :active_services, Array
 
   belongs_to :assignment
   belongs_to :user

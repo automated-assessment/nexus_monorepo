@@ -2,6 +2,7 @@ require 'zip'
 
 class SubmissionUtils
   require_relative '../lib/git_utils'
+  require_relative '../lib/workflow_utils'
 
   class << self
     def unzip!(submission)
@@ -45,9 +46,14 @@ class SubmissionUtils
       # Assume this is all going to go well
       submission.failed = false
       submission.save!
-      submission.assignment.marking_tools.each do |mt|
+
+      submission.active_services.each do |service|
+        mt = MarkingTool.find_by(uid: service.marking_tool_uid)
         begin
-          SendSubmissionJob.perform_later submission.id, mt.id
+          raise ActiveRecord::RecordNotFound, "#{service.marking_tool_uid} does not exist" unless mt
+
+          # TODO: Change back to perform_later when submitting project
+          SendSubmissionJob.perform_now submission.id, mt
         rescue => e
           submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", 'Error')
           submission.failed = true
