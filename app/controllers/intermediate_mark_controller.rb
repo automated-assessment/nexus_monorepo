@@ -25,6 +25,14 @@ class IntermediateMarkController < ApplicationController
         to_invoke.each { |i| @submission.active_services << i }
         @submission.save
         SubmissionUtils.notify_tools!(@submission)
+      else
+        @submission.intermediate_marks.each do |im|
+          unless im.mark
+            im.mark = 0
+            im.save!
+          end
+        end
+        @submission.save!
       end
     else
       render json: { response: 'Mark for this tool and submission has already been received.' }.to_json,
