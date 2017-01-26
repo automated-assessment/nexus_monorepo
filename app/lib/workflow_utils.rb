@@ -33,7 +33,6 @@ class WorkflowUtils
           unless (assignment_tools & mtc.depends_on).eql? mtc.depends_on
             return "One or more tools that #{mt.name} depends on have not been added to the assignment"
           end
-          binding.pry
           as.parents = ActiveService.where(assignment_id: assignment.id, marking_tool_uid: mtc.depends_on)
         end
         as.save!
