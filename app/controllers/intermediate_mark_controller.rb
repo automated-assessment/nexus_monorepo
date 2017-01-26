@@ -23,9 +23,12 @@ class IntermediateMarkController < ApplicationController
       if mark >= @active_service.condition
         to_invoke = WorkflowUtils.next_services_to_invoke(@active_service)
         to_invoke.each { |i| @submission.active_services << i }
+        @submission.log("#{@active_service.marking_tool_uid}'s condition of #{@active_service.condition} met.")
         @submission.save
         SubmissionUtils.notify_tools!(@submission)
       else
+        @submission.log("#{@active_service.marking_tool_uid}'s condition of #{@active_service.condition} not met.")
+        @submission.log('Rest of intermediate marks being set to 0')
         @submission.intermediate_marks.each do |im|
           unless im.mark
             im.mark = 0

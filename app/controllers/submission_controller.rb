@@ -259,6 +259,8 @@ class SubmissionController < ApplicationController
   def remark
     return unless authenticate_admin!
     @submission = Submission.find(params[:id])
+    services = WorkflowUtils.get_first_services_to_invoke(@submission.assignment)
+    @submission.active_services = services
 
     if SubmissionUtils.remark!(@submission, current_user, flash)
       flash[:success] = 'Successfully sent submission for remarking.'
