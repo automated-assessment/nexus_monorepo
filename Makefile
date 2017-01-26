@@ -32,6 +32,7 @@ init-sub-repos:
 	echo "Change ACCESS_TOKEN before deploying to production in .env.conf.list!\n"
 
 init-env:
+	make init-sub-repos
 	make .env.list
 	make .env.javac.list
 	make .env.rng.list
