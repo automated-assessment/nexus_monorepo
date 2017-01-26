@@ -65,37 +65,37 @@ run-dev:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 restart-nexus:
-	docker restart nexusdeployment_nexus_1
+	docker-compose restart nexus
 
 restart-javac:
-	docker restart nexusdeployment_javac-tool_1
+	docker-compose restart javac-tool
 
 restart-rng:
-	docker restart nexusdeployment_rng-tool_1
+	docker-compose restart rng-tool
 
 restart-io:
-	docker restart nexusdeployment_io-tool_1
+	docker-compose restart io-tool
 
 restart-config:
-	docker restart nexusdeployment_config-tool_1
+	docker-compose restart config-tool
 
 restart-db:
-	docker restart nexusdeployment_db_1
+	docker-compose restart db
 
 restart-mongodb:
-	docker restart nexusdeployment_mongodb_1
+	docker-compose restart mongodb
 
 restart-sneakers:
-	docker restart nexusdeployment_sneakers_1
+	docker-compose restart sneakers
 
 restart-rabbitmq:
-	docker restart nexusdeployment_rabbitmq_1
+	docker-compose restart rabbitmq
 
 restart-syslog:
-	docker restart nexusdeployment_syslog_1
+	docker-compose restart syslog
 
 bash:
-	docker exec nexusdeployment_nexus_1 bash
+	docker-compose exec nexus bash
 
 migrate-db:
 	docker-compose run nexus rake db:migrate
