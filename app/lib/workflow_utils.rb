@@ -8,13 +8,21 @@ class WorkflowUtils
       tool_ids = assignment.marking_tool_contexts.pluck(:marking_tool_id)
       assignment_tools = MarkingTool.where(id: tool_ids).pluck(:uid)
 
+      # Create ActiveService nodes for each marking tool context
+      # allows the adding of marking services to assignments in any order
       assignment.marking_tool_contexts.each do |mtc|
         as = ActiveService.new
         as.assignment = assignment
         mt = MarkingTool.find(mtc.marking_tool_id)
         as.marking_tool_uid = mt.uid
         as.condition = mtc.condition
+        as.save!
+      end
 
+      # Handle dependencies between the marking tool contexts
+      assignment.marking_tool_contexts.each do |mtc|
+        mt = MarkingTool.find(mtc.marking_tool_id)
+        as = ActiveService.find_by(assignment_id: assignment.id, marking_tool_uid: mt.uid)
         unless mtc.depends_on.empty?
           # Check if active service depends on itself
           if mtc.depends_on.include? mt.uid
@@ -25,7 +33,7 @@ class WorkflowUtils
           unless (assignment_tools & mtc.depends_on).eql? mtc.depends_on
             return "One or more tools that #{mt.name} depends on have not been added to the assignment"
           end
-
+          binding.pry
           as.parents = ActiveService.where(assignment_id: assignment.id, marking_tool_uid: mtc.depends_on)
         end
         as.save!
