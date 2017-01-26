@@ -2,8 +2,7 @@ init-sub-repos:
 	git submodule init
 	git submodule update
 
-init-env:
-	touch .env.list
+.env.list:
 	echo "NEXUS_GHE_OAUTH_ID=<O-AUTH-ID>" >> .env.list
 	echo "NEXUS_GHE_OAUTH_SECRET=<O-AUTH-SECRET>" >> .env.list
 	echo "NEXUS_GITHUB_USER=<GITHUB-USERNAME>" >> .env.list
@@ -11,37 +10,33 @@ init-env:
 	echo "NEXUS_GITHUB_ORG=<GITHUB-ORGANISATION>" >> .env.list
 	echo "Please now set the environment variables in .env.list!\n"
 
-init-env-javac:
-	touch .env.javac.list
-	echo "NEXUS_TOOL_CANONICAL_NAME=javac" >> .env.javac.list
-	echo "NEXUS_ACCESS_TOKEN=foo" >> .env.javac.list
-	echo "Change ACCESS_TOKEN before deploying to production in .env.javac.list!\n"
+.env.javac.list:
+		echo "NEXUS_TOOL_CANONICAL_NAME=javac" >> .env.javac.list
+		echo "NEXUS_ACCESS_TOKEN=foo" >> .env.javac.list
+		echo "Change ACCESS_TOKEN before deploying to production in .env.javac.list!\n"
 
-init-env-rng:
-	touch .env.rng.list
+
+.env.rng.list:
 	echo "NEXUS_TOOL_CANONICAL_NAME=rng" >> .env.rng.list
 	echo "NEXUS_ACCESS_TOKEN=foo" >> .env.rng.list
 	echo "Change ACCESS_TOKEN before deploying to production in .env.rng.list!\n"
 
-init-env-iotool:
-	touch .env.iotool.list
+.env.iotool.list:
 	echo "NEXUS_TOOL_CANONICAL_NAME=iotool" >> .env.iotool.list
 	echo "NEXUS_ACCESS_TOKEN=foo" >> .env.iotool.list
 	echo "Change ACCESS_TOKEN before deploying to production in .env.iotool.list!\n"
 
-init-env-conf:
-	touch .env.conf.list
+.env.conf.list:
 	echo "NEXUS_TOOL_CANONICAL_NAME=conf" >> .env.conf.list
 	echo "NEXUS_ACCESS_TOKEN=foo" >> .env.conf.list
 	echo "Change ACCESS_TOKEN before deploying to production in .env.conf.list!\n"
 
-init-env-all:
-	make init-sub-repos
-	make init-env
-	make init-env-javac
-	make init-env-rng
-	make init-env-iotool
-	make init-env-conf
+init-env:
+	make .env.list
+	make .env.javac.list
+	make .env.rng.list
+	make .env.iotool.list
+	make .env.conf.list
 
 build:
 	docker-compose -f docker-compose.yml build
