@@ -39,9 +39,11 @@ The access token must be valid for the nexus instance to be run, so in the first
   1. `git clone https://github.kcl.ac.uk/k1464330/nexus-deployment.git`
   2. `cd <pathToRepo>/nexus-deployment`
 
-**2. Run `make init-env-all`. This executes the following:**
+**2. Run `make init-env`. This executes the following:**
   1. Initialise submodules: `git submodule init`
   2. Fetch all submodules: `git submodule update`
+  3. Creates, if they don't exist, and populates relevant `.env` files needed to run.
+
 
 **3 Create an Organisation**
   This keeps any repos created in development seperate from those created in production during actual use.
