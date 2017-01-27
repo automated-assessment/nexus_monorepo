@@ -31,13 +31,8 @@ init-sub-repos:
 	echo "NEXUS_ACCESS_TOKEN=foo" >> .env.conf.list
 	echo "Change ACCESS_TOKEN before deploying to production in .env.conf.list!\n"
 
-init-env:
+init-env: .env.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list
 	make init-sub-repos
-	make .env.list
-	make .env.javac.list
-	make .env.rng.list
-	make .env.iotool.list
-	make .env.conf.list
 
 build:
 	docker-compose -f docker-compose.yml build
