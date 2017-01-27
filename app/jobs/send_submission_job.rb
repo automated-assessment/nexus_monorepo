@@ -38,6 +38,7 @@ class SendSubmissionJob < ActiveJob::Base
       @submission.log("Error notifying #{@marking_tool.name}: #{e.class} #{e.message}", 'Error')
     end
     record_fail!
+    Rails.logger.error "Error backtrace was: #{e.backtrace}"
   end
 
   private
