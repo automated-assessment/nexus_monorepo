@@ -8,22 +8,31 @@ class WorkflowUtils
         tool = MarkingTool.find_by(id: mtc.marking_tool_id)
         raise StandardError, "Error with marking tool #{tool.name}. Marking services cannot depend on themselves" if mtc.depends_on.include? tool.uid
 
-        uid = tool.uid.to_sym
+        uid = tool.uid
         assignment.active_services[uid] = mtc.depends_on
       end
       assignment.save
     end
 
-    def next_services_to_invoke(assignment, marking_tool = nil)
+    def reset_workflow(submission)
+      submission.active_services = submission.assignment.active_services
+      submission.save!
+    end
+
+    def next_services_to_invoke(submission)
       to_invoke = []
-      assignment.active_services.each do |tool, depends_array|
-        if marking_tool
-          depends_array.delete marking_tool.uid if depends_array.include? marking_tool.uid
-        end
+      submission.active_services.each do |tool, depends_array|
         to_invoke << tool.to_s if depends_array.empty?
-        binding.pry
       end
-      assignment.save
+      to_invoke
+    end
+
+    def trim_workflow!(submission, marking_tool)
+      submission.active_services.delete(marking_tool) if marking_tool
+      submission.active_services.each do |_, depends_array|
+        depends_array.delete marking_tool if depends_array.include? marking_tool
+      end
+      submission.save!
     end
   end
 end
