@@ -1,52 +1,29 @@
 class WorkflowUtils
   class << self
-    # Given an `assignment` with some `Marking Tool Contexts`
-    # It creates a workflow using `Active Services`
-    # Returns an error message describing any invalid paramters
-    # Returns nil otherwise.
     def construct_workflow(assignment)
-      tool_ids = assignment.marking_tool_contexts.pluck(:marking_tool_id)
-      assignment_tools = MarkingTool.where(id: tool_ids).pluck(:uid)
+      cycle = !(assignment.marking_tool_contexts.pluck(:depends_on).include? [])
+      raise StandardError, 'All marking tools depend on another marking service! Please remove cycle' if cycle
 
-      # Create ActiveService nodes for each marking tool context
-      # allows the adding of marking services to assignments in any order
       assignment.marking_tool_contexts.each do |mtc|
-        as = ActiveService.new
-        as.assignment = assignment
-        mt = MarkingTool.find(mtc.marking_tool_id)
-        as.marking_tool_uid = mt.uid
-        as.condition = mtc.condition
-        as.save!
+        tool = MarkingTool.find_by(id: mtc.marking_tool_id)
+        raise StandardError, "Error with marking tool #{tool.name}. Marking services cannot depend on themselves" if mtc.depends_on.include? tool.uid
+
+        uid = tool.uid.to_sym
+        assignment.active_services[uid] = mtc.depends_on
       end
+      assignment.save
+    end
 
-      # Handle dependencies between the marking tool contexts
-      assignment.marking_tool_contexts.each do |mtc|
-        mt = MarkingTool.find(mtc.marking_tool_id)
-        as = ActiveService.find_by(assignment_id: assignment.id, marking_tool_uid: mt.uid)
-        unless mtc.depends_on.empty?
-          # Check if active service depends on itself
-          if mtc.depends_on.include? mt.uid
-            return "#{mt.name} cannot depend on itself!"
-          end
-
-          # Check each item in depends on is actually a part of the assignment
-          unless (assignment_tools & mtc.depends_on).eql? mtc.depends_on
-            return "One or more tools that #{mt.name} depends on have not been added to the assignment"
-          end
-          as.parents = ActiveService.where(assignment_id: assignment.id, marking_tool_uid: mtc.depends_on)
+    def next_services_to_invoke(assignment, marking_tool = nil)
+      to_invoke = []
+      assignment.active_services.each do |tool, depends_array|
+        if marking_tool
+          depends_array.delete marking_tool.uid if depends_array.include? marking_tool.uid
         end
-        as.save!
+        to_invoke << tool.to_s if depends_array.empty?
+        binding.pry
       end
-      nil
-    end
-
-    def get_first_services_to_invoke(assignment)
-      active_services = ActiveService.where(assignment_id: assignment.id)
-      active_services.to_a.select { |as| as.parents.empty? }
-    end
-
-    def next_services_to_invoke(active_service)
-      active_service.children.to_a
+      assignment.save
     end
   end
 end
