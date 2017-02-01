@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170119173028) do
+ActiveRecord::Schema.define(version: 20170201134558) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -20,16 +20,6 @@ ActiveRecord::Schema.define(version: 20170119173028) do
     t.text     "description"
   end
 
-  create_table "active_services", force: :cascade do |t|
-    t.integer  "assignment_id"
-    t.string   "marking_tool_uid"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
-    t.integer  "condition"
-  end
-
-  add_index "active_services", ["assignment_id"], name: "index_active_services_on_assignment_id"
-
   create_table "assignments", force: :cascade do |t|
     t.string   "title"
     t.text     "description"
@@ -37,8 +27,8 @@ ActiveRecord::Schema.define(version: 20170119173028) do
     t.datetime "deadline"
     t.boolean  "allow_late"
     t.integer  "course_id"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
     t.integer  "late_cap"
     t.boolean  "allow_zip"
     t.boolean  "allow_git"
@@ -46,7 +36,8 @@ ActiveRecord::Schema.define(version: 20170119173028) do
     t.string   "repourl"
     t.integer  "max_attempts"
     t.datetime "latedeadline"
-    t.boolean  "feedback_only", default: false
+    t.boolean  "feedback_only",   default: false
+    t.text     "active_services"
   end
 
   add_index "assignments", ["course_id"], name: "index_assignments_on_course_id"
@@ -145,13 +136,6 @@ ActiveRecord::Schema.define(version: 20170119173028) do
   end
 
   add_index "marking_tools", ["uid"], name: "index_marking_tools_on_uid", unique: true
-
-  create_table "service_relationships", force: :cascade do |t|
-    t.integer  "parent_id"
-    t.integer  "child_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
 
   create_table "students_courses", id: false, force: :cascade do |t|
     t.integer "user_id"
