@@ -27,16 +27,30 @@ app.post('/mark', (req, res, next) => {
   }
   const submissionID = req.body.sid;
   console.log(`Request to mark submission ${submissionID} received.`);
+
+  // Poor man's worker queue: Simply enqueue marking of the submission for a later round on the node.js event loop
+  // This won't be durable, so things may get lost when the marking tool is killed, but otherwise should work.
+  process.nextTick(() => {markSubmission(submissionID);});
+  console.log(`Request to mark submission ${submissionID} enqueued.`);
+
+  // Tell Nexus we will handle this...
   res.sendStatus(200);
+
+  return next();
+});
+
+function markSubmission(submissionID) {
+  console.log(`About to mark submission ${submissionID}.`);
 
   // emulate waiting
   sleep.sleep(Math.floor(Math.random() * 5) + 1);
 
+  // Generate mark
   const randomMark = Math.floor(Math.random() * 100);
 
   sendMark(randomMark, submissionID, (err, res, body) => {
     if (err) {
-      console.log(`Error from request: ${err}`);
+      console.log(`Error from request (mark for submission ${submissionID}): ${err}`);
     }
   });
 
@@ -44,12 +58,12 @@ app.post('/mark', (req, res, next) => {
 
   sendFeedback(progressBarHTML, submissionID, (err, res, body) => {
     if (err) {
-      console.log(`Error from request: ${err}`);
+      console.log(`Error from request (feedback for submission ${submissionID}): ${err}`);
     }
   });
 
-  return next();
-});
+  console.log(`Finished marking submission ${submissionID}. Mark was ${randomMark}.`);
+}
 
 app.listen(port, () => {
   console.log(`Tool listening on port ${port}!`);
