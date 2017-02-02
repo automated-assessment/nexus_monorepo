@@ -35,6 +35,7 @@ As a minimum, `NEXUS_ACCESS_TOKEN` is required, although other environment varia
 - Generates a random mark [0, 100]
 - Sends that mark back to the CMC
 - Sends a basic Boostrap progress bar reflecting the mark as feedback to the CMC
+- Does all of the above asynchronously.
 
 Required query parameters:
 - `sid`: Submission ID
