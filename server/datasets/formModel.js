@@ -7,3 +7,4 @@ module.exports = mongoose.model('ConfiguredForm',{
     providerCount:Number,
     formBuild:String
 });
+

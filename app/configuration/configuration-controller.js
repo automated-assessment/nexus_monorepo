@@ -3,8 +3,11 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('ConfigurationController',['$scope','$http','StudentCountFactory',function($scope,$http,StudentCountFactory){
+        .controller('ConfigurationController',['$scope','$http','$stateParams','StudentCountFactory',
+            function($scope,$http,$stateParams,StudentCountFactory){
             $scope.newConfig = {};
+
+            $scope.newConfig.assignmentId = $stateParams.aid;
             $scope.numbers=StudentCountFactory;
             $scope.newConfig.providerCount = $scope.numbers[0];
             $scope.createConfig = function(){

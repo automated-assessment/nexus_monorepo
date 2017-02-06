@@ -6,6 +6,7 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+var dummyData = require('./dummy/dummydata.json');
 var formController = require(__dirname + '/server/controllers/form-controller.js');
 var app = express();
 var port = 3050;
@@ -27,3 +28,11 @@ app.post('/api/config/create',formController.createConfig);
 app.listen(port,function(){
     console.log("Listening on port " + port);
 });
+
+app.post('/mark',function(req,res,next){
+    //for nexus
+    req.body = dummyData.first;
+    formController.createSubmission(req,res);
+    next()
+});
+

@@ -6,13 +6,14 @@
         .config(function($stateProvider){
             $stateProvider
                 .state('configState',{
-                    url:'/config',
+                    url:'/config?aid',
                     templateUrl:'app/configuration/configuration.html',
                     controller:'ConfigurationController'
                 })
                 .state('providerState',{
                     url:'/provider',
-                    templateUrl:'app/provider/'
+                    templateUrl:'app/provider/provider.html',
+                    controller:'ProviderController'
                 })
         });
 }());
