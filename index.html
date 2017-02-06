@@ -4,14 +4,36 @@
     <meta charset="UTF-8">
     <title>Peer Feedback</title>
     <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="node_modules/jquery-ui-dist/jquery-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="node_modules/formBuilder/dist/form-builder.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
 </head>
-<body>
 
+<nav>
+    <div class="container">
+        <a ui-sref="configState">Configuration</a>
+    </div>
+</nav>
+<body ng-app = "PeerFeedback">
 
+<div class="container">
+    <div ui-view></div>
+</div>
+
+    <!-- Libraries -->
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/jquery-ui-dist/jquery-ui.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="node_modules/angular/angular.min.js"></script>
+    <script src="node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="node_modules/formBuilder/dist/form-builder.min.js"></script>
+
+    <!-- AngularJS-->
+    <script src="app/app.js"></script>
+    <script src="app/configuration/configuration-factory.js"></script>
+    <script src="app/configuration/configuration-directive.js"></script>
+    <script src="app/configuration/configuration-controller.js"></script>
+
 
 </body>
 </html>
