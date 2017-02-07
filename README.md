@@ -83,7 +83,7 @@ The access token must be valid for the nexus instance to be run, so in the first
 
 ####For *development* usage...####
 
-**6.1. Run `make build-dev` for development only**
+**6.1. Run `make build-dev`**
   - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml build`
   - First time build will take a while
 
@@ -92,12 +92,12 @@ The access token must be valid for the nexus instance to be run, so in the first
   - See `Useful Commands` for partial set up commands which handle updates
   - Always takes time
 
-**6.3. Run `make run-dev` for development only**
+**6.3. Run `make run-dev`**
   - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
 
 ####For *production* usage...####
 
-**7.1. Run `make build` for production only**
+**7.1. Run `make build`**
   - Which runs: `docker-compose -f docker-compose.yml build`
   - First time build will take a while
 
@@ -106,7 +106,7 @@ The access token must be valid for the nexus instance to be run, so in the first
   - See `Useful Commands` for partial set up commands which handle updates
   - Always takes time
 
-**7.3. Run `make run` for production only**
+**7.3. Run `make run`**
   - Which runs: `docker-compose up -d`
 
 This brings up the nexus server fully ready to run and detaches it from the current console. You should be able to get to nexus by opening `localhost:3000` in your browser.
