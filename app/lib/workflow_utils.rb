@@ -7,18 +7,21 @@ class WorkflowUtils
     # Based on a topolical sort
     # Runs in O(n) linear time where n is the number of marking tool contexts
     def construct_workflow(assignment)
+      return if assignment.marking_tool_contexts.empty?
       # If each marking tool context depends on another, then there would be a cycle
-      # in the workflow graph. Incorrect as workflows in Nexus are defined as DAGs
+      # in the workflow graph. Correct workflows in Nexus are defined as DAGs
       cycle = !(assignment.marking_tool_contexts.pluck(:depends_on).include? [])
       raise StandardError, 'All marking tools depend on another marking service! Please remove cycle' if cycle
 
       assignment.marking_tool_contexts.each do |mtc|
         tool = MarkingTool.find_by(id: mtc.marking_tool_id)
         raise StandardError, "Error with marking tool #{tool.name}. Marking services cannot depend on themselves" if mtc.depends_on.include? tool.uid
+        tool_ids = mtc.depends_on.map(&:marking_tool_id)
+        depends_on = MarkingTool.where(id: tool_ids).pluck(:uid)
 
         # Set a key in the hash to be the tool uid for the current mtc
         # Set the value to be the array of tools it depends on before it can run
-        assignment.active_services[tool.uid] = mtc.depends_on
+        assignment.active_services[tool.uid] = depends_on
       end
       assignment.save
     end
