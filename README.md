@@ -81,10 +81,6 @@ The access token must be valid for the nexus instance to be run, so in the first
   10. In your `.env.list` file. Set `NEXUS_GITHUB_TOKEN` to be your `Personal Access Token` github generated for you.
   11. Make sure you save the `.env.list` file.
 
-**If you are building Nexus for production, go to Step 5 and skip Step 6.**
-
-**If you are doing a BSc or MSc final project, skip Step 5 and go to Step 6.**
-
 ####For *development* usage...####
 
 **6.1. Run `make build-dev` for development only**
