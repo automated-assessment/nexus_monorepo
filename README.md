@@ -81,33 +81,33 @@ The access token must be valid for the nexus instance to be run, so in the first
   10. In your `.env.list` file. Set `NEXUS_GITHUB_TOKEN` to be your `Personal Access Token` github generated for you.
   11. Make sure you save the `.env.list` file.
 
-**If you are building Nexus for production, go to Step 5 and skip Step 6.**
+####For *development* usage...####
 
-**If you are doing a BSc or MSc final project, skip Step 5 and go to Step 6.**
-
-**5. Run `make build` for production only**
-  - Which runs: `docker-compose -f docker-compose.yml build`
-  - First time build will take a while
-
-
-**6. Run `make build-dev` for development only**
+**6.1. Run `make build-dev`**
   - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml build`
   - First time build will take a while
 
-
-**7 Initialise Nexus with `make init-nexus`**
+**6.2. Initialise Nexus with `make init-nexus`**
   - Only needed the first time to set up everything.
   - See `Useful Commands` for partial set up commands which handle updates
   - Always takes time
 
-
-**8. Run `make run` for production only**
-  - Which runs: `docker-compose up -d`
-
-
-**9. Run `make run-dev` for development only**
+**6.3. Run `make run-dev`**
   - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
 
+####For *production* usage...####
+
+**7.1. Run `make build`**
+  - Which runs: `docker-compose -f docker-compose.yml build`
+  - First time build will take a while
+
+**7.2. Initialise Nexus with `make init-nexus`**
+  - Only needed the first time to set up everything.
+  - See `Useful Commands` for partial set up commands which handle updates
+  - Always takes time
+
+**7.3. Run `make run`**
+  - Which runs: `docker-compose up -d`
 
 This brings up the nexus server fully ready to run and detaches it from the current console. You should be able to get to nexus by opening `localhost:3000` in your browser.
 
