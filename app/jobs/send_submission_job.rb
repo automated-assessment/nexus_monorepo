@@ -47,7 +47,7 @@ class SendSubmissionJob < ActiveJob::Base
     payload = {
       student: @submission.user.name,
       studentuid: @submission.user.id,
-      studentemail: @submission.user.email,
+      studentemail: @submission.user.email, # This will only have a value for a user registered via GHE
       sid: @submission.id,
       aid: @submission.assignment.id,
       cloneurl: @submission.augmented_clone_url,
