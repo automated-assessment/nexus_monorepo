@@ -46,7 +46,7 @@ class SendSubmissionJob < ActiveJob::Base
   def build_json_payload
     payload = {
       student: @submission.user.name,
-      studentuid: @submission.user.uid,
+      studentuid: @submission.user.id,
       studentemail: @submission.user.email,
       sid: @submission.id,
       aid: @submission.assignment.id,
