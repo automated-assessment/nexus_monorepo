@@ -17,5 +17,6 @@
     </orderEntry>
     <orderEntry type="library" name="node-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="angular-DefinitelyTyped" level="application" />
+    <orderEntry type="library" name="mongoose-DefinitelyTyped" level="application" />
   </component>
 </module>

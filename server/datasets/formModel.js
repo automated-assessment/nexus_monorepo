@@ -3,7 +3,7 @@
  */
 var mongoose = require('mongoose');
 module.exports = mongoose.model('ConfiguredForm',{
-    assignmentId:Number,
+    aid:Number,
     providerCount:Number,
     formBuild:String
 });

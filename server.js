@@ -6,7 +6,8 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
-var dummyData = require('./dummy/dummydata.json');
+var bluebird = require('bluebird');
+
 var formController = require(__dirname + '/server/controllers/form-controller.js');
 var allocationController = require(__dirname + '/server/controllers/allocation-controller.js');
 var app = express();
@@ -16,7 +17,8 @@ var port = 3050;
 
 var sender = require('./server/send-request');
 
-mongoose.Promise = global.Promise;
+//mongoose.Promise = bluebird;
+
 mongoose.connect('mongodb://localhost/peerfeedback');
 
 app.use(bodyParser.json());
@@ -34,7 +36,8 @@ app.listen(port,function(){
 });
 
 app.post('/mark',function(req,res,next){
-    console.log("Start");
+
+    allocationController.createSubmission(req,res,next);
     res.sendStatus(200);
     sender.sendMark(10, req.body.sid,function(err,res,body){
     });

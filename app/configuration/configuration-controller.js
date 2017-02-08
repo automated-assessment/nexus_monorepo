@@ -7,7 +7,7 @@
             function($scope,$http,$stateParams,StudentCountFactory){
             $scope.newConfig = {};
 
-            $scope.newConfig.assignmentId = $stateParams.aid;
+            $scope.newConfig.aid = $stateParams.aid;
             $scope.numbers=StudentCountFactory;
             $scope.newConfig.providerCount = $scope.numbers[0];
             $scope.createConfig = function(){

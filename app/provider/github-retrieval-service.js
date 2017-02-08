@@ -6,14 +6,14 @@
 
 (function(){
    angular.module('PeerFeedback')
-       .factory('RetrievalFactory',['$http',function($http) {
+       .factory('GithubRetrievalFactory',['$http',function($http) {
            function getPartial(){
                var authToken = "be7549b0fb2ad810c5b2a2a28376ecdac5d47f12";
                var baseUrl = "https://github.kcl.ac.uk/api/v3/repos/NexusDevAdam";
 
                return $http({
                    method:'GET',
-                   url:baseUrl + '/assignment-3/contents/File1.java',
+                   url:baseUrl + '/assignment-2/contents/File1.java',
                    headers: {
                        'Authorization': 'token ' + authToken,
                        'Accept': 'application/vnd.github.v3.html'

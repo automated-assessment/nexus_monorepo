@@ -6,10 +6,11 @@
 var mongoose = require('mongoose');
 
 module.exports = mongoose.model('Submission',{
+    studentuid:Number,
     sid:Number,
     aid:Number,
     pid:[],
-    cloneUrl:String,
+    cloneurl:String,
     branch:String,
     sha:String
 });
