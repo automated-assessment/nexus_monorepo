@@ -13,7 +13,7 @@
 
                return $http({
                    method:'GET',
-                   url:baseUrl + '/assignment-3/contents/File2.java',
+                   url:baseUrl + '/assignment-3/contents/File1.java',
                    headers: {
                        'Authorization': 'token ' + authToken,
                        'Accept': 'application/vnd.github.v3.html'

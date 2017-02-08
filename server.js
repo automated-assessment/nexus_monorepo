@@ -8,11 +8,15 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var dummyData = require('./dummy/dummydata.json');
 var formController = require(__dirname + '/server/controllers/form-controller.js');
+var allocationController = require(__dirname + '/server/controllers/allocation-controller.js');
 var app = express();
 var port = 3050;
 
 
 
+var sender = require('./server/send-request');
+
+mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/peerfeedback');
 
 app.use(bodyParser.json());
@@ -30,9 +34,14 @@ app.listen(port,function(){
 });
 
 app.post('/mark',function(req,res,next){
-    //for nexus
-    req.body = dummyData.first;
-    formController.createSubmission(req,res);
-    next()
+    console.log("Start");
+    res.sendStatus(200);
+    sender.sendMark(10, req.body.sid,function(err,res,body){
+    });
+
+    var html = "<div>Working</div>";
+    sender.sendFeedback(html,req.body.sid,function(err,res,body){
+    });
+
 });
 

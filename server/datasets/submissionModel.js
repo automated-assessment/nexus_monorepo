@@ -4,9 +4,11 @@
 
 //This needs editing to remove any data that is not required.
 var mongoose = require('mongoose');
+
 module.exports = mongoose.model('Submission',{
     sid:Number,
     aid:Number,
+    pid:[],
     cloneUrl:String,
     branch:String,
     sha:String

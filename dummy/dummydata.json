@@ -3,7 +3,14 @@
     "sid":1,
     "aid":1,
     "cloneurl":"Potentially irrelevant",
-    "branch":"Unique defines student",
+    "branch":"Defines student 1",
+    "sha":"defines commit"
+  },
+  "second":{
+    "sid":2,
+    "aid":1,
+    "cloneurl":"Potentially irrelevant",
+    "branch":"Defines student 2",
     "sha":"defines commit"
   }
 }
