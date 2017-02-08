@@ -2,24 +2,24 @@
  * Created by adamellis on 06/02/2017.
  */
 
+require('dotenv').config();
 
-var express = require('express');
-var mongoose = require('mongoose');
-var bodyParser = require('body-parser');
-var bluebird = require('bluebird');
+const express = require('express');
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+const bodyParser = require('body-parser');
 
-var formController = require(__dirname + '/server/controllers/form-controller.js');
-var allocationController = require(__dirname + '/server/controllers/allocation-controller.js');
-var app = express();
-var port = 3050;
+const app = express();
+const port = process.env.PORT || 5000;
+const dbHost = process.env.DB_HOST || localhost;
+console.log(port);
+const formController = require(__dirname + '/server/controllers/form-controller.js');
+const allocationController = require(__dirname + '/server/controllers/allocation-controller.js');
+const sender = require('./server/send-request');
 
 
 
-var sender = require('./server/send-request');
-
-//mongoose.Promise = bluebird;
-
-mongoose.connect('mongodb://localhost/peerfeedback');
+mongoose.connect(`mongodb://${dbHost}/peerfeedback`);
 
 app.use(bodyParser.json());
 app.use('/app',express.static(__dirname + '/app'));
@@ -31,20 +31,21 @@ app.get('/',function(req,res){
 });
 
 app.post('/api/config/create',formController.createConfig);
-app.listen(port,function(){
-    console.log("Listening on port " + port);
-});
+
 
 app.post('/mark',function(req,res,next){
-
     allocationController.createSubmission(req,res,next);
-    res.sendStatus(200);
+    res.status(200).send();
     sender.sendMark(10, req.body.sid,function(err,res,body){
     });
 
-    var html = "<div>Working</div>";
+    const html = "<div>Working</div>";
     sender.sendFeedback(html,req.body.sid,function(err,res,body){
     });
 
+});
+
+app.listen(port,function(){
+    console.log(`Listening on port: ${port}`);
 });
 

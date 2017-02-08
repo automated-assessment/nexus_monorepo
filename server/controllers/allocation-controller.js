@@ -22,10 +22,10 @@ var allocationPromise = function(response){
            if(submissionsLength > providerCount){
                var random1 = Math.round(Math.random()*(submissionsLength-1));
                var random2 = Math.round(Math.random()*(submissionsLength-1));
+
                for(var i=0;i<providerCount;i++){
                    var receiver = formData[random1];
                    var provider = formData[random2];
-                    console.log(maxCount(formData));
                    if((receiver.studentuid !== provider.studentuid) &&
                        receiver.pid.length <= maxCount(formData) &&
                        provider.pid.length <= maxCount(formData)){
@@ -70,3 +70,41 @@ var maxCount = function(formData){
 //     })
 // };
 
+//Allocation algorithm:
+
+// var allocationPromise = function(response){
+//
+//     Form.find({aid:response.aid},function(err,formData){
+//         var providerCount = formData[0].providerCount;
+//         Submission.find({aid:response.aid},function(err,formData){
+//             var submissionsLength = formData.length;
+//             if(submissionsLength > providerCount){
+//                 var random1 = Math.round(Math.random()*(submissionsLength-1));
+//                 var random2 = Math.round(Math.random()*(submissionsLength-1));
+//
+//                 for(var i=0;i<providerCount;i++){
+//                     var receiver = formData[random1];
+//                     var provider = formData[random2];
+//                     if((receiver.studentuid !== provider.studentuid) &&
+//                         receiver.pid.length <= maxCount(formData) &&
+//                         provider.pid.length <= maxCount(formData)){
+//
+//                         provider.pid.push(receiver.sid);
+//                         provider.save();
+//                     }
+//                 }
+//
+//             }
+//         });
+//     });
+// };
+//
+// var maxCount = function(formData){
+//     var max = 0;
+//     for(var submission in formData){
+//         if(formData[submission].pid.length > max){
+//             max = formData[submission].pid.length;
+//         }
+//     }
+//     return max;
+// };
