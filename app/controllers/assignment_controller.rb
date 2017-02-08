@@ -79,7 +79,7 @@ class AssignmentController < ApplicationController
     end
 
     begin
-      WorkflowUtils.construct_workflow(@assignment)
+      @assignment.active_services = WorkflowUtils.construct_workflow(@assignment.marking_tool_contexts)
     rescue StandardError => e
       error_flash_and_cleanup!(e.message)
       return

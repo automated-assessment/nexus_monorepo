@@ -20,12 +20,12 @@ class IntermediateMarkController < ApplicationController
       @intermediate_mark.mark = mark
       @intermediate_mark.save!
 
-      WorkflowUtils.trim_workflow!(@submission, @marking_tool.uid)
+      @submission.active_services = WorkflowUtils.trim_workflow!(@submission.active_services, @marking_tool.uid)
       marking_tool_context = @submission.assignment.marking_tool_contexts.where(marking_tool_id: @marking_tool.id)[0]
 
       if mark >= marking_tool_context.condition
         @submission.log("#{@marking_tool.name}'s condition of #{marking_tool_context.condition} met.")
-        @submission.save
+        @submission.save!
         SubmissionUtils.notify_tools!(@submission)
       else
         @submission.log("#{@marking_tool.name}'s condition of #{marking_tool_context.condition} not met.")
