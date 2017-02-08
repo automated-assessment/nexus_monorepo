@@ -46,8 +46,8 @@ class SendSubmissionJob < ActiveJob::Base
   def build_json_payload
     payload = {
       student: @submission.user.name,
-      studentuid: @submission.user.uid,
-      studentemail: @submission.user.email,
+      studentuid: @submission.user.id,
+      studentemail: @submission.user.email, # This will only have a value for a user registered via GHE
       sid: @submission.id,
       aid: @submission.assignment.id,
       cloneurl: @submission.augmented_clone_url,
