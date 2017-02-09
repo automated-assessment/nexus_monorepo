@@ -1,42 +1,107 @@
 var Submission = require('../datasets/submissionModel');
 var Form = require('../datasets/formModel.js');
+var async = require('async');
 
 module.exports.createSubmission = function(req,res,next){
 
     var submission = new Submission(req.body);
 
     submission.save()
-        .then(allocationPromise);
+        .then(buildingAllocPromise);
 
 
 };
 
+var buildingAllocPromise = function(response){
 
+
+    Submission.find({},function(err,submissionData){
+            const providerCount = 3;
+            assignment(0);
+            function assignment(i){
+                if(i<providerCount) {
+                    submissionData[17].pid.push(6);
+                    submissionData[17].save()
+                        .then(function (response, err) {
+                            assignment(++i);
+                        });
+                } else {
+                    console.log("Complete");
+                }
+            }
+
+    })
+};
+
+
+
+// console.log(`random 1(receiver) is ${random1+1} submission entry `);
+// console.log(`random 2(provider) is ${random2+1} submission entry`);
 
 var allocationPromise = function(response){
+    Form.find({aid:response.aid},function(err,formData){
+        const providerCount = formData[0].providerCount;
+        Submission.find({aid:response.aid},function(err,submissionData) {
+
+                    if(submissionData.length>3){
+
+                        var submission = submissionData[0];
+                        for (var i = 0; i < 3; i++) {
+                            submission.pid.push(3);
+                            console.log(submission.pid.length);
+                            submission.save();
+                        }
+
+                    }
+
+
+
+        })
+    })
+};
+
+
+            //     for(let i=0;i<providerCount;){
+            //         console.log(`${i} iteration`);
+            //         var random1 = Math.round(Math.random()*(submissionsLength-1));
+            //         var random2 = Math.round(Math.random()*(submissionsLength-1));
+            //         var receiver = formData[random1];
+            //         var provider = formData[random2];
+            //         if((receiver.studentuid !== provider.studentuid)){
+            //             receiver.pid.push('hit');
+            //             receiver.save();
+            //             i++;
+            //         }
+            //
+            //     }
+
+
+var debugAllocationPromise = function(response){
 
    Form.find({aid:response.aid},function(err,formData){
        const providerCount = formData[0].providerCount;
        Submission.find({aid:response.aid},function(err,formData){
            var submissionsLength = formData.length;
            if(submissionsLength > providerCount){
-               for(var i=0;i<providerCount;i++){
+               for(let i=0;i<providerCount;){
                    console.log(`${i} iteration`);
                    var random1 = Math.round(Math.random()*(submissionsLength-1));
                    var random2 = Math.round(Math.random()*(submissionsLength-1));
-                   console.log(`random 1 is ${random1} submission entry`);
-                   console.log(`random 2 is ${random2} submission entry`);
-                   console.log("running multiple");
+                   console.log(`random 1(receiver) is ${random1+1} submission entry `);
+                   console.log(`random 2(provider) is ${random2+1} submission entry`);
                    var receiver = formData[random1];
                    var provider = formData[random2];
                    if((receiver.studentuid !== provider.studentuid) &&
                        provider.pid.length <= maxCount(formData)){
-                       console.log(provider.pid.length);
-                       console.log("assign");
-                       provider.pid.push(receiver.sid);
-                       provider.save();
+                       ++i;
+                       console.log("ASSIGN");
+                       receiver.pid.push(provider.studentuid);
+                       receiver.save();
                    }
+
+
                }
+               console.log("----------------BREAK-----------");
 
            }
        });
