@@ -43,6 +43,9 @@ group :development, :test do
   gem 'byebug'
   # Rspec unit testing
   gem 'rspec-rails', '~> 3.0'
+
+  # Class diagrams
+  gem 'railroady'
 end
 
 group :development do
@@ -71,6 +74,6 @@ group :test do
   gem 'rspec_junit_formatter', '0.2.2'
 end
 
-#gem 'bunny'
-#gem 'sneakers', '2.3.5'
+# gem 'bunny'
+# gem 'sneakers', '2.3.5'
 gem 'sneakers'
