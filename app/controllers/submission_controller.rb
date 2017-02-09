@@ -259,7 +259,7 @@ class SubmissionController < ApplicationController
     return unless authenticate_admin!
     @submission = Submission.find(params[:id])
     @submission.active_services = @submission.assignment.active_services
-
+    @submission.save!
     if SubmissionUtils.remark!(@submission, current_user, flash)
       flash[:success] = 'Successfully sent submission for remarking.'
     end
