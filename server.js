@@ -12,7 +12,6 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 5000;
 const dbHost = process.env.DB_HOST || localhost;
-console.log(port);
 const formController = require(__dirname + '/server/controllers/form-controller.js');
 const allocationController = require(__dirname + '/server/controllers/allocation-controller.js');
 const sender = require('./server/send-request');

@@ -16,20 +16,23 @@ module.exports.createSubmission = function(req,res,next){
 var allocationPromise = function(response){
 
    Form.find({aid:response.aid},function(err,formData){
-       var providerCount = formData[0].providerCount;
+       const providerCount = formData[0].providerCount;
        Submission.find({aid:response.aid},function(err,formData){
            var submissionsLength = formData.length;
            if(submissionsLength > providerCount){
-               var random1 = Math.round(Math.random()*(submissionsLength-1));
-               var random2 = Math.round(Math.random()*(submissionsLength-1));
-
                for(var i=0;i<providerCount;i++){
+                   console.log(`${i} iteration`);
+                   var random1 = Math.round(Math.random()*(submissionsLength-1));
+                   var random2 = Math.round(Math.random()*(submissionsLength-1));
+                   console.log(`random 1 is ${random1} submission entry`);
+                   console.log(`random 2 is ${random2} submission entry`);
+                   console.log("running multiple");
                    var receiver = formData[random1];
                    var provider = formData[random2];
                    if((receiver.studentuid !== provider.studentuid) &&
-                       receiver.pid.length <= maxCount(formData) &&
                        provider.pid.length <= maxCount(formData)){
-
+                       console.log(provider.pid.length);
+                       console.log("assign");
                        provider.pid.push(receiver.sid);
                        provider.save();
                    }

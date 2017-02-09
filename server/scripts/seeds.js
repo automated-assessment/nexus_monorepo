@@ -15,10 +15,11 @@ mongoose.connection.collections['submissions'].drop(createDb());
 
 function createDb(){
     var i =0;
-    for(let i=0;i<4;i++){
+    for(let i=0;i<5;i++){
         var submission = new Submission();
         submission.aid=1;
         submission.studentuid=i;
+        submission.sid=i+3;
         submission.pid = [];
         submission.save();
     }
