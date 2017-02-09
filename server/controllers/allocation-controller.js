@@ -28,8 +28,8 @@ var allocationPromise = function(response){
                         var receiver = submissionData[random1];
                         var provider = submissionData[random2];
                         if((receiver.studentuid !== provider.studentuid) &&
-                            receiver.pid.length <= maxCount(submissionData)){
-                            console.log(maxCount(submissionData));
+                            receiver.pid.length <= minPid(submissionData)){
+                            console.log(minPid(submissionData));
                             receiver.pid.push(provider.studentuid);
                             receiver.save()
                                 .then(function(response,err){
@@ -40,11 +40,30 @@ var allocationPromise = function(response){
                         }
                     }
                 }
+            } else {
+                //need to store as there are no allocation spots
+                console.log("No allocation available");
+                //is this possible? - perhaps if one student submits many times
+                //how to deal? - inform student that they can only submit so many times to fix this?
             }
         });
     });
 };
 
+
+
+
+
+var minPid = function(submissionData){
+
+    let pidLengths =[];
+
+    for(var submission in submissionData){
+        //console.log(`submission is ${submissionData[submission].pid.length}`);
+        pidLengths.push(submissionData[submission].pid.length);
+    }
+    return Math.min(...pidLengths);
+};
 
 
 var debugAllocationPromise = function(response){
@@ -83,25 +102,10 @@ var debugAllocationPromise = function(response){
                     }
                 }
                 console.log("----------------BREAK-----------");
-
             }
         });
     });
 };
-
-var maxCount = function(submissionData){
-
-    let pidLengths =[];
-
-    for(var submission in submissionData){
-        //console.log(`submission is ${submissionData[submission].pid.length}`);
-        pidLengths.push(submissionData[submission].pid.length);
-    }
-    return Math.min(...pidLengths);
-};
-
-
-
 
 
 
