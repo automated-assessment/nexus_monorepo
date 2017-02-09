@@ -12,22 +12,22 @@ RSpec.describe WorkflowUtils do
   let(:mtc_4) { MarkingToolContext.new }
 
   before(:each) do
-    mtc_1.marking_tool_id = mt_1.id
+    mtc_1.marking_tool = mt_1
     mtc_1.weight = 25
     mtc_1.condition = 0
     mtc_1.depends_on = []
 
-    mtc_2.marking_tool_id = mt_2.id
+    mtc_2.marking_tool = mt_2
     mtc_2.weight = 25
     mtc_2.condition = 0
     mtc_2.depends_on = []
 
-    mtc_3.marking_tool_id = mt_3.id
+    mtc_3.marking_tool = mt_3
     mtc_3.weight = 25
     mtc_3.condition = 0
     mtc_3.depends_on = []
 
-    mtc_4.marking_tool_id = mt_4.id
+    mtc_4.marking_tool = mt_4
     mtc_4.weight = 25
     mtc_4.condition = 0
     mtc_4.depends_on = []
@@ -74,9 +74,9 @@ RSpec.describe WorkflowUtils do
             mt_4.uid => [mt_3.uid]
           }
 
-          mtc_2.depends_on << mtc_1
-          mtc_3.depends_on << mtc_2
-          mtc_4.depends_on << mtc_3
+          mtc_2.depends_on << mt_1.uid
+          mtc_3.depends_on << mt_2.uid
+          mtc_4.depends_on << mt_3.uid
           mtc_1.save!
           mtc_2.save!
           mtc_3.save!
@@ -92,10 +92,10 @@ RSpec.describe WorkflowUtils do
       context 'with a parallel structure' do
         context 'with a cycle in marking tool contexts' do
           it 'raises a StandardError' do
-            mtc_2.depends_on << mtc_1
-            mtc_2.depends_on << mtc_4
-            mtc_3.depends_on << mtc_2
-            mtc_4.depends_on << mtc_3
+            mtc_2.depends_on << mt_1.uid
+            mtc_2.depends_on << mt_4.uid
+            mtc_3.depends_on << mt_2.uid
+            mtc_4.depends_on << mt_3.uid
 
             mtc_1.save!
             mtc_2.save!
@@ -116,8 +116,8 @@ RSpec.describe WorkflowUtils do
               mt_4.uid => [mt_3.uid]
             }
 
-            mtc_2.depends_on << mtc_1
-            mtc_4.depends_on << mtc_3
+            mtc_2.depends_on << mt_1.uid
+            mtc_4.depends_on << mt_3.uid
 
             mtc_1.save!
             mtc_2.save!
@@ -134,10 +134,10 @@ RSpec.describe WorkflowUtils do
       context 'with an aggregation structure' do
         context 'with a cycle in marking tool contexts' do
           it 'raises a StandardError' do
-            mtc_2.depends_on << mtc_3
-            mtc_3.depends_on << mtc_1
-            mtc_3.depends_on << mtc_2
-            mtc_4.depends_on << mtc_3
+            mtc_2.depends_on << mt_3.uid
+            mtc_3.depends_on << mt_1.uid
+            mtc_3.depends_on << mt_2.uid
+            mtc_4.depends_on << mt_3.uid
 
             mtc_1.save!
             mtc_2.save!
@@ -153,14 +153,14 @@ RSpec.describe WorkflowUtils do
             expected = {
               mt_1.uid => [mt_2.uid],
               mt_2.uid => [],
-              mt_3.uid => [mt_1.uid, mt_2.uid],
+              mt_3.uid => [mt_2.uid, mt_1.uid].sort,
               mt_4.uid => [mt_3.uid]
             }
 
-            mtc_1.depends_on << mtc_2
-            mtc_3.depends_on << mtc_1
-            mtc_3.depends_on << mtc_2
-            mtc_4.depends_on << mtc_3
+            mtc_1.depends_on << mt_2.uid
+            mtc_3.depends_on << mt_2.uid
+            mtc_3.depends_on << mt_1.uid
+            mtc_4.depends_on << mt_3.uid
 
             mtc_1.save!
             mtc_2.save!
@@ -180,8 +180,8 @@ RSpec.describe WorkflowUtils do
     context 'with marking tools left to invoke' do
       it 'returns a non empty array of tools eligible for invocation' do
         expected = [mt_1.uid, mt_3.uid]
-        mtc_2.depends_on << mtc_1
-        mtc_4.depends_on << mtc_3
+        mtc_2.depends_on << mt_1.uid
+        mtc_4.depends_on << mt_3.uid
 
         mtc_1.save!
         mtc_2.save!
@@ -212,10 +212,10 @@ RSpec.describe WorkflowUtils do
           mt_4.uid => [mt_3.uid]
         }
 
-        mtc_1.depends_on << mtc_2
-        mtc_3.depends_on << mtc_1
-        mtc_3.depends_on << mtc_2
-        mtc_4.depends_on << mtc_3
+        mtc_1.depends_on << mt_2.uid
+        mtc_3.depends_on << mt_1.uid
+        mtc_3.depends_on << mt_2.uid
+        mtc_4.depends_on << mt_3.uid
 
         mtc_1.save!
         mtc_2.save!
@@ -234,13 +234,13 @@ RSpec.describe WorkflowUtils do
         expected = {
           mt_1.uid => [mt_2.uid],
           mt_2.uid => [],
-          mt_3.uid => [mt_1.uid, mt_2.uid],
+          mt_3.uid => [mt_1.uid, mt_2.uid].sort,
           mt_4.uid => [mt_3.uid]
         }
-        mtc_1.depends_on << mtc_2
-        mtc_3.depends_on << mtc_1
-        mtc_3.depends_on << mtc_2
-        mtc_4.depends_on << mtc_3
+        mtc_1.depends_on << mt_2.uid
+        mtc_3.depends_on << mt_1.uid
+        mtc_3.depends_on << mt_2.uid
+        mtc_4.depends_on << mt_3.uid
 
         mtc_1.save!
         mtc_2.save!
@@ -258,13 +258,13 @@ RSpec.describe WorkflowUtils do
         expected = {
           mt_1.uid => [mt_2.uid],
           mt_2.uid => [],
-          mt_3.uid => [mt_1.uid, mt_2.uid],
+          mt_3.uid => [mt_1.uid, mt_2.uid].sort,
           mt_4.uid => [mt_3.uid]
         }
-        mtc_1.depends_on << mtc_2
-        mtc_3.depends_on << mtc_1
-        mtc_3.depends_on << mtc_2
-        mtc_4.depends_on << mtc_3
+        mtc_1.depends_on << mt_2.uid
+        mtc_3.depends_on << mt_1.uid
+        mtc_3.depends_on << mt_2.uid
+        mtc_4.depends_on << mt_3.uid
 
         mtc_1.save!
         mtc_2.save!

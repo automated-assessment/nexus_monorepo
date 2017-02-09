@@ -18,9 +18,7 @@ class WorkflowUtils
       marking_tool_contexts.each do |mtc|
         tool = MarkingTool.find_by(id: mtc.marking_tool_id)
         raise StandardError, "Error with marking tool #{tool.name}. Marking services cannot depend on themselves" if mtc.depends_on.include? tool.uid
-        tool_ids = mtc.depends_on.map(&:marking_tool_id)
-        depends_on = MarkingTool.where(id: tool_ids).pluck(:uid)
-
+        depends_on = MarkingTool.where(uid: mtc.depends_on).pluck(:uid).sort
         # Set a key in the hash to be the tool uid for the current mtc
         # Set the value to be the array of tools it depends on before it can run
         active_services[tool.uid] = depends_on
