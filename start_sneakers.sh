@@ -1,2 +1,2 @@
 #!/bin/bash
-export $(cat .env.file | xargs) && rake sneakers:work
+export $(cat .env.list | xargs) && rake sneakers:work

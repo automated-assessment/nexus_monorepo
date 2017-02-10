@@ -15,19 +15,20 @@ class SendSubmissionJob < ActiveJob::Base
     uri = URI.parse(marking_tool.url)
     @submission.log("Notifying #{marking_tool.name} at #{uri}...", 'Debug')
 
-    http = Net::HTTP.new(uri.host, uri.port)
-    req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
+    Net::HTTP.start(uri.host, uri.port) do |http|
+      req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
 
-    req.body = build_json_payload
+      req.body = build_json_payload
 
-    res = http.request(req)
+      res = http.request(req)
 
-    if res.code =~ /2../
-      # Successfully handed submission over to tool
-      @submission.log("Received #{res.code} #{res.message} from #{marking_tool.name}", 'Success')
-    else
-      @submission.log("Received #{res.code} #{res.message} from #{marking_tool.name}: #{res.body}", 'Error')
-      record_fail!
+      if res.code =~ /2../
+        # Successfully handed submission over to tool
+        @submission.log("Received #{res.code} #{res.message} from #{marking_tool.name}", 'Success')
+      else
+        @submission.log("Received #{res.code} #{res.message} from #{marking_tool.name}: #{res.body}", 'Error')
+        record_fail!
+      end
     end
 
   rescue StandardError => e
@@ -36,6 +37,7 @@ class SendSubmissionJob < ActiveJob::Base
       @submission.log("Error notifying #{marking_tool.name}: #{e.class} #{e.message}", 'Error')
     end
     record_fail!
+    Rails.logger.error "Error backtrace was: #{e.backtrace}"
   end
 
   private
@@ -43,6 +45,8 @@ class SendSubmissionJob < ActiveJob::Base
   def build_json_payload
     payload = {
       student: @submission.user.name,
+      studentuid: @submission.user.id,
+      studentemail: @submission.user.email, # This will only have a value for a user registered via GHE
       sid: @submission.id,
       aid: @submission.assignment.id,
       cloneurl: @submission.augmented_clone_url,

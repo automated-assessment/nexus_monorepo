@@ -116,7 +116,7 @@ class AssignmentController < ApplicationController
     return unless authenticate_admin!
     @assignment = return_assignment!
     if @assignment
-      headers['Content-Disposition'] = 'attachment; filename=\"submissions-data-export.csv\"'
+      headers['Content-Disposition'] = 'attachment; filename="submissions-data-export.csv"'
       headers['Content-Type'] ||= 'text/csv'
     end
   end
