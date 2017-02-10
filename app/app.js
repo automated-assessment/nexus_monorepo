@@ -11,9 +11,14 @@
                     controller:'ConfigurationController'
                 })
                 .state('providerState',{
-                    url:'/provider',
+                    url:'/provider?aid?studentuid',
                     templateUrl:'app/provider/provider.html',
                     controller:'ProviderController'
+                })
+                .state('allocationState',{
+                    url:'/allocation',
+                    templateUrl:'app/allocation/allocation.html',
+                    controller:'AllocationController'
                 })
         });
 }());

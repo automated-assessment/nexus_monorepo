@@ -1,3 +1,5 @@
+//Used exclusively in form related queries
+
 var Config = require('../datasets/formModel');
 
 

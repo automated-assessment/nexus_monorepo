@@ -3,9 +3,17 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('ProviderController',['$scope','$sce','GithubRetrievalFactory',function($scope,$sce,GithubRetrievalFactory){
+        .controller('ProviderController',['$scope','$sce','GithubRetrievalFactory','$http',function($scope,$sce,GithubRetrievalFactory,$http){
                     GithubRetrievalFactory.then(function(response){
-                           $scope.myHTML = $sce.trustAsHtml(response.data);
+
+
+                        //check this is safe to inject.
+                        $scope.myHTML = $sce.trustAsHtml(response.data);
+
+                        //inject form to fill.
+
+                        //get particular submission using aid and sid
+
                         });
         }]);
 }());

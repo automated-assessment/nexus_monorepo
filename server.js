@@ -13,8 +13,9 @@ const app = express();
 const port = process.env.PORT || 5000;
 const dbHost = process.env.DB_HOST || localhost;
 const formController = require(__dirname + '/server/controllers/form-controller.js');
-const allocationController = require(__dirname + '/server/controllers/allocation-controller.js');
-const sender = require('./server/send-request');
+const submissionController = require(__dirname + '/server/controllers/submission-controller.js');
+//const providerController = require(__dirname + '/server/controllers/provider-controller.js');
+
 
 
 
@@ -29,20 +30,13 @@ app.get('/',function(req,res){
    res.sendFile(__dirname + '/index.html');
 });
 
+//Configuration
 app.post('/api/config/create',formController.createConfig);
 
 
-app.post('/mark',function(req,res,next){
-    allocationController.createSubmission(req,res,next);
-    res.status(200).send();
-    sender.sendMark(10, req.body.sid,function(err,res,body){
-    });
 
-    const html = "<div>Working</div>";
-    sender.sendFeedback(html,req.body.sid,function(err,res,body){
-    });
-
-});
+//Create Submission
+app.post('/mark',submissionController.createSubmission);
 
 app.listen(port,function(){
     console.log(`Listening on port: ${port}`);
