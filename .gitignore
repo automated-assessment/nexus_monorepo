@@ -6,3 +6,4 @@ iotool_data/
 mongodata/
 logs/
 npm-debug.log
+dbdumps/*.gz
