@@ -11,12 +11,12 @@
                     controller:'ConfigurationController'
                 })
                 .state('providerState',{
-                    url:'/provider?aid?studentuid',
+                    url:'/provider?sid',
                     templateUrl:'app/provider/provider.html',
                     controller:'ProviderController'
                 })
                 .state('allocationState',{
-                    url:'/allocation',
+                    url:'/allocation?aid?studentuid',
                     templateUrl:'app/allocation/allocation.html',
                     controller:'AllocationController'
                 })

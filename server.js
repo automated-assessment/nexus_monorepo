@@ -14,7 +14,7 @@ const port = process.env.PORT || 5000;
 const dbHost = process.env.DB_HOST || localhost;
 const formController = require(__dirname + '/server/controllers/form-controller.js');
 const submissionController = require(__dirname + '/server/controllers/submission-controller.js');
-//const providerController = require(__dirname + '/server/controllers/provider-controller.js');
+const allocationController = require(__dirname + '/server/controllers/allocation-controller.js');
 
 
 
@@ -33,12 +33,18 @@ app.get('/',function(req,res){
 //Configuration
 app.post('/api/config/create',formController.createConfig);
 
-
-
 //Create Submission
 app.post('/mark',submissionController.createSubmission);
+
+//Allocation
+app.get('/api/allocation/getProvideTo',allocationController.getProvideTo);
+app.get('/api/allocation/getReceivedFrom',allocationController.getReceivedFrom);
 
 app.listen(port,function(){
     console.log(`Listening on port: ${port}`);
 });
 
+app.get('/test',function(req,res){
+   console.log(req.query.test);
+   res.status(200).send();
+});
