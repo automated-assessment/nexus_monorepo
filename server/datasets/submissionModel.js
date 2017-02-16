@@ -10,7 +10,6 @@ module.exports = mongoose.model('Submission',{
     studentpid:[],
     sid:Number,
     aid:Number,
-    cloneurl:String,
     branch:String,
-    sha:String
+    submittedForm:String
 });

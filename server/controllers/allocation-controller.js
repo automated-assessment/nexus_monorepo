@@ -41,7 +41,6 @@ module.exports.getReceivedFrom = function(req,res){
             }
             Submission.find({studentuid:{$in:studentIdArray}})
                 .then(function(response){
-                    console.log(response);
                     res.status(200).send(response);
                 });
         });

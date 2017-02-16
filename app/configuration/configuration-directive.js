@@ -4,12 +4,13 @@
 
             function link(scope, elem){
 
-                var form = elem.formBuilder().data('formBuilder');
+                const form = elem.formBuilder({
+                    dataType:'json'
+                }).data('formBuilder');
                 $(".form-builder-save").click(function(e){
                     scope.newConfig.formBuild = form.formData;
                    scope.createConfig();
                 });
-
             }
 
 

@@ -16,13 +16,7 @@
                         console.log("Successfully added to db.");
                         console.log(response.data);
                     })
-            };
-
-
-
-
-
-
+            }
 
         }]);
 }());

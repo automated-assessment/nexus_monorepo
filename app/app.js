@@ -11,7 +11,7 @@
                     controller:'ConfigurationController'
                 })
                 .state('providerState',{
-                    url:'/provider?sid',
+                    url:'/provider?sid?aid',
                     templateUrl:'app/provider/provider.html',
                     controller:'ProviderController'
                 })

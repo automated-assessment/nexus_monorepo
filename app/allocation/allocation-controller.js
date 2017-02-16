@@ -15,6 +15,7 @@
                 }
             }).then(function(response){
                 $scope.provideTo = response.data;
+
             });
 
             $http({

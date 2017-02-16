@@ -20,6 +20,7 @@ const sender = require('../send-request');
 
 module.exports.createSubmission = function(req,res,next){
     res.status(200).send();
+
     //This bit needs refactoring too. It doesn't belong here.
     sender.sendMark(10, req.body.sid,function(err,res,body){
     });
