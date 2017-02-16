@@ -1,10 +1,9 @@
 (function(){
     angular.module('PeerFeedback')
         .controller('AllocationController',['$scope','$stateParams','$http',function($scope,$stateParams,$http){
-
-
             $scope.aid = $stateParams.aid;
             $scope.studentuid = $stateParams.studentuid;
+
             //extract this to a factory
             $http({
                 method:'GET',
@@ -27,6 +26,7 @@
                 }
             }).then(function(response){
                 $scope.receivedFrom = response.data;
+                console.log(response.data[0].studentpid);
             })
 
 

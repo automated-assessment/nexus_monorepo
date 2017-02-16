@@ -1,7 +1,5 @@
 <section>
 
-    <!--Provide to allocation for student number: {{studentuid}} for assessment: {{aid}}-->
-    <!--<br/>-->
     <h2>Allocation</h2>
 <br/>
 <br/>
@@ -9,31 +7,13 @@
 Provide for:
     <br/><br/>
 
-    <div ng-repeat="submission in provideTo"><a>Student number {{submission.studentuid}} provide for submission {{submission.sid}}</a></div>
+    <div ng-repeat="submission in provideTo"><a ui-sref="providerState({aid:{{submission.aid}}, studentuid:{{submission.studentuid}},sid:{{submission.sid}} })">studentuid: {{submission.studentuid}} provide for sid: {{submission.sid}}</a></div>
 <br/><br/>
 
 Received from:
     <br/><br/>
-    <div ng-repeat="submission in receivedFrom">Student number {{submission.studentuid}} provide for submission {{submission.sid}}</div>
+    <div ng-repeat="submission in receivedFrom"><a ui-sref="receiverState()">studentuid: {{submission.studentuid}} provided for sid: {{submission.sid}}</a></div>
 
-
-
-
-<!--<div class="col-md-6">-->
-<!--Please provide feedback to the following students:-->
-    <!--<br/><br/>-->
-    <!--&lt;!&ndash;<div ng-repeat="submission in provideTo">Provide feedback for: <a ui-sref="providerState({sid:sid})" class="btn btn-primary">Student {{submission.studentuid}}</a><br/><br/></div>&ndash;&gt;-->
-    <!--<div ng-repeat="submission in provideTo">{{submission.sid}}</div>-->
-<!--</div>-->
-<!--<div class="col-md-6">-->
-<!--Received feedback from the following students:-->
-    <!--<br/><br/>-->
-    <!--<div ng-repeat="submission in receivedFrom">-->
-        <!--<div ng-repeat="pid in submission.pid">-->
-            <!--&lt;!&ndash;Provide feedback for: <a ui-sref="providerState({sid:sid})" class="btn btn-primary">Student {{pid}}</a><br/><br/></div>&ndash;&gt;-->
-        <!--</div>-->
-    <!--</div>-->
-<!--</div>-->
 
 
 </section>

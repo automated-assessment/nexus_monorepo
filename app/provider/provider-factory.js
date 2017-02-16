@@ -10,7 +10,6 @@
            const apiCall = {};
 
            apiCall.getPartial = function(branchName){
-            if(branchName) {
                 const authToken = "be7549b0fb2ad810c5b2a2a28376ecdac5d47f12"; //needs to be extracted to env
                 const baseUrl = "https://github.kcl.ac.uk/api/v3/repos/NexusDevAdam";
 
@@ -25,7 +24,7 @@
                         ref: branchName
                     }
                 });
-            }
+
            };
            return apiCall;
        }]);

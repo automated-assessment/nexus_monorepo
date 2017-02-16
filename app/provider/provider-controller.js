@@ -19,11 +19,12 @@
                 }
 
             }).then(function(response) {
+                //need to add in some kind of check, this will run even with no branch - it shouldnt.
+                    GithubRetrievalFactory.getPartial(response.data.branch)
+                        .then(function (response) {
+                            $scope.submission.gitHubSnippet = $sce.trustAsHtml(response.data);
+                        });
 
-                GithubRetrievalFactory.getPartial(response.data[0].branch)
-                    .then(function (response) {
-                        $scope.myHTML = $sce.trustAsHtml(response.data);
-                    });
             });
 
 
@@ -43,14 +44,6 @@
                         console.log("Complete");
                     })
             };
-
-
-
-
-
-            //inject form to fill.
-
-            //get particular submission using aid and sid
         }])
 }());
 

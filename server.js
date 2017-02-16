@@ -16,6 +16,7 @@ const formController = require(__dirname + '/server/controllers/form-controller.
 const submissionController = require(__dirname + '/server/controllers/submission-controller.js');
 const allocationController = require(__dirname + '/server/controllers/allocation-controller.js');
 const providerController = require(__dirname + '/server/controllers/provider-controller.js');
+const receiverController = require(__dirname + '/server/controllers/receiver-controller.js');
 
 
 
@@ -45,6 +46,9 @@ app.get('/api/allocation/getReceivedFrom',allocationController.getReceivedFrom);
 app.get('/api/provider/getSubmission',providerController.getSubmission);
 app.get('/api/provider/getForm',providerController.getForm);
 app.post('/api/provider/saveForm',providerController.saveForm);
+
+//Receiver
+app.get('/api/receiver/getForm',receiverController.getForm);
 
 app.listen(port,function(){
     console.log(`Listening on port: ${port}`);

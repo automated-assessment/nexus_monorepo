@@ -5,9 +5,10 @@
 //This will be used exclusively for provider stuff
 const Submission = require('../datasets/submissionModel');
 const Form = require('../datasets/formModel');
+
 module.exports.getSubmission = function(req,res){
     const sid = req.query.sid;
-    Submission.find({sid:sid})
+    Submission.findOne({sid:sid})
         .then(function(response){
             res.status(200).send(response);
         })

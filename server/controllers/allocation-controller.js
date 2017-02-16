@@ -21,28 +21,39 @@ module.exports.getProvideTo = function(req,res){
 
 };
 
-module.exports.getReceivedFrom = function(req,res){
+module.exports.getReceivedFrom = function(req,res) {
 
     //use the student numbers for that particular student id to resolve the submission numbers
-    studentId = req.query.studentuid;
+    const studentuid = req.query.studentuid;
+    const aid = req.query.aid;
 
-    Submission.find({studentuid:studentId},{_id:0,studentpid:1})
+    Submission.find({aid: aid, studentuid: studentuid},{_id:0,studentpid:1})
         .then(function(response){
-            let studentIdArray = [];
-            let counter = 0;
-
-            for(let i=0;i<response.length;i++){
-                for(let j=0;j<response[i].studentpid.length;j++){
-                    studentIdArray[counter] = response[i].studentpid[j].no;
-                    ++counter;
-                }
-            }
-            Submission.find({studentuid:{$in:studentIdArray}})
-                .then(function(response){
-                    res.status(200).send(response);
-                });
+           res.send(response);
         });
-
 };
+
+
+
+
+
+    // Submission.find({studentuid:studentId},{_id:0,studentpid:1})
+    //     .then(function(response){
+    //         let studentIdArray = [];
+    //         let counter = 0;
+    //
+    //         for(let i=0;i<response.length;i++){
+    //             for(let j=0;j<response[i].studentpid.length;j++){
+    //                 studentIdArray[counter] = response[i].studentpid[j].no;
+    //                 ++counter;
+    //             }
+    //         }
+    //         Submission.find({studentuid:{$in:studentIdArray}})
+    //             .then(function(response){
+    //                 res.status(200).send(response);
+    //             });
+    //     });
+
+
 
 

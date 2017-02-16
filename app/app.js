@@ -20,5 +20,10 @@
                     templateUrl:'app/allocation/allocation.html',
                     controller:'AllocationController'
                 })
+                .state('receiverState',{
+                    url:'/receiver?sid?studentuid',
+                    templateUrl:'app/receiver/receiver.html',
+                    controller:'ReceiverController'
+                })
         });
 }());
