@@ -44,10 +44,7 @@ app.get('/api/allocation/getReceivedFrom',allocationController.getReceivedFrom);
 //Provider
 app.get('/api/provider/getSubmission',providerController.getSubmission);
 app.get('/api/provider/getForm',providerController.getForm);
-app.post('/api/provider/saveForm',function(req,res){
-    console.log("Working");
-    res.status(200).send("Hello");
-});
+app.post('/api/provider/saveForm',providerController.saveForm);
 
 app.listen(port,function(){
     console.log(`Listening on port: ${port}`);

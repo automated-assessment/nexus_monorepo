@@ -17,7 +17,17 @@ module.exports.getSubmission = function(req,res){
 module.exports.getForm = function(req,res){
     Form.findOne(req.query)
         .then(function(response){
-            console.log(response);
             res.status(200).send(response);
         })
+};
+
+module.exports.saveForm = function(req,res){
+    const studentuid = Number(req.body.studentuid);
+    const sid = Number(req.body.sid);
+    const updatedJson = req.body.currentForm;
+    Submission.findOneAndUpdate({"studentpid.no":studentuid,sid:sid},{$set:{"studentpid.$.form":updatedJson}})
+        .then(function(response){
+            res.status(200).send(response);
+        })
+
 };

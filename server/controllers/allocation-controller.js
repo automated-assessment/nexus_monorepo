@@ -6,7 +6,7 @@
 const Submission = require('../datasets/submissionModel');
 
 module.exports.getProvideTo = function(req,res){
-    Submission.find({studentpid:Number(req.query.studentuid)},{_id:0,studentuid:1})
+    Submission.find({"studentpid.no":Number(req.query.studentuid)},{_id:0,studentuid:1})
         .then(function(response){
 
             let studentId=[];
@@ -24,8 +24,6 @@ module.exports.getProvideTo = function(req,res){
 module.exports.getReceivedFrom = function(req,res){
 
     //use the student numbers for that particular student id to resolve the submission numbers
-
-
     studentId = req.query.studentuid;
 
     Submission.find({studentuid:studentId},{_id:0,studentpid:1})
@@ -35,7 +33,7 @@ module.exports.getReceivedFrom = function(req,res){
 
             for(let i=0;i<response.length;i++){
                 for(let j=0;j<response[i].studentpid.length;j++){
-                    studentIdArray[counter] = response[i].studentpid[j];
+                    studentIdArray[counter] = response[i].studentpid[j].no;
                     ++counter;
                 }
             }

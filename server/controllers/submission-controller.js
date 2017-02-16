@@ -64,7 +64,7 @@ const assign = function(providerTotal, submissionData){
             const receiver = randomStudent(submissionData);
             if((receiver.studentuid !== provider.studentuid) &&
                 receiver.studentpid.length <= minPid(submissionData)){
-                receiver.studentpid.push(provider.studentuid);
+                receiver.studentpid.push({"no":provider.studentuid});
                 receiver.save()
                     .then(function(response,err){
                         assignment(++i);

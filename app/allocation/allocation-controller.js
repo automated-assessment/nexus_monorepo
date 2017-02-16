@@ -26,7 +26,6 @@
                     studentuid:$stateParams.studentuid
                 }
             }).then(function(response){
-
                 $scope.receivedFrom = response.data;
             })
 

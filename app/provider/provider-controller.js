@@ -4,9 +4,11 @@
 (function() {
     angular.module('PeerFeedback')
         .controller('ProviderController', ['$scope', '$sce', 'GithubRetrievalFactory', '$stateParams','$http',function ($scope, $sce, GithubRetrievalFactory, $stateParams,$http) {
-            //check this is safe to inject.
-            $scope.sid = $stateParams.sid;
-            $scope.aid = $stateParams.aid;
+            $scope.submission = {};
+            $scope.submission.sid = $stateParams.sid;
+            $scope.submission.aid = $stateParams.aid;
+
+            $scope.submission.studentuid = $stateParams.studentuid;
             $http({
                 method:'GET',
                 url: '/api/provider/getSubmission',
@@ -16,7 +18,7 @@
                 }
 
             }).then(function(response) {
-                $scope.submission = response.data;
+                $scope.submission.data = response.data;
                 GithubRetrievalFactory.getPartial("submissions-u137-l")
                     .then(function (response) {
                         $scope.myHTML = $sce.trustAsHtml(response.data);
@@ -35,8 +37,10 @@
             };
 
             $scope.saveForm = function(){
-                console.log("Yes");
-                $http.post('/api/provider/saveForm',$scope.submittedForm);
+                $http.post('/api/provider/saveForm',$scope.submission)
+                    .then(function(response){
+                        console.log("Complete");
+                    })
             };
 
 
