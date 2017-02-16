@@ -10,22 +10,22 @@
            const apiCall = {};
 
            apiCall.getPartial = function(branchName){
+            if(branchName) {
+                const authToken = "be7549b0fb2ad810c5b2a2a28376ecdac5d47f12"; //needs to be extracted to env
+                const baseUrl = "https://github.kcl.ac.uk/api/v3/repos/NexusDevAdam";
 
-               const authToken = "be7549b0fb2ad810c5b2a2a28376ecdac5d47f12"; //needs to be extracted to env
-               const baseUrl = "https://github.kcl.ac.uk/api/v3/repos/NexusDevAdam";
-
-               return $http({
-                   method:'GET',
-                   url:baseUrl + '/assignment-1/contents/File1.java',
-                   headers: {
-                       'Authorization': 'token ' + authToken,
-                       'Accept': 'application/vnd.github.v3.html'
-                   },
-                   params: {
-                       ref:branchName
-                   }
-               });
-
+                return $http({
+                    method: 'GET',
+                    url: baseUrl + '/assignment-1/contents/File1.java',
+                    headers: {
+                        'Authorization': 'token ' + authToken,
+                        'Accept': 'application/vnd.github.v3.html'
+                    },
+                    params: {
+                        ref: branchName
+                    }
+                });
+            }
            };
            return apiCall;
        }]);
@@ -34,15 +34,3 @@
 
 // /:repo/contents/:fileName
 
-
-(function(){
-    angular.module('PeerFeedback')
-        .factory('AlternativeFactory',function(){
-          const obj = {};
-
-          obj.fnName = function(param){
-              return param;
-          };
-          return obj;
-        });
-}());

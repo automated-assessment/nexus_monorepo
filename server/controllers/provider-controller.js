@@ -6,8 +6,8 @@
 const Submission = require('../datasets/submissionModel');
 const Form = require('../datasets/formModel');
 module.exports.getSubmission = function(req,res){
-    //console.log(req.query);
-    Submission.find(req.query)
+    const sid = req.query.sid;
+    Submission.find({sid:sid})
         .then(function(response){
             res.status(200).send(response);
         })
@@ -15,7 +15,8 @@ module.exports.getSubmission = function(req,res){
 };
 
 module.exports.getForm = function(req,res){
-    Form.findOne(req.query)
+    const aid = req.query.aid;
+    Form.findOne({aid:aid})
         .then(function(response){
             res.status(200).send(response);
         })
