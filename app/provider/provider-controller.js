@@ -9,8 +9,6 @@
             $scope.submission.sid = $stateParams.sid;
             $scope.submission.aid = $stateParams.aid;
             $scope.submission.studentuid = $stateParams.studentuid;
-
-
             $http({
                 method:'GET',
                 url: '/api/provider/getSubmission',
@@ -28,12 +26,13 @@
             });
 
 
-            $scope.getForm = function(){
+            $scope.getFormPromise = function(){
                 return $http({
                     method:'GET',
                     url:'/api/provider/getForm',
                     params:{
-                        aid:$stateParams.aid
+                        sid:$stateParams.sid,
+                        studentuid:$stateParams.studentuid
                     }
                 });
             };

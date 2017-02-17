@@ -5,14 +5,15 @@
     angular.module('PeerFeedback')
         .directive('renderForm',function(){
             function link(scope,elem,attrs){
-                scope.getForm()
-                    .then(function(response) {
-                        console.log(response.data);
-                        if(response.data.formBuild){
-                            elem.formRender({formData: response.data.formBuild, dataType: 'json'});
-                            scope.submission.currentForm = response.data.formBuild;
-                        }
-
+                scope.getFormPromise()
+                    .then(function(response){
+                        const currentForm = response.data.providers[0].currentForm;
+                        const renderOpts = {
+                            formData:currentForm,
+                            dataType:'json'
+                        };
+                        elem.formRender(renderOpts);
+                        scope.submission.currentForm = currentForm;
                     })
             }
             return {
@@ -21,11 +22,3 @@
             }
         })
 }());
-
-/**
-
-
-
-
-});
-   **/

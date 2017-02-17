@@ -4,7 +4,8 @@
 (function(){
     angular.module('PeerFeedback')
         .directive('saveForm',function(){
-
+            //need to understand this code.
+            //borrowed from internet
             const saveUserValues = function(container,json){
                 const originalFormData = JSON.parse(json);
                 const formData = new FormData(container);
@@ -56,10 +57,7 @@
                     scope.saveForm();
                 });
 
-
             }
-
-
             return {
                 restrict:'A',
                 link:link

@@ -7,13 +7,12 @@
 Provide for:
     <br/><br/>
 
-    <div ng-repeat="submission in provideTo"><a ui-sref="providerState({aid:{{submission.aid}}, studentuid:{{submission.studentuid}},sid:{{submission.sid}} })">studentuid: {{submission.studentuid}} provide for sid: {{submission.sid}}</a></div>
+    <div ng-repeat="submission in provideTo"><a ui-sref="providerState({aid:{{submission.aid}}, studentuid:{{studentuid}},sid:{{submission.sid}} })">Provide for submission {{submission.sid}},  who is: {{submission.studentuid}} </a></div>
 <br/><br/>
 
 Received from:
     <br/><br/>
-    <div ng-repeat="submission in receivedFrom"><a ui-sref="receiverState()">studentuid: {{submission.studentuid}} provided for sid: {{submission.sid}}</a></div>
-
+    <div ng-repeat="provider in receivedFrom.providers"><a ui-sref="receiverState({sid:{{receivedFrom.sid}}, studentuid: {{provider.provideruid}}})">Provided for submission {{receivedFrom.sid}} by {{provider.provideruid}}</a></div>
 
 
 </section>

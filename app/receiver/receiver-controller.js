@@ -8,7 +8,7 @@
            $scope.sid = $stateParams.sid;
            $scope.studentuid = $stateParams.studentuid;
 
-           $scope.getForm = function(){
+           $scope.getFormPromise = function(){
                return $http({
                    method:'GET',
                    url:'/api/receiver/getForm',

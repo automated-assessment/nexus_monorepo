@@ -16,9 +16,12 @@ module.exports.getSubmission = function(req,res){
 };
 
 module.exports.getForm = function(req,res){
-    const aid = req.query.aid;
-    Form.findOne({aid:aid})
+    console.log(req.query);
+    const sid = Number(req.query.sid);
+    const providerId = Number(req.query.studentuid);
+    Submission.findOne({sid:sid,"providers.provideruid":providerId},{"providers.$.provideruid":1})
         .then(function(response){
+            console.log(response);
             res.status(200).send(response);
         })
 };
@@ -27,7 +30,7 @@ module.exports.saveForm = function(req,res){
     const studentuid = Number(req.body.studentuid);
     const sid = Number(req.body.sid);
     const updatedJson = req.body.currentForm;
-    Submission.findOneAndUpdate({"studentpid.no":studentuid,sid:sid},{$set:{"studentpid.$.form":updatedJson}})
+    Submission.findOneAndUpdate({"providers.provideruid":studentuid,sid:sid},{$set:{"providers.$.currentForm":updatedJson}})
         .then(function(response){
             res.status(200).send(response);
         })

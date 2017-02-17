@@ -13,20 +13,23 @@ const Submission = require('../datasets/submissionModel');
 
 
 module.exports.runAllocation = function(response){
-
-    Form.find({aid:response.aid},function(err,formData){
-        const providerTotal = formData[0].providerCount;
-        const minAllocationCount = formData[0].providerCount;
-        Submission.find({aid:response.aid},function(err,submissionData){
-            if(submissionData.length > minAllocationCount){
-                assign(providerTotal,submissionData);
-            }
+    Form.findOne({aid:response.aid})
+        .then(function(formData){
+            const providerTotal = formData.providerCount;
+            const minAllocationCount = formData.providerCount;
+            Submission.find({aid:response.aid})
+                .then(function(submissionData){
+                    if(submissionData.length>minAllocationCount){
+                        assign(providerTotal,submissionData,formData);
+                    }
+                })
         });
-    });
+
+
 };
 
 
-const assign = function(providerTotal, submissionData){
+const assign = function(providerTotal, submissionData,formData){
     assignment(0);
     function assignment(i){
         if(i<providerTotal) {
@@ -34,7 +37,14 @@ const assign = function(providerTotal, submissionData){
             const receiver = randomStudent(submissionData);
             if((receiver.studentuid !== provider.studentuid) &&
                 receiver.providers.length <= minPid(submissionData)){
-                receiver.providers.push({"no":provider.studentuid});
+
+                const providerObj = {
+                    provideruid:provider.studentuid,
+                    currentForm:formData.formBuild,
+                    provided:false
+                };
+
+                receiver.providers.push(providerObj);
                 receiver.save()
                     .then(function(response,err){
                         assignment(++i);

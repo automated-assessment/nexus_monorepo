@@ -7,9 +7,9 @@ const Submission = require('../datasets/submissionModel');
 module.exports.getForm = function(req,res){
     const query = {
         sid:Number(req.query.sid),
-        "studentpid.no":Number(req.query.studentuid)
+        "providers.provideruid":Number(req.query.studentuid)
     };
-    Submission.findOne(query,{"studentpid.$.no":1})
+    Submission.findOne(query,{"providers.$.no":1})
         .then(function(response){
             res.status(200).send(response);
         });
