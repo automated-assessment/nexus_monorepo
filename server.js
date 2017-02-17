@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 5000;
 const dbHost = process.env.DB_HOST || localhost;
-const formController = require(__dirname + '/server/controllers/form-controller.js');
+const configurationController = require(__dirname + '/server/controllers/configuration-controller.js');
 const submissionController = require(__dirname + '/server/controllers/submission-controller.js');
 const allocationController = require(__dirname + '/server/controllers/allocation-controller.js');
 const providerController = require(__dirname + '/server/controllers/provider-controller.js');
@@ -33,7 +33,7 @@ app.get('/',function(req,res){
 });
 
 //Configuration
-app.post('/api/config/create',formController.createConfig);
+app.post('/api/config/save',configurationController.createConfig);
 
 //Create Submission
 app.post('/mark',submissionController.createSubmission);

@@ -8,17 +8,15 @@
            $scope.sid = $stateParams.sid;
            $scope.studentuid = $stateParams.studentuid;
 
-           $http({
-               method:'GET',
-               url:'/api/receiver/getForm',
-               params: {
-                   sid:$stateParams.sid,
-                   studentuid:$stateParams.studentuid
-               }
-           })
-               .then(function(response){
-                   $scope.currentForm = response.data.studentpid[0].form;
-                   console.log(response.data);
+           $scope.getForm = function(){
+               return $http({
+                   method:'GET',
+                   url:'/api/receiver/getForm',
+                   params: {
+                       sid:$stateParams.sid,
+                       studentuid:$stateParams.studentuid
+                   }
                })
+           }
         });
 }());

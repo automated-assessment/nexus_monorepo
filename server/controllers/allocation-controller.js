@@ -5,6 +5,7 @@
 
 const Submission = require('../datasets/submissionModel');
 
+
 module.exports.getProvideTo = function(req,res){
     Submission.find({"studentpid.no":Number(req.query.studentuid)},{_id:0,studentuid:1})
         .then(function(response){
@@ -32,6 +33,15 @@ module.exports.getReceivedFrom = function(req,res) {
            res.send(response);
         });
 };
+
+
+
+
+
+
+
+
+
 
 
 
