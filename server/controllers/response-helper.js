@@ -2,6 +2,8 @@
  * Created by adamellis on 07/02/2017.
  */
 
+//Borrowed code
+
 
 var NEXUS_BASE_URL = process.env.NEXUS_BASE_URL || 'http://localhost:3000';
 var NEXUS_TOOL_CANONICAL_NAME = process.env.NEXUS_TOOL_CANONICAL_NAME || 'peerfeedback';
@@ -18,9 +20,10 @@ module.exports.sendMark = function(n, submissionID, callback){
 }
 
 module.exports.sendFeedback = function (feedbackHTML, submissionID, callback){
-    var url = NEXUS_BASE_URL + "/report_feedback/" + submissionID + "/" + NEXUS_TOOL_CANONICAL_NAME;
+    //var url = NEXUS_BASE_URL + "/report_feedback/" + submissionID + "/" + NEXUS_TOOL_CANONICAL_NAME;
+    const url = 'http://localhost:3050/view';
     sendRequest({body:feedbackHTML},url,callback);
-}
+};
 
 function sendRequest(body, url, callback) {
 
@@ -33,7 +36,6 @@ function sendRequest(body, url, callback) {
         json: true,
         body:body
     };
-
     request(requestOptions, function(err,res,body){
 
     });

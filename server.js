@@ -18,7 +18,7 @@ const allocationController = require(__dirname + '/server/controllers/allocation
 const providerController = require(__dirname + '/server/controllers/provider-controller.js');
 const receiverController = require(__dirname + '/server/controllers/receiver-controller.js');
 
-
+let view="";
 
 
 mongoose.connect(`mongodb://${dbHost}/peerfeedback`);
@@ -55,6 +55,15 @@ app.listen(port,function(){
 });
 
 app.get('/test',function(req,res){
-   console.log(req.query.test);
    res.status(200).send();
 });
+
+
+app.post('/view',function(req,res){
+    view = req.body.body;
+});
+
+app.get('/view',function(req,res){
+   res.status(200).send(view);
+});
+
