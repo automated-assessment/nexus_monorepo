@@ -30,12 +30,11 @@ def _summarize_as_html_helper( ret, diagnostics=True):
             summary.append(escapeHTML(result.error) + "</td></tr>\n")
         else:
             summary.append("<tr><td></td><td colspan='2'>Return values:</td></tr>\n")
-            ret_names = result.ret_names
             ret_values = result.ret
-            for j in range(0, len(ret_names)):
+            for j in range(0, len(ret_values)):
                 summary.append("<tr>")
                 summary.append("<td></td>")
-                summary.append("<td>" + str(ret_names[j]) + "=</td>")
+                summary.append("<td>Return value " + str(j+1) + "=</td>")
                 summary.append("<td>" + str(ret_values[j]) + "</td>")
                 summary.append("</tr>\n")
         if diagnostics:
