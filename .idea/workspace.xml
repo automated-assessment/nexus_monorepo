@@ -2,20 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9892a55a-b0d5-40db-bb65-18fe84bb52eb" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/provider/providerAPI.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/receiver/receiverAPI.js" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/provider/provider-factory.js" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/configuration/configuration-controller.js" afterPath="$PROJECT_DIR$/app/configuration/configuration-controller.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/configuration/configurationAPI.js" afterPath="$PROJECT_DIR$/app/configuration/configurationAPI.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/provider/provider-controller.js" afterPath="$PROJECT_DIR$/app/provider/provider-controller.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/receiver/receiver-controller.js" afterPath="$PROJECT_DIR$/app/receiver/receiver-controller.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/render-form.js" afterPath="$PROJECT_DIR$/app/render-form.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.js" afterPath="$PROJECT_DIR$/server.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/allocation-controller.js" afterPath="$PROJECT_DIR$/server/controllers/allocation-controller.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/provider-controller.js" afterPath="$PROJECT_DIR$/server/controllers/provider-controller.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/response-controller.js" afterPath="$PROJECT_DIR$/server/controllers/response-controller.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/allocation-process.js" afterPath="$PROJECT_DIR$/server/controllers/allocation-process.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/submission-controller.js" afterPath="$PROJECT_DIR$/server/controllers/submission-controller.js" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -53,11 +41,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="app.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/app.js">
+      <file leaf-file-name="submission-controller.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/controllers/submission-controller.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="23" column="35" lean-forward="false" selection-start-line="23" selection-start-column="35" selection-end-line="23" selection-end-column="35" />
+            <state relative-caret-position="240">
+              <caret line="16" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -75,24 +63,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="receiverAPI.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="receiverAPI.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/receiver/receiverAPI.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="23" column="10" lean-forward="true" selection-start-line="23" selection-start-column="10" selection-end-line="23" selection-end-column="10" />
+            <state relative-caret-position="225">
+              <caret line="17" column="17" lean-forward="false" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="17" />
               <folding>
                 <element signature="e#0#46#0" expanded="false" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="allocation-controller.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/allocation/allocation-controller.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="21" lean-forward="false" selection-start-line="11" selection-start-column="21" selection-end-line="11" selection-end-column="21" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -107,14 +85,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="save-form.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/provider/save-form.js">
+      <file leaf-file-name="allocation-process.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/server/controllers/allocation-process.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="56" column="37" lean-forward="false" selection-start-line="56" selection-start-column="37" selection-end-line="56" selection-end-column="37" />
+            <state relative-caret-position="240">
+              <caret line="48" column="28" lean-forward="true" selection-start-line="48" selection-start-column="28" selection-end-line="48" selection-end-column="28" />
               <folding>
                 <element signature="e#0#46#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="allocation-controller.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/controllers/allocation-controller.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="117">
+              <caret line="26" column="8" lean-forward="false" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="8" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -176,8 +164,6 @@
       <find>scope</find>
       <find>studentpid</find>
       <find>scope.data</find>
-      <find>console.</find>
-      <find>console.log</find>
       <find>branch</find>
       <find>provider</find>
       <find>no</find>
@@ -188,6 +174,8 @@
       <find>providerCount</find>
       <find>console</find>
       <find>cons</find>
+      <find>console.log</find>
+      <find>console.</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -240,11 +228,9 @@
         <option value="$PROJECT_DIR$/app/receiver/receiver.html" />
         <option value="$PROJECT_DIR$/app/allocation/allocation.html" />
         <option value="$PROJECT_DIR$/app/provider/save-form.js" />
-        <option value="$PROJECT_DIR$/server/controllers/allocation-process.js" />
         <option value="$PROJECT_DIR$/server/send-request.js" />
         <option value="$PROJECT_DIR$/server/controllers/response-helper.js" />
         <option value="$PROJECT_DIR$/server/controllers/response-controller.js" />
-        <option value="$PROJECT_DIR$/server/controllers/submission-controller.js" />
         <option value="$PROJECT_DIR$/server/controllers/allocation-controller.js" />
         <option value="$PROJECT_DIR$/server.js" />
         <option value="$PROJECT_DIR$/app/provider/provider-factory.js" />
@@ -257,6 +243,8 @@
         <option value="$PROJECT_DIR$/app/receiver/receiver-controller.js" />
         <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/app/receiver/receiverAPI.js" />
+        <option value="$PROJECT_DIR$/server/controllers/submission-controller.js" />
+        <option value="$PROJECT_DIR$/server/controllers/allocation-process.js" />
       </list>
     </option>
   </component>
@@ -1026,7 +1014,7 @@
       <workItem from="1487273365890" duration="30083000" />
       <workItem from="1487338320424" duration="659000" />
       <workItem from="1487339573300" duration="5559000" />
-      <workItem from="1487351169392" duration="7845000" />
+      <workItem from="1487351169392" duration="18310000" />
     </task>
     <task id="LOCAL-00001" summary="Integrating VCS with intellij">
       <created>1486377894740</created>
@@ -1182,11 +1170,18 @@
       <option name="project" value="LOCAL" />
       <updated>1487349714096</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Refactored all $http calls to be in separate angularjs factories">
+      <created>1487467638714</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1487467638714</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="220414000" />
+    <option name="totallyTimeSpent" value="230879000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1198,8 +1193,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1280" height="690" extended-state="6" />
-    <editor active="false" />
+    <frame x="0" y="23" width="1280" height="690" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.3285968" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1213,7 +1208,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4635879" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Mongo Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23909532" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2902098" sideWeight="0.49353796" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24825175" sideWeight="0.49353796" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27221325" sideWeight="0.4937833" order="6" side_tool="false" content_ui="combo" />
@@ -1280,7 +1275,8 @@
     <MESSAGE value="Refactored configuration directory" />
     <MESSAGE value="MVP complete. Need to integrate with Nexus and then need to seal up" />
     <MESSAGE value="Trying to build a view to test with MVP. MVP seems to be functioning as expected" />
-    <option name="LAST_COMMIT_MESSAGE" value="Trying to build a view to test with MVP. MVP seems to be functioning as expected" />
+    <MESSAGE value="Refactored all $http calls to be in separate angularjs factories" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactored all $http calls to be in separate angularjs factories" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1463,24 +1459,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/controllers/allocation-controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="48" lean-forward="false" selection-start-line="8" selection-start-column="48" selection-end-line="8" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/controllers/allocation-process.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="117">
-          <caret line="31" column="4" lean-forward="false" selection-start-line="31" selection-start-column="4" selection-end-line="31" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#46#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/controllers/configuration-controller.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -1504,14 +1482,6 @@
           <folding>
             <element signature="e#0#46#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/controllers/submission-controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="10" column="35" lean-forward="false" selection-start-line="10" selection-start-column="35" selection-end-line="10" selection-end-column="35" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1661,8 +1631,34 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/receiver/receiverAPI.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="23" column="10" lean-forward="true" selection-start-line="23" selection-start-column="10" selection-end-line="23" selection-end-column="10" />
+        <state relative-caret-position="225">
+          <caret line="17" column="17" lean-forward="false" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#46#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/controllers/allocation-controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="117">
+          <caret line="26" column="8" lean-forward="false" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/controllers/submission-controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/controllers/allocation-process.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="48" column="28" lean-forward="true" selection-start-line="48" selection-start-column="28" selection-end-line="48" selection-end-column="28" />
           <folding>
             <element signature="e#0#46#0" expanded="false" />
           </folding>
