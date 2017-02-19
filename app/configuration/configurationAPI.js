@@ -6,7 +6,7 @@
        .factory('configurationAPI',['$http',function($http){
 
            const postForm = function(configForm){
-               $http.post('/api/config/save',configForm);
+               return $http.post('/api/config/save',configForm);
            };
 
            return {

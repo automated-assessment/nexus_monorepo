@@ -3,9 +3,9 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .directive('renderForm',function(){
+        .directive('renderForm',['providerAPI',function(providerAPI){
             function link(scope,elem,attrs){
-                scope.getFormPromise()
+                scope.getFormPromise(scope.submission.sid,scope.submission.studentuid)
                     .then(function(response){
                         const currentForm = response.data.providers[0].currentForm;
                         const renderOpts = {
@@ -20,5 +20,5 @@
                 restrict:'A',
                 link:link
             }
-        })
+        }])
 }());

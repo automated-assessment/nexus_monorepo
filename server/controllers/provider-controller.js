@@ -7,7 +7,7 @@ const Submission = require('../datasets/submissionModel');
 const Form = require('../datasets/formModel');
 
 module.exports.getSubmission = function(req,res){
-    const sid = req.query.sid;
+    const sid = Number(req.query.sid);
     Submission.findOne({sid:sid})
         .then(function(response){
             res.status(200).send(response);
@@ -16,12 +16,10 @@ module.exports.getSubmission = function(req,res){
 };
 
 module.exports.getForm = function(req,res){
-    console.log(req.query);
     const sid = Number(req.query.sid);
     const providerId = Number(req.query.studentuid);
     Submission.findOne({sid:sid,"providers.provideruid":providerId},{"providers.$.provideruid":1})
         .then(function(response){
-            console.log(response);
             res.status(200).send(response);
         })
 };

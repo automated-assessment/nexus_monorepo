@@ -13,5 +13,7 @@
             $scope.saveConfig = function(){
                 configurationAPI.postForm($scope.newConfig);
             }
+
+
         }]);
 }());

@@ -7,7 +7,6 @@ const Submission = require('../datasets/submissionModel');
 
 
 module.exports.getProvideTo = function(req,res){
-
     Submission.find({"providers.provideruid":Number(req.query.studentuid)},{_id:0,studentuid:1})
         .then(function(response){
             let studentId=[];

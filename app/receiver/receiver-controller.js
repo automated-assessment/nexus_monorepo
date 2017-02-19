@@ -3,20 +3,14 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('ReceiverController',function($scope,$stateParams,$http){
+        .controller('ReceiverController',['$scope','$stateParams','receiverAPI',function($scope,$stateParams,receiverAPI){
            $scope.submission={};
            $scope.sid = $stateParams.sid;
            $scope.studentuid = $stateParams.studentuid;
 
            $scope.getFormPromise = function(){
-               return $http({
-                   method:'GET',
-                   url:'/api/receiver/getForm',
-                   params: {
-                       sid:$stateParams.sid,
-                       studentuid:$stateParams.studentuid
-                   }
-               })
+               return receiverAPI.getFormPromise($stateParams.sid,$stateParams.studentuid);
            }
-        });
+
+        }]);
 }());
