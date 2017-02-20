@@ -3,7 +3,7 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .factory('StudentCountFactory',function(){
+        .factory('providerCountFactory',function(){
            const studentCount = 8;
            const numbers=[];
            for(let i=2;i<studentCount+1;i++){

@@ -3,7 +3,7 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('ConfigurationController',['$scope','$stateParams','StudentCountFactory','configurationAPI',
+        .controller('configurationController',['$scope','$stateParams','providerCountFactory','configurationAPI',
             function($scope,$stateParams,StudentCountFactory,configurationAPI){
             $scope.newConfig = {};
             $scope.newConfig.aid = $stateParams.aid;

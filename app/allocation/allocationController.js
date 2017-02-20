@@ -1,6 +1,6 @@
 (function(){
     angular.module('PeerFeedback')
-        .controller('AllocationController',['$scope','$stateParams','allocationAPI',function($scope,$stateParams,allocationAPI){
+        .controller('allocationController',['$scope','$stateParams','allocationAPI',function($scope,$stateParams,allocationAPI){
             $scope.aid = $stateParams.aid;
             $scope.studentuid = $stateParams.studentuid;
 

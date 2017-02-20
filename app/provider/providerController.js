@@ -3,7 +3,7 @@
  */
 (function() {
     angular.module('PeerFeedback')
-        .controller('ProviderController', ['$scope', '$sce', '$stateParams','providerAPI',function ($scope, $sce, $stateParams,providerAPI) {
+        .controller('providerController', ['$scope', '$sce', '$stateParams','providerAPI',function ($scope, $sce, $stateParams,providerAPI) {
 
             $scope.submission = {};
             $scope.submission.sid = $stateParams.sid;
@@ -28,8 +28,5 @@
                 providerAPI.saveForm($scope.submission);
             };
 
-            $scope.getFormPromise = function(){
-                return providerAPI.getFormPromise($stateParams.sid,$stateParams.studentuid);
-            }
         }])
 }());

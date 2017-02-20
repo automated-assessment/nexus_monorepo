@@ -16,17 +16,6 @@
                 })
             };
 
-            const getFormPromise = function(sid, studentuid){
-                return $http({
-                    method:'GET',
-                    url:'/api/provider/getForm',
-                    params:{
-                        sid:sid,
-                        studentuid:studentuid
-                    }
-                });
-            };
-
 
             const getPartial = function(branchName){
                 const authToken = "be7549b0fb2ad810c5b2a2a28376ecdac5d47f12"; //needs to be extracted to env
@@ -57,7 +46,6 @@
             return {
                 getSubmission:getSubmission,
                 getPartial:getPartial,
-                getFormPromise:getFormPromise,
                 saveForm:saveForm
             }
         }]);

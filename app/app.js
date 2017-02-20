@@ -8,22 +8,22 @@
                 .state('configState',{
                     url:'/config?aid',
                     templateUrl:'app/configuration/configuration.html',
-                    controller:'ConfigurationController'
+                    controller:'configurationController'
                 })
                 .state('providerState',{
                     url:'/provider?sid?aid?studentuid',
                     templateUrl:'app/provider/provider.html',
-                    controller:'ProviderController'
+                    controller:'providerController'
                 })
                 .state('allocationState',{
                     url:'/allocation?aid?studentuid',
                     templateUrl:'app/allocation/allocation.html',
-                    controller:'AllocationController'
+                    controller:'allocationController'
                 })
                 .state('receiverState',{
                     url:'/receiver?sid?studentuid',
                     templateUrl:'app/receiver/receiver.html',
-                    controller:'ReceiverController'
+                    controller:'receiverController'
                 })
         });
 }());
