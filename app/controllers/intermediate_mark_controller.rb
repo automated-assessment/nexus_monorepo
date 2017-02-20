@@ -20,23 +20,18 @@ class IntermediateMarkController < ApplicationController
       @intermediate_mark.mark = mark
       @intermediate_mark.save!
 
-      @submission.active_services = WorkflowUtils.trim_workflow!(@submission.active_services, @marking_tool.uid)
       marking_tool_context = @submission.assignment.marking_tool_contexts.where(marking_tool_id: @marking_tool.id)[0]
 
       if mark >= marking_tool_context.condition
+        @submission.active_services = WorkflowUtils.trim_workflow!(@submission.active_services, @marking_tool.uid)
         @submission.log("#{@marking_tool.name}'s condition of #{marking_tool_context.condition} met.")
         @submission.save!
         SubmissionUtils.notify_tools!(@submission)
       else
         @submission.log("#{@marking_tool.name}'s condition of #{marking_tool_context.condition} not met.")
         @submission.log('Rest of intermediate marks being set to 0')
-        @submission.intermediate_marks.each do |im|
-          unless im.mark
-            im.mark = 0
-            im.save!
-          end
-        end
-        @submission.save!
+        # Call workflow utils here
+        WorkflowUtils.fail_rest_of_workflow!(@submission, @marking_tool.uid)
       end
     else
       render json: { response: 'Mark for this tool and submission has already been received.' }.to_json,

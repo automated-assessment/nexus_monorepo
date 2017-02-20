@@ -51,8 +51,7 @@ class WorkflowUtils
     # Runs in O(nm) where n is the number of keys in the hash
     # and m is the number of marking tools assigned to the assignment
     def trim_workflow!(active_services, marking_tool)
-      deleted = active_services.delete(marking_tool)
-      if deleted
+      if active_services.delete(marking_tool)
         active_services.each do |_, depends_array|
           depends_array.delete marking_tool if depends_array.include? marking_tool
         end
@@ -60,7 +59,34 @@ class WorkflowUtils
       active_services
     end
 
+    def fail_rest_of_workflow!(submission, marking_tool)
+      submission.active_services = hard_trim!(submission.active_services, marking_tool)
+      submission.save!
+      simulate_rest_of_workflow(submission, marking_tool)
+    end
+
     private
+
+    def hard_trim!(active_services, marking_tool)
+      if active_services.delete(marking_tool)
+        active_services.each do |_, depends_array|
+          depends_array.clear if depends_array.include? marking_tool
+        end
+      end
+      active_services
+    end
+
+    def simulate_rest_of_workflow(submission, marking_tool)
+      next_services = next_services_to_invoke(submission.active_services)
+      next_services.each do |service|
+        marking_tool = MarkingTool.find_by(uid: service)
+        intermediate_mark = submission.intermediate_marks.find_by!(marking_tool_id: marking_tool.id)
+        intermediate_mark.mark = 0
+        intermediate_mark.save!
+        submission.active_services = hard_trim!(submission.active_services, service)
+      end
+      submission.save!
+    end
 
     # Given a hash defining a workflow
     # Return true if it is a valid DAG
