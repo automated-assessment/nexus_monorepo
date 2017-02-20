@@ -59,6 +59,8 @@ app.post('/mark', (req, res, next) => {
     const branch = req.body.branch;
     const sha = req.body.sha;
 
+    console.log(`Request to mark submission ${submissionID} received.`);
+
     sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
     console.log(`Using directory ${sourceDir}.`);
 
@@ -66,7 +68,6 @@ app.post('/mark', (req, res, next) => {
     _removeDirectoryIfExists(sourceDir);
 
     let output = '';
-    console.log(`Request to mark submission ${submissionID} received.`);
 
     // clone repo
     const childGitClone = execSync(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`);
@@ -74,23 +75,31 @@ app.post('/mark', (req, res, next) => {
 
     exitCode = 0;
     try {
-        // TODO check does this meet the security requirement?
-       output = execSync(`${cmd} --dir ${sourceDir}`, { cwd: sourceDir, env: {'NEXUS_ACCESS_TOKEN':''} });
-       exitCode = 0;
+      console.log('About to run marking tool');
+      // TODO check does this meet the security requirement?
+      output = execSync(`${cmd} --dir ${sourceDir}`, { cwd: sourceDir, env: {'NEXUS_ACCESS_TOKEN':''} });
+      exitCode = 0;
+      console.log('Marking tool ran successfully.');
     } catch (r) {
       if (r.error.code) {
-         exitCode = r.errorCode;         
-         output = r.stdout;
+        console.log(`Marking tool produced error code: ${r.error.code}.`);
+        exitCode = r.errorCode;
+        output = r.stdout;
       } else {
-         output = 'Internal error: testing tool failed to run command.';
-         exitCode = -1;
+        console.log(`Internal error running marking tool: ${r}.`);
+        output = 'Internal error: testing tool failed to run command.';
+        exitCode = -1;
       }
     }
       
     if (exitCode>=0) {
+      console.log('Reporting mark to NEXUS.');
       // Success. Report 100 score
       sendMark(exitCode, submissionID);
+      
       res.sendStatus(200);
+      
+      console.log('Reporting feedback to NEXUS.');
       // Send output as feedback
       sendFeedback(`<div class="generic-feedback">${output}</div>`, submissionID, (err, res, body) => {
           if (err) {
@@ -98,6 +107,7 @@ app.post('/mark', (req, res, next) => {
           }
       });          
     } else {
+      console.log('Informing NEXUS of issues.');
       res.status(500).send( output );
     }
 
