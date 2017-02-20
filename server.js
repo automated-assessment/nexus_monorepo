@@ -73,7 +73,7 @@ app.post('/mark', (req, res, next) => {
     const childGitClone = execSync(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`);
     const childGitCheckout = execSync(`git checkout ${sha}`, { cwd: sourceDir });
 
-    exitCode = 0;
+    let exitCode = 0;
     try {
       console.log('About to run marking tool');
       // TODO check does this meet the security requirement?
