@@ -113,6 +113,7 @@ app.post('/mark', (req, res, next) => {
 
   } catch (e) {
     // Fix what request response we sent so that nexus knows something has gone wrong
+    console.log(`Exception occurred: ${e.toString()}.`);
     res.status(500).send(`Error in generic testing tool: ${e.toString()},\n${e.output.toString()}`);
   } finally {
     try {
