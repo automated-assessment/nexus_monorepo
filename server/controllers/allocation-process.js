@@ -13,9 +13,9 @@ const Submission = require('../datasets/submissionModel');
 
 
 module.exports.runAllocation = function(submission){
-    getAssignment(submission)
+    queryAssignment(submission)
         .then(function(assignment){
-            submissionCount(submission.aid)
+            querySubmissionCount(submission.aid)
                 .then(function(count){
                     if(count<Math.pow(assignment.providerCount,2)){
                         backTrack(assignment);
@@ -23,10 +23,11 @@ module.exports.runAllocation = function(submission){
                     allocate(assignment,submission);
                 });
         })
+
 };
 
 
-const submissionCount = function(aid){
+const querySubmissionCount = function(aid){
     return Submission.count({aid:aid})
         .then(function(response){
             return response;
@@ -43,7 +44,7 @@ const backTrack = function(assignment){
         })
 };
 
-const getAssignment = function(submission){
+const queryAssignment = function(submission){
     return Form.findOne({aid:submission.aid},{_id:0,providerCount:1,formBuild:1})
         .then(function(formData){
             return formData;
@@ -52,7 +53,7 @@ const getAssignment = function(submission){
 };
 
 const allocate = function(assignment,submission){
-    getProviders(assignment,submission)
+    queryProviders(assignment,submission)
         .then(function(providers){
             let providersArray = [];
             providers.forEach(function(provider){
@@ -69,7 +70,7 @@ const allocate = function(assignment,submission){
         })
 };
 
-const getProviders = function(assignment,submission){
+const queryProviders = function(assignment,submission){
     return Submission.aggregate(
         [
             {$match:

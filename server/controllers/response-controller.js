@@ -4,8 +4,8 @@
 const sender = require('./response-helper');
 
 module.exports.response = function(req){
-    // sender.sendMark(10, req.body.sid,function(err,res,body){
-    // });
+    sender.sendMark(100, req.body.sid,function(err,res,body){
+     });
     const aid = req.body.aid;
     const studentuid = req.body.studentuid;
     const sid = req.body.sid;
