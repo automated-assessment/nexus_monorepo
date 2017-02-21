@@ -3,11 +3,10 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .directive('renderForm',['formAPI',function(formAPI){
+        .directive('renderProviderForm',['providerAPI',function(providerAPI){
             function link(scope,elem,attrs){
-                formAPI.getFormPromise(scope.submission.sid,scope.submission.studentuid)
+                providerAPI.getFormPromise(scope.submission.sid,scope.submission.studentuid)
                     .then(function(response){
-                        console.log(response);
                         const currentForm = response.data.providers[0].currentForm;
                         const renderOpts = {
                             formData:currentForm,
@@ -15,8 +14,12 @@
                         };
                         elem.formRender(renderOpts);
                         scope.submission.currentForm = currentForm;
-                    });
+                    })
+
             }
+
+
+
             return {
                 restrict:'A',
                 link:link

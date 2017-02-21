@@ -20,9 +20,22 @@ module.exports.saveForm = function(req,res){
     const studentuid = Number(req.body.studentuid);
     const sid = Number(req.body.sid);
     const updatedJson = req.body.currentForm;
-    Submission.findOneAndUpdate({"providers.provideruid":studentuid,sid:sid},{$set:{"providers.$.currentForm":updatedJson}})
+    Submission.findOneAndUpdate({"providers.provideruid":studentuid,sid:sid},{$set:{"providers.$.currentForm":updatedJson,"providers.$.provided":req.body.provided}})
         .then(function(response){
             res.status(200).send(response);
         })
 
+};
+
+module.exports.getForm = function(req,res){
+
+    const query = {
+        sid:Number(req.query.sid),
+        "providers.provideruid":Number(req.query.studentuid)
+    };
+    Submission.findOne(query,{"providers.$.provideruid":1})
+        .then(function(response){
+            console.log(response);
+            res.status(200).send(response);
+        });
 };

@@ -1,17 +1,27 @@
 (function(){
     angular.module('PeerFeedback')
-        .controller('allocationController',['$scope','$stateParams','allocationAPI',function($scope,$stateParams,allocationAPI){
-            $scope.aid = $stateParams.aid;
+        .controller('allocationController',['$scope','$stateParams','allocationAPI','parseAssignments',function($scope,$stateParams,allocationAPI,parseAssignments){
+
             $scope.studentuid = $stateParams.studentuid;
 
-            allocationAPI.getAllocation($stateParams,'provideTo')
+
+            let allocationResponse = {};
+
+
+            allocationAPI.getAllocation($stateParams.studentuid,'provideTo')
                 .then(function(response){
-                    $scope.provideTo = response.data;
+                    //$scope.provideTo = response.data;
+                    allocationResponse.provideTo = response.data;
+                    allocationAPI.getAllocation($stateParams.studentuid,'receivedFrom')
+                        .then(function(response){
+                            //$scope.receivedFrom = response.data;
+                            allocationResponse.receivedFrom=response.data;
+                           $scope.allocation = parseAssignments.parse(allocationResponse);
+                        });
+
                 });
-            allocationAPI.getAllocation($stateParams,'receivedFrom')
-                .then(function(response){
-                    $scope.receivedFrom = response.data;
-                })
+
 
         }]);
 }());
+

@@ -5,16 +5,16 @@
     angular.module('PeerFeedback')
         .factory('allocationAPI',['$http',function($http){
 
-            const getAllocation = function(stateParams,instruction){
+            const getAllocation = function(studentuid,instruction){
                 return $http({
                     method:'GET',
                     url:'/api/allocation/get'+instruction,
                     params:{
-                        aid:stateParams.aid,
-                        studentuid:stateParams.studentuid
+                        studentuid:studentuid
                     }
                 })
             };
+
             return {
                 getAllocation:getAllocation
             }

@@ -54,6 +54,7 @@
                     const json = scope.submission.currentForm;
                     const updatedJson = saveUserValues(container,json);
                     scope.submission.currentForm = updatedJson;
+                    scope.submission.provided=true;
                     scope.saveForm();
                 });
 

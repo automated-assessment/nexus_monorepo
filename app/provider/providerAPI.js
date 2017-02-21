@@ -5,7 +5,7 @@
     angular.module('PeerFeedback')
         .factory('providerAPI',['$http',function($http){
 
-            const getSubmission = function(sid){
+            const querySubmission = function(sid){
                 return $http({
                     method:'GET',
                     url: '/api/provider/getSubmission',
@@ -17,7 +17,7 @@
             };
 
 
-            const getPartial = function(branchName){
+            const queryPartial = function(branchName){
                 const authToken = "be7549b0fb2ad810c5b2a2a28376ecdac5d47f12"; //needs to be extracted to env
                 const baseUrl = "https://github.kcl.ac.uk/api/v3/repos/NexusDevAdam";
                 return $http({
@@ -43,10 +43,33 @@
             };
 
 
+            const getPartial = function(sid) {
+               return querySubmission(sid).then(function(response) {
+                  return  queryPartial(response.data.branch)
+                });
+            };
+
+            const getFormPromise = function(sid, studentuid){
+                return $http({
+                    method:'GET',
+                    url:'/api/provider/getForm',
+                    params:{
+                        sid:sid,
+                        studentuid:studentuid
+                    }
+                });
+            };
+
+
+
+
+
             return {
-                getSubmission:getSubmission,
+                querySubmission:querySubmission,
+                queryPartial:queryPartial,
+                saveForm:saveForm,
                 getPartial:getPartial,
-                saveForm:saveForm
+                getFormPromise:getFormPromise
             }
         }]);
 }());

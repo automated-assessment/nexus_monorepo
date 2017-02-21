@@ -16,7 +16,7 @@
                     controller:'providerController'
                 })
                 .state('allocationState',{
-                    url:'/allocation?aid?studentuid',
+                    url:'/allocation?studentuid',
                     templateUrl:'app/allocation/allocation.html',
                     controller:'allocationController'
                 })
@@ -24,6 +24,16 @@
                     url:'/receiver?sid?studentuid',
                     templateUrl:'app/receiver/receiver.html',
                     controller:'receiverController'
+                })
+                .state('academicState',{
+                    url:'/academic',
+                    templateUrl:'app/academic/academic.html',
+                    controller:'academicController'
+                })
+                .state('responseState',{
+                    url:'/response',
+                    templateUrl:'app/response/response.html',
+                    controller:'responseController'
                 })
         });
 }());

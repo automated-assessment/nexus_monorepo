@@ -11,10 +11,13 @@
 
 <nav>
     <div class="container">
+        <a ui-sref="academicState">Academic</a>
         <a ui-sref="configState">Configuration</a>
         <a ui-sref="providerState">Provider</a>
         <a ui-sref="allocationState">Allocation</a>
         <a ui-sref="receiverState">Receiver</a>
+        <a ui-sref="responseState">Response</a>
+
     </div>
 </nav>
 <body ng-app = "PeerFeedback">
@@ -34,6 +37,7 @@
 
     <!-- AngularJS-->
     <script src="app/app.js"></script>
+
     <script src="app/configuration/providerCountFactory.js"></script>
     <script src="app/configuration/formBuild.js"></script>
     <script src="app/configuration/configurationController.js"></script>
@@ -41,15 +45,20 @@
 
     <script src="app/provider/providerController.js"></script>
     <script src="app/provider/providerAPI.js"></script>
-
+    <script src="app/provider/renderProviderForm.js"></script>
     <script src="app/provider/saveForm.js"></script>
 
     <script src="app/allocation/allocationController.js"></script>
     <script src="app/allocation/allocationAPI.js"></script>
+    <script src="app/allocation/parseAssignments.js"></script>
 
     <script src="app/receiver/receiverController.js"></script>
     <script src="app/receiver/receiverAPI.js"></script>
-    <script src="app/renderForm.js"></script>
-    <script src="app/formAPI.js"></script>
+    <script src="app/receiver/renderReceiverForm.js"></script>
+
+
+    <script src="app/academic/academicController.js"></script>
+
+    <script src="app/response/responseController.js"></script>
 </body>
 </html>

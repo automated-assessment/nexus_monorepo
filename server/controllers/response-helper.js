@@ -20,8 +20,8 @@ module.exports.sendMark = function(n, submissionID, callback){
 }
 
 module.exports.sendFeedback = function (feedbackHTML, submissionID, callback){
-    //var url = NEXUS_BASE_URL + "/report_feedback/" + submissionID + "/" + NEXUS_TOOL_CANONICAL_NAME;
-    const url = 'http://localhost:3050/view';
+    var url = NEXUS_BASE_URL + "/report_feedback/" + submissionID + "/" + NEXUS_TOOL_CANONICAL_NAME;
+
     sendRequest({body:feedbackHTML},url,callback);
 };
 

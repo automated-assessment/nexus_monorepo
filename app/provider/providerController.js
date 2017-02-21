@@ -4,7 +4,6 @@
 (function() {
     angular.module('PeerFeedback')
         .controller('providerController', ['$scope', '$sce', '$stateParams','providerAPI',function ($scope, $sce, $stateParams,providerAPI) {
-
             $scope.submission = {};
             $scope.submission.sid = $stateParams.sid;
             $scope.submission.aid = $stateParams.aid;
@@ -14,15 +13,12 @@
             //this could still be further extracted. shouldn't be in controller
 
 
+            providerAPI.getPartial($stateParams.sid)
+                .then(function(response){
+                    $scope.submission.gitHubSnippet = $sce.trustAsHtml(response.data);
+                });
 
 
-            providerAPI.getSubmission($stateParams.sid).then(function(response) {
-                    providerAPI.getPartial(response.data.branch)
-                        .then(function (response) {
-                            $scope.submission.gitHubSnippet = $sce.trustAsHtml(response.data);
-                        });
-
-            });
 
             $scope.saveForm = function(){
                 providerAPI.saveForm($scope.submission);

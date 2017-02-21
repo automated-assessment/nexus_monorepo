@@ -3,8 +3,5 @@
  */
 
 
-module.exports.callMe = function(){
-    console.log("Hello");
-}
 
 
