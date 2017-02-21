@@ -67,7 +67,7 @@ app.post('/mark', (req, res, next) => {
     console.log(`Request to mark submission ${submissionID} enqueued.`);
 
     res.sendStatus(200);
-  catch (e) {
+  } catch (e) {
     // Fix what request response we sent so that nexus knows something has gone wrong
     res.status(500).send(`Error in matlab-tool: ${e.toString()}`);
   } finally {
