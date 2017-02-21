@@ -59,7 +59,10 @@ def _execute( dir, function, timeout=10 ):
         ret = ''
         printret = ''
 
-        args = ['/usr/local/bin/matlab','-nosplash','-nodesktop','–nojvm','–noFigureWindows','-minimize', '-wait', '-logfile', logfile, '-r',
+        matlab_exe = '/usr/local/bin/matlab'
+        if not os.path.isfile(matlab_exe):
+            matlab_exe = 'matlab';
+        args = [matlab_exe,'-nosplash','-nodesktop','–nojvm','–noFigureWindows','-minimize', '-wait', '-logfile', logfile, '-r',
                 """cd('"""+file+"""');
                 fprintf('#484 BEGIN EXECUTION\\n');
                 try
