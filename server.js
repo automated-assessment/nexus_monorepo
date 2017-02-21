@@ -86,7 +86,7 @@ app.post('/mark', (req, res, next) => {
         exitCode = r.errorCode;
         output = r.stdout;
       } else {
-        console.log(`Internal error running marking tool: ${r}.`);
+        console.log(`Internal error running marking tool: ${r}: ${output}.`);
         output = 'Internal error: testing tool failed to run command.';
         exitCode = -1;
       }
