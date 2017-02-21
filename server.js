@@ -150,7 +150,6 @@ function markSubmission(submissionID, cloneURL, branch, sha) {
     } catch (e) {
       console.log(`Error in generic testing tool: ${e.toString()}`);
     }
-    return next();
   }
 }
 
