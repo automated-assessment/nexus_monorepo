@@ -3,6 +3,7 @@ import os
 import tempfile
 import re
 import psutil
+import sys
 
 
 def _kill(proc_pid):
@@ -47,30 +48,14 @@ class MatlabFunction:
 def _execute( dir, function, timeout=10 ):
     """Executes a Matlab function in the given directory"""
 
+    verbose = False
+
     file = os.path.realpath( dir)
     file = file.replace('\\','\\\\')
-    
-    print(file)
 
-    process = None
-    timeout_occurred = False
-
-    try:
-        ret = ''
-        printret = ''
-
-        matlab_exe = '/usr/local/bin/matlab'
-        if not os.path.isfile(matlab_exe):
-            matlab_exe = 'matlab';
-        args = [matlab_exe,'-nosplash','-nodesktop','-nojvm','-noFigureWindows', '-r',
-                """disp('Matlab started');
-                disp('Going to """+file+"""');
-                for i=1:100
-		    disp(i);
-		end
-                cd('"""+file+"""');
+    f = tempfile.NamedTemporaryFile('w',suffix='.m',delete=False)
+    f.write(""" cd('"""+file+"""');
                 fprintf('#484 BEGIN EXECUTION\\n');
-                disp('Got into directory');
                 try
                     functionHandle = @"""+function+""";
                     N=nargout(functionHandle);
@@ -81,7 +66,6 @@ def _execute( dir, function, timeout=10 ):
                         fprintf('#484 End return value\\n');
                     end
                     fprintf('#484 END EXECUTION\\n');
-                    """ + printret + """
                     exit(0);
                 catch ME
                     disp('#484 MATLAB ERROR');
@@ -89,17 +73,61 @@ def _execute( dir, function, timeout=10 ):
                     disp(ME.message);
                     exit(1);
                 end
-                exit(1);"""]
+                exit(1);""")
+    f.close();
+
+    windows = (sys.platform == 'win32')
+    if windows:
+        log = tempfile.NamedTemporaryFile('w', suffix='.log', delete=False)
+        log.close()
+
+    process = None
+    timeout_occurred = False
+
+    try:
+
+        os_args = []
+        if windows:
+            os_args = ["-wait", "-logfile", log.name];
+
+        matlab_exe = '/usr/local/bin/matlab'
+        if not os.path.isfile(matlab_exe):
+            matlab_exe = 'matlab'
+
+        args = [matlab_exe,'-nosplash','-nodesktop','-nojvm','-noFigureWindows'];
+        for arg in os_args:
+            args.append(arg)
+        args.append('-r')
+        args.append("""run('"""+f.name+"""')""")
+        if verbose:
+            print( str(args))
+
         process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         process.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
         timeout_occurred = True
         _kill(process.pid)
+        process.wait()
     finally:
-        stdout, stderr = process.communicate()
-        full_output = stdout.decode('utf-8')
 
-    print(full_output)
+        if windows:
+            with open(log.name) as log_in:
+                full_output= log_in.read()
+            try :
+                os.remove(log.name)
+            except:
+                pass
+        else:
+            stdout, stderr = process.communicate()
+            full_output = stdout.decode('utf-8')
+
+        try:
+            os.remove(f.name)
+        except:
+            pass
+    if verbose:
+        print('Output from matlab');
+        print(full_output)
 
     if timeout_occurred:
         p = re.compile(""".*#484 BEGIN EXECUTION\\n(.*)""", re.DOTALL);
