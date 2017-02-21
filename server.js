@@ -52,7 +52,6 @@ const _removeDirectoryIfExists = (dir) => {
 };
 
 app.post('/mark', (req, res, next) => {
-  let sourceDir = '';
   try {
     const submissionID = req.body.sid;
     const cloneURL = req.body.cloneurl;
@@ -76,6 +75,7 @@ app.post('/mark', (req, res, next) => {
 });
 
 function markSubmission(submissionID, cloneURL, branch, sha) {
+  let sourceDir = '';
   try {
     sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
     console.log(`Using directory ${sourceDir}.`);
