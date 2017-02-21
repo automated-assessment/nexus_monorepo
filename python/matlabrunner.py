@@ -52,6 +52,8 @@ def _execute( dir, function, timeout=10 ):
     (handle,logfile) = tempfile.mkstemp()
     os.close(handle)
 
+    print(file)
+
     process = None
     timeout_occurred = False
 
@@ -63,8 +65,9 @@ def _execute( dir, function, timeout=10 ):
         if not os.path.isfile(matlab_exe):
             matlab_exe = 'matlab';
         args = [matlab_exe,'-nosplash','-nodesktop','-nojvm','-noFigureWindows', '-logfile', logfile, '-r',
-                """cd('"""+file+"""');
+                """disp('Matlab started');disp('Going to """+file+"""');cd('"""+file+"""');
                 fprintf('#484 BEGIN EXECUTION\\n');
+                disp('Got into directory');
                 try
                     functionHandle = @"""+function+""";
                     N=nargout(functionHandle);
@@ -96,6 +99,8 @@ def _execute( dir, function, timeout=10 ):
             os.remove(logfile)
         except Exception:
             print('Failed to delete temporary file')
+
+    print(full_output)
 
     if timeout_occurred:
         p = re.compile(""".*#484 BEGIN EXECUTION\\n(.*)""", re.DOTALL);
