@@ -63,7 +63,12 @@ def _execute( dir, function, timeout=10 ):
         if not os.path.isfile(matlab_exe):
             matlab_exe = 'matlab';
         args = [matlab_exe,'-nosplash','-nodesktop','-nojvm','-noFigureWindows', '-r',
-                """disp('Matlab started');disp('Going to """+file+"""');cd('"""+file+"""');
+                """disp('Matlab started');
+                disp('Going to """+file+"""');
+                for i=1:100
+		    disp(i);
+		end
+                cd('"""+file+"""');
                 fprintf('#484 BEGIN EXECUTION\\n');
                 disp('Got into directory');
                 try
