@@ -59,7 +59,7 @@ def _execute( dir, function, timeout=10 ):
         ret = ''
         printret = ''
 
-        args = ['matlab','-automation', '-wait', '-logfile', logfile, '-r',
+        args = ['matlab','-nosplash','-nodesktop','–nojvm','–noFigureWindows','-minimize', '-wait', '-logfile', logfile, '-r',
                 """cd('"""+file+"""');
                 fprintf('#484 BEGIN EXECUTION\\n');
                 try
