@@ -61,6 +61,22 @@ app.post('/mark', (req, res, next) => {
 
     console.log(`Request to mark submission ${submissionID} received.`);
 
+    // Poor man's worker queue: Simply enqueue marking of the submission for a later round on the node.js event loop
+    // This won't be durable, so things may get lost when the marking tool is killed, but otherwise should work.
+    process.nextTick(() => {markSubmission(submissionID, cloneURL, branch, sha);});
+    console.log(`Request to mark submission ${submissionID} enqueued.`);
+
+    res.sendStatus(200);
+  catch (e) {
+    // Fix what request response we sent so that nexus knows something has gone wrong
+    res.status(500).send(`Error in matlab-tool: ${e.toString()}`);
+  } finally {
+    return next();
+  }
+});
+
+function markSubmission(submissionID, cloneURL, branch, sha) {
+  try {
     sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
     console.log(`Using directory ${sourceDir}.`);
 
@@ -97,34 +113,46 @@ app.post('/mark', (req, res, next) => {
       // Success. Report 100 score
       sendMark(exitCode, submissionID);
       
-      res.sendStatus(200);
-      
       console.log('Reporting feedback to NEXUS.');
       // Send output as feedback
       sendFeedback(`<div class="generic-feedback">${output}</div>`, submissionID, (err, res, body) => {
           if (err) {
             console.log(`Error from Nexus feedback request: ${err}`);
           }
-      });          
+      });
     } else {
       console.log('Informing NEXUS of issues.');
-      res.status(500).send( output );
+      sendMark (0, submissionID);
+      sendFeedback('<div class="generic-feedback">There was an error marking your submission. Please contact your lecturer.</div>',
+            submissionID,
+            (err, res, body) => {
+              if (err) {
+                console.log(`Error from Nexus feedback request: ${err}`);
+              }
+            });
     }
 
   } catch (e) {
     // Fix what request response we sent so that nexus knows something has gone wrong
     console.log(`Exception occurred: ${e.toString()}.`);
-    res.status(500).send(`Error in generic testing tool: ${e.toString()},\n${e.output.toString()}`);
+    sendMark (0, submissionID);
+    sendFeedback('<div class="generic-feedback">There was an error marking your submission. Please contact your lecturer.</div>',
+          submissionID,
+          (err, res, body) => {
+            if (err) {
+              console.log(`Error from Nexus feedback request: ${err}`);
+            }
+          });
   } finally {
     try {
     // Clean up repository directory after us
       _removeDirectoryIfExists(sourceDir);
     } catch (e) {
-      console.log(`Error in generic testing tool: ${e.toString()},\n${e.output.toString()}`);
+      console.log(`Error in generic testing tool: ${e.toString()}`);
     }
     return next();
   }
-});
+}
 
 app.listen(port, () => {
   console.log(`Tool listening on port ${port}!`);
