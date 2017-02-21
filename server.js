@@ -81,12 +81,12 @@ app.post('/mark', (req, res, next) => {
       exitCode = 0;
       console.log('Marking tool ran successfully.');
     } catch (r) {
-      if (r.status > 0) {
+      if ((r.status > 0) && (r.status <= 100)) {
         console.log(`Marking tool produced error code: ${r.status}.`);
         exitCode = r.status;
         output = r.stdout;
       } else {
-        console.log(`Internal error running marking tool: ${r}: ${output}.`);
+        console.log(`Internal error running marking tool: ${r}: ${output}.\n${r.stdout}`);
         output = 'Internal error: testing tool failed to run command.';
         exitCode = -1;
       }
