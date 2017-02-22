@@ -1,3 +1,4 @@
+require 'set'
 class WorkflowUtils
   class << self
     # Given an assignment with marking tool contexts
@@ -51,13 +52,35 @@ class WorkflowUtils
     # Runs in O(nm) where n is the number of keys in the hash
     # and m is the number of marking tools assigned to the assignment
     def trim_workflow!(active_services, marking_tool)
-      deleted = active_services.delete(marking_tool)
-      if deleted
+      if active_services.delete(marking_tool)
         active_services.each do |_, depends_array|
           depends_array.delete marking_tool if depends_array.include? marking_tool
         end
       end
       active_services
+    end
+
+    # Uses a breadth first search to traverse the rest of the workflow graph
+    # Setting the mark for that tool to 0 as each node is visited.
+    def fail_rest_of_workflow!(submission, marking_tool)
+      workflow = submission.active_services
+      queue = []
+      visited = Set.new
+      workflow.each do |tool, depends_array|
+        queue << tool if depends_array.include? marking_tool
+      end
+      until queue.empty?
+        current_service = queue.shift
+        marking_tool = MarkingTool.find_by!(uid: current_service)
+        intermediate_mark = submission.intermediate_marks.find_by!(marking_tool_id: marking_tool.id)
+        intermediate_mark.mark = 0
+        intermediate_mark.save!
+        visited.add(current_service)
+        workflow.each do |tool, depends_array|
+          queue << tool if depends_array.include?(current_service) && !visited.include?(tool)
+        end
+      end
+      submission.calculate_final_mark_if_possible
     end
 
     private

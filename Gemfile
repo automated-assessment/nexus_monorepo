@@ -43,9 +43,6 @@ group :development, :test do
   gem 'byebug'
   # Rspec unit testing
   gem 'rspec-rails', '~> 3.0'
-
-  # Class diagrams
-  gem 'railroady'
 end
 
 group :development do
