@@ -62,15 +62,22 @@ class WorkflowUtils
 
     # Uses a breadth first search to traverse the rest of the workflow graph
     # Setting the mark for that tool to 0 as each node is visited.
+    # Each node encountered is not considered for whether or not it is pending
+    # Because a prerequisite marking service has recieved an undesirable result,
+    # the rest of the marking services in the path should be set to 0 regardless
+    # of whether they have been assigned a mark already.
     def fail_rest_of_workflow!(submission, marking_tool)
+      # Only need to consider the remaining workflow.
       workflow = submission.active_services
       queue = []
-      visited = Set.new
+      visited = Set.new # Ensure each node is only enqueued once
+
+      # Add current nodes children to queue.
       workflow.each do |tool, depends_array|
         queue << tool if depends_array.include? marking_tool
       end
       until queue.empty?
-        current_service = queue.shift
+        current_service = queue.shift # shift is equivalent to dequeue.
         marking_tool = MarkingTool.find_by!(uid: current_service)
         intermediate_mark = submission.intermediate_marks.find_by!(marking_tool_id: marking_tool.id)
         intermediate_mark.mark = 0
