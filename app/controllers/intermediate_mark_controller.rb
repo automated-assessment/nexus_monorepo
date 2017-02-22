@@ -30,7 +30,6 @@ class IntermediateMarkController < ApplicationController
       else
         @submission.log("#{@marking_tool.name}'s condition of #{marking_tool_context.condition} not met.")
         @submission.log('Rest of intermediate marks being set to 0')
-        # Call workflow utils here
         WorkflowUtils.fail_rest_of_workflow!(@submission, @marking_tool.uid)
       end
     else
