@@ -1,3 +1,4 @@
+require 'set'
 class WorkflowUtils
   class << self
     # Given an assignment with marking tool contexts
@@ -59,34 +60,30 @@ class WorkflowUtils
       active_services
     end
 
+    # Uses a breadth first search to traverse the rest of the workflow graph
+    # Setting the mark for that tool to 0 as each node is visited.
     def fail_rest_of_workflow!(submission, marking_tool)
-      submission.active_services = hard_trim!(submission.active_services, marking_tool)
-      submission.save!
-      simulate_rest_of_workflow(submission, marking_tool)
-    end
-
-    private
-
-    def hard_trim!(active_services, marking_tool)
-      if active_services.delete(marking_tool)
-        active_services.each do |_, depends_array|
-          depends_array.clear if depends_array.include? marking_tool
-        end
+      workflow = submission.active_services
+      queue = []
+      visited = Set.new
+      workflow.each do |tool, depends_array|
+        queue << tool if depends_array.include? marking_tool
       end
-      active_services
-    end
-
-    def simulate_rest_of_workflow(submission, marking_tool)
-      next_services = next_services_to_invoke(submission.active_services)
-      next_services.each do |service|
-        marking_tool = MarkingTool.find_by(uid: service)
+      until queue.empty?
+        current_service = queue.shift
+        marking_tool = MarkingTool.find_by!(uid: current_service)
         intermediate_mark = submission.intermediate_marks.find_by!(marking_tool_id: marking_tool.id)
         intermediate_mark.mark = 0
         intermediate_mark.save!
-        submission.active_services = hard_trim!(submission.active_services, service)
+        visited.add(current_service)
+        workflow.each do |tool, depends_array|
+          queue << tool if depends_array.include?(current_service) && !visited.include?(tool)
+        end
       end
-      submission.save!
+      submission.calculate_final_mark_if_possible
     end
+
+    private
 
     # Given a hash defining a workflow
     # Return true if it is a valid DAG

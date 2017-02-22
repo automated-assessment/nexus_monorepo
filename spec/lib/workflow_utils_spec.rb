@@ -278,4 +278,7 @@ RSpec.describe WorkflowUtils do
       end
     end
   end
+  describe '#fail_rest_of_workflow!' do
+    pending
+  end
 end
