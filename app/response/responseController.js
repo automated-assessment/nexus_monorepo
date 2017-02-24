@@ -3,7 +3,10 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('responseController',function($scope){
-            $scope.test = "hello";
-        });
+        .controller('responseController',['$scope','responseFactory','responseService',function($scope,responseFactory,responseService){
+            console.log(responseFactory.speak());
+
+            console.log(responseService.speak());
+
+        }]);
 }());

@@ -3,37 +3,38 @@
  */
 (function(){
     angular.module('PeerFeedback',['ui.router'])
-        .config(function($stateProvider){
+        .config(function($stateProvider,$urlRouterProvider){
             $stateProvider
-                .state('configState',{
-                    url:'/config?aid',
+                .state('frameState',{
+                    url:'/frame',
+                    templateUrl:'app/frame/frame.html',
+                    controller:'frameController'
+                })
+                .state('frameState.configurationState',{
+                    url:'/configuration?aid',
                     templateUrl:'app/configuration/configuration.html',
                     controller:'configurationController'
                 })
-                .state('providerState',{
+                .state('frameState.providerState',{
                     url:'/provider?sid?aid?studentuid',
                     templateUrl:'app/provider/provider.html',
                     controller:'providerController'
                 })
-                .state('allocationState',{
-                    url:'/allocation?studentuid',
-                    templateUrl:'app/allocation/allocation.html',
-                    controller:'allocationController'
+                .state('frameState.adminState',{
+                    url:'/admin?studentuid',
+                    templateUrl:'app/admin/admin.html',
+                    controller:'adminController'
                 })
-                .state('receiverState',{
+                .state('frameState.receiverState',{
                     url:'/receiver?sid?studentuid',
                     templateUrl:'app/receiver/receiver.html',
                     controller:'receiverController'
                 })
-                .state('academicState',{
-                    url:'/academic',
-                    templateUrl:'app/academic/academic.html',
-                    controller:'academicController'
-                })
-                .state('responseState',{
+                .state('frameState.responseState',{
                     url:'/response',
                     templateUrl:'app/response/response.html',
                     controller:'responseController'
-                })
+                });
+                $urlRouterProvider.otherwise('/frame');
         });
 }());

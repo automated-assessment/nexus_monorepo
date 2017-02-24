@@ -8,7 +8,7 @@
 //is this possible? - perhaps if one student submits many times
 //how to deal? - inform student that they can only submit so many times to fix this?
 
-const Form = require('../datasets/formModel');
+const Assignment = require('../datasets/assignmentModel');
 const Submission = require('../datasets/submissionModel');
 
 
@@ -45,7 +45,7 @@ const backTrack = function(assignment){
 };
 
 const queryAssignment = function(submission){
-    return Form.findOne({aid:submission.aid},{_id:0,providerCount:1,formBuild:1})
+    return Assignment.findOne({aid:submission.aid},{_id:0,providerCount:1,formBuild:1})
         .then(function(formData){
             return formData;
         })

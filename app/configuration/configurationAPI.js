@@ -4,9 +4,8 @@
 (function(){
    angular.module('PeerFeedback')
        .factory('configurationAPI',['$http',function($http){
-
            const postForm = function(configForm){
-               return $http.post('/api/config/save',configForm);
+               return $http.post('/api/configuration/saveForm',configForm);
            };
 
            return {

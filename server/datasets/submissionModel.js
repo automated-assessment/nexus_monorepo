@@ -3,13 +3,12 @@
  */
 
 //This needs editing to remove any data that is not required.
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 module.exports = mongoose.model('Submission',{
     studentuid:Number,
     providers:[],
     sid:Number,
     aid:Number,
-    branch:String,
-    submittedForm:String
+    branch:String
 });

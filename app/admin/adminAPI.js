@@ -6,7 +6,8 @@
         .factory('allocationAPI',['$http',function($http){
 
             const getAllocation = function(studentuid,instruction){
-                return $http({
+                return $http(
+                    {
                     method:'GET',
                     url:'/api/allocation/get'+instruction,
                     params:{

@@ -3,17 +3,16 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('configurationController',['$scope','$stateParams','providerCountFactory','configurationAPI',
-            function($scope,$stateParams,StudentCountFactory,configurationAPI){
-            $scope.newConfig = {};
-            $scope.newConfig.aid = $stateParams.aid;
-            $scope.numbers=StudentCountFactory;
-            $scope.newConfig.providerCount = $scope.numbers[0];
+        .controller('configurationController',['$scope','$stateParams','configurationAPI','$anchorScroll',
+            function($scope,$stateParams,configurationAPI){
+            $scope.providerCounts = [2,3,4,5,6,7,8];
 
-            $scope.saveConfig = function(){
-                configurationAPI.postForm($scope.newConfig);
-            }
-
-
+            $scope.newConfig = {
+                    aid:$stateParams.aid,
+                    date:new Date(),
+                    providerCount:$scope.providerCounts[0]
+            };
         }]);
 }());
+
+

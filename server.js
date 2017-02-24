@@ -31,15 +31,18 @@ app.get('/',function(req,res){
    res.sendFile(__dirname + '/index.html');
 });
 
-//Configuration
-app.post('/api/config/save',configurationController.createConfig);
-
 //Create Submission
 app.post('/mark',submissionController.createSubmission);
 
-//Allocation
-app.get('/api/allocation/getProvideTo',allocationController.getProvideTo);
-app.get('/api/allocation/getReceivedFrom',allocationController.getReceivedFrom);
+
+
+//Academic
+app.post('/api/configuration/saveForm',configurationController.createConfig);
+
+
+//Admin
+app.get('/api/admin/getProvideTo',allocationController.getProvideTo);
+app.get('/api/admin/getReceivedFrom',allocationController.getReceivedFrom);
 
 //Provider
 app.get('/api/provider/getSubmission',providerController.getSubmission);

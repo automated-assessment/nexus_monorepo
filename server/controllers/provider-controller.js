@@ -4,7 +4,6 @@
 
 //This will be used exclusively for provider stuff
 const Submission = require('../datasets/submissionModel');
-const Form = require('../datasets/formModel');
 
 module.exports.getSubmission = function(req,res){
     const sid = Number(req.query.sid);
@@ -20,7 +19,22 @@ module.exports.saveForm = function(req,res){
     const studentuid = Number(req.body.studentuid);
     const sid = Number(req.body.sid);
     const updatedJson = req.body.currentForm;
-    Submission.findOneAndUpdate({"providers.provideruid":studentuid,sid:sid},{$set:{"providers.$.currentForm":updatedJson,"providers.$.provided":req.body.provided}})
+    const isProvided = req.body.provided;
+
+    const query = {
+        "providers.provideruid":studentuid,
+        sid:sid
+    };
+
+    const update = {
+        $set:{
+            "providers.$.currentForm":updatedJson,
+            "providers.$.provided":isProvided
+
+        }
+    };
+
+    Submission.findOneAndUpdate(query,update)
         .then(function(response){
             res.status(200).send(response);
         })
@@ -28,7 +42,6 @@ module.exports.saveForm = function(req,res){
 };
 
 module.exports.getForm = function(req,res){
-
     const query = {
         sid:Number(req.query.sid),
         "providers.provideruid":Number(req.query.studentuid)

@@ -9,17 +9,7 @@
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
 </head>
 
-<nav>
-    <div class="container">
-        <a ui-sref="academicState">Academic</a>
-        <a ui-sref="configState">Configuration</a>
-        <a ui-sref="providerState">Provider</a>
-        <a ui-sref="allocationState">Allocation</a>
-        <a ui-sref="receiverState">Receiver</a>
-        <a ui-sref="responseState">Response</a>
 
-    </div>
-</nav>
 <body ng-app = "PeerFeedback">
 
 <div class="container">
@@ -27,38 +17,43 @@
 </div>
 
     <!-- Libraries -->
-    <script src="node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="node_modules/jquery-ui-dist/jquery-ui.min.js"></script>
-    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="node_modules/angular/angular.min.js"></script>
-    <script src="node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
-    <script src="node_modules/formBuilder/dist/form-builder.min.js"></script>
-    <script src="node_modules/formBuilder/dist/form-render.min.js"></script>
+    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <script src="node_modules/jquery-ui-dist/jquery-ui.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="node_modules/angular/angular.js"></script>
+    <script src="node_modules/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="node_modules/formBuilder/dist/form-builder.js"></script>
+    <script src="node_modules/formBuilder/dist/form-render.js"></script>
 
     <!-- AngularJS-->
     <script src="app/app.js"></script>
 
-    <script src="app/configuration/providerCountFactory.js"></script>
-    <script src="app/configuration/formBuild.js"></script>
+    <script src="app/frame/frameController.js"></script>
+    <script src="app/frame/notification.js"></script>
+
     <script src="app/configuration/configurationController.js"></script>
     <script src="app/configuration/configurationAPI.js"></script>
+    <script src="app/configuration/formBuild.js"></script>
 
     <script src="app/provider/providerController.js"></script>
     <script src="app/provider/providerAPI.js"></script>
     <script src="app/provider/renderProviderForm.js"></script>
     <script src="app/provider/saveForm.js"></script>
 
-    <script src="app/allocation/allocationController.js"></script>
-    <script src="app/allocation/allocationAPI.js"></script>
-    <script src="app/allocation/parseAssignments.js"></script>
+    <script src="app/admin/adminController.js"></script>
+    <script src="app/admin/adminAPI.js"></script>
+    <script src="app/admin/parseAssignments.js"></script>
 
     <script src="app/receiver/receiverController.js"></script>
     <script src="app/receiver/receiverAPI.js"></script>
     <script src="app/receiver/renderReceiverForm.js"></script>
 
 
-    <script src="app/academic/academicController.js"></script>
+    <script src="app/configuration/configurationController.js"></script>
 
     <script src="app/response/responseController.js"></script>
+    <script src="app/response/responseFactory.js"></script>
+    <script src="app/response/responseService.js"></script>
+
 </body>
 </html>

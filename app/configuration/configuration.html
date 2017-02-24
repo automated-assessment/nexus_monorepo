@@ -1,11 +1,11 @@
 <section>
-
     <h2>Configuration</h2>
     <br/>
+
     <div class="form-inline">
         Number of feedback providers:
         <select class="form-control"
-                ng-options="number as number for number in numbers"
+                ng-options="number as number for number in providerCounts"
                 ng-model="newConfig.providerCount"></select>
     </div>
     <br/>
@@ -23,9 +23,11 @@
     </div>
 
     <br/><br/>
-    <form-build></form-build>
 
+    <form-build options="{dataType:'json'}" save="saveConfig()" config="newConfig" notify="createNotification"></form-build>
 
 <br/>
+
+
 
 </section>
