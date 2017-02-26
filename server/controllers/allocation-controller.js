@@ -1,7 +1,10 @@
 /**
  * Created by adamellis on 10/02/2017.
  */
-
+//Some of this code can be used for the admin view, but essentially an allocation page should not be required.
+    //Simply return the students personal allocation as the response, which should be handled in response controller.
+    //Handled as a response controller and not as allocation, as the response is an API call and not necessarily an allocation.
+    //Therefore this code can be removed and disassembled where necessary.
 const Submission = require('../datasets/submissionModel');
 
 module.exports.getProvideTo = function(req,res){

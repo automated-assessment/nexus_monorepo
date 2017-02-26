@@ -10,7 +10,7 @@
                     configurationAPI.postForm(scope.config)
                         .then(
                             function(){
-                                scope.notify("Your form has been saved successfully","success");
+                                scope.notify("Your form has been saved successfully.","success");
                                 $anchorScroll();
                             },
                             function(){

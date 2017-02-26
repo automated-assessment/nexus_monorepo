@@ -14,11 +14,6 @@
                         type:type
                     }
                 };
-
-
-
-
-
            }
 
            return {

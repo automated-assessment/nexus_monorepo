@@ -11,10 +11,14 @@ module.exports.createSubmission = function(req,res){
     queryIsNewSubmission(req.body.sid)
        .then(function(isNewSubmission){
            if(isNewSubmission){
-               const submission = new Submission(req.body);
+               const submission = req.body;
                allocationProcess.runAllocation(submission);
+               responseController.response(req);
+
+           } else {
+               //This is not a new submission, needs to be handled.
            }
-           responseController.response(req);
+
        });
     res.status(200).send();
 };
