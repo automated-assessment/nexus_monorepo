@@ -162,13 +162,12 @@ class GitUtils
       submission_user = submission.user
       client = Octokit::Client.new(login: submission_user.ghe_login, access_token: submission_user.githubtoken)
 
-      # Check repo existence
-      repo = Octokit::Repository.from_url(submission.repourl)
-      return false unless repo
+      # Split on / and grab the last two entries (user and repo name)
+      # Join the two with a slash and remove the .git extension
+      owner_repo = submission.repourl.split('/')[-2..-1].join('/')[0..-5]
 
-      # Check branch existence
-      url = "#{repo.owner}/#{repo.name[0..-5]}" # Repo name minus the .git extension
-      branch = client.branch(url, submission.gitbranch)
+      # Check repo/branch existence
+      branch = client.branch(owner_repo, submission.gitbranch)
       return false unless branch
 
       # Branch exists.
