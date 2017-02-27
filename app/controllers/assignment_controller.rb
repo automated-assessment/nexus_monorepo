@@ -177,7 +177,7 @@ class AssignmentController < ApplicationController
                                        :allow_zip,
                                        :allow_git,
                                        :allow_ide,
-                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :_destroy])
+                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id])
   end
 
   def return_assignment!
