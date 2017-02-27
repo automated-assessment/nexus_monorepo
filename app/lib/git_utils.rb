@@ -167,24 +167,25 @@ class GitUtils
       owner_repo = submission.repourl.split('/')[-2..-1].join('/')[0..-5]
 
       # Check repo/branch existence
-      branch = client.branch(owner_repo, submission.gitbranch)
+      branch = client.branch(owner_repo, submission.gitbranch.strip)
       return false unless branch
 
       # Branch exists.
       # Return true is sha exists
-      valid_sha?(branch[:commit], submission.commithash)
+      valid_sha?(branch[:commit], submission.commithash.strip)
     end
 
     private
 
     def valid_sha?(branch_commits, submission_sha)
+      binding.pry
       # Check if sha is most recent commit
-      return true if branch_commits[:sha].eql? submission_sha
+      return true if branch_commits[:sha].start_with? submission_sha
 
       # Not most recent commit, so check all previous
       parent_commits = branch_commits[:parents]
       parent_commits.each do |commit|
-        return true if commit[:sha].eql? submission_sha
+        return true if commit[:sha].start_with? submission_sha
       end
       false
     end
