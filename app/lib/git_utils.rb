@@ -164,21 +164,26 @@ class GitUtils
 
       # Split on / and grab the last two entries (user and repo name)
       # Join the two with a slash and remove the .git extension
+      #
+      # By doing the URL manipulation, this eliminates the need for the
+      # a seperate call to Octokit::Repository all together, which returns
+      # a Repository object with owner and repo name instance fields, both of which
+      # the below line extracts from the submission.repourl
       owner_repo = submission.repourl.split('/')[-2..-1].join('/')[0..-5]
 
-      # Check repo/branch existence
+      # Check repo/branch existence in one call, using the information extracted
+      # above.
       branch = client.branch(owner_repo, submission.gitbranch.strip)
       return false unless branch
 
       # Branch exists.
-      # Return true is sha exists
+      # Return true if sha exists anywhere in branch commit tree
       valid_sha?(branch[:commit], submission.commithash.strip)
     end
 
     private
 
     def valid_sha?(branch_commits, submission_sha)
-      binding.pry
       # Check if sha is most recent commit
       return true if branch_commits[:sha].start_with? submission_sha
 
