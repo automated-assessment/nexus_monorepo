@@ -3,29 +3,25 @@
  */
 
 const Submission = require('../datasets/submissionModel');
-const responseController = require('./response-controller');
 const allocationProcess = require('./allocation-process');
+const responseSender = require('./response-sender');
 
 module.exports.createSubmission = function(req,res){
-    console.log("working");
+    console.log("Submission received");
     queryIsNewSubmission(req.body.sid)
        .then(function(isNewSubmission){
-           if(isNewSubmission){
+           if(isNewSubmission) {
                const submission = req.body;
                allocationProcess.runAllocation(submission);
-               responseController.response(req);
-
-           } else {
-               //This is not a new submission, needs to be handled.
            }
-
+           responseSender.sendResponse(req);
        });
     res.status(200).send();
 };
 
 
 const queryIsNewSubmission =  function(sid){
-    return Submission.find({sid:sid}).limit(1)
+    return Submission.findOne({sid:sid})
         .then(function(response){
            return Number(response)===0;
         });

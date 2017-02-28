@@ -17,7 +17,7 @@
             };
 
 
-            const queryPartial = function(branchName){
+            const queryGitPartial = function(branchName){
                 const authToken = "be7549b0fb2ad810c5b2a2a28376ecdac5d47f12"; //needs to be extracted to env
                 const baseUrl = "https://github.kcl.ac.uk/api/v3/repos/NexusDevAdam";
                 return $http({
@@ -45,17 +45,17 @@
 
             const getPartial = function(sid) {
                return querySubmission(sid).then(function(response) {
-                  return  queryPartial(response.data.branch)
+                  return  queryGitPartial(response.data.branch)
                 });
             };
 
-            const getFormPromise = function(sid, studentuid){
+            const getFormPromise = function(sid, providersid){
                 return $http({
                     method:'GET',
                     url:'/api/provider/getForm',
                     params:{
                         sid:sid,
-                        studentuid:studentuid
+                        providersid:providersid
                     }
                 });
             };
@@ -66,7 +66,7 @@
 
             return {
                 querySubmission:querySubmission,
-                queryPartial:queryPartial,
+                queryGitPartial:queryGitPartial,
                 saveForm:saveForm,
                 getPartial:getPartial,
                 getFormPromise:getFormPromise

@@ -1,41 +1,50 @@
 /**
- * Created by adamellis on 10/02/2017.
+ * Created by adamellis on 17/02/2017.
  */
-//Some of this code can be used for the admin view, but essentially an allocation page should not be required.
-    //Simply return the students personal allocation as the response, which should be handled in response controller.
-    //Handled as a response controller and not as allocation, as the response is an API call and not necessarily an allocation.
-    //Therefore this code can be removed and disassembled where necessary.
 const Submission = require('../datasets/submissionModel');
 
+//Retrieve the submissions that this student has to provide to based on their sid
 module.exports.getProvideTo = function(req,res){
-
     const query = {
-        "providers.provideruid":Number(req.query.studentuid)
+        "providers.providersid":Number(req.query.sid)
     };
 
-    Submission.find(query,{_id:0,studentuid:1})
+    const projection = {
+        _id:0,
+        aid:1,
+        student:1,
+        sid:1,
+        "providers.$.providersid":1
+    };
+    Submission.find(query,projection)
         .then(function(response){
-            let studentId=[];
-            for(let i=0;i<response.length;i++) {
-                studentId[i] = response[i].studentuid;
-            }
-            Submission.find({studentuid:{$in:studentId}})
-                .then(function(response){
-                    res.status(200).send(response);
-                });
-        });
+            res.send(response);
+        })
+        .catch(function(){
+            res.sendStatus(400);
+        })
+};
+
+//Retrieve what this student has received for their submission, i.e. the forms
+module.exports.getReceivedFrom = function(req,res){
+    const query = {
+        sid:Number(req.query.sid)
+    };
+
+    Submission.findOne(query)
+        .then(function(response){
+            res.send(response);
+        })
+        .catch(function(){
+            res.sendStatus(400);
+        })
 
 };
 
-module.exports.getReceivedFrom = function(req,res) {
 
-    //use the student numbers for that particular student id to resolve the submission numbers
-    const query = {
-        studentuid:req.query.studentuid
-    };
 
-    Submission.find(query)
-        .then(function(response){
-           res.status(200).send(response);
-        });
-};
+
+
+
+
+

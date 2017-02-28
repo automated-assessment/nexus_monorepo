@@ -9,20 +9,20 @@ module.exports.getSubmission = function(req,res){
     const sid = Number(req.query.sid);
     Submission.findOne({sid:sid})
         .then(function(response){
-            res.status(200).send(response);
+            res.send(response);
         })
 
 };
 
 
 module.exports.saveForm = function(req,res){
-    const studentuid = Number(req.body.studentuid);
+    const providersid = Number(req.body.providersid);
     const sid = Number(req.body.sid);
     const updatedJson = req.body.currentForm;
     const isProvided = req.body.provided;
 
     const query = {
-        "providers.provideruid":studentuid,
+        "providers.providersid":providersid,
         sid:sid
     };
 
@@ -44,11 +44,10 @@ module.exports.saveForm = function(req,res){
 module.exports.getForm = function(req,res){
     const query = {
         sid:Number(req.query.sid),
-        "providers.provideruid":Number(req.query.studentuid)
+        "providers.providersid":Number(req.query.providersid)
     };
     Submission.findOne(query,{"providers.$.provideruid":1})
         .then(function(response){
-            console.log(response);
             res.status(200).send(response);
         });
 };

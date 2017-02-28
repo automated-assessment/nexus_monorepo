@@ -4,13 +4,13 @@
 (function(){
     angular.module('PeerFeedback')
         .factory('receiverAPI',['$http',function($http){
-            const getFormPromise = function(sid, studentuid){
+            const getFormPromise = function(sid, providersid){
                 return $http({
                     method:'GET',
                     url:'/api/receiver/getForm',
                     params:{
                         sid:sid,
-                        studentuid:studentuid
+                        providersid:providersid
                     }
                 });
             };

@@ -3,19 +3,17 @@
  */
 
 
-//need to ensure that student doesnt get same submission twice
-//need to store when no allocation spots
-//is this possible? - perhaps if one student submits many times
-//how to deal? - inform student that they can only submit so many times to fix this?
-
 const Assignment = require('../datasets/assignmentModel');
 const Submission = require('../datasets/submissionModel');
+const crypto = require('crypto');
+const randomName = require('node-random-name');
 
 /**
  * Entrypoint to running the allocation algorithm.
  * @param submission
  */
 module.exports.runAllocation = function(submission){
+    submission.providers = [];
     queryAssignment(submission)
         .then(function(assignment){
             allocate(assignment,submission);
@@ -45,14 +43,21 @@ const queryAssignment = function(submission){
  */
 const allocate = function(assignment,submission){
     const bulk = Submission.collection.initializeUnorderedBulkOp();
+
+
+
+
     queryRandomProviders(assignment,submission)
         .then(function(randomProviders){
             randomProviders.forEach(function(randomProvider){
-                submission.providers.push(randomProvider.sid);
-                randomProvider.providers.push(submission.sid);
-                bulk.find({sid:randomProvider.sid}).updateOne({$push:{providers:submission.sid}})
+
+                const providerObj = generateStudentObject(randomProvider,assignment);
+                const submissionObj = generateStudentObject(submission,assignment);
+                submission.providers.push(providerObj);
+                bulk.find({sid:randomProvider.sid}).updateOne({$push:{providers:submissionObj}})
 
             });
+            submission.hash = crypto.randomBytes(20).toString('hex');
             bulk.insert(submission);
 
             bulk.execute()
@@ -61,6 +66,17 @@ const allocate = function(assignment,submission){
                 });
 
         });
+};
+
+const generateStudentObject = function(perspective,assignment){
+
+
+    return {
+        alias:randomName({seed:Math.random()}),
+        providersid:perspective.sid,
+        currentForm:assignment.formBuild,
+        provided:false
+    }
 };
 
 /**

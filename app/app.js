@@ -10,30 +10,35 @@
                     templateUrl:'app/frame/frame.html',
                     controller:'frameController'
                 })
+                .state('frameState.allocationState',{
+                    url:'/allocation?sid',
+                    templateUrl:'app/allocation/allocation.html',
+                    controller:'allocationController'
+                })
                 .state('frameState.configurationState',{
                     url:'/configuration?aid',
                     templateUrl:'app/configuration/configuration.html',
                     controller:'configurationController'
                 })
                 .state('frameState.providerState',{
-                    url:'/provider?sid?aid?studentuid',
+                    url:'/provider',
+                    params:{
+                        aid:null,
+                        providersid:null,
+                        sid:null
+                    },
                     templateUrl:'app/provider/provider.html',
                     controller:'providerController'
                 })
-                .state('frameState.adminState',{
-                    url:'/admin?studentuid',
-                    templateUrl:'app/admin/admin.html',
-                    controller:'adminController'
-                })
                 .state('frameState.receiverState',{
-                    url:'/receiver?sid?studentuid',
+                    url:'/receiver',
+                    params:{
+                        aid:null,
+                        providersid:null,
+                        sid:null
+                    },
                     templateUrl:'app/receiver/receiver.html',
                     controller:'receiverController'
-                })
-                .state('frameState.responseState',{
-                    url:'/response',
-                    templateUrl:'app/response/response.html',
-                    controller:'responseController'
                 });
                 $urlRouterProvider.otherwise('/frame');
         });

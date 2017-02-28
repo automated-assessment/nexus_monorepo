@@ -5,7 +5,7 @@
     angular.module('PeerFeedback')
         .directive('renderProviderForm',['providerAPI',function(providerAPI){
             function link(scope,elem,attrs){
-                providerAPI.getFormPromise(scope.submission.sid,scope.submission.studentuid)
+                providerAPI.getFormPromise(scope.submission.sid,scope.submission.providersid)
                     .then(function(response){
                         const currentForm = response.data.providers[0].currentForm;
                         const renderOpts = {

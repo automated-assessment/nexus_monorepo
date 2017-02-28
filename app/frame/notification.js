@@ -14,12 +14,21 @@
                         type:type
                     }
                 };
+                scope.hide = function(){
+                    if(scope.notification){
+                        scope.notification.display = false;
+                    }
+                }
            }
 
            return {
                restrict:'E',
                link:link,
-               scope:{listener:'='},
+               scope:
+                   {
+                       listener:'=',
+                       hide:'='
+                   },
                templateUrl:'app/frame/notification.html'
            }
 

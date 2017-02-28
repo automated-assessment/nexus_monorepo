@@ -6,7 +6,9 @@
 const mongoose = require('mongoose');
 
 module.exports = mongoose.model('Submission',{
+    student:String,
     studentuid:Number,
+    studentemail:String,
     providers:[],
     sid:Number,
     aid:Number,

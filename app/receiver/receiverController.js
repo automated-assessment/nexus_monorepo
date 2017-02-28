@@ -7,9 +7,12 @@
 
            $scope.submission={};
            $scope.submission.sid = $stateParams.sid;
-           $scope.submission.studentuid = $stateParams.studentuid;
+           $scope.submission.providersid = $stateParams.providersid;
+           $scope.submission.aid = $stateParams.aid;
 
-          //console.log(receiverAPI.getFormPromise());
+
+
+
 
 
         }]);

@@ -3,14 +3,14 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('frameController',function($scope){
+        .controller('frameController',['$scope','$rootScope',function($scope,$rootScope){
+
+            $rootScope.$on('$stateChangeStart',function(event){
+               $scope.hideNotification();
+            });
 
                 //can be called on loaded throughout
                 //$scope.createNotification("Oops!","warning");
 
-
-
-
-
-        })
+        }]);
 }());

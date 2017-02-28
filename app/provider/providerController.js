@@ -4,11 +4,14 @@
 (function() {
     angular.module('PeerFeedback')
         .controller('providerController', ['$scope', '$sce', '$stateParams','providerAPI',function ($scope, $sce, $stateParams,providerAPI) {
+
+
             $scope.submission = {};
             $scope.submission.sid = $stateParams.sid;
             $scope.submission.aid = $stateParams.aid;
-            $scope.submission.studentuid = $stateParams.studentuid;
+            $scope.submission.providersid = $stateParams.providersid;
 
+            console.log($stateParams.sid);
             //need to add in some kind of check, this will run even with no branch - it shouldnt.
             //this could still be further extracted. shouldn't be in controller
 
@@ -18,6 +21,7 @@
                     $scope.submission.gitHubSnippet = $sce.trustAsHtml(response.data);
                 });
 
+            //providerAPI.getForm();
 
 
             $scope.saveForm = function(){

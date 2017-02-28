@@ -5,20 +5,24 @@ const Submission = require('../datasets/submissionModel');
 
 
 module.exports.getForm = function(req,res){
-
+    console.log(req.query.providersid);
     const query = {
         sid:Number(req.query.sid),
-        "providers.provideruid":Number(req.query.studentuid)
+        "providers.providersid":Number(req.query.providersid)
     };
-    Submission.findOne(query,{"providers.$.provideruid":1})
+    Submission.findOne(query,{"providers.$.providersid":1})
         .then(function(response){
             const disabledFormObject = disable(response);
-            res.status(200).send(disabledFormObject);
-        });
+            res.send(disabledFormObject);
+        })
+        .catch(function(err){
+            res.send('Error');
+        })
 };
 
 
 const disable = function(response){
+    console.log(response);
     const form = JSON.parse(response.providers[0].currentForm);
     form.forEach(function(formElement){
         formElement.disabled="disabled";

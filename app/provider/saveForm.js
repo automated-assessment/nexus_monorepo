@@ -56,6 +56,7 @@
                     scope.submission.currentForm = updatedJson;
                     scope.submission.provided=true;
                     scope.saveForm();
+                    scope.createNotification("Your feedback was sent successfully.","success");
                 });
 
             }

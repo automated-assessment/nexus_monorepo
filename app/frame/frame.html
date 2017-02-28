@@ -2,16 +2,15 @@
 
     <nav>
         <div class="container">
-            <a ui-sref="frameState.adminState">Admin</a>
-            <a ui-sref="frameState.configurationState">Academic</a>
-            <a ui-sref="frameState.providerState">Provider</a>
             <a ui-sref="frameState.allocationState">Allocation</a>
+            <a ui-sref="frameState.configurationState">Configuration</a>
+            <a ui-sref="frameState.providerState">Provider</a>
             <a ui-sref="frameState.receiverState">Receiver</a>
-            <a ui-sref="frameState.responseState">Response</a>
+
 
         </div>
 
     </nav>
-    <notification listener="createNotification"></notification>
+    <notification listener="createNotification" hide="hideNotification"></notification>
     <div ui-view></div>
 </section>
