@@ -8,10 +8,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 
 
 const app = express();
+
 const port = process.env.PORT || 5000;
 const dbHost = process.env.DB_HOST || localhost;
 const configurationController = require(__dirname + '/server/controllers/configuration-controller.js');
@@ -22,13 +24,16 @@ const allocationController = require(__dirname + '/server/controllers/allocation
 
 
 
+
 mongoose.connect(`mongodb://${dbHost}/peerfeedback`);
 
+app.use(cors({origin:'http://localhost:3050'}));
 app.use(bodyParser.json());
-app.use('/app',express.static(__dirname + '/app'));
-app.use('/css', express.static(__dirname + '/css'));
-app.use('/node_modules',express.static(__dirname + '/node_modules'));
+app.use('/app',express.static(__dirname + '/app')); //change to public to fit convention
+app.use('/css',express.static(__dirname+'/css'));
+app.use('/node_modules',express.static(__dirname+'/node_modules'));
 
+debugRoutes();
 
 
 app.get('/',function(req,res){
@@ -39,8 +44,8 @@ app.get('/',function(req,res){
 app.post('/mark',submissionController.createSubmission);
 
 app.get('/api/response',function(req,res){
-    //res.set({"Access-Control-Allow-Origin":"*"});
-    res.sendFile('index.html');
+    res.set({"Access-Control-Allow-Origin":"*"});
+    res.sendFile(__dirname + "/index.html");
 });
 
 //Academic
@@ -54,7 +59,6 @@ app.get('/api/allocation/getProvideTo', allocationController.getProvideTo);
 
 //Provider
 app.get('/api/provider/getSubmission',providerController.getSubmission);
-app.get('/api/provider/getForm',providerController.getForm);
 app.post('/api/provider/saveForm',providerController.saveForm);
 
 //Receiver
@@ -68,3 +72,9 @@ app.get('/test',function(req,res){
    res.send(200);
 });
 
+function debugRoutes(){
+    app.use(function (req, res, next) {
+        console.log(req.method, req.url, req.body);
+        next();
+    });
+};

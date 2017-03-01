@@ -1,6 +1,6 @@
 (function(){
     angular.module('PeerFeedback')
-        .directive('formBuild',['$anchorScroll','configurationAPI',function($anchorScroll,configurationAPI){
+        .directive('formBuild',['configurationAPI',function(configurationAPI){
 
             function link(scope, elem, attrs){
                 const form = elem.formBuilder(scope.$eval(attrs.options)).data('formBuilder');
@@ -11,11 +11,9 @@
                         .then(
                             function(){
                                 scope.notify("Your form has been saved successfully.","success");
-                                $anchorScroll();
                             },
                             function(){
                                 scope.notify("There was an error saving the form, please try again.","danger");
-                                $anchorScroll();
                             }
                         )
                 })

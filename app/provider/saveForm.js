@@ -50,7 +50,6 @@
 
                 elem.click(function(){
                     const container = $('#render-form')[0];
-
                     const json = scope.submission.currentForm;
                     const updatedJson = saveUserValues(container,json);
                     scope.submission.currentForm = updatedJson;

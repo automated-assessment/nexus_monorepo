@@ -3,7 +3,7 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .directive('notification',function(){
+        .directive('notification',['$anchorScroll',function($anchorScroll){
            function link(scope,elem,attrs){
                 scope.notification = {};
                 scope.notification.display=false;
@@ -12,7 +12,9 @@
                         display:true,
                         text:text,
                         type:type
-                    }
+                    };
+                    $anchorScroll();
+
                 };
                 scope.hide = function(){
                     if(scope.notification){
@@ -32,5 +34,5 @@
                templateUrl:'app/frame/notification.html'
            }
 
-        });
+        }]);
 }());

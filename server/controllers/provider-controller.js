@@ -6,14 +6,15 @@
 const Submission = require('../datasets/submissionModel');
 
 module.exports.getSubmission = function(req,res){
-    const sid = Number(req.query.sid);
-    Submission.findOne({sid:sid})
+    const query = {
+        sid:Number(req.query.sid),
+        "providers.providersid":Number(req.query.providersid)
+    };
+    Submission.findOne(query,{branch:1,"providers.$.provideruid":1})
         .then(function(response){
-            res.send(response);
-        })
-
+            res.status(200).send(response);
+        });
 };
-
 
 module.exports.saveForm = function(req,res){
     const providersid = Number(req.body.providersid);
@@ -41,13 +42,3 @@ module.exports.saveForm = function(req,res){
 
 };
 
-module.exports.getForm = function(req,res){
-    const query = {
-        sid:Number(req.query.sid),
-        "providers.providersid":Number(req.query.providersid)
-    };
-    Submission.findOne(query,{"providers.$.provideruid":1})
-        .then(function(response){
-            res.status(200).send(response);
-        });
-};

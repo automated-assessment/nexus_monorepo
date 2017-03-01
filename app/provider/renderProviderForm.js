@@ -5,16 +5,19 @@
     angular.module('PeerFeedback')
         .directive('renderProviderForm',['providerAPI',function(providerAPI){
             function link(scope,elem,attrs){
-                providerAPI.getFormPromise(scope.submission.sid,scope.submission.providersid)
-                    .then(function(response){
-                        const currentForm = response.data.providers[0].currentForm;
-                        const renderOpts = {
-                            formData:currentForm,
-                            dataType:'json'
-                        };
-                        elem.formRender(renderOpts);
-                        scope.submission.currentForm = currentForm;
-                    })
+
+                scope.displayForm = function(sid,providersid){
+                    const currentForm = response.data.providers[0].currentForm;
+                    const renderOpts = {
+                        formData:currentForm,
+                        dataType:'json'
+                    };
+                    elem.formRender(renderOpts);
+                    scope.submission.currentForm = currentForm;
+                };
+
+
+
 
             }
 
@@ -22,7 +25,8 @@
 
             return {
                 restrict:'A',
-                link:link
+                link:link,
+                scope:{displayForm:'='}
             }
         }])
 }());

@@ -5,9 +5,6 @@
     angular.module('PeerFeedback')
         .controller('allocationController',['$scope','allocationAPI','$stateParams',function($scope,allocationAPI,$stateParams){
 
-
-            //The two queries are very similar, extract them.
-
             if($stateParams.sid){
                 allocationAPI.getProvideTo($stateParams.sid)
                     .then(function(response){
@@ -23,9 +20,3 @@
 
         }]);
 }());
-
-// <div ng-repeat="provider in receivedFrom.providers">
-//     <a ui-sref="frameState.receiverState({{receivedFromQuery}})">
-//     {{provider.alias}} from sid:{{provider.providersid}} to {{receivedFrom.sid}}
-// </a>
-//</div>
