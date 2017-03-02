@@ -28,7 +28,7 @@ class SubmissionController < ApplicationController
       if current_user.githubtoken
         @client = Octokit::Client.new(login: current_user.ghe_login, access_token: current_user.githubtoken, auto_paginate: true)
         @repo_list = []
-        @client.repos(sort: 'updated', per_page: '100', affiliation: 'owner,collaborator,organization_member', visibility: 'all').each do |r|
+        @client.repos(sort: 'updated', per_page: 100, affiliation: 'owner,collaborator,organization_member', visibility: 'all').each do |r|
           @repo_list << [r.full_name, r.clone_url]
         end
       else
