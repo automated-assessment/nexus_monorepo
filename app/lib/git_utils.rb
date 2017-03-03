@@ -171,14 +171,18 @@ class GitUtils
       # the below line extracts from the submission.repourl
       owner_repo = submission.repourl.split('/')[-2..-1].join('/')[0..-5]
 
-      # Check repo/branch existence in one call, using the information extracted
-      # above.
-      branch = client.branch(owner_repo, submission.gitbranch.strip)
-      return false unless branch
+      begin
+        # Check repo/branch existence in one call, using the information extracted
+        # above.
+        # Throws Octokit::NotFound exception if branch doesn't exist.
+        branch = client.branch(owner_repo, submission.gitbranch.strip)
 
-      # Branch exists.
-      # Return true if sha exists anywhere in branch commit tree
-      valid_sha?(branch[:commit], submission.commithash.strip)
+        # Branch exists.
+        # Return true if sha exists anywhere in branch commit tree
+        valid_sha?(branch[:commit], submission.commithash.strip)
+      rescue Octokit::NotFound # Thrown when branch doesn't exist
+        false
+      end
     end
 
     private
