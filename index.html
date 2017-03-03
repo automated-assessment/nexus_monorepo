@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Peer Feedback</title>
     <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
@@ -32,26 +33,28 @@
     <script src="app/app.js"></script>
 
     <script src="app/frame/frameController.js"></script>
-    <script src="app/frame/notification.js"></script>
+    <script src="app/frame/notification/notificationDirective.js"></script>
+    <script src="app/frame/notification/NotificationService.js"></script>
+
+    <script src="app/common/networkProvider.js"></script>
+
+    <script src="app/academic/academicController.js"></script>
 
     <script src="app/configuration/configurationController.js"></script>
-    <script src="app/configuration/configurationAPI.js"></script>
-    <script src="app/configuration/formBuild.js"></script>
+    <script src="app/common/directives/formBuild.js"></script>
 
     <script src="app/provider/providerController.js"></script>
-    <script src="app/provider/providerAPI.js"></script>
-    <script src="app/provider/renderProviderForm.js"></script>
-    <script src="app/provider/saveForm.js"></script>
+    <script src="app/common/directives/renderProviderForm.js"></script>
+    <script src="app/common/directives/saveForm.js"></script>
 
     <script src="app/receiver/receiverController.js"></script>
     <script src="app/receiver/receiverAPI.js"></script>
-    <script src="app/receiver/renderReceiverForm.js"></script>
+    <script src="app/common/directives/renderReceiverForm.js"></script>
 
 
     <script src="app/configuration/configurationController.js"></script>
 
     <script src="app/allocation/allocationController.js"></script>
-    <script src="app/allocation/allocationAPI.js"></script>
 
 </body>
 </html>

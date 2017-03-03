@@ -1,36 +1,23 @@
 /**
  * Created by adamellis on 06/02/2017.
  */
+
+
+//This needs a lot of work
 (function() {
     angular.module('PeerFeedback')
-        .controller('providerController', ['$scope', '$sce', '$stateParams', 'providerAPI', function ($scope, $sce, $stateParams, providerAPI) {
-            //Within the provider page.
-            //Need to retrieve the github submission dependent on the retrievalQuery
-            //Need to retrieve the form
-            //Need a listener for save of the form
+        .controller('providerController', ['$sce', '$stateParams', 'networkProvider', function ($sce, $stateParams, networkProvider) {
+            const vm = this;
 
-            const submission = {
-                aid: $stateParams.aid,
-                providersid: $stateParams.providersid,
-                sid: $stateParams.sid
 
-            };
-
-            $scope.submission = submission;
-
-            // providerAPI.querySubmission(submission.providersid,submission.sid)
-            //     .then(function(response){
-            //         console.log(response);
-            //         providerAPI.queryGitPartial(response.data.branch)
-            //             .then(function(response){
-            //                 $scope.submission.gitHubSnippet = $sce.trustAsHtml(response.data);
-            //             })
-            //     });
-
-            $scope.test = function(){
-                return "Something";
-            };
-
+            networkProvider.getSubmission($stateParams.providersid,$stateParams.sid)
+                .then(function(response){
+                    console.log(response);
+                    networkProvider.getGitPartial(response.data.branch,$stateParams.aid)
+                        .then(function(response){
+                            console.log(response.data);
+                        })
+                })
         }])
 }());
 

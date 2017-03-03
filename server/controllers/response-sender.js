@@ -18,18 +18,7 @@ module.exports.sendResponse = function(req){
     const studentuid = req.body.studentuid;
     const sid = req.body.sid;
     const html =
-        `<div id="response"></div>
-
-<script>
-    const xmlHttpRequest = new XMLHttpRequest();
-    xmlHttpRequest.onreadystatechange = function(){
-        if(this.readyState == 4 && this.status==200){
-            document.getElementById("response").innerHTML = xmlHttpRequest.responseText;
-        }
-    };
-    xmlHttpRequest.open("GET","http://localhost:3050/api/response");
-    xmlHttpRequest.send();
-</script>`;
+        `<iframe src="http://localhost:3050/#!/frame/allocation?sid=${sid}" height="500" width="1000"`;
     sendFeedback(html,req.body.sid,function(err,res,body){
     });
 };

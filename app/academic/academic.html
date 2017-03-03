@@ -1,0 +1,11 @@
+<section>
+    This is academic
+    <br/>
+
+
+    Search by sid:<input ng-model="searchText.sid">
+    Search by name:<input ng-model="searchText.student">
+
+
+    <div ng-repeat="submission in vm.submissions|filter:searchText">{{submission.student}} submitted {{submission.sid}}</div>
+</section>

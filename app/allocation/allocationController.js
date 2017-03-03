@@ -3,15 +3,15 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('allocationController',['$scope','allocationAPI','$stateParams',function($scope,allocationAPI,$stateParams){
+        .controller('allocationController',['$scope','networkProvider','$stateParams',function($scope,networkProvider,$stateParams){
 
             if($stateParams.sid){
-                allocationAPI.getProvideTo($stateParams.sid)
+                networkProvider.getProvideTo($stateParams.sid)
                     .then(function(response){
                         $scope.provideTo = response.data;
 
                     });
-                allocationAPI.getReceivedFrom($stateParams.sid)
+                networkProvider.getReceivedFrom($stateParams.sid)
                     .then(function(response){
                         $scope.receivedFrom = response.data;
 

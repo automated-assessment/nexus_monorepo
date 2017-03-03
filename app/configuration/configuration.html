@@ -2,11 +2,12 @@
     <h2>Configuration</h2>
     <br/>
 
+
     <div class="form-inline">
         Number of feedback providers:
-        <select class="form-control"
-                ng-options="number as number for number in providerCounts"
-                ng-model="newConfig.providerCount"></select>
+        <select class="form-control col-lg-6"
+                ng-options="number as number for number in vm.providerCounts"
+                ng-model="vm.assignmentConfig.providerCount"></select>
     </div>
     <br/>
     <div class="form-inline">
@@ -19,15 +20,15 @@
         Allow student feedback providers to contribute to final mark: &nbsp;  <input type="radio" name="studentMark" value="yes"/>Yes
         <input type="radio" name="studentMark" value="no"/>No
 
-
     </div>
-
     <br/><br/>
+    <form-build vm="vm"></form-build>
 
-    <form-build options="{dataType:'json'}" save="saveConfig()" config="newConfig" notify="createNotification"></form-build>
+
+    <!-- format, form-object, formData, saveListener-->
+
 
 <br/>
-
 
 
 </section>

@@ -21,13 +21,14 @@ const submissionController = require(__dirname + '/server/controllers/submission
 const providerController = require(__dirname + '/server/controllers/provider-controller.js');
 const receiverController = require(__dirname + '/server/controllers/receiver-controller.js');
 const allocationController = require(__dirname + '/server/controllers/allocation-controller.js');
+const academicController = require(__dirname + '/server/controllers/academic-controller.js');
 
 
 
 
 mongoose.connect(`mongodb://${dbHost}/peerfeedback`);
 
-app.use(cors({origin:'http://localhost:3050'}));
+app.use(cors({origin:'http://localhost:3000'}));
 app.use(bodyParser.json());
 app.use('/app',express.static(__dirname + '/app')); //change to public to fit convention
 app.use('/css',express.static(__dirname+'/css'));
@@ -49,7 +50,11 @@ app.get('/api/response',function(req,res){
 });
 
 //Academic
-app.post('/api/configuration/saveForm',configurationController.createConfig);
+app.get('/api/academic/getAllSubmissions',academicController.getAllSubmissions);
+
+//Configuration
+app.get('/api/configuration/getAssignmentConfig',configurationController.getAssignmentConfig);
+app.post('/api/configuration/postAssignmentConfig',configurationController.saveAssignmentConfig);
 
 //Response
 app.get('/api/allocation/getReceivedFrom',allocationController.getReceivedFrom);
