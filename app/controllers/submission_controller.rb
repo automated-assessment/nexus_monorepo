@@ -26,9 +26,9 @@ class SubmissionController < ApplicationController
 
     if @submission.assignment.allow_git
       if current_user.githubtoken
-        @client = Octokit::Client.new(access_token: current_user.githubtoken)
+        @client = Octokit::Client.new(login: current_user.ghe_login, access_token: current_user.githubtoken, auto_paginate: true)
         @repo_list = []
-        @client.repos(current_user.ghe_login, sort: 'updated', per_page: '100').each do |r|
+        @client.repos(sort: 'updated', per_page: 100, affiliation: 'owner,collaborator,organization_member', visibility: 'all').each do |r|
           @repo_list << [r.full_name, r.clone_url]
         end
       else
@@ -128,7 +128,7 @@ class SubmissionController < ApplicationController
   def create_git
     return unless create_submission(true)
 
-    unless GitUtils.has_valid_repo?(@submission)
+    unless GitUtils.valid_repo?(@submission)
       flash[:error] = "Branch or SHA don't exist in Git repository indicated. Please make sure you provide the correct information."
       redirect_to new_submission_path(aid: @submission.assignment.id)
       return
