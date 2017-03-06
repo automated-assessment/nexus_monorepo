@@ -88,21 +88,26 @@ class GitUtils
       # Regex on Dir and reject.
       FileUtils.cd(Dir.glob("#{repo_path}/*")[0]) do
         # Get all files that are not . or ..
+        # .git isn't affected here since it is one directory up
+        # and any git file included as part of the submission is stripped
+        # by the model validation
         files = Dir.glob('*', File::FNM_DOTMATCH).tap { |a| a.shift(2) }
         FileUtils.rm_r(files)
       end
 
+      # Remove everything
       repo.remove('.', recursive: true)
 
       # move files back
       FileUtils.cd(tmp_path) do
         FileUtils.mv Dir.glob('*'), repo_path
       end
+      submission.log("Moved files back to code directory: #{repo_path}", 'Debug')
 
       # Clean up temp file
       FileUtils.rmdir(tmp_path)
+      submission.log("#{tmp_path} deleted", 'Debug')
 
-      submission.log("Moved files back to code directory: #{repo_path}", 'Debug')
       repo.add(all: true)
       repo.commit(gen_commit_msg(submission), allow_empty: true)
       repo.push('origin', branch_name)
