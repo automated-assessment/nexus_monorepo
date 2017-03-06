@@ -2,7 +2,6 @@ require 'zip'
 
 class SubmissionUtils
   require_relative '../lib/git_utils'
-
   class << self
     def unzip!(submission)
       file_blacklist = Regexp.union(

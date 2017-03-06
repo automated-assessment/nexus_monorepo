@@ -40,7 +40,6 @@ class GitUtils
     end
 
     def first_time_push!(submission)
-      # binding.pry
       # init repo; checkout new branch; add all files; commit; push
       repo = init_gitobj(submission)
       branch_name = gen_branch_name(submission)
@@ -71,6 +70,7 @@ class GitUtils
       tmp_path = gen_tmp_path(submission)
       FileUtils.mkdir_p tmp_path
       FileUtils.cd(repo_path) do
+        # Also make sure . files are moved
         FileUtils.mv Dir.glob('*'), tmp_path
       end
       submission.log("Moved files to tmp directory: #{tmp_path}", 'Debug')
@@ -81,12 +81,27 @@ class GitUtils
       repo.add_remote('origin', submission.augmented_clone_url)
       repo.pull('origin', branch_name)
       repo.checkout(branch_name)
+
       # Remove all files, if any
-      repo.remove('.', recursive: true) unless Dir["#{repo_path}/*"].reject { |fname| fname == '.' || fname == '..' }.empty?
+      # Everything but not .git
+      # Stage removals one by one
+      # Regex on Dir and reject.
+      FileUtils.cd(Dir.glob("#{repo_path}/*")[0]) do
+        # Get all files that are not . or ..
+        files = Dir.glob('*', File::FNM_DOTMATCH).tap { |a| a.shift(2) }
+        FileUtils.rm_r(files)
+      end
+
+      repo.remove('.', recursive: true)
+
       # move files back
       FileUtils.cd(tmp_path) do
         FileUtils.mv Dir.glob('*'), repo_path
       end
+
+      # Clean up temp file
+      FileUtils.rmdir(tmp_path)
+
       submission.log("Moved files back to code directory: #{repo_path}", 'Debug')
       repo.add(all: true)
       repo.commit(gen_commit_msg(submission), allow_empty: true)
