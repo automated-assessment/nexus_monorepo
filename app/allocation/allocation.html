@@ -3,12 +3,16 @@
     I am: {{receivedFrom.sid}}
     For assignment: {{receivedFrom.aid}}
 
-    <h3>Provide To</h3>
-    <div ng-repeat="submission in provideTo">
-        <a ui-sref="frameState.providerState({aid:{{submission.aid}},sid:{{submission.sid}},providersid:{{submission.providers[0].providersid}}})">
-        {{submission.providers[0].alias}} link from sid: {{submission.providers[0].providersid}} to {{submission.sid}}
-        </a>
-    </div>
+    <div ng-repeat="submission in provideTo">{{submission.student}}</div>
+
+
+
+    <!--<h3>Provide To</h3>-->
+    <!--<div ng-repeat="submission in provideTo">-->
+        <!--<a ui-sref="frameState.providerState({aid:{{submission.aid}},sid:{{submission.sid}},providersid:{{submission.providers[0].providersid}}})">-->
+        <!--{{submission.providers[0].alias}} link from sid: {{submission.providers[0].providersid}} to {{submission.sid}}-->
+        <!--</a>-->
+    <!--</div>-->
 
     <h3>Received From</h3>
     <div ng-repeat="provider in receivedFrom.providers">

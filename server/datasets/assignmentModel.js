@@ -6,6 +6,6 @@ module.exports = mongoose.model('Assignment',{
     aid:Number,
     providerCount:Number,
     formBuild:String,
-    date:Date
+    dateCreated:Date
 });
 

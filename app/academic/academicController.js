@@ -7,7 +7,7 @@
 
             const vm = this;
 
-            vm.submissions = allSubmissions;
+            vm.submissions = allSubmissions.data;
 
         }]);
 }());

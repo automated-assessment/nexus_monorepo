@@ -3,49 +3,68 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .factory('networkProvider',['$http',function($http){
+        .factory('networkProvider',['$http','parser',function($http,parser){
 
             //needs to be extracted to env
             const authToken = "be7549b0fb2ad810c5b2a2a28376ecdac5d47f12";
-
 
             //Additional functions:
             const buildPartial = function(response){
                 return response;
             };
 
-            //Academic
+            //Get all submissions
             const getAllSubmissions = function(){
-                return $http.get('/api/academic/getAllSubmissions');
+                return $http.get('/api/submissions');
             };
 
-            //Configuration
-            const postAssignmentConfig = function(configForm){
-                return $http.post('/api/configuration/postAssignmentConfig',configForm);
+            //Get all submissions for aid
+            const getSubmissions = function(aid){
+                return $http.get(`/api/submissions/${aid}`);
             };
 
-            const getAssignmentConfig = function(aid){
-                return $http.get('/api/configuration/getAssignmentConfig',{params:{aid:aid}})
+            //Get the receiver's submission and corresponding providers.
+            const getReceiverSubmissions = function(sid){
+                return $http.get(`/api/submissions/receiver/${sid}`)
+                    .then(function(response){
+                        return parser.receiverSubmissions(response.data);
+                    })
             };
 
-            //Allocation
-            const getProvideTo = function(sid){
-                return $http.get('/api/allocation/getProvideTo',{params:{sid:sid}});
-            };
-            const getReceivedFrom = function(sid){
-                return $http.get('/api/allocation/getReceivedFrom',{params:{sid:sid}});
-
-            };
-
-            //Provider
-
-            //This is responsible for locating the submission using the providersid and sid.
-            const getSubmission = function(providersid,sid){
-                return $http.get('/api/provider/getSubmission',{params:{providersid:providersid,sid,sid}});
-
+            //Get the provider's submissions and corresponding receivers.
+            const getProviderSubmissions = function(providersid){
+                return $http.get(`/api/submissions/provider/${providersid}`)
+                    .then(function(response){
+                        return parser.providerSubmissions(response.data);
+                    })
             };
 
-            //This is responsible for extracting the git partial
+            //Update the provider's feedback form.
+            const updateProviderForm = function(sid,providersid){
+                return $http.put(`/api/submissions/provider/${sid}/${providersid}`);
+            };
+
+            const getAllAssignments = function(){
+                return $http.get(`/api/assignments`);
+            };
+
+            const getOneAssignment = function(aid){
+                return $http.get(`/api/assignments/${aid}`)
+            };
+
+            const updateAssignment = function(aid){
+                return $http.put(`/api/assignments/${aid}`);
+            };
+
+
+
+
+
+
+
+
+
+            //Git API Query
             const getGitPartial = function(branch,aid){
                 const url = `https://github.kcl.ac.uk/api/v3/repos/NexusDevAdam/assignment-${aid}/contents`;
                 return $http({
@@ -66,24 +85,21 @@
 
             };
 
-            const saveForm = function(submission){
-                $http.post('/api/provider/saveForm',submission)
-                    .then(function(response){
-                        console.log("Complete");
-                    })
-            };
+
 
 
 
             return {
-                postAssignmentConfig:postAssignmentConfig,
-                getAssignmentConfig:getAssignmentConfig,
-                getProvideTo:getProvideTo,
-                getReceivedFrom:getReceivedFrom,
-                getSubmission:getSubmission,
-                getGitPartial:getGitPartial,
-                saveForm:saveForm,
-                getAllSubmissions:getAllSubmissions
+                getAllSubmissions:getAllSubmissions,
+                getSubmissions:getSubmissions,
+                getReceiverSubmissions:getReceiverSubmissions,
+                getProviderSubmissions:getProviderSubmissions,
+                updateProviderForm:updateProviderForm,
+                getAllAssignments:getAllAssignments,
+                getOneAssignment:getOneAssignment,
+                updateAssignment:updateAssignment
+
+
 
             }
 

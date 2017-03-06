@@ -2,9 +2,14 @@
  * Created by adamellis on 08/02/2017.
  */
 
-const randomName = require('node-random-name');
 
-for(let i=0;i<150;i++){
-    console.log(randomName({ seed:Math.random()}));
-}
 
+const test = [1,2,3,4,5];
+
+let testing = test.reduce(function(acc,val){
+    console.log(acc,val);
+    return acc+val;
+},0);
+
+
+console.log(testing);

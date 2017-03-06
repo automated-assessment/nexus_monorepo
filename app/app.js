@@ -16,11 +16,11 @@
                     templateUrl:'app/academic/academic.html',
                     controller:'academicController as vm',
                     resolve:{
-                        allSubmissions:['$http',function($http){
-                            return $http.get('/api/academic/getAllSubmissions')
+                        allSubmissions:['networkProvider',function(networkProvider){
+                            return networkProvider.getAllSubmissions()
                                 .then(function(response){
-                                    return response.data;
-                                })
+                                    return response;
+                                });
                         }]
                     }
                 })
@@ -35,11 +35,34 @@
                     controller:'configurationController as vm',
                     resolve:{
                         loadAssignment:['networkProvider','$stateParams',function(networkProvider,$stateParams) {
-                            return networkProvider.getAssignmentConfig($stateParams.aid)
-                                .then(function (response) {
-                                    return response.data;
-                                })
+                            if ($stateParams.aid) {
+                                return networkProvider.getOneAssignment($stateParams.aid)
+                                    .then(function (response) {
+                                        return response;
+                                    })
+                            }
+                        }],
+                        assignmentConfig:['loadAssignment','$stateParams',function(loadAssignment,$stateParams){
+                            const assignment = {
+                                providerCounts:[2,3,4,5,6,7,8],
+                                config:{
+                                    aid:$stateParams.aid,
+                                    dateCreated:new Date(),
+                                    dateModified:new Date(),
+                                    formBuild:""
+                                }
+                            };
+                            assignment.config.providerCount = assignment.providerCounts[0];
+
+                            //If there is a pre-existing assignment
+                            if(loadAssignment && loadAssignment.data) {
+                                assignment.config.formBuild = loadAssignment.data.formBuild;
+                                assignment.config.providerCount = loadAssignment.data.providerCount;
+                            }
+                            return assignment;
+
                         }]
+
                     }
                 })
                 .state('frameState.providerState',{
@@ -50,8 +73,7 @@
                         providersid:null,
                         sid:null
                     },
-                    templateUrl:'app/provider/provider.html',
-                    controller:'providerController'
+                    templateUrl:'app/provider/provider.html'
                 })
                 .state('frameState.receiverState',{
                     url:'/receiver',

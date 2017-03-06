@@ -3,28 +3,25 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('configurationController',['$scope','$stateParams','networkProvider','loadAssignment','NotificationService',function($scope,$stateParams,networkProvider,loadAssignment,NotificationService){
+        .controller('configurationController',['$scope','$stateParams', 'assignmentConfig','NotificationService','$http',function($scope,$stateParams,assignmentConfig, NotificationService,$http){
             const vm = this;
 
-            vm.providerCounts = [2,3,4,5,6,7,8];
-            vm.assignmentConfig = {
-                    aid:$stateParams.aid,
-                    date:new Date(),
-                    providerCount:vm.providerCounts[0],
-                    formBuild:loadAssignment.formBuild
-            };
+            vm.providerCounts = assignmentConfig.providerCounts;
+            vm.assignmentConfig = assignmentConfig.config;
 
 
 
-            vm.saveAssignmentConfig = function(){
-                vm.assignmentConfig.formBuild = vm.formObject.formData;
-                networkProvider.postAssignmentConfig(vm.assignmentConfig)
-                    .then(function(response){
-                        NotificationService.createNotification("The assignment configuration has been saved.","success");
-                    })
-                    .catch(function(response){
-                        NotificationService.createNotification("There was an error saving your configuration, please try again.","danger");
-                    })
+            vm.updateAssignmentConfig = function(){
+                if($stateParams.aid){
+                    vm.assignmentConfig.formBuild = vm.formObject.formData;
+                    $http.put(`/api/assignments/${$stateParams.aid}`,{data:vm.assignmentConfig})
+                        .then(function(response){
+                            NotificationService.createNotification("Your form was saved successfully","success");
+                        })
+                } else {
+                    NotificationService.createNotification("There was an error creating your form, please try again.","danger");
+                }
+
             };
         }]);
 }());

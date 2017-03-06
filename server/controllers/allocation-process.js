@@ -14,6 +14,7 @@ const randomName = require('node-random-name');
  */
 module.exports.runAllocation = function(submission){
     submission.providers = [];
+    submission.dateCreated = new Date();
     queryAssignment(submission)
         .then(function(assignment){
             allocate(assignment,submission);
@@ -70,10 +71,13 @@ const allocate = function(assignment,submission){
 
 const generateStudentObject = function(perspective,assignment){
 
+    console.log("perspective",perspective);
 
     return {
         alias:randomName({seed:Math.random()}),
         providersid:perspective.sid,
+        student:perspective.student,
+        studentemail:perspective.studentemail,
         currentForm:assignment.formBuild,
         provided:false
     }
@@ -95,13 +99,8 @@ const queryRandomProviders = function(assignment,submission) {
     return Submission.aggregate(
         [
             {
-                $project:{
-                    _id:1,
-                    aid:1,
-                    studentuid:1,
-                    sid:1,
-                    providers:1,
-                    branch:1,
+                //use $addFields
+                $addFields:{
                     size_providers:{$size:"$providers"}
                 }
             },

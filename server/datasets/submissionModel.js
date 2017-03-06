@@ -12,5 +12,7 @@ module.exports = mongoose.model('Submission',{
     providers:[],
     sid:Number,
     aid:Number,
-    branch:String
+    branch:String,
+    dateCreated:String,
+    dateModified:String
 });

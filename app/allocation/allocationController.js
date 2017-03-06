@@ -6,14 +6,15 @@
         .controller('allocationController',['$scope','networkProvider','$stateParams',function($scope,networkProvider,$stateParams){
 
             if($stateParams.sid){
-                networkProvider.getProvideTo($stateParams.sid)
+                networkProvider.getProviderSubmissions($stateParams.sid)
                     .then(function(response){
-                        $scope.provideTo = response.data;
+                        $scope.provideTo = response;
+
 
                     });
-                networkProvider.getReceivedFrom($stateParams.sid)
+                networkProvider.getReceiverSubmissions($stateParams.sid)
                     .then(function(response){
-                        $scope.receivedFrom = response.data;
+                        //$scope.receivedFrom = response.data;
 
                     });
             }
