@@ -74,7 +74,7 @@ class GitUtils
       FileUtils.mkdir_p tmp_path
       FileUtils.cd(repo_path) do
         # Also make sure . files are moved
-        FileUtils.mv files_to_move, tmp_path
+        FileUtils.mv all_files_except_git, tmp_path
       end
       submission.log("Moved files to tmp directory: #{tmp_path}", 'Debug')
 
@@ -90,7 +90,7 @@ class GitUtils
       # Everything but not .git
       FileUtils.cd(repo_path) do
         # Remove all files that are not . or .. or .git
-        FileUtils.rm_r(files_to_move)
+        FileUtils.rm_r(all_files_except_git)
       end
 
       # Remove everything from the remote repo in preparation
@@ -100,7 +100,7 @@ class GitUtils
       # move files back from temporary location to
       # local repository location
       FileUtils.cd(tmp_path) do
-        FileUtils.mv files_to_move, repo_path
+        FileUtils.mv all_files_except_git, repo_path
       end
       submission.log("Moved files back to code directory: #{repo_path}", 'Debug')
 
@@ -220,7 +220,7 @@ class GitUtils
     end
 
     # Gets all files to move except for ., .. and .git
-    def files_to_move
+    def all_files_except_git
       (Dir.glob('*', File::FNM_DOTMATCH).tap { |a| a.shift(2) }).delete_if { |file| file.eql? '.git' }
     end
   end
