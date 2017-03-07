@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170103201126) do
+ActiveRecord::Schema.define(version: 20170201134558) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -27,8 +27,8 @@ ActiveRecord::Schema.define(version: 20170103201126) do
     t.datetime "deadline"
     t.boolean  "allow_late"
     t.integer  "course_id"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
     t.integer  "late_cap"
     t.boolean  "allow_zip"
     t.boolean  "allow_git"
@@ -36,7 +36,8 @@ ActiveRecord::Schema.define(version: 20170103201126) do
     t.string   "repourl"
     t.integer  "max_attempts"
     t.datetime "latedeadline"
-    t.boolean  "feedback_only", default: false
+    t.boolean  "feedback_only",   default: false
+    t.text     "active_services"
   end
 
   add_index "assignments", ["course_id"], name: "index_assignments_on_course_id"
@@ -108,15 +109,6 @@ ActiveRecord::Schema.define(version: 20170103201126) do
   add_index "intermediate_marks", ["marking_tool_id"], name: "index_intermediate_marks_on_marking_tool_id"
   add_index "intermediate_marks", ["submission_id"], name: "index_intermediate_marks_on_submission_id"
 
-  create_table "marking_tool_context_hierarchies", id: false, force: :cascade do |t|
-    t.integer "ancestor_id",   null: false
-    t.integer "descendant_id", null: false
-    t.integer "generations",   null: false
-  end
-
-  add_index "marking_tool_context_hierarchies", ["ancestor_id", "descendant_id", "generations"], name: "marking_tool_context_anc_desc_idx", unique: true
-  add_index "marking_tool_context_hierarchies", ["descendant_id"], name: "marking_tool_context_desc_idx"
-
   create_table "marking_tool_contexts", force: :cascade do |t|
     t.integer  "assignment_id"
     t.integer  "marking_tool_id"
@@ -125,10 +117,8 @@ ActiveRecord::Schema.define(version: 20170103201126) do
     t.datetime "created_at",                      null: false
     t.datetime "updated_at",                      null: false
     t.boolean  "configured",      default: false
-    t.integer  "depends_on"
     t.integer  "condition"
-    t.string   "name"
-    t.integer  "parent_id"
+    t.text     "depends_on"
   end
 
   add_index "marking_tool_contexts", ["assignment_id"], name: "index_marking_tool_contexts_on_assignment_id"
@@ -175,6 +165,7 @@ ActiveRecord::Schema.define(version: 20170103201126) do
     t.boolean  "mark_override",     default: false
     t.boolean  "failed"
     t.boolean  "git_success",       default: false
+    t.text     "active_services"
   end
 
   add_index "submissions", ["assignment_id"], name: "index_submissions_on_assignment_id"

@@ -1,6 +1,7 @@
 class AssignmentController < ApplicationController
   include ApplicationHelper
   require_relative '../lib/git_utils'
+  require_relative '../lib/workflow_utils'
 
   before_action :authenticate_user!
 
@@ -68,49 +69,21 @@ class AssignmentController < ApplicationController
     return unless authenticate_admin!
     @assignment = Assignment.new(assignment_params)
     unless @assignment.save
-      flash[:error] = @assignment.errors.full_messages[0]
-      redirect_to action: 'new', cid: @assignment.course.id
-      @assignment.destroy
+      error_flash_and_cleanup!(@assignment.errors.full_messages[0])
       return
     end
 
     unless GitUtils.setup_remote_assignment_repo!(@assignment)
-      flash[:error] = 'Error creating repository for assignment!'
-      redirect_to action: 'new', cid: @assignment.course.id
-      @assignment.destroy
+      error_flash_and_cleanup!('Error creating repository for assignment!')
       return
     end
 
-    @assignment.marking_tool_contexts.each do |mtc|
-      marking_tool = MarkingTool.find_by(id: mtc.marking_tool_id)
-      unless marking_tool
-        flash[:error] = 'One of the marking tools selected doesn\'t exist'
-        redirect_to action: 'new', cid: @assignment.course.id
-        @assignment.destroy
-        return nil
-      end
-      mtc.name = "#{@assignment.id}-#{marking_tool.uid}"
-      mtc.save!
-    end
-
-    @assignment.marking_tool_contexts.each do |mtc|
-      marking_tool = MarkingTool.find_by(id: mtc.marking_tool_id)
-      depends_on = MarkingTool.find_by(id: mtc.depends_on)
-      next unless depends_on
-      if marking_tool.uid.eql? depends_on.uid
-        flash[:error] = 'A marking service cannot depend on itself!'
-        redirect_to action: 'new', cid: @assignment.course.id
-        @assignment.destroy
-        return nil
-      end
-      parent_node = MarkingToolContext.find_by(name: "#{@assignment.id}-#{depends_on.uid}")
-      unless parent_node
-        flash[:error] = "Please add the marking service #{depends_on.name} to the assignment before making #{marking_tool.name} dependant on it!"
-        redirect_to action: 'new', cid: @assignment.course.id
-        @assignment.destroy
-        return nil
-      end
-      parent_node.add_child mtc
+    begin
+      @assignment.active_services = WorkflowUtils.construct_workflow(@assignment.marking_tool_contexts)
+      @assignment.save!
+    rescue StandardError => e
+      error_flash_and_cleanup!(e.message)
+      return
     end
 
     if @assignment.marking_tools.configurable.any?
@@ -143,7 +116,7 @@ class AssignmentController < ApplicationController
     return unless authenticate_admin!
     @assignment = return_assignment!
     if @assignment
-      headers['Content-Disposition'] = 'attachment; filename=\"submissions-data-export.csv\"'
+      headers['Content-Disposition'] = 'attachment; filename="submissions-data-export.csv"'
       headers['Content-Type'] ||= 'text/csv'
     end
   end
@@ -209,7 +182,7 @@ class AssignmentController < ApplicationController
                                        :allow_zip,
                                        :allow_git,
                                        :allow_ide,
-                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :depends_on, :condition])
+                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :condition, depends_on: []])
   end
 
   def return_assignment!
@@ -219,5 +192,11 @@ class AssignmentController < ApplicationController
       render 'mine', status: 404
     end
     assignment
+  end
+
+  def error_flash_and_cleanup!(message)
+    flash[:error] = message
+    redirect_to action: 'new', cid: @assignment.course.id
+    @assignment.destroy
   end
 end

@@ -33,8 +33,6 @@ gem 'octokit', '~> 4.0'
 # Markdown rendering
 gem 'redcarpet'
 
-gem 'closure_tree'
-
 group :production do
   # postgres adapter
   gem 'pg'
@@ -73,6 +71,6 @@ group :test do
   gem 'rspec_junit_formatter', '0.2.2'
 end
 
-#gem 'bunny'
-#gem 'sneakers', '2.3.5'
+# gem 'bunny'
+# gem 'sneakers', '2.3.5'
 gem 'sneakers'

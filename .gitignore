@@ -41,6 +41,7 @@
 # Logs
 logs
 *.log
+*.log.*
 
 # Runtime data
 pids
@@ -65,3 +66,5 @@ node_modules
 
 ### env ###
 .env*
+
+.idea/*

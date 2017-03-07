@@ -8,6 +8,8 @@ class Assignment < ActiveRecord::Base
 
   accepts_nested_attributes_for :marking_tool_contexts, reject_if: proc { |attributes| attributes[:marking_tool_id].blank? }
 
+  serialize :active_services, Hash
+
   validates :title, presence: true
   validates :start, presence: true
   validates :deadline, presence: true
