@@ -59,6 +59,7 @@
                             if(submissionProviders){
                                 allocation.providers=submissionProviders.data;
                                 allocation.student = submissionProviders.data.student;
+                                allocation.dateCreated = submissionProviders.data.dateCreated;
                             }
                             return allocation;
                         }]
@@ -107,7 +108,8 @@
                     params:{
                         providersid:null,
                         receiversid:null,
-                        aid:null
+                        aid:null,
+                        alias:null
                     },
                     controller:'providerController as vm',
                     templateUrl:'app/provider/provider.html',
@@ -135,7 +137,8 @@
                     params:{
                         providersid:null,
                         receiversid:null,
-                        aid:null
+                        aid:null,
+                        alias:null
                     },
                     templateUrl:'app/receiver/receiver.html',
                     controller:'receiverController as vm',

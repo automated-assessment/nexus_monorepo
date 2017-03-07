@@ -9,6 +9,7 @@
             console.log(receivedForm);
             vm.currentForm = receivedForm.currentForm;
             vm.provided = receivedForm.provided;
+            vm.alias = $stateParams.alias;
 
 
 

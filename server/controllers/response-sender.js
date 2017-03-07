@@ -18,7 +18,7 @@ module.exports.sendResponse = function(req){
     const studentuid = req.body.studentuid;
     const sid = req.body.sid;
     const html =
-        `<iframe src="http://localhost:3050/#!/frame/allocation?sid=${sid}" height="500" width="1000"`;
+        `<iframe src="http://localhost:3050/#!/frame/allocation?sid=${sid}&aid=${aid}" height="500" width="1000"`;
     sendFeedback(html,req.body.sid,function(err,res,body){
     });
 };

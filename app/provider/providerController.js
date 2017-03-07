@@ -10,6 +10,9 @@
 
             const vm = this;
 
+
+            console.log($stateParams);
+            vm.alias = $stateParams.alias;
             vm.currentForm = providerForm.currentForm;
             vm.provided = providerForm.provided;
 

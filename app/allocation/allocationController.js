@@ -8,6 +8,7 @@
            const vm = this;
            vm.sid = allocation.sid;
            vm.aid = allocation.aid;
+           vm.dateCreated = allocation.dateCreated;
            vm.student = allocation.student;
            vm.provideTo = allocation.receivers;
            vm.receivedFrom = allocation.providers;

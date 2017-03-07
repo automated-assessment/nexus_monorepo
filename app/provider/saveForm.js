@@ -61,7 +61,8 @@
                     networkProvider.updateProviderForm(scope.vm.receiversid,scope.vm.providersid,response)
                         .then(function(response){
                             NotificationService.createNotification("Form saved successfully","success");
-                            $window.close();
+                            // this does seem to be sort of working, need to revisit $window.close();
+                            //TODO:window close.
                         });
 
                 })
