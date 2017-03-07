@@ -6,7 +6,7 @@
         .controller('academicController',['allSubmissions',function(allSubmissions){
 
             const vm = this;
-
+            console.log(allSubmissions.data);
             vm.submissions = allSubmissions.data;
 
         }]);

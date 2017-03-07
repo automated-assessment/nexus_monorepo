@@ -1,6 +1,6 @@
 (function(){
     angular.module('PeerFeedback')
-        .directive('formBuild',['$compile',function($compile){
+        .directive('buildForm',['$compile',function($compile){
 
             function link(scope,elem){
                 scope.vm.formObject = elem.formBuilder({dataType:'json',formData:scope.vm.assignmentConfig.formBuild}).data('formBuilder');

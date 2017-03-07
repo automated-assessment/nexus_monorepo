@@ -28,31 +28,44 @@ module.exports.getSubmissions = function(req,res){
         })
 };
 
-
-//this should be get providers.
-module.exports.getReceiverSubmissions = function(req,res){
+module.exports.getSubmissionRelation = function(req,res){
 
     const query = {
-        sid:req.params.sid
+        sid:req.params.receiversid,
+        "providers.providersid":Number(req.params.providersid)
     };
-
     const projection = {
-        student: 1,
-        studentemail: 1,
-        sid: 1,
-        branch: 1,
-        providers:1
+        _id:0,
+        "providers.$":1
     };
 
-    Submission.find(query,projection)
+
+    Submission.findOne(query,projection)
+        .then(function(response){
+            if(response){
+                response = response.providers[0];
+            }
+            res.send(response);
+        })
+
+
+};
+
+
+module.exports.getSubmissionProviders = function(req,res){
+
+    const query = {
+        sid:req.params.receiversid
+    };
+
+
+    Submission.findOne(query)
         .then(function(response){
             res.send(response);
         })
 };
 
-
-//this should be get receivers.
-module.exports.getProviderSubmissions = function(req,res){
+module.exports.getSubmissionReceivers = function(req,res){
 
     Submission.aggregate(
 
@@ -74,9 +87,11 @@ module.exports.getProviderSubmissions = function(req,res){
                 "tempreceivers":{
                     "receiversid":"$sid",
                     "student":"$student",
+                    "alias":"$providers.alias",
                     "studentemail":"$studentemail",
                     "currentForm":"$providers.currentForm",
-                    "provided":"$providers.provided"
+                    "provided":"$providers.provided",
+                    "dateCreated":"$dateCreated"
                 }
             }
         },
@@ -86,7 +101,8 @@ module.exports.getProviderSubmissions = function(req,res){
                 "providersid":{$addToSet:"$root.sid"},
                 "student":{$addToSet:"$root.student"},
                 "studentemail":{$addToSet:"$root.studentemail"},
-                "receivers":{$addToSet:"$tempreceivers"}
+                "receivers":{$addToSet:"$tempreceivers"},
+                "dateCreated":{$addToSet:"$dateCreated"}
             },
         },
         {$unwind:'$providersid'},{$unwind:'$student'},{$unwind:'$studentemail'}
@@ -94,7 +110,9 @@ module.exports.getProviderSubmissions = function(req,res){
 
     )
         .then(function(response){
-            console.log(res);
+            if(response){
+                response = response[0];
+            }
             res.send(response);
 
         });
@@ -109,7 +127,7 @@ module.exports.updateProviderForm = function(req,res){
 
 
     const query = {
-        sid:req.params.sid,
+        sid:req.params.receiversid,
         "providers.providersid":Number(req.params.providersid)
     };
 

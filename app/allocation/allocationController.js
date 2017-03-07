@@ -3,21 +3,19 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('allocationController',['$scope','networkProvider','$stateParams',function($scope,networkProvider,$stateParams){
+        .controller('allocationController',['allocation',function(allocation){
 
-            if($stateParams.sid){
-                networkProvider.getProviderSubmissions($stateParams.sid)
-                    .then(function(response){
-                        $scope.provideTo = response;
+           const vm = this;
+           vm.sid = allocation.sid;
+           vm.aid = allocation.aid;
+           vm.student = allocation.student;
+           vm.provideTo = allocation.receivers;
+           vm.receivedFrom = allocation.providers;
 
 
-                    });
-                networkProvider.getReceiverSubmissions($stateParams.sid)
-                    .then(function(response){
-                        //$scope.receivedFrom = response.data;
 
-                    });
-            }
+
+
 
         }]);
 }());

@@ -1,13 +1,10 @@
 <section>
     <h2>Receiver</h2>
-    {{currentForm}}
 
 
-    {{submission}}
-    <!--<div ng-repeat="formElement in submission.currentForm">-->
-        <!--<b>{{formElement.label}}</b>: {{formElement.value}}-->
-    <!--</div>-->
+    {{vm.currentForm}}
 
-    <form render-receiver-form></form>
+    {{vm.provided}}
 
+    <form render-form vm="vm"></form>
 </section>

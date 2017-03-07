@@ -3,6 +3,7 @@
   <component name="JavaScriptLibraryMappings">
     <file url="PROJECT" libraries="{mongoose-DefinitelyTyped}" />
     <includedPredefinedLibrary name="ECMAScript 6" />
+    <includedPredefinedLibrary name="Node.js Core" />
     <excludedPredefinedLibrary name="Feedback/node_modules" />
   </component>
 </project>

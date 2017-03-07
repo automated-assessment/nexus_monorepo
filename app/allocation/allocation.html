@@ -1,27 +1,40 @@
 <section>
 
-    I am: {{receivedFrom.sid}}
-    For assignment: {{receivedFrom.aid}}
+    <div class="page-header"><h1>{{vm.student}}'s Peer Feedback</h1></div>
 
-    <div ng-repeat="submission in provideTo">{{submission.student}}</div>
+    <div class="jumbotron">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Alias</th>
+                    <th>Date Created</th>
+                    <th>Mark</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Hello</td>
+                    <td>You</td>
+                    <td>Nice</td>
+                </tr>
+                <tr>
+                    <td>Again!</td>
+                </tr>
+            </tbody>
+        </table>
+    Viewing submission: {{vm.sid}} in assignment: {{vm.aid}}
 
-
-
-    <!--<h3>Provide To</h3>-->
-    <!--<div ng-repeat="submission in provideTo">-->
-        <!--<a ui-sref="frameState.providerState({aid:{{submission.aid}},sid:{{submission.sid}},providersid:{{submission.providers[0].providersid}}})">-->
-        <!--{{submission.providers[0].alias}} link from sid: {{submission.providers[0].providersid}} to {{submission.sid}}-->
-        <!--</a>-->
-    <!--</div>-->
-
-    <h3>Received From</h3>
-    <div ng-repeat="provider in receivedFrom.providers">
-        <a ui-sref="frameState.receiverState({aid:{{receivedFrom.aid}},sid:{{receivedFrom.sid}},providersid:{{provider.providersid}}})">
-        {{provider.alias}} from sid:{{provider.providersid}} to {{receivedFrom.sid}}
-        </a>
+    <div ng-show="vm.provideTo">
+    <h3>ProvideTo</h3>
+        <div ng-repeat="receiver in vm.provideTo.receivers | orderBy:'receiversid'" ><a ui-sref="frameState.providerState({receiversid:{{receiver.receiversid}},providersid:{{vm.sid}},aid:{{vm.aid}}})" target="_blank">{{receiver.alias}} ({{vm.sid}} provide to {{receiver.receiversid}}) </a></div>
     </div>
+    <div ng-show="vm.receivedFrom">
+    <h3>ReceivedFrom</h3>
 
 
+        <div ng-repeat="provider in vm.receivedFrom.providers | orderBy:'providersid'"><a ui-sref="frameState.receiverState({receiversid:{{vm.sid}}, providersid:{{provider.providersid}}, aid:{{vm.aid}}})">{{provider.alias}} ({{vm.sid}} received from {{provider.providersid}})</a></div>
+    </div>
+    </div>
 
 </section>
 

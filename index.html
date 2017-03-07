@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Peer Feedback</title>
     <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="node_modules/jquery-ui-dist/jquery-ui.min.css"/>
     <link rel="stylesheet" type="text/css" href="node_modules/formBuilder/dist/form-builder.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
 </head>
-
-
 <body ng-app = "PeerFeedback">
 
 <div class="container">
     <div ui-view></div>
 </div>
-
     <!-- Libraries -->
-
-
 
     <script src="node_modules/jquery/dist/jquery.js"></script>
     <script src="node_modules/jquery-ui-dist/jquery-ui.js"></script>
@@ -34,29 +30,24 @@
 
     <script src="app/frame/frameController.js"></script>
     <script src="app/frame/notification/notificationDirective.js"></script>
-    <script src="app/frame/notification/NotificationService.js"></script>
+    <script src="app/common/services/NotificationService.js"></script>
 
     <script src="app/common/networkProvider.js"></script>
 
     <script src="app/academic/academicController.js"></script>
 
     <script src="app/configuration/configurationController.js"></script>
-    <script src="app/common/directives/formBuild.js"></script>
+    <script src="app/common/directives/buildForm.js"></script>
 
     <script src="app/provider/providerController.js"></script>
-    <script src="app/common/directives/renderProviderForm.js"></script>
-    <script src="app/common/directives/saveForm.js"></script>
+    <script src="app/common/directives/renderForm.js"></script>
+    <script src="app/provider/saveForm.js"></script>
 
     <script src="app/receiver/receiverController.js"></script>
-    <script src="app/receiver/receiverAPI.js"></script>
-    <script src="app/common/directives/renderReceiverForm.js"></script>
-
-    <script src="app/common/parser.js"></script>
 
 
     <script src="app/configuration/configurationController.js"></script>
 
     <script src="app/allocation/allocationController.js"></script>
-
 </body>
 </html>

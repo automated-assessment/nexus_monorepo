@@ -3,12 +3,15 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('receiverController',['$scope','$stateParams','receiverAPI',function($scope,$stateParams,receiverAPI){
+        .controller('receiverController',['receivedForm','$stateParams',function(receivedForm,$stateParams){
 
-           $scope.submission={};
-           $scope.submission.sid = $stateParams.sid;
-           $scope.submission.providersid = $stateParams.providersid;
-           $scope.submission.aid = $stateParams.aid;
+            const vm = this;
+            console.log(receivedForm);
+            vm.currentForm = receivedForm.currentForm;
+            vm.provided = receivedForm.provided;
+
+
+
 
 
 

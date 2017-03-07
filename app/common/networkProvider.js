@@ -3,15 +3,11 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .factory('networkProvider',['$http','parser',function($http,parser){
+        .factory('networkProvider',['$http',function($http){
 
             //needs to be extracted to env
             const authToken = "be7549b0fb2ad810c5b2a2a28376ecdac5d47f12";
 
-            //Additional functions:
-            const buildPartial = function(response){
-                return response;
-            };
 
             //Get all submissions
             const getAllSubmissions = function(){
@@ -24,24 +20,31 @@
             };
 
             //Get the receiver's submission and corresponding providers.
-            const getReceiverSubmissions = function(sid){
-                return $http.get(`/api/submissions/receiver/${sid}`)
+            const getSubmissionReceivers = function(providersid){
+                return $http.get(`/api/submissions/receivers/${providersid}`)
                     .then(function(response){
-                        return parser.receiverSubmissions(response.data);
+                        return response;
                     })
             };
 
             //Get the provider's submissions and corresponding receivers.
-            const getProviderSubmissions = function(providersid){
-                return $http.get(`/api/submissions/provider/${providersid}`)
+            const getSubmissionProviders = function(receiversid){
+                return $http.get(`/api/submissions/providers/${receiversid}`)
                     .then(function(response){
-                        return parser.providerSubmissions(response.data);
+                        return response;
+                    })
+            };
+
+            const getSubmissionRelation = function(receiversid,providersid){
+                return $http.get(`/api/submissions/providers/${receiversid}/${providersid}`)
+                    .then(function(response){
+                        return response;
                     })
             };
 
             //Update the provider's feedback form.
-            const updateProviderForm = function(sid,providersid){
-                return $http.put(`/api/submissions/provider/${sid}/${providersid}`);
+            const updateProviderForm = function(receiversid,providersid,data){
+                return $http.put(`/api/submissions/providers/${receiversid}/${providersid}`,data);
             };
 
             const getAllAssignments = function(){
@@ -58,25 +61,34 @@
 
 
 
+            const getGitFile = function(aid,branch,path){
+                return gitQuery(`/repos/NexusDevAdam/assignment-${aid}/contents/${path}`,{ref:branch});
 
 
+            };
 
+            const getGitTree = function(){
+                //TODO
+            };
 
+            const getGitContent = function(aid, branch){
+                return gitQuery(`/repos/NexusDevAdam/assignment-${aid}/contents`,{ref:branch})
 
-
+            };
             //Git API Query
-            const getGitPartial = function(branch,aid){
-                const url = `https://github.kcl.ac.uk/api/v3/repos/NexusDevAdam/assignment-${aid}/contents`;
+
+
+            const gitQuery = function(queryString,params){
+                const url = "https://github.kcl.ac.uk/api/v3";
+                params = params || {};
                 return $http({
                     method: 'GET',
-                    url: url,
+                    url: url + queryString,
                     headers: {
                         'Authorization': 'token ' + authToken,
                         'Accept': 'application/vnd.github.v3.html'
                     },
-                    params:{
-                        ref:'360d09519bcc6cfe6d5c327cdf8372bcdb1da311'
-                    }
+                    params:params
                 })
                     .then(function(response){
                         return response;
@@ -92,12 +104,16 @@
             return {
                 getAllSubmissions:getAllSubmissions,
                 getSubmissions:getSubmissions,
-                getReceiverSubmissions:getReceiverSubmissions,
-                getProviderSubmissions:getProviderSubmissions,
+                getSubmissionProviders:getSubmissionProviders,
+                getSubmissionReceivers:getSubmissionReceivers,
+                getSubmissionRelation:getSubmissionRelation,
                 updateProviderForm:updateProviderForm,
                 getAllAssignments:getAllAssignments,
                 getOneAssignment:getOneAssignment,
-                updateAssignment:updateAssignment
+                updateAssignment:updateAssignment,
+                getGitFile:getGitFile,
+                getGitTree:getGitTree,
+                getGitContent:getGitContent
 
 
 

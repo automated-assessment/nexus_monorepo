@@ -36,18 +36,20 @@ debugRoutes();
 //Create Submission
 
 
-app.get('/api/response',function(req,res){
-    res.set({"Access-Control-Allow-Origin":"*"});
-    res.sendFile(__dirname + "/index.html");
-});
+// app.get('/api/response',function(req,res){
+//     res.set({"Access-Control-Allow-Origin":"*"});
+//     res.sendFile(__dirname + "/index.html");
+// });
 
 //Submissions
 app.get('/api/submissions',submissionsController.getAllSubmissions);
 app.get('/api/submissions/:aid',submissionsController.getSubmissions);
-app.get('/api/submissions/receiver/:sid',submissionsController.getReceiverSubmissions);
-app.get('/api/submissions/provider/:providersid',submissionsController.getProviderSubmissions);
+app.get('/api/submissions/providers/:receiversid',submissionsController.getSubmissionProviders);
+app.get('/api/submissions/receivers/:providersid',submissionsController.getSubmissionReceivers);
 app.post('/mark',submissionsController.createSubmission);
-app.put('/api/submissions/provider/:sid/:providersid',submissionsController.updateProviderForm);
+app.get('/api/submissions/providers/:receiversid/:providersid',submissionsController.getSubmissionRelation);
+app.put('/api/submissions/providers/:receiversid/:providersid',submissionsController.updateProviderForm);
+
 
 //Assignments
 app.get('/api/assignments',assignmentsController.getAllAssignments);

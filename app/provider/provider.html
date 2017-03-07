@@ -1,24 +1,32 @@
 <Section>
 
+
+
+
     <h2>Provider</h2>
+    Assignment:{{vm.aid}}<br/>
+    Providersid:{{vm.providersid}}<br/>
+    Receiversid:{{vm.receiversid}}<br/>
 
     This will show the individual submission and the form to fill.
 
 
-    Currently looking at submission: {{submission.sid}}
+    Currently looking at submission: {{vm.receiversid}}
 <br/><br/>
 
     Student has submitted: <br/><br/>
-    <div ng-bind-html="submission.gitHubSnippet"></div>
+    <div ng-bind-html="vm.snippet.submission"></div>
 <hr/>
 Please provide the following feedback:
     <br/><br/>
 
     <!--Need to get form from aid-->
 
-<!--<form render-provider-form id="render-form"></form>-->
-<button save-form class="btn btn-primary">Submit</button>
+<form render-form id="render-form" vm="vm"></form>
+<button save-form class="btn btn-primary" vm="vm">Submit</button>
 
 
-{{test}}
+
+
+<test-directive></test-directive>
 </Section>

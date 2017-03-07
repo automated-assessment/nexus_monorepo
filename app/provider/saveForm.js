@@ -3,7 +3,7 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .directive('saveForm',function(){
+        .directive('saveForm',['NotificationService','networkProvider','$window',function(NotificationService,networkProvider,$window){
             //need to understand this code.
             //borrowed from internet
             const saveUserValues = function(container,json){
@@ -50,18 +50,30 @@
 
                 elem.click(function(){
                     const container = $('#render-form')[0];
-                    const json = scope.submission.currentForm;
-                    const updatedJson = saveUserValues(container,json);
-                    scope.submission.currentForm = updatedJson;
-                    scope.submission.provided=true;
-                    scope.saveForm();
-                    scope.createNotification("Your feedback was sent successfully.","success");
-                });
+                    const updatedForm = saveUserValues(container,scope.vm.currentForm);
+                    scope.vm.provided = true;
+
+                    console.log(updatedForm);
+                    const response = {
+                        currentForm:updatedForm,
+                        provided:scope.vm.provided
+                    };
+                    networkProvider.updateProviderForm(scope.vm.receiversid,scope.vm.providersid,response)
+                        .then(function(response){
+                            NotificationService.createNotification("Form saved successfully","success");
+                            $window.close();
+                        });
+
+                })
+
 
             }
             return {
                 restrict:'A',
-                link:link
+                link:link,
+                scope:{
+                    vm:"="
+                }
             }
-        })
+        }])
 })();

@@ -25,9 +25,46 @@
                     }
                 })
                 .state('frameState.allocationState',{
-                    url:'/allocation?sid',
+                    url:'/allocation?sid?aid',
                     templateUrl:'app/allocation/allocation.html',
-                    controller:'allocationController'
+                    controller:'allocationController as vm',
+                    resolve:{
+                        submissionReceivers:['networkProvider','$stateParams',function(networkProvider,$stateParams) {
+                            if($stateParams.sid){
+                                return networkProvider.getSubmissionReceivers($stateParams.sid)
+                                    .then(function(response){
+                                        return response;
+                                    })
+                            }
+
+
+                        }],
+                        submissionProviders:['networkProvider','$stateParams',function(networkProvider,$stateParams){
+                            if($stateParams.sid){
+                                return networkProvider.getSubmissionProviders($stateParams.sid)
+                                    .then(function(response){
+                                        return response;
+                                    })
+                            }
+                        }],
+                        allocation:['submissionReceivers','submissionProviders','$stateParams',function(submissionReceivers,submissionProviders,$stateParams){
+                            const allocation = {
+                                sid:$stateParams.sid,
+                                aid:$stateParams.aid
+                            };
+
+                            if(submissionReceivers){
+                                allocation.receivers = submissionReceivers.data;
+                            }
+                            if(submissionProviders){
+                                allocation.providers=submissionProviders.data;
+                                allocation.student = submissionProviders.data.student;
+                            }
+                            return allocation;
+                        }]
+
+
+                    }
                 })
                 .state('frameState.configurationState',{
                     url:'/configuration?aid',
@@ -67,23 +104,53 @@
                 })
                 .state('frameState.providerState',{
                     url:'/provider',
-                    controller:'providerController as vm',
                     params:{
-                        aid:null,
                         providersid:null,
-                        sid:null
+                        receiversid:null,
+                        aid:null
                     },
-                    templateUrl:'app/provider/provider.html'
+                    controller:'providerController as vm',
+                    templateUrl:'app/provider/provider.html',
+                    resolve:{ //refactor this with receiverState resolver
+                        providerForm:['$stateParams','networkProvider',function($stateParams,networkProvider){
+                            const form = {
+                                currentForm:""
+                            };
+                            if($stateParams.receiversid && $stateParams.providersid){
+                                return networkProvider.getSubmissionRelation($stateParams.receiversid,$stateParams.providersid)
+                                    .then(function(response){
+                                        form.currentForm = response.data.currentForm;
+                                        form.provided = response.data.provided; //is this necessary?
+                                        return form;
+                                    });
+                            } else {
+                                return form;
+                            }
+
+                        }]
+                    }
                 })
                 .state('frameState.receiverState',{
                     url:'/receiver',
                     params:{
-                        aid:null,
                         providersid:null,
-                        sid:null
+                        receiversid:null,
+                        aid:null
                     },
-                    templateUrl:'app/provider/receiver.html',
-                    controller:'receiverController'
+                    templateUrl:'app/receiver/receiver.html',
+                    controller:'receiverController as vm',
+                    resolve:{
+                        receivedForm:['$stateParams','networkProvider',function($stateParams, networkProvider){
+                            const form = {};
+                            networkProvider.getSubmissionRelation($stateParams.receiversid,$stateParams.providersid)
+                                .then(function(response){
+                                    form.currentForm =response.data.currentForm;
+                                    form.provided = response.data.provided;
+                                });
+
+                            return form;
+                        }]
+                    }
                 });
                 $urlRouterProvider.otherwise('/frame');
         }]);
