@@ -16,5 +16,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="mongoose-DefinitelyTyped" level="application" />
+    <orderEntry type="library" name="jasmine-DefinitelyTyped" level="application" />
   </component>
 </module>
