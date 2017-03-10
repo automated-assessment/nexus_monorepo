@@ -40,7 +40,6 @@ class GitUtils
     end
 
     def first_time_push!(submission)
-      # binding.pry
       # init repo; checkout new branch; add all files; commit; push
       repo = init_gitobj(submission)
       branch_name = gen_branch_name(submission)
@@ -66,14 +65,19 @@ class GitUtils
     end
 
     def subsequent_push!(submission)
-      # move files to a temporary location while we pull and remove
+      # Get the repo path in the file system and
+      # generate a tmp path to store files while updating the git repo.
       repo_path = gen_repo_path(submission)
       tmp_path = gen_tmp_path(submission)
+
+      # move files to a temporary location while we pull and remove
       FileUtils.mkdir_p tmp_path
       FileUtils.cd(repo_path) do
-        FileUtils.mv Dir.glob('*'), tmp_path
+        # Also make sure . files are moved
+        FileUtils.mv all_files_except_git, tmp_path
       end
       submission.log("Moved files to tmp directory: #{tmp_path}", 'Debug')
+
       # init repo; pull remote branch; rm all; add all; commit; push
       repo = init_gitobj(submission)
       branch_name = gen_branch_name(submission)
@@ -81,13 +85,29 @@ class GitUtils
       repo.add_remote('origin', submission.augmented_clone_url)
       repo.pull('origin', branch_name)
       repo.checkout(branch_name)
+
       # Remove all files, if any
-      repo.remove('.', recursive: true) unless Dir["#{repo_path}/*"].reject { |fname| fname == '.' || fname == '..' }.empty?
-      # move files back
+      # Everything but not .git
+      FileUtils.cd(repo_path) do
+        # Remove all files that are not . or .. or .git
+        FileUtils.rm_r(all_files_except_git)
+      end
+
+      # Remove everything from the remote repo in preparation
+      # for the new push
+      repo.remove('.', recursive: true)
+
+      # move files back from temporary location to
+      # local repository location
       FileUtils.cd(tmp_path) do
-        FileUtils.mv Dir.glob('*'), repo_path
+        FileUtils.mv all_files_except_git, repo_path
       end
       submission.log("Moved files back to code directory: #{repo_path}", 'Debug')
+
+      # Clean up temp location
+      FileUtils.rmdir(tmp_path)
+      submission.log("#{tmp_path} deleted", 'Debug')
+
       repo.add(all: true)
       repo.commit(gen_commit_msg(submission), allow_empty: true)
       repo.push('origin', branch_name)
@@ -197,6 +217,11 @@ class GitUtils
         return true if commit[:sha].start_with? submission_sha
       end
       false
+    end
+
+    # Gets all files to move except for ., .. and .git
+    def all_files_except_git
+      Dir.glob('*', File::FNM_DOTMATCH).delete_if { |file| file =~ /\A\.{1,2}\z|\A\.git\z/ }
     end
   end
 end
