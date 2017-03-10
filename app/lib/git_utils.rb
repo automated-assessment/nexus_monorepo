@@ -221,7 +221,7 @@ class GitUtils
 
     # Gets all files to move except for ., .. and .git
     def all_files_except_git
-      (Dir.glob('*', File::FNM_DOTMATCH).tap { |a| a.shift(2) }).delete_if { |file| file.eql? '.git' }
+      Dir.glob('*', File::FNM_DOTMATCH).delete_if { |file| file =~ /\A\.{1,2}\z|\A\.git\z/ }
     end
   end
 end
