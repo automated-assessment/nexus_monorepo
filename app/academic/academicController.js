@@ -3,8 +3,9 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('academicController',['allSubmissions',function(allSubmissions){
+        .controller('academicController',['allSubmissions','$document',function(allSubmissions,$document){
 
+            //console.log($document.find("#testing"));
             const vm = this;
             console.log(allSubmissions.data);
             vm.submissions = allSubmissions.data;

@@ -3,9 +3,9 @@
  */
 
 const Submission = require('../datasets/submissionModel');
-const allocationProcess = require('./allocation-process');
+const allocationUtils = require('./allocation-utils');
 const responseSender = require('./response-sender');
-
+const crypto = require('crypto');
 
 
 module.exports.getAllSubmissions = function(req,res){
@@ -16,7 +16,19 @@ module.exports.getAllSubmissions = function(req,res){
         });
 };
 
-module.exports.getSubmissions = function(req,res){
+module.exports.getSubmission = function(req,res){
+
+    const query = {
+        sid:req.params.sid
+    };
+
+    Submission.find(query)
+        .then(function(response){
+            res.send(response);
+        })
+};
+
+module.exports.getAssignmentSubmissions = function(req,res){
 
     const query = {
         aid:req.params.aid
@@ -28,16 +40,13 @@ module.exports.getSubmissions = function(req,res){
         })
 };
 
-module.exports.getSubmissionRelation = function(req,res){
+module.exports.getAllocation = function(req,res){
 
     const query = {
-        sid:req.params.receiversid,
-        "providers.providersid":Number(req.params.providersid)
+        receiverSid:req.params.receiversid,
+        providerSid:req.params.providersid
     };
-    const projection = {
-        _id:0,
-        "providers.$":1
-    };
+
 
 
     Submission.findOne(query,projection)
@@ -49,6 +58,23 @@ module.exports.getSubmissionRelation = function(req,res){
         })
 
 
+};
+
+
+module.exports.getSubmissionCore = function(req,res){
+
+    const query = {
+        sid:req.params.sid
+    };
+
+    const projection = {
+        providers:0
+    };
+
+    Submission.find(query,projection)
+        .then(function(response){
+            res.send(response);
+        })
 };
 
 
@@ -122,36 +148,23 @@ module.exports.getSubmissionReceivers = function(req,res){
 
 
 
-module.exports.updateProviderForm = function(req,res){
 
-
-
-    const query = {
-        sid:req.params.receiversid,
-        "providers.providersid":Number(req.params.providersid)
-    };
-
-    const update = {
-        $set:{
-            "providers.$.currentForm": req.body.currentForm,
-            "providers.$.provided": req.body.provided
-        }
-
-    };
-
-    Submission.findOneAndUpdate(query,update)
-        .then(function(response){
-            res.send(response);
-        })
-};
 
 
 module.exports.createSubmission = function(req,res){
     queryIsNewSubmission(req.params.sid)
         .then(function(isNewSubmission){
             if(isNewSubmission) {
-                const submission = req.body;
-                allocationProcess.runAllocation(submission);
+                const submission = new Submission(req.body);
+                submission.dateCreated = new Date();
+
+                submission.hash = crypto.randomBytes(20).toString('hex');
+
+                submission.save(function(response){
+                    console.log("Hit");
+                    allocationUtils.runAllocation(submission);
+                });
+
             }
             responseSender.sendResponse(req);
         });

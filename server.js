@@ -18,6 +18,7 @@ const port = process.env.PORT || 5000;
 const dbHost = process.env.DB_HOST || localhost;
 const submissionsController = require(__dirname + '/server/controllers/submissions-controller.js');
 const assignmentsController = require(__dirname + '/server/controllers/assignments-controller.js');
+const allocationsController = require(__dirname + '/server/controllers/allocations-controller.js');
 
 
 
@@ -43,17 +44,18 @@ debugRoutes();
 
 //Submissions
 app.get('/api/submissions',submissionsController.getAllSubmissions);
-app.get('/api/submissions/:aid',submissionsController.getSubmissions);
-app.get('/api/submissions/providers/:receiversid',submissionsController.getSubmissionProviders);
-app.get('/api/submissions/receivers/:providersid',submissionsController.getSubmissionReceivers);
+app.get('/api/submissions/:sid',submissionsController.getSubmission);
 app.post('/mark',submissionsController.createSubmission);
-app.get('/api/submissions/providers/:receiversid/:providersid',submissionsController.getSubmissionRelation);
-app.put('/api/submissions/providers/:receiversid/:providersid',submissionsController.updateProviderForm);
 
+app.get('/api/allocations/providers/:receiverSid',allocationsController.getProviders);
+app.get('/api/allocations/receivers/:providerSid',allocationsController.getReceivers);
+app.put('/api/allocations/:receiverSid/:providerSid',allocationsController.updateCurrentForm);
+app.get('/api/allocations/:receiverSid/:providerSid',allocationsController.getAllocation);
 
 //Assignments
 app.get('/api/assignments',assignmentsController.getAllAssignments);
 app.get('/api/assignments/:aid',assignmentsController.getOneAssignment);
+app.get('/api/assignments/:aid/submissions',submissionsController.getAssignmentSubmissions);
 app.put('/api/assignments/:aid',assignmentsController.updateAssignment);
 
 app.get('/',function(req,res){

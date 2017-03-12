@@ -9,10 +9,10 @@ module.exports = mongoose.model('Submission',{
     student:String,
     studentuid:Number,
     studentemail:String,
-    providers:[],
     sid:Number,
     aid:Number,
     branch:String,
     dateCreated:String,
-    dateModified:String
+    dateModified:String,
+    providers:Number
 });

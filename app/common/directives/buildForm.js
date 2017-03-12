@@ -1,9 +1,24 @@
 (function(){
     angular.module('PeerFeedback')
-        .directive('buildForm',['$compile',function($compile){
+        .directive('buildForm',['$compile','$timeout',function($compile,$timeout){
 
             function link(scope,elem){
-                scope.vm.formObject = elem.formBuilder({dataType:'json',formData:scope.vm.assignmentConfig.formBuild}).data('formBuilder');
+
+                const form = elem.formBuilder({dataType:'json',formData:scope.vm.assignmentConfig.formBuild}).data('formBuilder');
+
+                const watcher = scope.$watch(function(){
+                    return form.formData;
+                },function(){
+                    console.log("Change");
+                },true);
+                $timeout(watcher,0);
+
+
+
+
+
+
+
                 let saveElem = elem.find('.form-builder-save').attr("ng-click","vm.updateAssignmentConfig()");
                 $compile(saveElem)(scope);
             }

@@ -13,9 +13,10 @@
 
             vm.updateAssignmentConfig = function(){
                 if($stateParams.aid){
-                    vm.assignmentConfig.formBuild = vm.formObject.formData;
+                    console.log(vm.assignmentConfig.formBuild);
                     $http.put(`/api/assignments/${$stateParams.aid}`,{data:vm.assignmentConfig})
                         .then(function(response){
+
                             NotificationService.createNotification("Your form was saved successfully","success");
                         })
                 } else {

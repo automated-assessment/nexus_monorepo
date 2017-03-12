@@ -15,8 +15,12 @@
             };
 
             //Get all submissions for aid
-            const getSubmissions = function(aid){
-                return $http.get(`/api/submissions/${aid}`);
+            const getAssignmentSubmissions = function(aid){
+                return $http.get(`/api/assignemnts/${aid}/submissions`);
+            };
+
+            const getSubmissionCore = function(sid){
+                return $http.get(`api/submissions/${sid}`);
             };
 
             //Get the receiver's submission and corresponding providers.
@@ -103,7 +107,8 @@
 
             return {
                 getAllSubmissions:getAllSubmissions,
-                getSubmissions:getSubmissions,
+                getAssignmentSubmissions:getAssignmentSubmissions,
+                getSubmissionCore:getSubmissionCore,
                 getSubmissionProviders:getSubmissionProviders,
                 getSubmissionReceivers:getSubmissionReceivers,
                 getSubmissionRelation:getSubmissionRelation,

@@ -33,7 +33,7 @@
                             if($stateParams.sid){
                                 return networkProvider.getSubmissionReceivers($stateParams.sid)
                                     .then(function(response){
-                                        return response;
+                                       return response;
                                     })
                             }
 
@@ -47,22 +47,15 @@
                                     })
                             }
                         }],
-                        allocation:['submissionReceivers','submissionProviders','$stateParams',function(submissionReceivers,submissionProviders,$stateParams){
-                            const allocation = {
-                                sid:$stateParams.sid,
-                                aid:$stateParams.aid
-                            };
+                        submissionCore:['networkProvider','$stateParams',function(networkProvider,$stateParams){
+                            if($stateParams.sid){
+                                return networkProvider.getSubmissionProviders($stateParams.sid)
+                                    .then(function(response){
+                                        return response;
+                                    });
+                            }
+                        }],
 
-                            if(submissionReceivers){
-                                allocation.receivers = submissionReceivers.data;
-                            }
-                            if(submissionProviders){
-                                allocation.providers=submissionProviders.data;
-                                allocation.student = submissionProviders.data.student;
-                                allocation.dateCreated = submissionProviders.data.dateCreated;
-                            }
-                            return allocation;
-                        }]
 
 
                     }

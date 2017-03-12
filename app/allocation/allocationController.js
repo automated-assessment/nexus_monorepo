@@ -3,16 +3,27 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('allocationController',['allocation',function(allocation){
+        .controller('allocationController',['submissionCore','submissionReceivers','submissionProviders',
+            function(submissionCore,submissionReceivers,submissionProviders){
 
            const vm = this;
-           vm.sid = allocation.sid;
-           vm.aid = allocation.aid;
-           vm.dateCreated = allocation.dateCreated;
-           vm.student = allocation.student;
-           vm.provideTo = allocation.receivers;
-           vm.receivedFrom = allocation.providers;
 
+           console.log(submissionCore.data);
+           console.log(submissionReceivers.data);
+           console.log(submissionProviders.data);
+            vm.submission = {
+                core:submissionCore,
+                provideTo:submissionReceivers,
+                receivedFrom:submissionProviders
+            };
+
+           // vm.allocation = allocation;
+           // vm.sid = allocation.sid;
+           // vm.aid = allocation.aid;
+           // vm.dateCreated = allocation.dateCreated;
+           // vm.student = allocation.student;
+           // vm.provideTo = allocation.receivers;
+           // vm.receivedFrom = allocation.providers;
 
 
 

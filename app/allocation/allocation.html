@@ -1,10 +1,10 @@
 <section>
-<div ng-show='{{vm.sid}}'>
-    <div class="page-header"><h1>{{vm.student}}'s Peer Feedback</h1></div>
-    Viewing submission: {{vm.sid}} in assignment: {{vm.aid}}
+<div ng-show='{{vm.submission.sid}}'>
+    <div class="page-header"><h1>{{vm.submission.student}}'s Peer Feedback</h1></div>
+    Viewing submission: {{vm.submission.sid}} in assignment: {{vm.submission.aid}}
     <br/><br/>
     <div class="jumbotron">
-        <div ng-show="vm.provideTo">
+        <div ng-show="vm.submission.provideTo">
         <h3>ProvideTo</h3>
         <table class="table table-hover">
             <thead>
@@ -15,8 +15,8 @@
                 </tr>
             </thead>
             <tbody>
-                    <tr ng-repeat="receiver in vm.provideTo.receivers | orderBy:'receiversid'" >
-                        <td><a ui-sref="frameState.providerState({receiversid:{{receiver.receiversid}},providersid:{{vm.sid}},aid:{{vm.aid}},alias:'{{receiver.alias}}'})">{{receiver.alias}} ({{receiver.receiversid}})</a></td>
+                    <tr ng-repeat="receiver in vm.submission.provideTo.receivers | orderBy:'receiversid'" >
+                        <td><a ui-sref="frameState.providerState({receiversid:{{receiver.receiversid}},providersid:{{vm.submission.sid}},aid:{{vm.submission.aid}},alias:'{{receiver.alias}}'})">{{receiver.alias}} ({{receiver.receiversid}})</a></td>
                         <td>{{vm.dateCreated}}</td>
                         <td>{{10}}</td>
                     </tr>
