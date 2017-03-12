@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170201134558) do
+ActiveRecord::Schema.define(version: 20170312142710) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 20170201134558) do
     t.datetime "latedeadline"
     t.boolean  "feedback_only",   default: false
     t.text     "active_services"
+    t.text     "dataflow"
   end
 
   add_index "assignments", ["course_id"], name: "index_assignments_on_course_id"
@@ -133,6 +134,8 @@ ActiveRecord::Schema.define(version: 20170201134558) do
     t.string   "uid"
     t.boolean  "requires_config", default: false
     t.text     "config_url"
+    t.string   "input"
+    t.string   "output"
   end
 
   add_index "marking_tools", ["uid"], name: "index_marking_tools_on_uid", unique: true

@@ -21,6 +21,8 @@ class MarkingToolController < ApplicationController
                                          :description,
                                          :url,
                                          :requires_config,
-                                         :config_url)
+                                         :config_url,
+                                         :input,
+                                         :output)
   end
 end

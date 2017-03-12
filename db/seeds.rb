@@ -4,18 +4,24 @@ if ENV['DOCKER']
                      description: 'Java Compilation',
                      url: 'http://javac-tool:5000/mark',
                      uid: 'javac',
+                     input: 'java',
+                     output: 'class',
                      requires_config: false)
 
   MarkingTool.create(name: 'RNG Tool',
                      description: 'Random number generator',
                      url: 'http://rng-tool:3000/mark',
                      uid: 'rng',
+                     input: 'java',
+                     output: 'java',
                      requires_config: false)
 
   MarkingTool.create(name: 'Config Tool',
                      description: 'Sample Configuration Tool',
                      url: 'http://config-tool:3000/mark',
                      uid: 'conf',
+                     input: nil,
+                     output: nil,
                      requires_config: true,
                      config_url: 'http://config-tool:3000/static/config.html?aid=%{aid}')
 
@@ -23,6 +29,8 @@ if ENV['DOCKER']
                      description: 'IO Tool',
                      url: 'http://io-tool:3000/mark',
                      uid: 'iotool',
+                     input: 'java',
+                     output: nil,
                      requires_config: true,
                      config_url: 'http://io-tool:3000/#/static/config.html?aid=%{aid}')
 end
@@ -51,18 +59,24 @@ if Rails.env.eql? 'development'
                        description: 'Java Compilation',
                        url: 'http://localhost:3003/mark',
                        uid: 'javac',
+                       input: 'java',
+                       output: 'class',
                        requires_config: false)
 
     MarkingTool.create(name: 'RNG Tool',
                        description: 'Random number generator',
                        url: 'http://localhost:3001/mark',
                        uid: 'rng',
+                       input: 'java',
+                       output: 'java',
                        requires_config: false)
 
     MarkingTool.create(name: 'Config Tool',
                        description: 'Sample Configuration Tool',
                        url: 'http://localhost:3002/mark',
                        uid: 'conf',
+                       input: nil,
+                       output: nil,
                        requires_config: true,
                        config_url: 'http://localhost:3002/static/config.html?aid=%{aid}')
 
@@ -70,6 +84,8 @@ if Rails.env.eql? 'development'
                        description: 'IO Tool',
                        url: 'http://localhost:3004/mark',
                        uid: 'iotool',
+                       input: 'java',
+                       output: nil,
                        requires_config: true,
                        config_url: 'http://localhost:3004/#/static/config.html?aid=%{aid}')
   end

@@ -2,6 +2,7 @@ class AssignmentController < ApplicationController
   include ApplicationHelper
   require_relative '../lib/git_utils'
   require_relative '../lib/workflow_utils'
+  require_relative '../lib/dataflow_utils'
 
   before_action :authenticate_user!
 
@@ -80,6 +81,7 @@ class AssignmentController < ApplicationController
 
     begin
       @assignment.active_services = WorkflowUtils.construct_workflow(@assignment.marking_tool_contexts)
+      @assignment.dataflow = DataflowUtils.construct_dataflow(@assignment.marking_tool_contexts)
       @assignment.save!
     rescue StandardError => e
       error_flash_and_cleanup!(e.message)
