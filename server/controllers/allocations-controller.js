@@ -24,7 +24,7 @@ module.exports.getProviders = function(req,res){
         }
     ])
         .then(function(response){
-            console.log(response);
+            response = response[0];
             res.send(response);
         })
 };
@@ -46,6 +46,7 @@ module.exports.getReceivers = function(req,res){
             $project:{"receivers":1}
         })
         .then(function(response){
+            response = response[0];
             res.send(response);
         })
 };
@@ -71,7 +72,7 @@ module.exports.updateCurrentForm = function(req,res){
         });
 };
 
-module.exports.getAllocation = function (req,res) {
+module.exports.getOneAllocation = function (req,res) {
     const query = {
         receiverSid:req.params.receiverSid,
         providerSid:req.params.providerSid

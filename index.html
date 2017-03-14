@@ -15,6 +15,7 @@
 <div class="container">
     <div ui-view></div>
 </div>
+
     <!-- Libraries -->
 
     <script src="node_modules/jquery/dist/jquery.js"></script>
@@ -25,29 +26,42 @@
     <script src="node_modules/formBuilder/dist/form-builder.js"></script>
     <script src="node_modules/formBuilder/dist/form-render.js"></script>
 
-    <!-- AngularJS-->
-    <script src="app/app.js"></script>
-
-    <script src="app/frame/frameController.js"></script>
-    <script src="app/frame/notification/notificationDirective.js"></script>
-    <script src="app/common/services/NotificationService.js"></script>
-
-    <script src="app/common/networkProvider.js"></script>
-
-    <script src="app/academic/academicController.js"></script>
-
-    <script src="app/configuration/configurationController.js"></script>
-    <script src="app/common/directives/buildForm.js"></script>
-
-    <script src="app/provider/providerController.js"></script>
-    <script src="app/common/directives/renderForm.js"></script>
-    <script src="app/provider/saveForm.js"></script>
-
-    <script src="app/receiver/receiverController.js"></script>
 
 
-    <script src="app/configuration/configurationController.js"></script>
+    <script src="app/app.module.js"></script>
 
-    <script src="app/allocation/allocationController.js"></script>
+    <!-- AngularJS controllers, services, directives-->
+    <script src="app/layout/frame.controller.js"></script>
+    <script src="app/views/provider/provider.controller.js"></script>
+    <script src="app/views/academic/academic.controller.js"></script>
+    <script src="app/views/configuration/configuration.controller.js"></script>
+    <script src="app/views/receiver/receiver.controller.js"></script>
+    <script src="app/views/configuration/configuration.controller.js"></script>
+    <script src="app/views/allocation/allocation.controller.js"></script>
+
+
+    <script src="app/services/notification.service.js"></script>
+    <script src="app/services/network/allocation.service.js"></script>
+    <script src="app/services/network/assignment.service.js"></script>
+    <script src="app/services/network/submission.service.js"></script>
+
+    <script src="app/components/notification.directive.js"></script>
+    <script src="app/components/build-form.directive.js"></script>
+    <script src="app/components/render-form.directive.js"></script>
+    <script src="app/components/save-form.directive.js"></script>
+
+
+    <script src="app/app.route.js"></script>
+    <script src="app/views/academic/academic.route.js"></script>
+    <script src="app/views/allocation/allocation.route.js"></script>
+    <script src="app/views/configuration/configuration.route.js"></script>
+    <script src="app/views/provider/provider.route.js"></script>
+    <script src="app/views/receiver/receiver.route.js"></script>
+
+    <script src="app/values/providerCounts.values.js"></script>
+
+
+
+
 </body>
 </html>

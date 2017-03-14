@@ -1,0 +1,63 @@
+<section>
+<div ng-show='{{vm.submission.core.sid}}'>
+    Viewing submission: {{vm.submission.core.sid}} in assignment: {{vm.submission.core.aid}} for {{vm.submission.core.student}}
+    <br/><br/>
+    <div class="jumbotron">
+        <div ng-show="vm.submission.provideTo">
+        <h3>ProvideTo</h3>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Alias</th>
+                    <th>Allocated on</th>
+                    <th>Last modified</th>
+                    <th>Mark</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr ng-repeat="receiver in vm.submission.provideTo.receivers" >
+                        <td><a ui-sref="frameState.providerState({receiverSid:{{receiver.receiverSid}},providerSid:{{vm.submission.core.sid}},aid:{{vm.submission.core.aid}},alias:'{{receiver.alias}}'})">
+                            {{receiver.alias}} ({{receiver.receiverSid}})
+                        </a></td>
+                        <td>{{receiver.dateAllocated | date: 'shortDate'}}</td>
+                        <td>{{receiver.dateModified | date:'shortDate'}}</td>
+                        <td>{{receiver.mark}}</td>
+                    </tr>
+
+            </tbody>
+        </table>
+        </div>
+        <div ng-show="vm.submission.receivedFrom">
+            <h3>ReceivedFrom</h3>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Alias</th>
+                    <th>Allocated on</th>
+                    <th>Last modified</th>
+                    <th>Mark</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="provider in vm.submission.receivedFrom.providers">
+                        <td><a ui-sref="frameState.receiverState()">
+                            {{provider.alias}} ({{provider.providerSid}})
+                        </a></td>
+                        <td>{{provider.dateAllocated | date: 'shortDate'}}</td>
+                        <td>{{provider.dateModified | date:'shortDate'}}</td>
+                        <td>{{provider.mark}}</td>
+                    </tr>
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+    </div>
+</div>
+</section>
+
+

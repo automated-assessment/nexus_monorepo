@@ -44,13 +44,13 @@ debugRoutes();
 
 //Submissions
 app.get('/api/submissions',submissionsController.getAllSubmissions);
-app.get('/api/submissions/:sid',submissionsController.getSubmission);
+app.get('/api/submissions/:sid',submissionsController.getOneSubmission);
 app.post('/mark',submissionsController.createSubmission);
 
 app.get('/api/allocations/providers/:receiverSid',allocationsController.getProviders);
 app.get('/api/allocations/receivers/:providerSid',allocationsController.getReceivers);
 app.put('/api/allocations/:receiverSid/:providerSid',allocationsController.updateCurrentForm);
-app.get('/api/allocations/:receiverSid/:providerSid',allocationsController.getAllocation);
+app.get('/api/allocations/:receiverSid/:providerSid',allocationsController.getOneAllocation);
 
 //Assignments
 app.get('/api/assignments',assignmentsController.getAllAssignments);

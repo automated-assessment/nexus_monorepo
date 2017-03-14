@@ -73,7 +73,10 @@ const associate = function(receiverSid,providerSid,assignment){
         currentForm:assignment.formBuild,
         receiverSid:receiverSid,
         providerSid:providerSid,
-        alias:randomName({seed:Math.random()})
+        alias:randomName({seed:Math.random()}),
+        provided:false,
+        dateAllocated:new Date(),
+        dateModified:new Date()
     }
 };
 

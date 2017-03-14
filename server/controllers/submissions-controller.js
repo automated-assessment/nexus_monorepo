@@ -16,13 +16,13 @@ module.exports.getAllSubmissions = function(req,res){
         });
 };
 
-module.exports.getSubmission = function(req,res){
+module.exports.getOneSubmission = function(req,res){
 
     const query = {
         sid:req.params.sid
     };
 
-    Submission.find(query)
+    Submission.findOne(query)
         .then(function(response){
             res.send(response);
         })
@@ -38,26 +38,6 @@ module.exports.getAssignmentSubmissions = function(req,res){
         .then(function(response){
             res.send(response);
         })
-};
-
-module.exports.getAllocation = function(req,res){
-
-    const query = {
-        receiverSid:req.params.receiversid,
-        providerSid:req.params.providersid
-    };
-
-
-
-    Submission.findOne(query,projection)
-        .then(function(response){
-            if(response){
-                response = response.providers[0];
-            }
-            res.send(response);
-        })
-
-
 };
 
 

@@ -6,6 +6,8 @@ module.exports = mongoose.model('Allocation',{
     receiverSid:Number,
     providerSid:Number,
     currentForm:String,
-    dateCreated:Date,
-    alias:String
+    dateAllocated:Date,
+    dateModified:Date,
+    alias:String,
+    provided:Boolean
 });

@@ -24,13 +24,12 @@ module.exports.getOneAssignment =  function(req,res){
 };
 
 module.exports.updateAssignment = function(req,res){
-    console.log(req.body.data);
 
     const query = {
         aid:req.params.aid
     };
 
-    const update = req.body.data;
+    const update = req.body;
 
     const options = {
         upsert:true
