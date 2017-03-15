@@ -1,4 +1,5 @@
 require 'set'
+
 class DataflowUtils
   class << self
     # Given an assignment with marking tool contexts
@@ -20,8 +21,10 @@ class DataflowUtils
         handled_files.add marking_tool.output
         # Get array of marking service urls such that the tool takes in the given
         # file type as input
-        tools_that_require_files = MarkingTool.where(input: marking_tool.output).map(&:url)
-        tools_that_require_files.delete marking_tool.url
+        tools = MarkingTool.find(marking_tool_contexts.map(&:marking_tool_id)).select do |tool|
+          (tool.input.eql? marking_tool.output) && !(tool.uid.eql? marking_tool.uid)
+        end
+        tools_that_require_files = tools.map(&:url)
         tools_that_require_files.each do |tool|
           handled_tools.add tool
         end

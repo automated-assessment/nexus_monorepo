@@ -1,4 +1,5 @@
 require 'set'
+
 class WorkflowUtils
   class << self
     # Given an assignment with marking tool contexts
