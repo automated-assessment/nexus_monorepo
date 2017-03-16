@@ -132,19 +132,20 @@ module.exports.getSubmissionReceivers = function(req,res){
 
 
 module.exports.createSubmission = function(req,res){
-    queryIsNewSubmission(req.params.sid)
-        .then(function(isNewSubmission){
-            if(isNewSubmission) {
+    preExistingSubmission(req.body.sid)
+        .then(function(preExistingSubmission){
+            if(!preExistingSubmission) {
                 const submission = new Submission(req.body);
                 submission.dateCreated = new Date();
 
-                submission.hash = crypto.randomBytes(20).toString('hex');
+                submission.submissionHash = crypto.randomBytes(20).toString('hex');
 
                 submission.save(function(response){
-                    console.log("Hit");
                     allocationUtils.runAllocation(submission);
                 });
 
+            } else {
+                console.log("Error: submission exists");
             }
             responseSender.sendResponse(req);
         });
@@ -152,10 +153,10 @@ module.exports.createSubmission = function(req,res){
 };
 
 
-const queryIsNewSubmission =  function(sid){
+const preExistingSubmission =  function(sid){
     return Submission.findOne({sid:sid})
         .then(function(response){
-            return Number(response)===0;
-        });
+           return response;
+        })
 };
 

@@ -6,7 +6,7 @@
         .module('PeerFeedback')
         .directive('notification',['notificationService',function(notificationService){
            function link(scope){
-               scope.notification = notificationService.getNotification();
+               scope.notification = notificationService.get();
            }
 
            return {

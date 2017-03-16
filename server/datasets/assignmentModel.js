@@ -6,6 +6,9 @@ module.exports = mongoose.model('Assignment',{
     aid:Number,
     providerCount:Number,
     formBuild:String,
+    teacherHash:String,
+    awaitBiDirection:Boolean,
+    contributeFinalMark:Boolean,
     dateCreated:Date
 });
 

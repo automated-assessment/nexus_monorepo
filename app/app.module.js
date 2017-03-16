@@ -5,5 +5,5 @@
  * Created by adamellis on 06/02/2017.
  */
 (function(){
-    angular.module('PeerFeedback',['ui.router']);
+    angular.module('PeerFeedback',['ui.router','ngAnimate','ngTouch','ui.bootstrap']);
 }());

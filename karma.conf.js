@@ -17,17 +17,11 @@ module.exports = function(config) {
     files: [
         'node_modules/angular/angular.js',
         'node_modules/angular-mocks/angular-mocks.js',
+        'node_modules/angular-animate/angular-animate.js',
+        'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
+        'node_modules/angular-touch/angular-touch.js',
         'node_modules/angular-ui-router/release/angular-ui-router.js',
-        'app/app.js',
-        'node_modules/angular-ui-router/release/angular-ui-router.js',
-        'app/allocation/allocation.controller.js',
-        'app/allocation/allocation.controller.js',
-        'app/configuration/configuration.controller.js',
-        'app/configuration/configuration.controller.js',
-        'app/common/network.service.js',
-        'app/common/network.service.spec.js',
-        'app/common/services/notification.service.js',
-        'app/'
+        'app/**/**/*.js'
     ],
 
 
@@ -39,9 +33,8 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'app/**/*.js': ['coverage']
+      'app/**/**/*.js': ['coverage']
     },
-
 
     // test results reporter to use
     // possible values: 'dots', 'progress'

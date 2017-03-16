@@ -1,41 +1,61 @@
-<section>
-    <h2>Configuration</h2>
-    <br/>
+<div class="page-header"><h3>Configuration</h3></div>
 
+{{vm.assignment}}
+<form class="form-horizontal">
+    <!--Number of allocations form-group-->
+    <div class="form-group">
+        <label class="col-sm-3 control-label">Number of allocations:</label>
+        <div class="col-sm-1">
+            <select class="form-control"
+                    ng-options="number as number for number in vm.providerCounts"
+                    ng-model="vm.assignment.providerCount"></select>
+        </div>
+        <!-- //TODO: Move to ui-bootstrap tooltip -->
+        <span class="help-block">The maximum number of one-way allocations between any two submissions.</span>
+    </div>
 
-    <div class="form-inline">
-        Number of feedback providers:
-        <select class="form-control col-lg-6"
-                ng-options="number as number for number in vm.providerCounts"
-                ng-model="vm.assignment.providerCount"></select>
+    <!--Previous form form-group-->
+    <div class="form-group">
+        <label class="col-sm-3 control-label">Use previous form:</label>
+        <div class="col-sm-3">
+            <select class="form-control"
+                    ng-options="date as date for date in vm.dates"
+                    ng-model="vm.assignment.dateCreated"></select>
+        </div>
+        <!-- //TODO: Move to ui-bootstrap tooltip -->
+        <span class="help-block">Load a form previously used.</span>
+    </div>
+
+    <!-- Additional options form-group -->
+    <div class="form-group">
+        <label class="col-md-4 control-label">Additional options</label>
+        <div class="col-md-4">
+            <!--Contribute to final mark checkbox-->
+            <div class="checkbox">
+                <label for="contributionCheckbox">
+                    <input type="checkbox" name="checkboxes" id="contributionCheckbox"
+                           ng-model="vm.assignment.awaitBiDirection">
+                    Await bidirectional relationship before allocation
+                </label>
+            </div>
+
+            <!--Await bidirection checkbox -->
+            <div class="checkbox">
+                <label for="biDirectionCheckbox">
+                    <input type="checkbox" name="checkboxes" id="biDirectionCheckbox"
+                           ng-model="vm.assignment.contributeFinalMark">
+                    Contribute final mark
+                </label>
+            </div>
+        </div>
     </div>
     <br/>
-    <div class="form-inline">
-        Use previous questions:
-        <select class="form-control"><option>26-02-01</option></select>
-    </div>
 
-    <br/>
-    <div class="form-inline">
-        Allow student feedback providers to contribute to final mark: &nbsp;  <input type="radio" name="studentMark" value="yes"/>Yes
-        <input type="radio" name="studentMark" value="no"/>No
-
-    </div>
-    <br/>
-    <div class="form-inline">
-        Await bidirectional allocation before feedback: &nbsp;  <input type="radio" name="bidirectional" value="yes"/>Yes
-        <input type="radio" name="bidirectional" value="no"/>No
-
-    </div>
-    <br/><br/>
+    <h4>Build provider's form</h4>
+    <hr/>
     <build-form vm="vm"></build-form>
 
-    <button class="btn btn-primary" ng-click="vm.updateAssignment()">Save</button>
-
-    <!-- format, form-object, formData, saveListener-->
-
-
+</form>
 <br/>
-
-
+<button class="btn btn-primary" ng-click="vm.updateAssignment()">Save</button>
 </section>

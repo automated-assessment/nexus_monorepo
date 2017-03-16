@@ -1,28 +1,45 @@
 /**
  * Created by adamellis on 06/02/2017.
  */
-(function(){
+(function() {
     angular.module('PeerFeedback')
-        .controller('ConfigurationController',['notificationService','assignment','assignmentService','providerCounts',function(notificationService,assignment,assignmentService,providerCounts){
-            const vm = this;
+        .controller('ConfigurationController', ConfigurationController);
 
-            activate();
+    ConfigurationController.$inject = ['notificationService', 'assignment', 'assignmentService', 'providerCounts'];
 
-            vm.assignment = assignment;
+    function ConfigurationController(notificationService, assignment, assignmentService, providerCounts) {
+        const vm = this;
+
+        activate();
+        console.log(assignment);
+        vm.assignment = assignment;
+        vm.assignment.dateCreated = vm.dates[0];
+
+        vm.updateAssignment = updateAssignment;
 
 
-            vm.updateAssignment = function(){
-                assignmentService.updateAssignment(vm.assignment.aid,vm.assignment)
-                    .then(function(response){
-                        notificationService.createNotification("Assignment configuration saved successfully.","success");
+        function updateAssignment() {
+            console.log("Hello");
+            assignmentService.updateAssignment(vm.assignment.aid, vm.assignment)
+                .then(function (response) {
+                        const successMessage = "Assignment configuration saved successfully.";
+                        notificationService.create(successMessage, notificationService.SUCCESS);
                     },
-                    function(){
-                        notificationService.createNotification("Assignment configuration failed to save, please try again.","danger");
+                    function () {
+                        const failMessage = "Assignment configuration failed to save, please try again.";
+                        notificationService.create(failMessage, notificationService.FAILURE);
                     })
-            };
+        }
+        //TODO implement contribution
+        //TODO implement bidirectional
 
-            function activate(){
-                vm.providerCounts = providerCounts;
-            }
-        }]);
+
+        function activate() {
+            vm.providerCounts = providerCounts;
+
+            //TODO retrieve previous assignmentConfigs by date
+            vm.dates = [new Date().toDateString(), new Date().toDateString()];
+        }
+
+    }
 }());

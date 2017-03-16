@@ -1,23 +1,23 @@
 /**
  * Created by adamellis on 21/02/2017.
  */
-(function(){
+(function () {
     angular.module('PeerFeedback')
-        .controller('AllocationController',['submission','receivers','providers',
-            function(submission,receivers,providers){
-
-           const vm = this;
+        .controller('AllocationController', AllocationController);
 
 
-            vm.submission = {
-                core:submission.data,
-                provideTo:receivers.data,
-                receivedFrom:providers.data
-            };
+    AllocationController.$inject = ['submission', 'receivers', 'providers'];
+    function AllocationController(submission, receivers, providers) {
 
+        const vm = this;
 
+        vm.true = true;
+        vm.false = false;
 
-
-
-        }]);
+        vm.submission = {
+            core: submission,
+            provideTo: receivers,
+            receivedFrom: providers
+        };
+    }
 }());

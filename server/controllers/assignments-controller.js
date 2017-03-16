@@ -38,7 +38,8 @@ module.exports.updateAssignment = function(req,res){
     Assignment.findOneAndUpdate(query,update,options)
         .then(function(response){
             res.send(response);
-        });
+
+    });
 
 
 };

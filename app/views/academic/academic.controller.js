@@ -6,10 +6,15 @@
         .module('PeerFeedback')
         .controller('AcademicController',AcademicController);
 
-    AcademicController.$inject = ['allSubmissions'];
+    AcademicController.$inject = ['allSubmissions','$http'];
 
-    function AcademicController(allSubmissions){
+    function AcademicController(allSubmissions,$http){
         const vm = this;
-        vm.submissions = allSubmissions.data;
+        vm.submissions = allSubmissions;
+
+        $http.get('/api/test')
+            .then(function(response){
+                return response;
+            })
     }
 }());

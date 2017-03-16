@@ -6,7 +6,7 @@
         .controller('frameController',['$rootScope','notificationService',function($rootScope,notificationService){
 
             $rootScope.$on('$stateChangeStart',function(event){
-               notificationService.hideNotification();
+               notificationService.hide();
             });
 
         }]);

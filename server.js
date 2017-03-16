@@ -49,7 +49,7 @@ app.post('/mark',submissionsController.createSubmission);
 
 app.get('/api/allocations/providers/:receiverSid',allocationsController.getProviders);
 app.get('/api/allocations/receivers/:providerSid',allocationsController.getReceivers);
-app.put('/api/allocations/:receiverSid/:providerSid',allocationsController.updateCurrentForm);
+app.put('/api/allocations/:receiverSid/:providerSid',allocationsController.updateAllocation);
 app.get('/api/allocations/:receiverSid/:providerSid',allocationsController.getOneAllocation);
 
 //Assignments

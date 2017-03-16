@@ -12,20 +12,24 @@
                 display:""
             };
 
-            this.getNotification = function(){
+            this.get = function(){
                 return notification;
             };
 
-            this.createNotification = function(text,type) {
+            this.create = function(text,type) {
                 notification.text = text;
                 notification.type = type;
                 notification.display = true;
                 $anchorScroll();
             };
 
-            this.hideNotification = function(){
+            this.hide = function(){
                 notification.display = false;
-            }
+            };
+
+            this.SUCCESS = "success";
+            this.FAILURE = "danger";
+
 
 
 

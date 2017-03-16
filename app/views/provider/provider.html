@@ -1,17 +1,17 @@
 <Section>
 
 
+<!-- vm.core & vm.provider.*-->
 
-
-    <div class="page-header"><h1>Providing for {{vm.alias}}</h1></div>
-    Assignment:{{vm.aid}}<br/>
-    Providersid:{{vm.providersid}}<br/>
-    Receiversid:{{vm.receiversid}}<br/>
+    <div class="page-header"><h1>Providing for {{vm.provider.alias}}</h1></div>
+    Assignment:{{vm.core.aid}}<br/>
+    Providersid:{{vm.core.providerSid}}<br/>
+    Receiversid:{{vm.core.receiverSid}}<br/>
 
     This will show the individual submission and the form to fill.
 
 
-    Currently looking at submission: {{vm.receiversid}}
+    Currently looking at submission: {{vm.core.receiverSid}}
 <br/><br/>
 
     Student has submitted: <br/><br/>
@@ -22,11 +22,22 @@ Please provide the following feedback:
 
     <!--Need to get form from aid-->
 
-<form render-form id="render-form" vm="vm"></form>
-<button save-form class="btn btn-primary" vm="vm">Submit</button>
+    <form render-form current-form="vm.provider.currentForm" disable="vm.readOnly"></form>
+
+    Please indicate how well you think the student performed:
+    <!--TODO: Say if should or should not be included -->
+
+    <span uib-rating ng-model="vm.mark.rate" max="vm.mark.max" read-only="vm.mark.isReadonly" on-hover="vm.mark.hoveringOver(value)" on-leave="vm.mark.overStar = null"  aria-labelledby="default-rating"></span>
+    <span class="label" ng-class="{'label-warning': vm.mark.percent<30, 'label-info': vm.mark.percent>=30 && vm.mark.percent<70, 'label-success': vm.mark.percent>=70}" ng-show="vm.mark.overStar && !vm.mark.isReadonly">{{vm.mark.percent}}%</span>
+
+
+    <br/><br/>
+    <button class="btn btn-primary" ng-click="vm.updateFeedback()">Save</button>
 
 
 
+    <a ui-sref="frameState.allocationState({sid:{{vm.core.providerSid}}})">
+        <button class="btn btn-primary" >Back</button>
+    </a>
 
-<test-directive></test-directive>
 </Section>

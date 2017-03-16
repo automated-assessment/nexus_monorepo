@@ -9,5 +9,6 @@ module.exports = mongoose.model('Allocation',{
     dateAllocated:Date,
     dateModified:Date,
     alias:String,
-    provided:Boolean
+    provided:Boolean,
+    providerMark:Number
 });

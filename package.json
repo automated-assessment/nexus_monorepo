@@ -11,7 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "angular": "^1.6.3",
+    "angular-animate": "^1.6.3",
     "angular-mocks": "^1.6.3",
+    "angular-touch": "^1.6.3",
+    "angular-ui-bootstrap": "^2.5.0",
     "angular-ui-router": "^0.4.2",
     "body-parser": "^1.16.0",
     "bootstrap": "^3.3.7",
@@ -32,8 +35,9 @@
     "karma-spec-reporter": "0.0.30",
     "mongoose": "^4.8.1",
     "node-random-name": "^1.0.1",
+    "passport": "^0.3.2",
     "request": "^2.79.0"
   },
   "devDependencies": {},
-  "jshintConfig":{}
+  "jshintConfig": {}
 }

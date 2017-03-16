@@ -1,10 +1,9 @@
 <section>
-<div ng-show='{{vm.submission.core.sid}}'>
     Viewing submission: {{vm.submission.core.sid}} in assignment: {{vm.submission.core.aid}} for {{vm.submission.core.student}}
     <br/><br/>
     <div class="jumbotron">
         <div ng-show="vm.submission.provideTo">
-        <h3>ProvideTo</h3>
+        <h3>Provide feedback for the following students:</h3>
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -21,14 +20,14 @@
                         </a></td>
                         <td>{{receiver.dateAllocated | date: 'shortDate'}}</td>
                         <td>{{receiver.dateModified | date:'shortDate'}}</td>
-                        <td>{{receiver.mark}}</td>
+                        <td>{{receiver.providerMark | percent}}</td>
                     </tr>
 
             </tbody>
         </table>
         </div>
         <div ng-show="vm.submission.receivedFrom">
-            <h3>ReceivedFrom</h3>
+            <h3>Received feedback from the following students:</h3>
             <table class="table table-hover">
                 <thead>
                 <tr>
@@ -39,13 +38,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="provider in vm.submission.receivedFrom.providers">
-                        <td><a ui-sref="frameState.receiverState()">
+
+
+                    <tr ng-repeat="provider in vm.submission.receivedFrom.providers" ng-show="provider.provided">
+                        <td><a ui-sref="frameState.receiverState({receiverSid:{{vm.submission.core.sid}},providerSid:{{provider.providerSid}}})">
                             {{provider.alias}} ({{provider.providerSid}})
                         </a></td>
                         <td>{{provider.dateAllocated | date: 'shortDate'}}</td>
                         <td>{{provider.dateModified | date:'shortDate'}}</td>
-                        <td>{{provider.mark}}</td>
+                        <td>{{provider.providerMark}}</td>
+
                     </tr>
 
 
@@ -57,7 +59,6 @@
 
         </div>
     </div>
-</div>
 </section>
 
 

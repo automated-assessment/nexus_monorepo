@@ -13,8 +13,8 @@
         return {
             getReceivers:getReceivers,
             getProviders:getProviders,
-            getRelation:getRelation,
-            updateProviderForm:updateProviderForm
+            getAllocation:getAllocation,
+            updateAllocation:updateAllocation
         };
 
 
@@ -28,13 +28,16 @@
             return $http.get(`/api/allocations/providers/${receiverSid}`);
         }
 
-        function getRelation(receiverSid,providerSid){
+        function getAllocation(receiverSid,providerSid){
             return $http.get(`/api/allocations/${receiverSid}/${providerSid}`);
         }
 
-        //Update the provider's feedback form.
-        function updateProviderForm(receiverSid,providerSid,data){
-            return $http.put(`/api/allocations/${receiverSid}/${providerSid}`,data);
+        //Update a particular allocation.
+        function updateAllocation(receiverSid,providerSid,update){
+            return $http.put(`/api/allocations/${receiverSid}/${providerSid}`,update);
         }
+
+
     }
 }());
+

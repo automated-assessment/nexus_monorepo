@@ -1,13 +1,11 @@
 <section>
-    <div class="page-header">
-        <h1>Received from {{vm.alias}}
-        </h1>
-    </div>
 
 
-    {{vm.currentForm}}
 
-    {{vm.provided}}
+    <form render-form current-form="vm.receiver.currentForm" disable="vm.readOnly"></form>
 
-    <form render-form vm="vm"></form>
+    <a ui-sref="frameState.allocationState({sid:{{vm.core.receiverSid}}})">
+        <button class="btn btn-primary" >Back</button>
+    </a>
+
 </section>

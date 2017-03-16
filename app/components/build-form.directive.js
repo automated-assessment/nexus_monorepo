@@ -1,22 +1,38 @@
 (function(){
     angular.module('PeerFeedback')
-        .directive('buildForm',['$interval',function($interval){
+        .directive('buildForm',buildForm);
 
-            function link(scope,elem){
-                console.log(scope);
-                const form = elem.formBuilder({dataType:'json',formData:scope.vm.assignment.formBuild,showActionButtons:false}).data('formBuilder');
-                $interval(function(){
-                    scope.vm.assignment.formBuild =form.formData;
-                },500);
+    buildForm.$inject = ['$interval'];
+
+    function buildForm($interval) {
+
+        return {
+            restrict: 'E',
+            link: link,
+            scope: {
+                vm: '='
             }
-            return {
-                restrict:'E',
-                link:link,
-                scope:{
-                    vm:'='
-                }
-            }
-        }]);
+        };
+
+        function link(scope, elem) {
+            const form = elem.formBuilder({
+                dataType: 'json',
+                formData: scope.vm.assignment.formBuild,
+                showActionButtons: false,
+                controlPosition:'left'
+            }).data('formBuilder');
+            watchAndDestroy(scope, elem, form);
+        }
+
+        function watchAndDestroy(scope, elem, form) {
+            const fakeWatcher = $interval(function () {
+                scope.vm.assignment.formBuild = form.formData;
+            }, 500);
+            elem.on('$destroy', function () {
+                $interval.cancel(fakeWatcher);
+            });
+        }
+    }
 }());
 
 

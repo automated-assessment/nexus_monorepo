@@ -51,19 +51,16 @@ module.exports.getReceivers = function(req,res){
         })
 };
 
-module.exports.updateCurrentForm = function(req,res){
+module.exports.updateAllocation = function(req,res){
     console.log(req.params.receiverSid,req.params.providerSid);
     const query = {
         receiverSid:req.params.receiverSid,
         providerSid:req.params.providerSid
     };
 
+    console.log(req.body);
     const update = {
-        $set:{
-            currentForm: req.body.currentForm,
-            provided: req.body.provided
-        }
-
+        $set:req.body
     };
 
     Allocation.findOneAndUpdate(query,update)

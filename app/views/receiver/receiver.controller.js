@@ -1,16 +1,34 @@
 /**
  * Created by adamellis on 16/02/2017.
  */
-(function(){
+(function () {
+    'use strict';
+
     angular
         .module('PeerFeedback')
-        .controller('ReceiverController',['receivedForm','$stateParams',function(receivedForm,$stateParams){
+        .controller('ReceiverController', ReceiverController);
 
-            const vm = this;
-            console.log(receivedForm);
-            vm.currentForm = receivedForm.currentForm;
-            vm.provided = receivedForm.provided;
-            vm.alias = $stateParams.alias;
+    ReceiverController.$inject = ['receiver','$stateParams'];
 
-        }]);
-}());
+    /* @ngInject */
+    function ReceiverController(receiver,$stateParams) {
+        const vm = this;
+
+        activate();
+
+
+        function activate() {
+            vm.core = {
+                aid:$stateParams.aid,
+                receiverSid:$stateParams.receiverSid,
+                providerSid:$stateParams.providerSid
+            };
+
+            vm.receiver = receiver;
+
+            vm.readOnly = true;
+        }
+    }
+
+})();
+

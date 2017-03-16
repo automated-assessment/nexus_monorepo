@@ -7,7 +7,7 @@
         .config(['$stateProvider',function($stateProvider){
             $stateProvider
                 .state('frameState.allocationState',{
-                    url:'/allocation?sid?aid',
+                    url:'/allocation?sid',
                     templateUrl:'app/views/allocation/allocation.html',
                     controller:'AllocationController as vm',
                     resolve:{
@@ -27,19 +27,28 @@
             //Allocation view
             function receivers(allocationService,$stateParams){
                 if($stateParams.sid){
-                    return allocationService.getReceivers($stateParams.sid);
+                    return allocationService.getReceivers($stateParams.sid)
+                        .then(function(response){
+                            return response.data;
+                        })
                 }
             }
 
             function providers(allocationService,$stateParams){
                 if($stateParams.sid){
-                    return allocationService.getProviders($stateParams.sid);
+                    return allocationService.getProviders($stateParams.sid)
+                        .then(function(response){
+                            return response.data;
+                        })
                 }
             }
 
             function submission(submissionService,$stateParams){
                 if($stateParams.sid){
-                    return submissionService.getOneSubmission($stateParams.sid);
+                    return submissionService.getOneSubmission($stateParams.sid)
+                        .then(function(response){
+                            return response.data;
+                        })
                 }
             }
         }]);

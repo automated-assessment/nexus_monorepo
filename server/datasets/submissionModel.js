@@ -6,13 +6,12 @@
 const mongoose = require('mongoose');
 
 module.exports = mongoose.model('Submission',{
+    aid:Number,
+    sid:Number,
     student:String,
     studentuid:Number,
     studentemail:String,
-    sid:Number,
-    aid:Number,
     branch:String,
-    dateCreated:String,
-    dateModified:String,
-    providers:Number
+    submissionHash:String,
+    dateCreated:String
 });

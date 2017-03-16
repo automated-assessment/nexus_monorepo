@@ -18,7 +18,10 @@
             allSubmissions.$inject = ['submissionService'];
 
             function allSubmissions(submissionService){
-                return submissionService.getAllSubmissions();
+                return submissionService.getAllSubmissions()
+                    .then(function(response){
+                        return response.data;
+                    })
             }
         }]);
 }());

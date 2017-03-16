@@ -3,22 +3,34 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .directive('renderForm',function(){
-            function link(scope,elem) {
-                const currentForm = scope.vm.currentForm;
-                const renderOpts = {
-                    formData:currentForm,
-                    dataType:'json'
-                };
-                elem.formRender(renderOpts);
-            }
+        .directive('renderForm',['$interval','providerForm',function($interval,providerForm){
 
             return {
                 restrict:'A',
                 link:link,
                 scope:{
-                    vm:'='
+                    currentForm:'=',
+                    disable:'='
                 }
+            };
+
+            function link(scope,elem, attrs) {
+                const renderOpts = {
+                    formData:scope.currentForm || "",
+                    dataType:'json'
+                };
+                elem.formRender(renderOpts);
+                watchAndDestroy(scope,elem);
             }
-        })
+
+            function watchAndDestroy(scope,elem){
+                const fakeWatcher = $interval(function(){
+                    scope.currentForm = providerForm.save(elem[0],scope.currentForm);
+                },500);
+
+                elem.on('$destroy', function() {
+                    $interval.cancel(fakeWatcher);
+                });
+            }
+        }])
 }());

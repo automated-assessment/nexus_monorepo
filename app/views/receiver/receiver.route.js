@@ -7,7 +7,7 @@
         .config(['$stateProvider',function($stateProvider){
             $stateProvider
                 .state('frameState.receiverState',{
-                    url:'/receiver',
+                    url:'/receiver?receiverSid,providerSid',
                     params:{
                         receiverSid:null,
                         providerSid:null,
@@ -16,15 +16,13 @@
                     templateUrl:'app/views/receiver/receiver.html',
                     controller:'ReceiverController as vm',
                     resolve:{
-                        receivedForm:['$stateParams','networkProvider',function($stateParams, networkProvider){
-                            const form = {};
-                            networkProvider.getSubmissionRelation($stateParams.receiversid,$stateParams.providersid)
+                        receiver:['$stateParams','allocationService',function($stateParams, allocationService){
+                            return allocationService.getRelation($stateParams.receiverSid,$stateParams.providerSid)
                                 .then(function(response){
-                                    form.currentForm =response.data.currentForm;
-                                    form.provided = response.data.provided;
+                                    return response.data;
                                 });
 
-                            return form;
+
                         }]
                     }
                 });

@@ -16,7 +16,12 @@ const randomName = require('node-random-name');
 module.exports.runAllocation = function(submission){
     queryAssignment(submission)
         .then(function(assignment){
-            allocate(assignment,submission);
+            if(assignment){
+                allocate(assignment,submission);
+            } else {
+                console.log("No assignment found");
+            }
+
         });
 
 };
@@ -76,7 +81,8 @@ const associate = function(receiverSid,providerSid,assignment){
         alias:randomName({seed:Math.random()}),
         provided:false,
         dateAllocated:new Date(),
-        dateModified:new Date()
+        dateModified:new Date(),
+        providerMark:null
     }
 };
 
