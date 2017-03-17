@@ -1,4 +1,5 @@
 require 'set'
+require 'uri'
 
 class DataflowUtils
   class << self
@@ -24,7 +25,13 @@ class DataflowUtils
         tools = MarkingTool.find(marking_tool_contexts.map(&:marking_tool_id)).select do |tool|
           (tool.input.eql? marking_tool.output) && !(tool.uid.eql? marking_tool.uid)
         end
-        tools_that_require_files = tools.map(&:url)
+        tools_that_require_files = []
+        tools.map(&:url).each do |tool|
+          uri = URI(tool)
+          uri.path = '/data'
+          tools_that_require_files << uri.to_s
+          handled_tools.add tool
+        end
         tools_that_require_files.each do |tool|
           handled_tools.add tool
         end
