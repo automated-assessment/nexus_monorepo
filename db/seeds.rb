@@ -57,7 +57,7 @@ if Rails.env.eql? 'development'
     puts 'Invoked locally'
     MarkingTool.create(name: 'Java Compilation',
                        description: 'Java Compilation',
-                       url: 'http://localhost:3003/mark',
+                       url: 'http://localhost:5000/mark',
                        uid: 'javac',
                        input: 'java',
                        output: 'class',
@@ -65,7 +65,7 @@ if Rails.env.eql? 'development'
 
     MarkingTool.create(name: 'RNG Tool',
                        description: 'Random number generator',
-                       url: 'http://localhost:3001/mark',
+                       url: 'http://localhost:5001/mark',
                        uid: 'rng',
                        input: 'java',
                        output: 'java',
