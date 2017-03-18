@@ -37,7 +37,7 @@ class DataflowUtils
         end
         # Add tool to handled tools since dataflow only goes in one direction
         handled_tools.add marking_tool.url
-        dataflow[marking_tool.uid] = tools_that_require_files unless tools_that_require_files.empty?
+        dataflow[marking_tool.uid] = tools_that_require_files
         # Can return once all tools have been dealt with.
         return dataflow if handled_tools.size == marking_tool_contexts.size
       end
