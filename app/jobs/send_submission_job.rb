@@ -1,5 +1,6 @@
 require 'net/http'
 require 'uri'
+require 'json'
 
 class SendSubmissionJob < ActiveJob::Base
   queue_as Rails.configuration.rabbit_mq_qname
@@ -14,12 +15,10 @@ class SendSubmissionJob < ActiveJob::Base
 
     uri = URI.parse(marking_tool.url)
     @submission.log("Notifying #{marking_tool.name} at #{uri}...", 'Debug')
-
     Net::HTTP.start(uri.host, uri.port) do |http|
       req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
 
-      req.body = build_json_payload
-
+      req.body = build_json_payload(marking_tool.uid)
       res = http.request(req)
 
       if res.code =~ /2../
@@ -42,7 +41,7 @@ class SendSubmissionJob < ActiveJob::Base
 
   private
 
-  def build_json_payload
+  def build_json_payload(marking_tool_uid)
     payload = {
       student: @submission.user.name,
       studentuid: @submission.user.id,
@@ -51,7 +50,8 @@ class SendSubmissionJob < ActiveJob::Base
       aid: @submission.assignment.id,
       cloneurl: @submission.augmented_clone_url,
       branch: @submission.gitbranch,
-      sha: @submission.commithash
+      sha: @submission.commithash,
+      nextservices: @submission.assignment.dataflow[marking_tool_uid]
     }
     payload.to_json
   end
