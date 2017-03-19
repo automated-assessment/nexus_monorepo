@@ -19,7 +19,8 @@
                 dataType: 'json',
                 formData: scope.vm.assignment.formBuild,
                 showActionButtons: false,
-                controlPosition:'left'
+                controlPosition:'left',
+                disableFields:['checkbox']
             }).data('formBuilder');
             watchAndDestroy(scope, elem, form);
         }

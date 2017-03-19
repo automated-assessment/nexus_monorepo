@@ -18,34 +18,34 @@
                     }
                 });
 
-            receivers.$inject = ['allocationService','$stateParams'];
-            providers.$inject = ['allocationService','$stateParams'];
-            submission.$inject = ['submissionService','$stateParams'];
+            receivers.$inject = ['allocationNetService','$stateParams'];
+            providers.$inject = ['allocationNetService','$stateParams'];
+            submission.$inject = ['submissionNetService','$stateParams'];
 
             //
 
             //Allocation view
-            function receivers(allocationService,$stateParams){
+            function receivers(allocationNetService,$stateParams){
                 if($stateParams.sid){
-                    return allocationService.getReceivers($stateParams.sid)
+                    return allocationNetService.getReceivers($stateParams.sid)
                         .then(function(response){
                             return response.data;
                         })
                 }
             }
 
-            function providers(allocationService,$stateParams){
+            function providers(allocationNetService,$stateParams){
                 if($stateParams.sid){
-                    return allocationService.getProviders($stateParams.sid)
+                    return allocationNetService.getProviders($stateParams.sid)
                         .then(function(response){
                             return response.data;
                         })
                 }
             }
 
-            function submission(submissionService,$stateParams){
+            function submission(submissionNetService,$stateParams){
                 if($stateParams.sid){
-                    return submissionService.getOneSubmission($stateParams.sid)
+                    return submissionNetService.getOneSubmission($stateParams.sid)
                         .then(function(response){
                             return response.data;
                         })

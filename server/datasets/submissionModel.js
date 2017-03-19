@@ -11,6 +11,7 @@ module.exports = mongoose.model('Submission',{
     student:String,
     studentuid:Number,
     studentemail:String,
+    sha:String,
     branch:String,
     submissionHash:String,
     dateCreated:String

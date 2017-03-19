@@ -21,6 +21,7 @@ module.exports = function(config) {
         'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
         'node_modules/angular-touch/angular-touch.js',
         'node_modules/angular-ui-router/release/angular-ui-router.js',
+        'app/app.module.js',
         'app/**/**/*.js'
     ],
 

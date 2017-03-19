@@ -128,18 +128,32 @@ module.exports.getSubmissionReceivers = function(req,res){
 
 
 
+module.exports.getGitData = function(req,res){
 
+    const query = {
+        sid:req.params.sid
+    };
 
+    const projection = {
+        sha:1,
+        branch:1
+    };
 
+    Submission.findOne(query,projection)
+        .then(function(response){
+            res.send(response);
+        })
+};
+
+//TODO: Remove duplication of SHA and branch from submissions and allocations
 module.exports.createSubmission = function(req,res){
-    preExistingSubmission(req.body.sid)
+    console.log(req.body);
+    checkPreExisting(req.body.sid)
         .then(function(preExistingSubmission){
             if(!preExistingSubmission) {
                 const submission = new Submission(req.body);
                 submission.dateCreated = new Date();
-
                 submission.submissionHash = crypto.randomBytes(20).toString('hex');
-
                 submission.save(function(response){
                     allocationUtils.runAllocation(submission);
                 });
@@ -153,10 +167,11 @@ module.exports.createSubmission = function(req,res){
 };
 
 
-const preExistingSubmission =  function(sid){
+const checkPreExisting =  function(sid){
     return Submission.findOne({sid:sid})
         .then(function(response){
            return response;
         })
 };
+
 

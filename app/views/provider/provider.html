@@ -1,43 +1,45 @@
 <Section>
 
 
-<!-- vm.core & vm.provider.*-->
-
-    <div class="page-header"><h1>Providing for {{vm.provider.alias}}</h1></div>
-    Assignment:{{vm.core.aid}}<br/>
-    Providersid:{{vm.core.providerSid}}<br/>
-    Receiversid:{{vm.core.receiverSid}}<br/>
-
-    This will show the individual submission and the form to fill.
+    <!-- vm.core & vm.provider.*-->
 
 
-    Currently looking at submission: {{vm.core.receiverSid}}
-<br/><br/>
+    <div class="page-header"><h3>Feedback for {{vm.provider.alias}}</h3></div>
 
-    Student has submitted: <br/><br/>
-    <div ng-bind-html="vm.snippet.submission"></div>
-<hr/>
-Please provide the following feedback:
-    <br/><br/>
+    <h3>{{vm.provider.alias|firstName}}'s submission:</h3> <br/>
+    <div ng-repeat="snippet in vm.snippets">
+        <h4>{{snippet.fileName}}:</h4>
+        <p>
+        <div ng-bind-html="snippet.content">
+        </div>
+        </p>
+        <br/>
+    </div>
 
-    <!--Need to get form from aid-->
+    <hr/>
+    <h4>Please provide the following feedback:</h4>
 
-    <form render-form current-form="vm.provider.currentForm" disable="vm.readOnly"></form>
+
+
+    <p><form render-form current-form="vm.provider.currentForm" disable="vm.readOnly"></form></p>
 
     Please indicate how well you think the student performed:
     <!--TODO: Say if should or should not be included -->
 
-    <span uib-rating ng-model="vm.mark.rate" max="vm.mark.max" read-only="vm.mark.isReadonly" on-hover="vm.mark.hoveringOver(value)" on-leave="vm.mark.overStar = null"  aria-labelledby="default-rating"></span>
-    <span class="label" ng-class="{'label-warning': vm.mark.percent<30, 'label-info': vm.mark.percent>=30 && vm.mark.percent<70, 'label-success': vm.mark.percent>=70}" ng-show="vm.mark.overStar && !vm.mark.isReadonly">{{vm.mark.percent}}%</span>
+    <span uib-rating ng-model="vm.mark.rate" max="vm.mark.max" read-only="vm.mark.isReadonly"
+          on-hover="vm.mark.hoveringOver(value)" on-leave="vm.mark.overStar = null"
+          aria-labelledby="default-rating"></span>
+    <span class="label"
+          ng-class="{'label-warning': vm.mark.percent<30, 'label-info': vm.mark.percent>=30 && vm.mark.percent<70, 'label-success': vm.mark.percent>=70}"
+          ng-show="vm.mark.overStar && !vm.mark.isReadonly">{{vm.mark.percent}}%</span>
 
 
     <br/><br/>
     <button class="btn btn-primary" ng-click="vm.updateFeedback()">Save</button>
 
 
-
     <a ui-sref="frameState.allocationState({sid:{{vm.core.providerSid}}})">
-        <button class="btn btn-primary" >Back</button>
+        <button class="btn btn-primary">Back</button>
     </a>
 
 </Section>

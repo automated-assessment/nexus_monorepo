@@ -29,8 +29,8 @@ app.use(bodyParser.json());
 app.use('/app',express.static(__dirname + '/app')); //change to public to fit convention
 app.use('/css',express.static(__dirname+'/css'));
 app.use('/node_modules',express.static(__dirname+'/node_modules'));
-
-debugRoutes();
+//
+// debugRoutes();
 
 
 
@@ -45,6 +45,7 @@ debugRoutes();
 //Submissions
 app.get('/api/submissions',submissionsController.getAllSubmissions);
 app.get('/api/submissions/:sid',submissionsController.getOneSubmission);
+app.get('/api/submissions/:sid/git',submissionsController.getGitData);
 app.post('/mark',submissionsController.createSubmission);
 
 app.get('/api/allocations/providers/:receiverSid',allocationsController.getProviders);

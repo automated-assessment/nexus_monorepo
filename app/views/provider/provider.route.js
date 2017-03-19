@@ -17,14 +17,20 @@
                     controller:'ProviderController as vm',
                     resolve:{
 
-                        provider:['$stateParams','allocationService',function($stateParams,allocationService){
-                            return allocationService.getRelation($stateParams.receiverSid,$stateParams.providerSid)
+                        provider:['$stateParams','allocationNetService',function($stateParams,allocationNetService){
+                            return allocationNetService.getOneAllocation($stateParams.receiverSid,$stateParams.providerSid)
                                 .then(function(response){
                                     return response.data;
-                                })
+                                });
+                        }],
+                        snippets:['$stateParams','snippetsService',function($stateParams,snippetsService){
+                            return snippetsService.getSnippets($stateParams.receiverSid,$stateParams.providerSid,$stateParams.aid);
                         }]
+
                     }
                 });
 
         }]);
 }());
+
+//check truncation

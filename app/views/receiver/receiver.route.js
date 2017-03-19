@@ -16,8 +16,8 @@
                     templateUrl:'app/views/receiver/receiver.html',
                     controller:'ReceiverController as vm',
                     resolve:{
-                        receiver:['$stateParams','allocationService',function($stateParams, allocationService){
-                            return allocationService.getRelation($stateParams.receiverSid,$stateParams.providerSid)
+                        receiver:['$stateParams','allocationNetService',function($stateParams, allocationNetService){
+                            return allocationNetService.getOneAllocation($stateParams.receiverSid,$stateParams.providerSid)
                                 .then(function(response){
                                     return response.data;
                                 });

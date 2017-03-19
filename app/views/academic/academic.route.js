@@ -15,10 +15,10 @@
                     }
                 });
 
-            allSubmissions.$inject = ['submissionService'];
+            allSubmissions.$inject = ['submissionNetService'];
 
-            function allSubmissions(submissionService){
-                return submissionService.getAllSubmissions()
+            function allSubmissions(submissionNetService){
+                return submissionNetService.getAllSubmissions()
                     .then(function(response){
                         return response.data;
                     })

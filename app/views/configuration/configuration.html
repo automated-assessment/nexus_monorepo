@@ -1,10 +1,9 @@
 <div class="page-header"><h3>Configuration</h3></div>
 
-{{vm.assignment}}
 <form class="form-horizontal">
     <!--Number of allocations form-group-->
     <div class="form-group">
-        <label class="col-sm-3 control-label">Number of allocations:</label>
+        <label class="col-sm-2 control-label">Number of allocations:</label>
         <div class="col-sm-1">
             <select class="form-control"
                     ng-options="number as number for number in vm.providerCounts"
@@ -16,7 +15,7 @@
 
     <!--Previous form form-group-->
     <div class="form-group">
-        <label class="col-sm-3 control-label">Use previous form:</label>
+        <label class="col-sm-2 control-label">Use previous form:</label>
         <div class="col-sm-3">
             <select class="form-control"
                     ng-options="date as date for date in vm.dates"
@@ -28,7 +27,7 @@
 
     <!-- Additional options form-group -->
     <div class="form-group">
-        <label class="col-md-4 control-label">Additional options</label>
+        <label class="col-md-2 control-label">Additional options</label>
         <div class="col-md-4">
             <!--Contribute to final mark checkbox-->
             <div class="checkbox">

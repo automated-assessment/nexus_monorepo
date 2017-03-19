@@ -16,11 +16,11 @@
                     }
                 });
 
-            assignment.$inject = ['$stateParams','assignmentService'];
+            assignment.$inject = ['$stateParams','assignmentNetService'];
 
-            function assignment($stateParams,assignmentService){
+            function assignment($stateParams,assignmentNetService){
                 if($stateParams.aid){
-                    return assignmentService.getOneAssignment($stateParams.aid)
+                    return assignmentNetService.getOneAssignment($stateParams.aid)
                         .then(function(response){
                             if(response.data){
                                 return response.data;

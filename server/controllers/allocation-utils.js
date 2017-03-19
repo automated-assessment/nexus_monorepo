@@ -52,16 +52,14 @@ const allocate = function(assignment,submission){
 
     queryRandomProviders(assignment, submission)
         .then(function(randomProviders){
-            console.log("Random providers",randomProviders);
             randomProviders.forEach(function(randomProvider){
-                const forwardAssociation = associate(submission.sid, randomProvider.sid, assignment);
-                const backwardAssociation = associate(randomProvider.sid,submission.sid, assignment);
+                const forwardAssociation = associate(submission, randomProvider, assignment);
+                const backwardAssociation = associate(randomProvider,submission, assignment);
                 allocationArray.push(forwardAssociation);
                 allocationArray.push(backwardAssociation);
             });
 
 
-            console.log("Final Array",allocationArray);
             Allocation.insertMany(allocationArray)
                 .then(function(response){
                     console.log("Allocation complete");
@@ -73,16 +71,18 @@ const allocate = function(assignment,submission){
 
 
 
-const associate = function(receiverSid,providerSid,assignment){
+const associate = function(receiver,provider,assignment){
     return {
         currentForm:assignment.formBuild,
-        receiverSid:receiverSid,
-        providerSid:providerSid,
+        receiverSid:receiver.sid,
+        providerSid:provider.sid,
         alias:randomName({seed:Math.random()}),
         provided:false,
         dateAllocated:new Date(),
         dateModified:new Date(),
-        providerMark:null
+        providerMark:null,
+        branch:receiver.branch,
+        sha:receiver.sha
     }
 };
 
@@ -133,7 +133,7 @@ const queryRandomProviders = function(assignment,submission) {
                     size: assignment.providerCount}
             },
             {
-                $project:{sid:1}
+                $project:{sid:1,branch:1,sha:1}
             }
         ])
 

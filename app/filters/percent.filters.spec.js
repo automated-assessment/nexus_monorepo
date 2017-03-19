@@ -2,6 +2,8 @@
  * Created by adamellis on 16/03/2017.
  */
 (function(){
+    'use strict';
+
     describe('percent',function(){
         let percentFilter;
 

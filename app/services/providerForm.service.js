@@ -1,6 +1,7 @@
 /**
  * Created by adamellis on 15/03/2017.
  */
+//TODO: This module needs renaming to bring to convention of xService
 (function(){
     angular
         .module('PeerFeedback')

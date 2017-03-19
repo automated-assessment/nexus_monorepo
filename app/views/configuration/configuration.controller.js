@@ -5,9 +5,9 @@
     angular.module('PeerFeedback')
         .controller('ConfigurationController', ConfigurationController);
 
-    ConfigurationController.$inject = ['notificationService', 'assignment', 'assignmentService', 'providerCounts'];
+    ConfigurationController.$inject = ['notificationService', 'assignment', 'assignmentNetService', 'providerCounts'];
 
-    function ConfigurationController(notificationService, assignment, assignmentService, providerCounts) {
+    function ConfigurationController(notificationService, assignment, assignmentNetService, providerCounts) {
         const vm = this;
 
         activate();
@@ -20,7 +20,7 @@
 
         function updateAssignment() {
             console.log("Hello");
-            assignmentService.updateAssignment(vm.assignment.aid, vm.assignment)
+            assignmentNetService.updateAssignment(vm.assignment.aid, vm.assignment)
                 .then(function (response) {
                         const successMessage = "Assignment configuration saved successfully.";
                         notificationService.create(successMessage, notificationService.SUCCESS);
