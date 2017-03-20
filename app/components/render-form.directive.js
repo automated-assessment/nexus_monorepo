@@ -3,7 +3,7 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .directive('renderForm',['$interval','providerForm',function($interval,providerForm){
+        .directive('renderForm',['$interval','feedbackForm',function($interval,feedbackForm){
 
             return {
                 restrict:'A',
@@ -25,7 +25,7 @@
 
             function watchAndDestroy(scope,elem){
                 const fakeWatcher = $interval(function(){
-                    scope.currentForm = providerForm.save(elem[0],scope.currentForm);
+                    scope.currentForm = feedbackForm.save(elem[0],scope.currentForm);
                 },500);
 
                 elem.on('$destroy', function() {

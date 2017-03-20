@@ -2,15 +2,11 @@
  * Created by adamellis on 19/03/2017.
  */
 const request = require('request-promise');
-const unzip = require('unzip');
 const owner = process.env.NEXUS_GITHUB_ORG;
 const token = process.env.NEXUS_GITHUB_TOKEN;
 
-module.exports.getLink = function(req,res){
+module.exports.getArchiveLink = function(req,res){
     let path = "";
-
-
-
     const queryString = `/repos/${owner}/${req.params.repo}/zipball/${req.params.branch}`;
 
     const options = {
@@ -29,6 +25,5 @@ module.exports.getLink = function(req,res){
         .then(function(response){
             res.send(path);
         });
-
 };
 

@@ -2,17 +2,16 @@
  * Created by adamellis on 14/03/2017.
  */
 
-//TODO: Should these be renamed to allocationNetService to represent hit to backend
 (function(){
     'use strict';
 
     angular
         .module('PeerFeedback')
-        .factory('allocationNetService',allocationNetService);
+        .factory('allocationNetwork',allocationNetwork);
 
-    allocationNetService.$inject = ['$http'];
+    allocationNetwork.$inject = ['$http'];
 
-    function allocationNetService($http){
+    function allocationNetwork($http){
 
         return {
             getReceivers:getReceivers,

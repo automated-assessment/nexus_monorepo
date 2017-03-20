@@ -4,8 +4,8 @@
 (function(){
     'use strict';
 
-    describe('allocationNetService',function(){
-        let allocationNetService;
+    describe('allocationNetwork',function(){
+        let allocationNetwork;
         let $httpBackend;
 
         const mockResponse = {
@@ -19,8 +19,8 @@
 
         beforeEach(function(){
             module('PeerFeedback');
-            inject(function(_allocationNetService_,_$httpBackend_){
-                allocationNetService = _allocationNetService_;
+            inject(function(_allocationNetwork_,_$httpBackend_){
+                allocationNetwork = _allocationNetwork_;
                 $httpBackend = _$httpBackend_;
 
             });
@@ -34,7 +34,7 @@
         it('should get receivers',function(){
             const mockProviderSid = 3;
 
-            allocationNetService.getReceivers(mockProviderSid)
+            allocationNetwork.getReceivers(mockProviderSid)
                 .then(testReceivers,failTest);
 
             function testReceivers(receivers){
@@ -51,7 +51,7 @@
         it('should get providers',function(){
             const mockReceiverSid = 3;
 
-            allocationNetService.getProviders(mockReceiverSid)
+            allocationNetwork.getProviders(mockReceiverSid)
                 .then(testProviders,failTest);
 
             function testProviders(providers){
@@ -71,7 +71,7 @@
                 providerSid:4
             };
 
-            allocationNetService.getOneAllocation(mockQuery.receiverSid,mockQuery.providerSid)
+            allocationNetwork.getOneAllocation(mockQuery.receiverSid,mockQuery.providerSid)
                 .then(testGetOneAllocation,failTest);
 
             function testGetOneAllocation(allocation){
@@ -96,7 +96,7 @@
                 body:"This is the update body"
             };
 
-            allocationNetService.updateAllocation(mockQuery.receiverSid,mockQuery.providerSid,mockUpdate)
+            allocationNetwork.updateAllocation(mockQuery.receiverSid,mockQuery.providerSid,mockUpdate)
                 .then(testUpdateAllocation,failTest);
 
             function testUpdateAllocation(allocation){

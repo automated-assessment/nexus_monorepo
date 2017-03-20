@@ -6,11 +6,11 @@
 
     angular
         .module('PeerFeedback')
-        .factory('assignmentNetService',assignmentNetService);
+        .factory('assignmentNetwork',assignmentNetwork);
 
-    assignmentNetService.$inject = ['$http'];
+    assignmentNetwork.$inject = ['$http'];
 
-    function assignmentNetService($http){
+    function assignmentNetwork($http){
 
         return {
             getAllAssignments:getAllAssignments,

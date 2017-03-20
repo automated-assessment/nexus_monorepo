@@ -4,11 +4,11 @@
 (function(){
     angular
         .module('PeerFeedback')
-        .factory('submissionNetService',submissionNetService);
+        .factory('submissionNetwork',submissionNetwork);
 
-    submissionNetService.$inject = ['$http'];
+    submissionNetwork.$inject = ['$http'];
 
-    function submissionNetService($http){
+    function submissionNetwork($http){
 
         return {
             getAllSubmissions:getAllSubmissions,

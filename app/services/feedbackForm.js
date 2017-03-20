@@ -5,10 +5,10 @@
 (function(){
     angular
         .module('PeerFeedback')
-        .factory('providerForm',providerForm);
+        .factory('feedbackForm',feedbackForm);
 
 
-    function providerForm(){
+    function feedbackForm(){
         return {
             save:save
         };

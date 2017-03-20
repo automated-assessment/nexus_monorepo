@@ -5,23 +5,17 @@
 
     angular
         .module('PeerFeedback')
-        .factory('snippetsService', snippetsService);
+        .factory('snippetSubmission', snippetSubmission);
 
-    snippetsService.$inject = ['gitNetService', 'allocationNetService', '$sce'];
+    snippetSubmission.$inject = ['gitNetwork', '$sce', 'archiveSubmission'];
 
 
-    function snippetsService(gitNetService, allocationNetService, $sce) {
-
-        let zip;
+    function snippetSubmission(gitNetwork, $sce, archiveSubmission) {
 
         return {
-            resolvePaths: resolvePaths,
-            getSnippets: getSnippets,
-            isZip:isZip
-
+            getSnippets: getSnippets
         };
 
-        //this should really be reformatted.
         function getSnippets(aid, branch, sha) {
             return getFileNames(aid, sha)
                 .then(function (pathArray) {
@@ -31,24 +25,17 @@
                         })
                 });
         }
-
-
         /**
          * @param aid
          * @param sha
          * @returns Promise paths as array
          */
         function getFileNames(aid, sha) {
-            return gitNetService.getTree(aid, sha)
+            return gitNetwork.getTree(aid, sha)
                 .then(function (response) {
                     return resolvePaths(response.data.tree);
                 })
         }
-
-        function isZip(){
-            return zip;
-        }
-
 
         //path from tree
         /**
@@ -60,36 +47,22 @@
         function getContents(fileNames, branch, aid) {
             const contentArray = [];
             const promiseArray = [];
-
-            if (!containsZip(fileNames)) {
-                isZip = false;
+            archiveSubmission.checkForZip(fileNames);
+            if (!archiveSubmission.isZip()) {
                 fileNames.forEach(function (fileName) {
-                    promiseArray.push(gitNetService.getContent(aid, branch, fileName)
+                    promiseArray.push(gitNetwork.getContent(aid, branch, fileName)
                         .then(function (response) {
-                            contentArray.push({fileName: fileName, content: $sce.trustAsHtml(response.data)});
+                            contentArray.push({
+                                fileName: fileName,
+                                content: $sce.trustAsHtml(response.data)
+                            });
                         }));
-
-
                 });
             }
-
-
             return Promise.all(promiseArray)
                 .then(function () {
                     return contentArray;
                 })
-        }
-
-
-
-        function containsZip(fileNames) {
-            return fileNames.some(function (fileName) {
-                if (fileName.substr(fileName.length - 4) === ".zip") {
-                    return zip = true;
-                }
-            });
-
-
         }
 
 
@@ -103,6 +76,7 @@
             });
             return filePaths;
         }
+
 
     }
 })();

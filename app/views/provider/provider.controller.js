@@ -8,16 +8,16 @@
     angular.module('PeerFeedback')
         .controller('ProviderController', ProviderController);
 
-    ProviderController.$inject = ['$sce', '$stateParams', 'provider', 'allocationNetService', 'notificationService','snippets','gitNetService','submission','snippetsService'];
+    ProviderController.$inject = ['$stateParams', 'provider', 'allocationNetwork', 'notificationService','gitNetwork','submission','snippetSubmission','archiveSubmission','snippets'];
 
-    function ProviderController($sce, $stateParams, provider, allocationNetService, notificationService,snippets,gitNetService,submission,snippetsService) {
+    function ProviderController($stateParams, provider, allocationNetwork, notificationService,gitNetwork,submission,snippetSubmission,archiveSubmission,snippets) {
 
 
 
         const vm = this;
         activate();
 
-        gitNetService.getZip("",vm.core.branch)
+        gitNetwork.getZip("",vm.core.branch)
             .then(function(response){
                 vm.download = response.data;
             });
@@ -35,7 +35,7 @@
                 provided: true,
                 dateModified: new Date()
             };
-            allocationNetService.updateAllocation(vm.core.receiverSid, vm.core.providerSid, update)
+            allocationNetwork.updateAllocation(vm.core.receiverSid, vm.core.providerSid, update)
                 .then(function (response) {
                         const successMessage = "Your feedback has been successfully submitted. Thank you";
                         notificationService.create(successMessage, notificationService.SUCCESS);
@@ -60,7 +60,7 @@
             vm.provider = provider;
             vm.snippets = snippets;
 
-            vm.isZip = snippetsService.isZip();
+            vm.isZip = archiveSubmission.isZip();
             vm.mark = {
                 rate:0,
                 max:10,

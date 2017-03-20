@@ -6,9 +6,9 @@
         .module('PeerFeedback')
         .controller('AcademicController',AcademicController);
 
-    AcademicController.$inject = ['allSubmissions','$http','gitNetService'];
+    AcademicController.$inject = ['allSubmissions','$http','gitNetwork'];
 
-    function AcademicController(allSubmissions,$http,gitNetService){
+    function AcademicController(allSubmissions,$http,gitNetwork){
         const vm = this;
         vm.submissions = allSubmissions;
 

@@ -18,19 +18,19 @@
                     resolve:{
 
 
-                        submission:['$stateParams','submissionNetService',function($stateParams,submissionNetService){
-                            return submissionNetService.getGitData($stateParams.receiverSid)
+                        submission:['$stateParams','submissionNetwork',function($stateParams,submissionNetwork){
+                            return submissionNetwork.getGitData($stateParams.receiverSid)
                                 .then(function(response){
                                     return response.data;
                                 })
                         }],
 
-                        snippets:['$stateParams','snippetsService','submission',function($stateParams,snippetsService,submission){
-                            return snippetsService.getSnippets($stateParams.aid, submission.branch, submission.sha);
+                        snippets:['$stateParams','snippetSubmission','submission',function($stateParams,snippetSubmission,submission){
+                            return snippetSubmission.getSnippets($stateParams.aid, submission.branch, submission.sha);
                         }],
 
-                        provider:['$stateParams','allocationNetService',function($stateParams,allocationNetService){
-                            return allocationNetService.getOneAllocation($stateParams.receiverSid,$stateParams.providerSid)
+                        provider:['$stateParams','allocationNetwork',function($stateParams,allocationNetwork){
+                            return allocationNetwork.getOneAllocation($stateParams.receiverSid,$stateParams.providerSid)
                                 .then(function(response){
                                     return response.data;
                                 });

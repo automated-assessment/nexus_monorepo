@@ -4,11 +4,11 @@
 (function(){
     angular
         .module('PeerFeedback')
-        .factory('gitNetService',gitNetService);
+        .factory('gitNetwork',gitNetwork);
 
-    gitNetService.$inject = ['$http','NEXUS_GITHUB_ORG','NEXUS_GITHUB_TOKEN'];
+    gitNetwork.$inject = ['$http','NEXUS_GITHUB_ORG','NEXUS_GITHUB_TOKEN'];
 
-    function gitNetService($http,NEXUS_GITHUB_ORG,NEXUS_GITHUB_TOKEN){
+    function gitNetwork($http,NEXUS_GITHUB_ORG,NEXUS_GITHUB_TOKEN){
 
 
         return {

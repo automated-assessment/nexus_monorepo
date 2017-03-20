@@ -52,11 +52,15 @@ app.get('/api/assignments/:aid',assignmentsController.getOneAssignment);
 app.get('/api/assignments/:aid/submissions',submissionsController.getAssignmentSubmissions);
 app.put('/api/assignments/:aid',assignmentsController.updateAssignment);
 
-app.get('/api/git/:repo/:branch',gitController.getLink);
+app.get('/api/git/:repo/:branch',gitController.getArchiveLink);
 
 
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/index.html');
+});
+
+app.get('http://www.google.com',function(req,res){
+    console.log("Hitting google");
 });
 
 
