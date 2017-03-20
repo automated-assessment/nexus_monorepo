@@ -8,7 +8,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const bodyParser = require('body-parser');
-const cors = require('cors');
 
 
 
@@ -19,6 +18,7 @@ const dbHost = process.env.DB_HOST || localhost;
 const submissionsController = require(__dirname + '/server/controllers/submissions-controller.js');
 const assignmentsController = require(__dirname + '/server/controllers/assignments-controller.js');
 const allocationsController = require(__dirname + '/server/controllers/allocations-controller.js');
+const gitController = require(__dirname + '/server/controllers/git-controller.js');
 
 
 
@@ -29,23 +29,16 @@ app.use(bodyParser.json());
 app.use('/app',express.static(__dirname + '/app')); //change to public to fit convention
 app.use('/css',express.static(__dirname+'/css'));
 app.use('/node_modules',express.static(__dirname+'/node_modules'));
-//
+
 // debugRoutes();
 
 
-
-//Create Submission
-
-
-// app.get('/api/response',function(req,res){
-//     res.set({"Access-Control-Allow-Origin":"*"});
-//     res.sendFile(__dirname + "/index.html");
-// });
 
 //Submissions
 app.get('/api/submissions',submissionsController.getAllSubmissions);
 app.get('/api/submissions/:sid',submissionsController.getOneSubmission);
 app.get('/api/submissions/:sid/git',submissionsController.getGitData);
+//probably better ways to build this api
 app.post('/mark',submissionsController.createSubmission);
 
 app.get('/api/allocations/providers/:receiverSid',allocationsController.getProviders);
@@ -58,6 +51,9 @@ app.get('/api/assignments',assignmentsController.getAllAssignments);
 app.get('/api/assignments/:aid',assignmentsController.getOneAssignment);
 app.get('/api/assignments/:aid/submissions',submissionsController.getAssignmentSubmissions);
 app.put('/api/assignments/:aid',assignmentsController.updateAssignment);
+
+app.get('/api/git/:repo/:branch',gitController.getLink);
+
 
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/index.html');

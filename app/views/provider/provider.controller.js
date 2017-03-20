@@ -8,20 +8,19 @@
     angular.module('PeerFeedback')
         .controller('ProviderController', ProviderController);
 
-    ProviderController.$inject = ['$sce', '$stateParams', 'provider', 'allocationNetService', 'notificationService','snippets','gitNetService'];
+    ProviderController.$inject = ['$sce', '$stateParams', 'provider', 'allocationNetService', 'notificationService','snippets','gitNetService','submission','snippetsService'];
 
-    function ProviderController($sce, $stateParams, provider, allocationNetService, notificationService,snippets,gitNetService) {
-
+    function ProviderController($sce, $stateParams, provider, allocationNetService, notificationService,snippets,gitNetService,submission,snippetsService) {
 
 
 
         const vm = this;
         activate();
 
-
-        gitNetService.getZip();
-
-
+        gitNetService.getZip("",vm.core.branch)
+            .then(function(response){
+                vm.download = response.data;
+            });
 
         vm.mark.hoveringOver = function (value) {
             vm.mark.overStar = value;
@@ -51,14 +50,17 @@
         function activate() {
             vm.core = {
                 aid: $stateParams.aid,
+                branch:submission.branch,
+                sha:submission.sha,
                 receiverSid: $stateParams.receiverSid,
                 providerSid: $stateParams.providerSid,
                 snippet: {}
             };
+            vm.isZip = false;
             vm.provider = provider;
-
             vm.snippets = snippets;
 
+            vm.isZip = snippetsService.isZip();
             vm.mark = {
                 rate:0,
                 max:10,

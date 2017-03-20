@@ -7,6 +7,14 @@
     <div class="page-header"><h3>Feedback for {{vm.provider.alias}}</h3></div>
 
     <h3>{{vm.provider.alias|firstName}}'s submission:</h3> <br/>
+
+    <div ng-show="vm.isZip">
+        <a class="btn btn-primary" ng-href="{{vm.download}}" download>
+            Download submission
+        </a>
+
+    </div>
+
     <div ng-repeat="snippet in vm.snippets">
         <h4>{{snippet.fileName}}:</h4>
         <p>

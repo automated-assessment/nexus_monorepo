@@ -11,8 +11,6 @@
 
         const vm = this;
 
-        vm.true = true;
-        vm.false = false;
 
         vm.submission = {
             core: submission,

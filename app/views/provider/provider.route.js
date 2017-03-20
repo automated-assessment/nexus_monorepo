@@ -17,15 +17,29 @@
                     controller:'ProviderController as vm',
                     resolve:{
 
+
+                        submission:['$stateParams','submissionNetService',function($stateParams,submissionNetService){
+                            return submissionNetService.getGitData($stateParams.receiverSid)
+                                .then(function(response){
+                                    return response.data;
+                                })
+                        }],
+
+                        snippets:['$stateParams','snippetsService','submission',function($stateParams,snippetsService,submission){
+                            return snippetsService.getSnippets($stateParams.aid, submission.branch, submission.sha);
+                        }],
+
                         provider:['$stateParams','allocationNetService',function($stateParams,allocationNetService){
                             return allocationNetService.getOneAllocation($stateParams.receiverSid,$stateParams.providerSid)
                                 .then(function(response){
                                     return response.data;
                                 });
                         }],
-                        snippets:['$stateParams','snippetsService',function($stateParams,snippetsService){
-                            return snippetsService.getSnippets($stateParams.receiverSid,$stateParams.providerSid,$stateParams.aid);
-                        }]
+
+
+
+
+
 
                     }
                 });
@@ -33,4 +47,4 @@
         }]);
 }());
 
-//check truncation
+//should get submission (i.e. git data) and then pass this into provider, so that provider is not actually accessing the submission. cleaner code.

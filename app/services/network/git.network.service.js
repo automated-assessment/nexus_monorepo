@@ -19,6 +19,12 @@
 
 
 
+        function getZip(repo,branch){
+            repo = "assignment-1";
+            return $http.get(`/api/git/${repo}/${branch}`)
+        }
+
+
         function getTree(aid,sha){
             return gitQuery(`/repos/${NEXUS_GITHUB_ORG}/assignment-${aid}/git/trees/${sha}?recursive=1`)
         }
@@ -27,8 +33,8 @@
             return gitQuery(`/repos/${NEXUS_GITHUB_ORG}/assignment-${aid}/contents/${path}`,{ref:branch})
         }
 
+
         function gitQuery(queryString,params){
-            console.log(params);
             const url = "https://github.kcl.ac.uk/api/v3";
             return $http({
                 method: 'GET',

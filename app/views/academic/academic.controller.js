@@ -6,15 +6,11 @@
         .module('PeerFeedback')
         .controller('AcademicController',AcademicController);
 
-    AcademicController.$inject = ['allSubmissions','$http'];
+    AcademicController.$inject = ['allSubmissions','$http','gitNetService'];
 
-    function AcademicController(allSubmissions,$http){
+    function AcademicController(allSubmissions,$http,gitNetService){
         const vm = this;
         vm.submissions = allSubmissions;
 
-        $http.get('/api/test')
-            .then(function(response){
-                return response;
-            })
     }
 }());

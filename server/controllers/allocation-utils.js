@@ -80,9 +80,7 @@ const associate = function(receiver,provider,assignment){
         provided:false,
         dateAllocated:new Date(),
         dateModified:new Date(),
-        providerMark:null,
-        branch:receiver.branch,
-        sha:receiver.sha
+        providerMark:null
     }
 };
 

@@ -6,6 +6,8 @@ const Submission = require('../datasets/submissionModel');
 const allocationUtils = require('./allocation-utils');
 const responseSender = require('./response-sender');
 const crypto = require('crypto');
+const request = require('request-promise');
+const unzip = require('unzip');
 
 
 module.exports.getAllSubmissions = function(req,res){
@@ -173,5 +175,6 @@ const checkPreExisting =  function(sid){
            return response;
         })
 };
+
 
 
