@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   get 'assignments/:id/deadline_extensions' => 'assignment#show_deadline_extensions', as: :assignment_deadline_extensions
   get 'assignments/:id/repush_submissions' => 'assignment#prepare_submission_repush', as: :assignment_prepare_submission_repush
   patch 'assignments/:id/repush_submissions' => 'assignment#submission_repush', as: :assignment_submission_repush
+  get 'assignments/destroy/:id' => 'assignment#destroy', as: :delete_assignment
 
   ### Deadline Extensions
   get 'assignments/:aid/deadline_extensions/new' => 'deadline_extension#new', as: :new_deadline_extension

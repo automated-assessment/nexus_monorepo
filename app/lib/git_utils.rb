@@ -147,6 +147,15 @@ class GitUtils
       return false
     end
 
+    # Delete remote repository for the given assignment
+    # Returns true if repository was destroyed
+    # Returns false otherwise
+    def delete_remote_assignment_repo!(assignment)
+      repo_name = assignment.repourl.split('/')[-2..-1].join('/')[0..-5]
+      client = Octokit::Client.new(login: Rails.configuration.ghe_user, password: Rails.configuration.ghe_password)
+      client.delete_repository(repo_name)
+    end
+
     # Danger, Will Robinson!
     # Attempts to repush the files for all submissions to this assignment between the two ids given (incl)
     # Lots of reasons why this could go wrong, but when GHE loses files due to storage crash and backup issues,
