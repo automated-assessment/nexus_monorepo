@@ -1,6 +1,6 @@
 class Assignment < ActiveRecord::Base
   belongs_to :course
-  has_many :submissions
+  has_many :submissions, dependent: :destroy
   has_many :marking_tool_contexts
   has_many :marking_tools, through: :marking_tool_contexts
   has_many :deadline_extensions

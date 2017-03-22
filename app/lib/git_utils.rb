@@ -1,11 +1,11 @@
 class GitUtils
   class << self
     def gen_repo_path(submission)
-      Rails.root.join('var', 'submissions', 'code', "#{submission.id}")
+      Rails.root.join('var', 'submissions', 'code', submission.id.to_s)
     end
 
     def gen_tmp_path(submission)
-      Rails.root.join('var', 'submissions', 'tmp', "#{submission.id}")
+      Rails.root.join('var', 'submissions', 'tmp', submission.id.to_s)
     end
 
     def gen_branch_name(submission)
@@ -19,7 +19,7 @@ class GitUtils
     def init_gitobj(submission)
       repo_path = gen_repo_path(submission)
       # Ensure this isn't a Git repo already (safety catch in case a previous push went wrong)
-      FileUtils.rm_rf(File.join(repo_path, ".git"), secure: true) if Dir.exists?(File.join(repo_path, ".git"))
+      FileUtils.rm_rf(File.join(repo_path, '.git'), secure: true) if Dir.exist?(File.join(repo_path, '.git'))
 
       Dir.chdir(repo_path) do
         git_init_out = `git init`
@@ -65,14 +65,19 @@ class GitUtils
     end
 
     def subsequent_push!(submission)
-      # move files to a temporary location while we pull and remove
+      # Get the repo path in the file system and
+      # generate a tmp path to store files while updating the git repo.
       repo_path = gen_repo_path(submission)
       tmp_path = gen_tmp_path(submission)
+
+      # move files to a temporary location while we pull and remove
       FileUtils.mkdir_p tmp_path
       FileUtils.cd(repo_path) do
-        FileUtils.mv Dir.glob('*'), tmp_path
+        # Also make sure . files are moved
+        FileUtils.mv all_files_except_git, tmp_path
       end
-      submission.log("Moved files to tmp directory: #{tmp_path}", "Debug")
+      submission.log("Moved files to tmp directory: #{tmp_path}", 'Debug')
+
       # init repo; pull remote branch; rm all; add all; commit; push
       repo = init_gitobj(submission)
       branch_name = gen_branch_name(submission)
@@ -80,13 +85,29 @@ class GitUtils
       repo.add_remote('origin', submission.augmented_clone_url)
       repo.pull('origin', branch_name)
       repo.checkout(branch_name)
+
       # Remove all files, if any
-      repo.remove('.', recursive: true) unless Dir["#{repo_path}/*"].reject{|fname| fname == '.' || fname == '..'}.empty?
-      # move files back
-      FileUtils.cd(tmp_path) do
-        FileUtils.mv Dir.glob('*'), repo_path
+      # Everything but not .git
+      FileUtils.cd(repo_path) do
+        # Remove all files that are not . or .. or .git
+        FileUtils.rm_r(all_files_except_git)
       end
-      submission.log("Moved files back to code directory: #{repo_path}", "Debug")
+
+      # Remove everything from the remote repo in preparation
+      # for the new push
+      repo.remove('.', recursive: true)
+
+      # move files back from temporary location to
+      # local repository location
+      FileUtils.cd(tmp_path) do
+        FileUtils.mv all_files_except_git, repo_path
+      end
+      submission.log("Moved files back to code directory: #{repo_path}", 'Debug')
+
+      # Clean up temp location
+      FileUtils.rmdir(tmp_path)
+      submission.log("#{tmp_path} deleted", 'Debug')
+
       repo.add(all: true)
       repo.commit(gen_commit_msg(submission), allow_empty: true)
       repo.push('origin', branch_name)
@@ -108,12 +129,13 @@ class GitUtils
     def setup_remote_assignment_repo!(assignment)
       repo_name = "assignment-#{assignment.id}"
       repo_desc = "Automatically created on #{DateTime.now.utc} by Nexus for assignment id #{assignment.id}"
-      res = Octokit.create_repository(repo_name,
-                                      organization: Rails.configuration.ghe_org,
-                                      private: true,
-                                      has_issues: false,
-                                      has_wiki: false,
-                                      description: repo_desc)
+      client = Octokit::Client.new(login: Rails.configuration.ghe_user, password: Rails.configuration.ghe_password)
+      res = client.create_repository(repo_name,
+                                     organization: Rails.configuration.ghe_org,
+                                     private: true,
+                                     has_issues: false,
+                                     has_wiki: false,
+                                     description: repo_desc)
       assignment.repourl = res.clone_url
       assignment.save!
 
@@ -133,11 +155,11 @@ class GitUtils
       assignment.log("Attempting to re-push submissions #{min_id}--#{max_id}.", 'info')
 
       # First need to reset repourl field for all submissions we are going to be treating
-      assignment.log("Removing repourl markers.", 'debug')
-      assignment.submissions.where("id >= ? AND id <= ?", min_id, max_id).update_all repourl: nil
+      assignment.log('Removing repourl markers.', 'debug')
+      assignment.submissions.where('id >= ? AND id <= ?', min_id, max_id).update_all repourl: nil
 
       # Now need to iterate over all of these submissions and do a push for each one
-      assignment.submissions.unscoped.order(:id).where("id >= ? AND id <= ?", min_id, max_id).each do |s|
+      assignment.submissions.unscoped.order(:id).where('id >= ? AND id <= ?', min_id, max_id).each do |s|
         Rails.logger.debug("Re-pushing submission #{s.id}.")
         s.log('Re-pushing', 'info')
         push!(s)
@@ -154,22 +176,52 @@ class GitUtils
       return false
     end
 
-    def has_valid_repo?(submission)
-      if (submission.studentrepo)
-        aug_url = submission.augmented_clone_url
-        refs = Git.ls_remote(aug_url)
-        unless (refs['branches'].nil?)
-          # Check the branch mentioned exists
-          return !refs['branches'][submission.gitbranch].nil?
-          # TODO Really should also be checking commit SHA existence, but I cannot seem to figure out how to do this without a full-fletched fetch of the branch, which I would prefer to avoid :-)
-        else
-          # No branches exist at all in remote repo
-          return false
-        end
-      else
-        # We've constructed the repo ourselves so this should be OK by default
-        return true
+    def valid_repo?(submission)
+      return true unless submission.studentrepo # We've constructed the repo ourselves so this should be OK by default
+
+      submission_user = submission.user
+      client = Octokit::Client.new(login: submission_user.ghe_login, access_token: submission_user.githubtoken)
+
+      # Split on / and grab the last two entries (user and repo name)
+      # Join the two with a slash and remove the .git extension
+      #
+      # By doing the URL manipulation, this eliminates the need for the
+      # a seperate call to Octokit::Repository all together, which returns
+      # a Repository object with owner and repo name instance fields, both of which
+      # the below line extracts from the submission.repourl
+      owner_repo = submission.repourl.split('/')[-2..-1].join('/')[0..-5]
+
+      begin
+        # Check repo/branch existence in one call, using the information extracted
+        # above.
+        # Throws Octokit::NotFound exception if branch doesn't exist.
+        branch = client.branch(owner_repo, submission.gitbranch.strip)
+
+        # Branch exists.
+        # Return true if sha exists anywhere in branch commit tree
+        valid_sha?(branch[:commit], submission.commithash.strip)
+      rescue Octokit::NotFound # Thrown when branch doesn't exist
+        false
       end
+    end
+
+    private
+
+    def valid_sha?(branch_commits, submission_sha)
+      # Check if sha is most recent commit
+      return true if branch_commits[:sha].start_with? submission_sha
+
+      # Not most recent commit, so check all previous
+      parent_commits = branch_commits[:parents]
+      parent_commits.each do |commit|
+        return true if commit[:sha].start_with? submission_sha
+      end
+      false
+    end
+
+    # Gets all files to move except for ., .. and .git
+    def all_files_except_git
+      Dir.glob('*', File::FNM_DOTMATCH).delete_if { |file| file =~ /\A\.{1,2}\z|\A\.git\z/ }
     end
   end
 end
