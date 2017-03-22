@@ -32,6 +32,28 @@
     </div>
 
     <div class="form-group">
+      <%= f.label 'Input', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :input, class: 'form-control', placeholder: 'e.g. java, cpp, class' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Output', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :output, class: 'form-control', placeholder: 'e.g. java, cpp, class' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Access Token', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :access_token, class: 'form-control' %>
+        <span>If this is left blank, intermediate ouput will not be sent to this tool</span>
+      </div>
+    </div>
+
+    <div class="form-group">
       <%= f.label :requires_config, class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
         <%= f.check_box :requires_config, class: 'form-control' %>

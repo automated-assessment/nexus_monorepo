@@ -72,6 +72,7 @@ Rails.application.routes.draw do
   ### Marking Tools
   get 'marking_tools/new' => 'marking_tool#new', as: :new_marking_tool
   post 'marking_tools/create' => 'marking_tool#create', as: :create_marking_tool
+  get 'marking_tools/destroy/:id' => 'marking_tool#destroy', as: :delete_marking_tool
 
   ### Audit Items
   get 'audit_items/all' => 'audit_item#all', as: :all_audit_items

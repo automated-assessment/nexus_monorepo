@@ -6,7 +6,8 @@ if ENV['DOCKER']
                      uid: 'javac',
                      input: 'java',
                      output: 'class',
-                     requires_config: false)
+                     requires_config: false,
+                     access_token: 'bar')
 
   MarkingTool.create(name: 'RNG Tool',
                      description: 'Random number generator',
@@ -14,7 +15,8 @@ if ENV['DOCKER']
                      uid: 'rng',
                      input: 'java',
                      output: 'java',
-                     requires_config: false)
+                     requires_config: false,
+                     access_token: 'bar')
 
   MarkingTool.create(name: 'Config Tool',
                      description: 'Sample Configuration Tool',
@@ -23,7 +25,8 @@ if ENV['DOCKER']
                      input: nil,
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://config-tool:3000/static/config.html?aid=%{aid}')
+                     config_url: 'http://config-tool:3000/static/config.html?aid=%{aid}',
+                     access_token: 'bar')
 
   MarkingTool.create(name: 'IO Tool',
                      description: 'IO Tool',
@@ -32,7 +35,8 @@ if ENV['DOCKER']
                      input: 'java',
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://io-tool:3000/#/static/config.html?aid=%{aid}')
+                     config_url: 'http://io-tool:3000/#/static/config.html?aid=%{aid}',
+                     access_token: 'bar')
 end
 
 if Rails.env.eql? 'development'
@@ -61,7 +65,8 @@ if Rails.env.eql? 'development'
                        uid: 'javac',
                        input: 'java',
                        output: 'class',
-                       requires_config: false)
+                       requires_config: false,
+                       access_token: 'bar')
 
     MarkingTool.create(name: 'RNG Tool',
                        description: 'Random number generator',
@@ -69,7 +74,8 @@ if Rails.env.eql? 'development'
                        uid: 'rng',
                        input: 'java',
                        output: 'java',
-                       requires_config: false)
+                       requires_config: false,
+                       access_token: 'bar')
 
     MarkingTool.create(name: 'Config Tool',
                        description: 'Sample Configuration Tool',
@@ -78,7 +84,8 @@ if Rails.env.eql? 'development'
                        input: nil,
                        output: nil,
                        requires_config: true,
-                       config_url: 'http://localhost:3002/static/config.html?aid=%{aid}')
+                       config_url: 'http://localhost:3002/static/config.html?aid=%{aid}',
+                       access_token: 'bar')
 
     MarkingTool.create(name: 'IO Tool',
                        description: 'IO Tool',
@@ -87,6 +94,7 @@ if Rails.env.eql? 'development'
                        input: 'java',
                        output: nil,
                        requires_config: true,
-                       config_url: 'http://localhost:3004/#/static/config.html?aid=%{aid}')
+                       config_url: 'http://localhost:3004/#/static/config.html?aid=%{aid}',
+                       access_token: 'bar')
   end
 end

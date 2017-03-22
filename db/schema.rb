@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170312142710) do
+ActiveRecord::Schema.define(version: 20170322151501) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -136,6 +136,7 @@ ActiveRecord::Schema.define(version: 20170312142710) do
     t.text     "config_url"
     t.string   "input"
     t.string   "output"
+    t.string   "access_token"
   end
 
   add_index "marking_tools", ["uid"], name: "index_marking_tools_on_uid", unique: true
