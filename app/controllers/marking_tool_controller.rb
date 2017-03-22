@@ -13,6 +13,12 @@ class MarkingToolController < ApplicationController
     @marking_tool = MarkingTool.new
   end
 
+  def destroy
+    return unless authenticate_admin!
+    MarkingTool.delete(params[:id])
+    redirect_to admin_panel_path
+  end
+
   private
 
   def marking_tool_params
@@ -20,9 +26,10 @@ class MarkingToolController < ApplicationController
                                          :uid,
                                          :description,
                                          :url,
-                                         :requires_config,
-                                         :config_url,
                                          :input,
-                                         :output)
+                                         :output,
+                                         :access_token,
+                                         :requires_config,
+                                         :config_url)
   end
 end

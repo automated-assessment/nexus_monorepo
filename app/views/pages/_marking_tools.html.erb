@@ -10,7 +10,7 @@
           <th>UID</th>
           <th>Description</th>
           <th>URL</th>
-          <th>Requires Configuration</th>
+          <th>Input/Ouput</th>
           <th>Config URL</th>
         </tr>
       </thead>
@@ -21,8 +21,12 @@
             <th><%= m.uid %></th>
             <td><%= m.description %></td>
             <td><code><%= m.url %></code></td>
-            <td><%= m.requires_config %></td>
+            <td><code><%= m.input %> -> <%= m.output %></code></td>
             <td><code><%= m.requires_config? ? m.config_url : 'n/a' %></code></td>
+            <td>
+              <%= link_to(delete_marking_tool_path(id: m.id)) do %>
+                <button type="button" class="btn btn-xs btn-danger"><%= icon 'times' %></button>
+              <% end %>
           </tr>
         <% end %>
       </tbody>
