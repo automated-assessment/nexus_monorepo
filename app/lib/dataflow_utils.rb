@@ -26,14 +26,18 @@ class DataflowUtils
           (tool.input.eql? marking_tool.output) && !(tool.uid.eql? marking_tool.uid)
         end
         tools_that_require_files = []
-        tools.map(&:url).each do |tool|
-          uri = URI(tool)
+        tools.each do |tool|
+          tool_entry = {}
+          uri = URI(tool.url)
           uri.path = '/data'
-          tools_that_require_files << uri.to_s
-          handled_tools.add tool
+          tool_entry['url'] = uri.to_s
+          tool_entry['auth_token'] = tool.access_token
+          tools_that_require_files << tool_entry.to_json
+          handled_tools.add tool.url
         end
         tools_that_require_files.each do |tool|
-          handled_tools.add tool
+          tool_hash = JSON.parse(tool)
+          handled_tools.add tool_hash['url']
         end
         # Add tool to handled tools since dataflow only goes in one direction
         handled_tools.add marking_tool.url
