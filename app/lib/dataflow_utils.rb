@@ -27,6 +27,7 @@ class DataflowUtils
         end
         tools_that_require_files = []
         tools.each do |tool|
+          next unless tool.access_token
           tool_entry = {}
           uri = URI(tool.url)
           uri.path = '/data'
