@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   get 'courses/:id/list' => 'course#enrolment_list', as: :enrolment_list
   get 'courses/:id/edit' => 'course#edit', as: :edit_course
   patch 'courses/:id' => 'course#update', as: :update_course
+  get 'courses/delete/:id' => 'course#destroy', as: :delete_course
 
   ### Assignments
   get 'assignments' => 'assignment#mine', as: :my_assignments
@@ -40,6 +41,7 @@ Rails.application.routes.draw do
   get 'assignments/:id/deadline_extensions' => 'assignment#show_deadline_extensions', as: :assignment_deadline_extensions
   get 'assignments/:id/repush_submissions' => 'assignment#prepare_submission_repush', as: :assignment_prepare_submission_repush
   patch 'assignments/:id/repush_submissions' => 'assignment#submission_repush', as: :assignment_submission_repush
+  get 'assignments/delete/:id' => 'assignment#destroy', as: :delete_assignment
 
   ### Deadline Extensions
   get 'assignments/:aid/deadline_extensions/new' => 'deadline_extension#new', as: :new_deadline_extension

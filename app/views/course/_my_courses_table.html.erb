@@ -13,6 +13,18 @@
         <tr>
           <th scope="row"><%= link_to c.title, c %></th>
           <td><%= c.teacher.name %></td>
+          <% if current_user.admin? %>
+            <td>
+              <%= link_to(delete_course_path(id: c.id), onclick: 'return confirmDeletion()') do %>
+                <button type="button" class="btn btn-xs btn-danger pull-right"><%= icon 'times' %> Delete</button>
+              <% end %>
+            </td>
+            <script>
+              function confirmDeletion() {
+                return confirm("This action will delete the Course and all its assignments / submissions. Are you sure?");
+              }
+            </script>
+          <% end %>
         </tr>
       <% end %>
     </tbody>
