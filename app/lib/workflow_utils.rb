@@ -10,6 +10,7 @@ class WorkflowUtils
     # Runs in O(n) linear time where n is the number of marking tool contexts
     def construct_workflow(marking_tool_contexts)
       return {} if marking_tool_contexts.empty?
+
       # If each marking tool context depends on another, then there would be a cycle
       # in the workflow graph. Correct workflows in Nexus are defined as DAGs
       cycle = !(marking_tool_contexts.map(&:depends_on).include? [])
