@@ -75,13 +75,13 @@ app.post('/mark', (req, res, next) => {
     // Find any .jar files, if any
     const jarFind = execSync('find . -name "*.jar" > options.txt', { cwd: sourceDir });
     const jarCat = execSync('cat options.txt', { cwd: sourceDir });
-
-    if (jarCat.toString().length > 0) {
+    const jarCatOutput = jarCat.toString();
+    if (jarCatOutput.length > 0) {
       output += '<p class="text-info">Jar library files found:</p>';
-      output += `<pre><code>${jarCat.toString()}</code></pre>`;
+      output += `<pre><code>${jarCatOutput}</code></pre>`;
 
       // Construct options file
-      const jarFiles = `-cp ${jarCat.toString().split('\n').join(':')}`;
+      const jarFiles = `-cp ${jarCatOutput.split('\n').join(':')}`;
       const options = execSync(`echo "${jarFiles}" > options.txt`, { cwd: sourceDir });
     }
 
