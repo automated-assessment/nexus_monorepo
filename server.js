@@ -85,7 +85,7 @@ app.post('/mark', (req, res, next) => {
         _sendMark(0, submissionID);
         output += '<p>You should not include whitespace in any Jar file names (or their paths) in your submission. Below are the files with problematic file names:</p>';
         output += `<pre><code>${WHITESPACE_LINES.join('\n')}</code></pre>`;
-        output += '<p>No Java files were checked because there were problemtatic Jar libraries</p>';
+        output += '<p>No Java files were checked because there were problematic Jar libraries</p>';
         res.sendStatus(200);
 
         sendFeedback(`<div class="javac-feedback">${output}</div>`, submissionID, (err, res, body) => {
