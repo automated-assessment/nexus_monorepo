@@ -43,7 +43,7 @@ const _sendMark = (mark, submissionID) => {
 };
 
 const _removeDirectoryIfExists = (dir) => {
-  if (dir !== '') {    
+  if (dir !== '') {
     if (fs.existsSync(dir)) {
       fsExtra.removeSync(dir);
       console.log(`Cleaned up directory ${dir}.`);
@@ -72,6 +72,34 @@ app.post('/mark', (req, res, next) => {
     const childGitClone = execSync(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`);
     const childGitCheckout = execSync(`git checkout ${sha}`, { cwd: sourceDir });
 
+    // Find any .jar files, if any
+    const jarFind = execSync('find . -name "*.jar" > options.txt', { cwd: sourceDir });
+    const jarCat = execSync('cat options.txt', { cwd: sourceDir });
+    const jarCatOutput = jarCat.toString();
+    if (jarCatOutput.length > 0) {
+      output += '<p class="text-info">Jar library files found:</p>';
+      output += `<pre><code>${jarCatOutput}</code></pre>`;
+      const WHITESPACE_LINES = jarCatOutput.match(WHITESPACE_REGEX);
+      if (WHITESPACE_LINES !== null) {
+        // send mark of 0 and feedback listing only those file names that have white space in them
+        _sendMark(0, submissionID);
+        output += '<p>You should not include whitespace in any Jar file names (or their paths) in your submission. Below are the files with problematic file names:</p>';
+        output += `<pre><code>${WHITESPACE_LINES.join('\n')}</code></pre>`;
+        output += '<p>No Java files were checked because there were problematic Jar libraries</p>';
+        res.sendStatus(200);
+
+        sendFeedback(`<div class="javac-feedback">${output}</div>`, submissionID, (err, res, body) => {
+          if (err) {
+            console.log(`Error from Nexus feedback request: ${err}`);
+          }
+        });
+      }
+
+      // Construct options file
+      const jarFiles = `-cp ${jarCatOutput.split('\n').join(':')}`;
+      const options = execSync(`echo "${jarFiles}" > options.txt`, { cwd: sourceDir });
+    }
+
     // find .java files and cat to 'sources.txt'
     const childFind = execSync('find . -name "*.java" > sources.txt', { cwd: sourceDir });
     const childCat = execSync('cat sources.txt', { cwd: sourceDir });
@@ -92,7 +120,7 @@ app.post('/mark', (req, res, next) => {
       // execute javac
       output += '<p class="text-info">Compiler Output:</p>';
       try {
-        const childJavac = execSync('javac -Xlint:all @sources.txt 2>&1', { cwd: sourceDir, timeout: 60000 });
+        const childJavac = execSync('javac -Xlint:all @options.txt @sources.txt 2>&1', { cwd: sourceDir, timeout: 60000 });
 
         output += '<p class="text-info">Java sources compiled successfully.</p>';
         output += `<pre><code>${childJavac.toString()}</code></pre>`;
@@ -107,7 +135,6 @@ app.post('/mark', (req, res, next) => {
         res.sendStatus(200);
       }
     }
-
     // Send output as feedback
     sendFeedback(`<div class="javac-feedback">${output}</div>`, submissionID, (err, res, body) => {
       if (err) {
