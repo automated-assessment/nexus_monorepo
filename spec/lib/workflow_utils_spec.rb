@@ -36,7 +36,7 @@ RSpec.describe WorkflowUtils do
   describe '#construct_workflow' do
     context 'with 0 marking services assigned' do
       it 'returns straight away with no changes' do
-        actual = described_class.construct_workflow([])
+        actual = described_class.construct_workflow({})
         expect(actual).to eq({})
       end
     end
@@ -55,7 +55,7 @@ RSpec.describe WorkflowUtils do
     context 'with the tool not dependent on anything' do
       it 'creates a hash structure with a single tool' do
         expected = {
-          mt_1.uid => []
+          mt_1.uid => Set.new
         }
 
         active_services = [mtc_1]
@@ -68,10 +68,10 @@ RSpec.describe WorkflowUtils do
       context 'with a sequential structure' do
         it 'creates the appropriate hash structure' do
           expected = {
-            mt_1.uid => [],
-            mt_2.uid => [mt_1.uid],
-            mt_3.uid => [mt_2.uid],
-            mt_4.uid => [mt_3.uid]
+            mt_1.uid => Set.new,
+            mt_2.uid => Set.new([mt_1.uid]),
+            mt_3.uid => Set.new([mt_2.uid]),
+            mt_4.uid => Set.new([mt_3.uid])
           }
 
           mtc_2.depends_on << mt_1.uid
@@ -110,10 +110,10 @@ RSpec.describe WorkflowUtils do
         context 'with no cycle in the marking tool contexts' do
           it 'creates the appropriate hash structure' do
             expected = {
-              mt_1.uid => [],
-              mt_2.uid => [mt_1.uid],
-              mt_3.uid => [],
-              mt_4.uid => [mt_3.uid]
+              mt_1.uid => Set.new,
+              mt_2.uid => Set.new([mt_1.uid]),
+              mt_3.uid => Set.new,
+              mt_4.uid => Set.new([mt_3.uid])
             }
 
             mtc_2.depends_on << mt_1.uid
@@ -151,10 +151,10 @@ RSpec.describe WorkflowUtils do
         context 'without a cycle in marking tool contexts' do
           it 'creates the appropriate hash structure' do
             expected = {
-              mt_1.uid => [mt_2.uid],
-              mt_2.uid => [],
-              mt_3.uid => [mt_2.uid, mt_1.uid].sort,
-              mt_4.uid => [mt_3.uid]
+              mt_1.uid => Set.new([mt_2.uid]),
+              mt_2.uid => Set.new,
+              mt_3.uid => Set.new([mt_2.uid, mt_1.uid]),
+              mt_4.uid => Set.new([mt_3.uid])
             }
 
             mtc_1.depends_on << mt_2.uid
@@ -205,11 +205,11 @@ RSpec.describe WorkflowUtils do
 
   describe '#trim_workflow!' do
     describe 'when the marking service is apart of the workflow' do
-      it 'removes the reporting tool from workflow and updates the depends on arrays' do
+      it 'removes the reporting tool from workflow and updates the depends on sets' do
         expected = {
-          mt_1.uid => [],
-          mt_3.uid => [mt_1.uid],
-          mt_4.uid => [mt_3.uid]
+          mt_1.uid => Set.new,
+          mt_3.uid => Set.new([mt_1.uid]),
+          mt_4.uid => Set.new([mt_3.uid])
         }
 
         mtc_1.depends_on << mt_2.uid
@@ -232,10 +232,10 @@ RSpec.describe WorkflowUtils do
     context 'when the marking tool is not apart of the workflow' do
       it 'returns the workflow as it is, unchanged' do
         expected = {
-          mt_1.uid => [mt_2.uid],
-          mt_2.uid => [],
-          mt_3.uid => [mt_1.uid, mt_2.uid].sort,
-          mt_4.uid => [mt_3.uid]
+          mt_1.uid => Set.new([mt_2.uid]),
+          mt_2.uid => Set.new,
+          mt_3.uid => Set.new([mt_1.uid, mt_2.uid]),
+          mt_4.uid => Set.new([mt_3.uid])
         }
         mtc_1.depends_on << mt_2.uid
         mtc_3.depends_on << mt_1.uid
@@ -256,10 +256,10 @@ RSpec.describe WorkflowUtils do
     context 'when the marking tool passed in is nil' do
       it 'returns the workflow as it is, unchanged' do
         expected = {
-          mt_1.uid => [mt_2.uid],
-          mt_2.uid => [],
-          mt_3.uid => [mt_1.uid, mt_2.uid].sort,
-          mt_4.uid => [mt_3.uid]
+          mt_1.uid => Set.new([mt_2.uid]),
+          mt_2.uid => Set.new,
+          mt_3.uid => Set.new([mt_1.uid, mt_2.uid]),
+          mt_4.uid => Set.new([mt_3.uid])
         }
         mtc_1.depends_on << mt_2.uid
         mtc_3.depends_on << mt_1.uid

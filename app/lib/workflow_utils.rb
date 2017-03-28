@@ -20,7 +20,7 @@ class WorkflowUtils
       marking_tool_contexts.each do |mtc|
         tool = MarkingTool.find_by(id: mtc.marking_tool_id)
         raise StandardError, "Error with marking tool #{tool.name}. Marking services cannot depend on themselves" if mtc.depends_on.include? tool.uid
-        depends_on = MarkingTool.where(uid: mtc.depends_on).pluck(:uid).sort
+        depends_on = Set.new MarkingTool.where(uid: mtc.depends_on).pluck(:uid)
         # Set a key in the hash to be the tool uid for the current mtc
         # Set the value to be the array of tools it depends on before it can run
         active_services[tool.uid] = depends_on
@@ -39,8 +39,8 @@ class WorkflowUtils
     # Runs in O(n) time where n is the number of keys in the hash.
     def next_services_to_invoke(active_services)
       to_invoke = []
-      active_services.each do |tool, depends_array|
-        to_invoke << tool if depends_array.empty?
+      active_services.each do |tool, depends_set|
+        to_invoke << tool if depends_set.empty?
       end
       to_invoke
     end
@@ -50,12 +50,11 @@ class WorkflowUtils
     # Traverse the workflow to remove it as a dependent for each tool that depends on it
     # Those keys in the hash where the value is now an empty array are
     # now eligible for invocation
-    # Runs in O(nm) where n is the number of keys in the hash
-    # and m is the number of marking tools assigned to the assignment
+    # Runs in O(n) where n is the number of keys in the hash
     def trim_workflow!(active_services, marking_tool)
       if active_services.delete(marking_tool)
-        active_services.each do |_, depends_array|
-          depends_array.delete marking_tool if depends_array.include? marking_tool
+        active_services.each do |_, depends_set|
+          depends_set.delete marking_tool if depends_set.include? marking_tool
         end
       end
       active_services
@@ -63,10 +62,6 @@ class WorkflowUtils
 
     # Uses a breadth first search to traverse the rest of the workflow graph
     # Setting the mark for that tool to 0 as each node is visited.
-    # Each node encountered is not considered for whether or not it is pending
-    # Because a prerequisite marking service has recieved an undesirable result,
-    # the rest of the marking services in the path should be set to 0 regardless
-    # of whether they have been assigned a mark already.
     def fail_rest_of_workflow!(submission, marking_tool)
       # Only need to consider the remaining workflow.
       workflow = submission.active_services
@@ -74,8 +69,8 @@ class WorkflowUtils
       visited = Set.new # Ensure each node is only enqueued once
 
       # Add current nodes children to queue.
-      workflow.each do |tool, depends_array|
-        queue << tool if depends_array.include? marking_tool
+      workflow.each do |tool, depends_set|
+        queue << tool if depends_set.include? marking_tool
       end
       until queue.empty?
         current_service = queue.shift # shift is equivalent to dequeue.
@@ -84,8 +79,8 @@ class WorkflowUtils
         intermediate_mark.mark = 0
         intermediate_mark.save!
         visited.add(current_service)
-        workflow.each do |tool, depends_array|
-          queue << tool if depends_array.include?(current_service) && !visited.include?(tool)
+        workflow.each do |tool, depends_set|
+          queue << tool if depends_set.include?(current_service) && !visited.include?(tool)
         end
       end
       submission.calculate_final_mark_if_possible
