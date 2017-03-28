@@ -79,6 +79,21 @@ app.post('/mark', (req, res, next) => {
     if (jarCatOutput.length > 0) {
       output += '<p class="text-info">Jar library files found:</p>';
       output += `<pre><code>${jarCatOutput}</code></pre>`;
+      const WHITESPACE_LINES = jarCatOutput.match(WHITESPACE_REGEX);
+      if (WHITESPACE_LINES !== null) {
+        // send mark of 0 and feedback listing only those file names that have white space in them
+        _sendMark(0, submissionID);
+        output += '<p>You should not include whitespace in any Jar file names (or their paths) in your submission. Below are the files with problematic file names:</p>';
+        output += `<pre><code>${WHITESPACE_LINES.join('\n')}</code></pre>`;
+        output += '<p>No Java files were checked because there were problemtatic Jar libraries</p>';
+        res.sendStatus(200);
+
+        sendFeedback(`<div class="javac-feedback">${output}</div>`, submissionID, (err, res, body) => {
+          if (err) {
+            console.log(`Error from Nexus feedback request: ${err}`);
+          }
+        });
+      }
 
       // Construct options file
       const jarFiles = `-cp ${jarCatOutput.split('\n').join(':')}`;
@@ -120,7 +135,6 @@ app.post('/mark', (req, res, next) => {
         res.sendStatus(200);
       }
     }
-
     // Send output as feedback
     sendFeedback(`<div class="javac-feedback">${output}</div>`, submissionID, (err, res, body) => {
       if (err) {
