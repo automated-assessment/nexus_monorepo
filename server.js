@@ -87,7 +87,7 @@ function markSubmission(submissionID, cloneURL, branch, sha) {
     const childGitClone = execSync(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`);
     const childGitCheckout = execSync(`git checkout ${sha}`, { cwd: sourceDir });
 
-    console.log(`About to run marking tool for submission ${submisisonID}.`);
+    console.log(`About to run marking tool for submission ${submissionID}.`);
     exec(`${cmd} --dir ${sourceDir}`, { cwd: sourceDir, env: {'NEXUS_ACCESS_TOKEN':''} }, (error, stdout, stderr) => {
       handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir);
     });
