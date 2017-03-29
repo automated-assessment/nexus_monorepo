@@ -87,13 +87,13 @@ function markSubmission(submissionID, cloneURL, branch, sha) {
     const childGitClone = execSync(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`);
     const childGitCheckout = execSync(`git checkout ${sha}`, { cwd: sourceDir });
 
-    console.log('About to run marking tool');
+    console.log(`About to run marking tool for submission ${submisisonID}.`);
     exec(`${cmd} --dir ${sourceDir}`, { cwd: sourceDir, env: {'NEXUS_ACCESS_TOKEN':''} }, (error, stdout, stderr) => {
       handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir);
     });
   } catch (e) {
     // Fix what request response we sent so that nexus knows something has gone wrong
-    console.log(`Exception occurred: ${e.toString()}.`);
+    console.log(`Exception occurred marking submission ${submissionID}: ${e.toString()}.`);
     sendMark (0, submissionID);
     sendFeedback('<div class="generic-feedback">There was an error marking your submission. Please contact your lecturer.</div>',
           submissionID,
@@ -113,30 +113,30 @@ function handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir
 
   if (error) {
     if ((error.code > 0) && (error.code <= 100)) {
-      console.log(`Marking tool produced error code: ${error.code}.`);
+      console.log(`Marking tool produced error code for submission ${submissionID}: ${error.code}.`);
       exitCode = error.code;
       output = stdout;
     } else {
-      console.log(`Internal error running marking tool: ${error}: ${stdout}.`);
+      console.log(`Internal error running marking tool for submission ${submissionID}: ${error}: ${stdout}.`);
       output = 'Internal error: testing tool failed to run command.';
       exitCode = -1;
     }
   } else {
-    console.log('Marking tool ran successfully.');
+    console.log(`Marking tool ran successfully for submission ${submissionID}.`);
   }
 
   if (exitCode>=0) {
-    console.log('Reporting mark to NEXUS.');
+    console.log(`Reporting mark to NEXUS for submission ${submissionID}.`);
     sendMark(exitCode, submissionID);
 
-    console.log('Reporting feedback to NEXUS.');
+    console.log(`Reporting feedback to NEXUS for submission ${submissionID}.`);
     sendFeedback(`<div class="generic-feedback">${output}</div>`, submissionID, (err, res, body) => {
         if (err) {
           console.log(`Error from Nexus feedback request: ${err}`);
         }
     });
   } else {
-    console.log('Informing NEXUS of issues.');
+    console.log(`Informing NEXUS of issues with marking submission ${submissionID}.`);
     sendMark (0, submissionID);
     sendFeedback('<div class="generic-feedback">There was an error marking your submission. Please contact your lecturer.</div>',
           submissionID,
