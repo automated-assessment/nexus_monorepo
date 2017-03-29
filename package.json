@@ -1,5 +1,5 @@
 {
-  "name": "nexus-javac",
+  "name": "nexus-matlab",
   "version": "1.0.0",
   "description": "matlab marking tool",
   "main": "index.js",
