@@ -4,7 +4,7 @@ import errorhandler from 'errorhandler';
 import path from 'path';
 import fs from 'fs';
 import fsExtra from 'fs-extra';
-import { execSync } from 'child_process';
+import { execSync, exec } from 'child_process';
 import { sendMark, sendFeedback } from './utils';
 
 const port = process.env.PORT || 5000;
@@ -43,7 +43,7 @@ const _sendMark = (mark, submissionID) => {
 };
 
 const _removeDirectoryIfExists = (dir) => {
-  if (dir !== '') {    
+  if (dir !== '') {
     if (fs.existsSync(dir)) {
       fsExtra.removeSync(dir);
       console.log(`Cleaned up directory ${dir}.`);
@@ -83,55 +83,14 @@ function markSubmission(submissionID, cloneURL, branch, sha) {
     // Clean up repository directory in case it already exists for some reason
     _removeDirectoryIfExists(sourceDir);
 
-    let output = '';
-
     // clone repo
     const childGitClone = execSync(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`);
     const childGitCheckout = execSync(`git checkout ${sha}`, { cwd: sourceDir });
 
-    let exitCode = 0;
-    try {
-      console.log('About to run marking tool');
-      // TODO check does this meet the security requirement?
-      output = execSync(`${cmd} --dir ${sourceDir}`, { cwd: sourceDir, env: {'NEXUS_ACCESS_TOKEN':''} });
-      exitCode = 0;
-      console.log('Marking tool ran successfully.');
-    } catch (r) {
-      if ((r.status > 0) && (r.status <= 100)) {
-        console.log(`Marking tool produced error code: ${r.status}.`);
-        exitCode = r.status;
-        output = r.stdout;
-      } else {
-        console.log(`Internal error running marking tool: ${r}: ${output}.\n${r.stdout}`);
-        output = 'Internal error: testing tool failed to run command.';
-        exitCode = -1;
-      }
-    }
-      
-    if (exitCode>=0) {
-      console.log('Reporting mark to NEXUS.');
-      // Success. Report 100 score
-      sendMark(exitCode, submissionID);
-      
-      console.log('Reporting feedback to NEXUS.');
-      // Send output as feedback
-      sendFeedback(`<div class="generic-feedback">${output}</div>`, submissionID, (err, res, body) => {
-          if (err) {
-            console.log(`Error from Nexus feedback request: ${err}`);
-          }
-      });
-    } else {
-      console.log('Informing NEXUS of issues.');
-      sendMark (0, submissionID);
-      sendFeedback('<div class="generic-feedback">There was an error marking your submission. Please contact your lecturer.</div>',
-            submissionID,
-            (err, res, body) => {
-              if (err) {
-                console.log(`Error from Nexus feedback request: ${err}`);
-              }
-            });
-    }
-
+    console.log('About to run marking tool');
+    exec(`${cmd} --dir ${sourceDir}`, { cwd: sourceDir, env: {'NEXUS_ACCESS_TOKEN':''} }, (error, stdout, stderr) => {
+      handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir);
+    });
   } catch (e) {
     // Fix what request response we sent so that nexus knows something has gone wrong
     console.log(`Exception occurred: ${e.toString()}.`);
@@ -143,13 +102,56 @@ function markSubmission(submissionID, cloneURL, branch, sha) {
               console.log(`Error from Nexus feedback request: ${err}`);
             }
           });
-  } finally {
-    try {
     // Clean up repository directory after us
-      _removeDirectoryIfExists(sourceDir);
-    } catch (e) {
-      console.log(`Error in generic testing tool: ${e.toString()}`);
+    _removeDirectoryIfExists(sourceDir);
+  }
+}
+
+function handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir) {
+  let exitCode = 0;
+  let output = '';
+
+  if (error) {
+    if ((error.code > 0) && (error.code <= 100)) {
+      console.log(`Marking tool produced error code: ${error.code}.`);
+      exitCode = error.code;
+      output = stdout;
+    } else {
+      console.log(`Internal error running marking tool: ${error}: ${stdout}.`);
+      output = 'Internal error: testing tool failed to run command.';
+      exitCode = -1;
     }
+  } else {
+    console.log('Marking tool ran successfully.');
+  }
+
+  if (exitCode>=0) {
+    console.log('Reporting mark to NEXUS.');
+    sendMark(exitCode, submissionID);
+
+    console.log('Reporting feedback to NEXUS.');
+    sendFeedback(`<div class="generic-feedback">${output}</div>`, submissionID, (err, res, body) => {
+        if (err) {
+          console.log(`Error from Nexus feedback request: ${err}`);
+        }
+    });
+  } else {
+    console.log('Informing NEXUS of issues.');
+    sendMark (0, submissionID);
+    sendFeedback('<div class="generic-feedback">There was an error marking your submission. Please contact your lecturer.</div>',
+          submissionID,
+          (err, res, body) => {
+            if (err) {
+              console.log(`Error from Nexus feedback request: ${err}`);
+            }
+          });
+  }
+
+  try {
+    // Clean up repository directory after us
+    _removeDirectoryIfExists(sourceDir);
+  } catch (e) {
+    console.log(`Error in generic testing tool: ${e.toString()}`);
   }
 }
 
