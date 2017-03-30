@@ -112,17 +112,18 @@ function handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir
   let output = '';
 
   if (error) {
-    if ((error.code > 0) && (error.code <= 100)) {
+    if ((error.code >= 0) && (error.code <= 100)) {
       console.log(`Marking tool produced error code for submission ${submissionID}: ${error.code}.`);
       exitCode = error.code;
       output = stdout;
     } else {
       console.log(`Internal error running marking tool for submission ${submissionID}: ${error}: ${stdout}.`);
-      output = 'Internal error: testing tool failed to run command.';
+      output = 'Internal error: testing tool failed to run command.\n'+stdout;
       exitCode = -1;
     }
   } else {
     console.log(`Marking tool ran successfully for submission ${submissionID}.`);
+    output = stdout;
   }
 
   if (exitCode>=0) {
