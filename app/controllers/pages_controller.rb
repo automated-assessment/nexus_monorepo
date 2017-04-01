@@ -1,6 +1,8 @@
 class PagesController < ApplicationController
   include ApplicationHelper
 
+  before_action :authenticate_admin!, except: :landing
+
   def landing
   end
 

@@ -4,19 +4,16 @@ module ApplicationHelper
   end
 
   def authenticate_admin!
-    if is_admin?
-      return true
-    else
-      redirect_to(error_url '401')
-      return false
-    end
+    return true if admin?
+    redirect_to error_url('403'), status: 403
+    false
   end
 
-  def is_admin?
+  def admin?
     current_user && current_user.admin?
   end
 
-  def is_user? (user)
+  def user?(user)
     current_user && (current_user.id == user.id)
   end
 
