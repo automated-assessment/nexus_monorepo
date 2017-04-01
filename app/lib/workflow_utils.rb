@@ -62,6 +62,8 @@ class WorkflowUtils
 
     # Uses a breadth first search to traverse the rest of the workflow graph
     # Setting the mark for that tool to 0 as each node is visited.
+    # Returns the nodes that were visited as a result of the simulation, not
+    # including the root
     def fail_rest_of_workflow!(submission, marking_tool)
       # Only need to consider the remaining workflow.
       workflow = submission.active_services
@@ -83,7 +85,7 @@ class WorkflowUtils
           queue << tool if depends_set.include?(current_service) && !visited.include?(tool)
         end
       end
-      submission.calculate_final_mark_if_possible
+      visited.delete marking_tool
     end
 
     private
