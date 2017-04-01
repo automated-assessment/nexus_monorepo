@@ -2,6 +2,7 @@ class IntermediateMarkController < ApplicationController
   include ApplicationHelper
   require_relative '../lib/workflow_utils'
   require_relative '../lib/submission_utils'
+
   skip_before_action :verify_authenticity_token, only: [:report]
 
   def report

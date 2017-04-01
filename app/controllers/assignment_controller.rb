@@ -5,6 +5,7 @@ class AssignmentController < ApplicationController
   require_relative '../lib/dataflow_utils'
 
   before_action :authenticate_user!
+  before_action :authenticate_admin!, except: [:mine, :show]
 
   def mine
   end
@@ -14,17 +15,14 @@ class AssignmentController < ApplicationController
   end
 
   def show_deadline_extensions
-    return unless authenticate_admin!
     @assignment = return_assignment!
   end
 
   def quick_config_confirm
-    return unless authenticate_admin!
     @assignment = return_assignment!
   end
 
   def configure_tools
-    return unless authenticate_admin!
     @assignment = return_assignment!
 
     if @assignment
@@ -40,7 +38,6 @@ class AssignmentController < ApplicationController
   end
 
   def new
-    return unless authenticate_admin!
     @assignment = Assignment.new
     course = Course.find_by(id: params[:cid])
     if course
@@ -67,7 +64,6 @@ class AssignmentController < ApplicationController
   end
 
   def create
-    return unless authenticate_admin!
     @assignment = Assignment.new(assignment_params)
     unless @assignment.save
       error_flash_and_cleanup!(@assignment.errors.full_messages[0])
@@ -96,12 +92,10 @@ class AssignmentController < ApplicationController
   end
 
   def edit
-    return unless authenticate_admin!
     @assignment = return_assignment!
   end
 
   def update
-    return unless authenticate_admin!
     @assignment = return_assignment!
     if @assignment
       if @assignment.update_attributes(assignment_params)
@@ -115,7 +109,6 @@ class AssignmentController < ApplicationController
   end
 
   def destroy
-    return unless authenticate_admin!
     assignment = return_assignment!
     repo_was_deleted = GitUtils.delete_remote_assignment_repo!(assignment)
     if repo_was_deleted
@@ -130,7 +123,6 @@ class AssignmentController < ApplicationController
   end
 
   def export_submissions_data
-    return unless authenticate_admin!
     @assignment = return_assignment!
     if @assignment
       headers['Content-Disposition'] = 'attachment; filename="submissions-data-export.csv"'
@@ -139,8 +131,6 @@ class AssignmentController < ApplicationController
   end
 
   def list_submissions
-    return unless authenticate_admin!
-
     @assignment = return_assignment!
 
     if @assignment
@@ -150,18 +140,14 @@ class AssignmentController < ApplicationController
   end
 
   def list_ordered_submissions
-    return unless authenticate_admin!
     @assignment = return_assignment!
   end
 
   def prepare_submission_repush
-    return unless authenticate_admin!
     @assignment = return_assignment!
   end
 
   def submission_repush
-    return unless authenticate_admin!
-
     @assignment = return_assignment!
     if @assignment
       min_id = params[:submissions][:min_id].to_i

@@ -3,6 +3,7 @@ class CourseController < ApplicationController
   require_relative '../lib/git_utils'
 
   before_action :authenticate_user!
+  before_action :authenticate_admin!, except: [:index, :mine, :show]
 
   def index
     @courses = Course.all
@@ -16,17 +17,14 @@ class CourseController < ApplicationController
   end
 
   def enrolment_list
-    return unless authenticate_admin!
     @course = return_course!
   end
 
   def new
-    return unless authenticate_admin!
     @course = Course.new
   end
 
   def create
-    return unless authenticate_admin!
     @course = Course.new(course_params)
     @course.teacher = current_user
 
@@ -38,12 +36,10 @@ class CourseController < ApplicationController
   end
 
   def edit
-    return unless authenticate_admin!
     @course = return_course!
   end
 
   def update
-    return unless authenticate_admin!
     @course = return_course!
     if @course.update_attributes(course_params)
       flash[:success] = 'Course updated'
@@ -54,7 +50,6 @@ class CourseController < ApplicationController
   end
 
   def destroy
-    return unless authenticate_admin!
     course = return_course!
     assignments = course.assignments
 
