@@ -5,6 +5,7 @@ RSpec.describe WorkflowUtils do
   let(:mt_2) { create(:marking_tool) }
   let(:mt_3) { create(:marking_tool) }
   let(:mt_4) { create(:marking_tool) }
+  let(:mt_5) { create(:marking_tool) }
 
   let(:mtc_1) { MarkingToolContext.new }
   let(:mtc_2) { MarkingToolContext.new }
@@ -12,6 +13,8 @@ RSpec.describe WorkflowUtils do
   let(:mtc_4) { MarkingToolContext.new }
 
   before(:each) do
+    MarkingTool.delete_all
+    MarkingToolContext.delete_all
     mtc_1.marking_tool = mt_1
     mtc_1.weight = 25
     mtc_1.condition = 0
@@ -278,7 +281,75 @@ RSpec.describe WorkflowUtils do
       end
     end
   end
-  describe '#fail_rest_of_workflow!' do
-    pending
+  describe '#simulate_workflow' do
+    context 'with a nil workflow' do
+      it 'returns an empty set of failed marking services' do
+        mtc_1.depends_on << mt_2.uid
+        mtc_3.depends_on << mt_1.uid
+        mtc_3.depends_on << mt_2.uid
+        mtc_4.depends_on << mt_3.uid
+
+        mtc_1.save!
+        mtc_2.save!
+        mtc_3.save!
+        mtc_4.save!
+        active_services = [mtc_1, mtc_2, mtc_3, mtc_4]
+        described_class.construct_workflow(active_services)
+        actual = described_class.simulate_workflow(nil, mt_2)
+        expect(Set.new).to eq actual
+      end
+    end
+    context 'with a nil marking tool' do
+      it 'returns an empty set of failed marking services' do
+        mtc_1.depends_on << mt_2.uid
+        mtc_3.depends_on << mt_1.uid
+        mtc_3.depends_on << mt_2.uid
+        mtc_4.depends_on << mt_3.uid
+
+        mtc_1.save!
+        mtc_2.save!
+        mtc_3.save!
+        mtc_4.save!
+        active_services = [mtc_1, mtc_2, mtc_3, mtc_4]
+        workflow = described_class.construct_workflow(active_services)
+        actual = described_class.simulate_workflow(workflow, nil)
+        expect(Set.new).to eq actual
+      end
+    end
+    context 'with a valid workflow and marking tool that is not an active service' do
+      it 'returns an empty set of failed marking services' do
+        mtc_1.depends_on << mt_2.uid
+        mtc_3.depends_on << mt_1.uid
+        mtc_3.depends_on << mt_2.uid
+        mtc_4.depends_on << mt_3.uid
+
+        mtc_1.save!
+        mtc_2.save!
+        mtc_3.save!
+        mtc_4.save!
+        active_services = [mtc_1, mtc_2, mtc_3, mtc_4]
+        workflow = described_class.construct_workflow(active_services)
+        actual = described_class.simulate_workflow(workflow, mt_5.uid)
+        expect(Set.new).to eq actual
+      end
+    end
+    context 'with a valid workflow and a tool that is an active service' do
+      it 'returns a non empty set of visited failed marking services' do
+        expected = Set.new [mt_1.uid, mt_3.uid, mt_4.uid]
+        mtc_1.depends_on << mt_2.uid
+        mtc_3.depends_on << mt_1.uid
+        mtc_3.depends_on << mt_2.uid
+        mtc_4.depends_on << mt_3.uid
+
+        mtc_1.save!
+        mtc_2.save!
+        mtc_3.save!
+        mtc_4.save!
+        active_services = [mtc_1, mtc_2, mtc_3, mtc_4]
+        workflow = described_class.construct_workflow(active_services)
+        actual = described_class.simulate_workflow(workflow, mt_2.uid)
+        expect(expected).to eq actual
+      end
+    end
   end
 end

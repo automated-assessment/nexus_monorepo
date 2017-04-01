@@ -32,7 +32,13 @@ class IntermediateMarkController < ApplicationController
         @submission.log("#{@marking_tool.name}'s condition of #{marking_tool_context.condition} not met.")
         @submission.log('Rest of intermediate marks being set to 0')
 
-        failed_services = WorkflowUtils.fail_rest_of_workflow!(@submission, @marking_tool.uid)
+        failed_services = WorkflowUtils.simulate_workflow(@submission.active_services, @marking_tool.uid) do |service|
+          marking_tool = MarkingTool.find_by!(uid: service)
+          intermediate_mark = @submission.intermediate_marks.find_by!(marking_tool_id: marking_tool.id)
+          intermediate_mark.mark = 0
+          intermediate_mark.save!
+        end
+
         unless failed_services.empty?
           failed_tools = MarkingTool.where(uid: failed_services.to_a).map(&:name)
           feedback_body = other_feedback(marking_tool_context, failed_tools)
