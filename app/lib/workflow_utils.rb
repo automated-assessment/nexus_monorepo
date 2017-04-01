@@ -6,7 +6,6 @@ class WorkflowUtils
     # Constructs a workflow using a hash where each key is a marking service
     # and its value is an array of tools that it depends on, such that the tool
     # cannot run until every tool in the array has returned a mark
-    # Based on a topolical sort
     # Runs in O(n) linear time where n is the number of marking tool contexts
     def construct_workflow(marking_tool_contexts)
       return {} if marking_tool_contexts.empty?
@@ -14,7 +13,7 @@ class WorkflowUtils
       # If each marking tool context depends on another, then there would be a cycle
       # in the workflow graph. Correct workflows in Nexus are defined as DAGs
       cycle = !(marking_tool_contexts.map(&:depends_on).include? [])
-      raise StandardError, 'All marking tools depend on another marking service! Please remove cycle' if cycle
+      raise StandardError, 'All marking tools depend on another marking service! Please remove the cycle' if cycle
 
       active_services = {}
       marking_tool_contexts.each do |mtc|
@@ -37,9 +36,10 @@ class WorkflowUtils
     # Return an array with all the keys, coresponding to UIDs
     # such that their value in the hash is an empty array
     # Runs in O(n) time where n is the number of keys in the hash.
-    def next_services_to_invoke(active_services)
+    def next_services_to_invoke(workflow)
       to_invoke = []
-      active_services.each do |tool, depends_set|
+      return to_invoke unless workflow
+      workflow.each do |tool, depends_set|
         to_invoke << tool if depends_set.empty?
       end
       to_invoke
@@ -51,41 +51,37 @@ class WorkflowUtils
     # Those keys in the hash where the value is now an empty array are
     # now eligible for invocation
     # Runs in O(n) where n is the number of keys in the hash
-    def trim_workflow!(active_services, marking_tool)
-      if active_services.delete(marking_tool)
-        active_services.each do |_, depends_set|
-          depends_set.delete marking_tool if depends_set.include? marking_tool
+    def trim_workflow!(workflow, service)
+      if workflow.delete(service)
+        workflow.each do |_, depends_set|
+          depends_set.delete service if depends_set.include? service
         end
       end
-      active_services
+      workflow
     end
 
     # Uses a breadth first search to traverse the rest of the workflow graph
-    # Setting the mark for that tool to 0 as each node is visited.
+    # At each node, it executes any block that is given.
     # Returns the nodes that were visited as a result of the simulation, not
     # including the root
-    def fail_rest_of_workflow!(submission, marking_tool)
+    def simulate_workflow(workflow, service)
       # Only need to consider the remaining workflow.
-      workflow = submission.active_services
       queue = []
       visited = Set.new # Ensure each node is only enqueued once
-
+      return visited unless workflow && service
       # Add current nodes children to queue.
       workflow.each do |tool, depends_set|
-        queue << tool if depends_set.include? marking_tool
+        queue << tool if depends_set.include? service
       end
       until queue.empty?
         current_service = queue.shift # shift is equivalent to dequeue.
-        marking_tool = MarkingTool.find_by!(uid: current_service)
-        intermediate_mark = submission.intermediate_marks.find_by!(marking_tool_id: marking_tool.id)
-        intermediate_mark.mark = 0
-        intermediate_mark.save!
+        yield current_service if block_given?
         visited.add(current_service)
         workflow.each do |tool, depends_set|
           queue << tool if depends_set.include?(current_service) && !visited.include?(tool)
         end
       end
-      visited.delete marking_tool
+      visited.delete service
     end
 
     private
