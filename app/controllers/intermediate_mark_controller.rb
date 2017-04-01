@@ -24,13 +24,21 @@ class IntermediateMarkController < ApplicationController
 
       if mark >= marking_tool_context.condition
         @submission.active_services = WorkflowUtils.trim_workflow!(@submission.active_services, @marking_tool.uid)
-        @submission.log("#{@marking_tool.name}'s condition of #{marking_tool_context.condition} met.")
-        @submission.save!
-        SubmissionUtils.notify_tools!(@submission)
+        unless @submission.active_services.empty?
+          @submission.log("#{@marking_tool.name}'s condition of #{marking_tool_context.condition} met.")
+          SubmissionUtils.notify_tools!(@submission)
+        end
       else
         @submission.log("#{@marking_tool.name}'s condition of #{marking_tool_context.condition} not met.")
         @submission.log('Rest of intermediate marks being set to 0')
-        WorkflowUtils.fail_rest_of_workflow!(@submission, @marking_tool.uid)
+
+        failed_services = WorkflowUtils.fail_rest_of_workflow!(@submission, @marking_tool.uid)
+        unless failed_services.empty?
+          failed_tools = MarkingTool.where(uid: failed_services.to_a).map(&:name)
+          feedback_body = other_feedback(marking_tool_context, failed_tools)
+          nexus = MarkingTool.find_by(uid: 'nexus')
+          FeedbackItem.create(submission: @submission, marking_tool: nexus, body: feedback_body)
+        end
       end
     else
       render json: { response: 'Mark for this tool and submission has already been received.' }.to_json,
@@ -39,5 +47,26 @@ class IntermediateMarkController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     render json: { response: 'Could not find matching record(s) for request.' }.to_json,
            status: 404
+  end
+
+  private
+
+  def other_feedback(marking_tool_context, failed_marking_services)
+    html = '<p class="text-info">
+              A mark of 0 was awarded for the following areas:
+            </p>
+            <pre>'
+    failed_marking_services.each do |service|
+      html += "<code>#{service} </code>\n"
+    end
+
+    html += '</pre>
+             <p class="text-info">'
+
+    tool = marking_tool_context.marking_tool
+    html += "This is because you scored below #{marking_tool_context.condition}%\
+             for #{tool.name}.\
+             </p>"
+    html.html_safe
   end
 end
