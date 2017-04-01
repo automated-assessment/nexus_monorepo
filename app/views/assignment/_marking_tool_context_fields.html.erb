@@ -2,7 +2,7 @@
   <div class="form-group">
     <%= f.label :marking_tool, "Tool", class: 'col-lg-2 control-label' %>
       <div class="col-lg-10">
-        <%= collection_select("assignment[marking_tool_contexts_attributes][#{f.options[:child_index]}]", :marking_tool_id, MarkingTool.all, :id, :name, { prompt: true }, { class: 'form-control' }) %>
+        <%= collection_select("assignment[marking_tool_contexts_attributes][#{f.options[:child_index]}]", :marking_tool_id, all_marking_tools, :id, :name, { prompt: true }, { class: 'form-control' }) %>
       </div>
   </div>
 
@@ -33,7 +33,7 @@
       <h3 class="panel-title"><%= icon 'ellipsis-v' %> Depends on</a></h3>
     </div>
     <div class="panel-body">
-      <% MarkingTool.all.each do |mt| %>
+      <% all_marking_tools.each do |mt| %>
         <%= f.check_box(:depends_on, { multiple: true }, mt.uid, nil) %>
         <%= mt.name %>
       <% end %>

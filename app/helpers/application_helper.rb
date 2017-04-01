@@ -40,6 +40,10 @@ module ApplicationHelper
     AccessToken.find_by(access_token: token).present?
   end
 
+  def all_marking_tools
+    MarkingTool.where.not(uid: 'nexus')
+  end
+
   def render_unauthorized_json
     render json: { response: 'Unauthorized' }.to_json,
            status: 401
