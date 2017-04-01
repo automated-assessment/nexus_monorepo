@@ -4,7 +4,7 @@ module SubmissionHelper
       # This may actually be an error, so need to work our way through the various error states
       if submission.extraction_error?
         content_tag(:span, 'Extraction Error', class: 'label label-danger')
-      elsif (!submission.git_success?)
+      elsif !submission.git_success?
         content_tag(:span, 'GHE Push Error', class: 'label label-danger')
       elsif submission.failed?
         content_tag(:span, 'Marking Tool Error', class: 'label label-danger')
@@ -20,7 +20,7 @@ module SubmissionHelper
         else concat(content_tag(:strong, s, class: 'text-success'))
         end
         concat(content_tag(:span, ' '))
-        # TODO This next line is really only here to be backward compatible with when we were incorrectly reporting a mark of 0 against extraction errors
+        # TODO: This next line is really only here to be backward compatible with when we were incorrectly reporting a mark of 0 against extraction errors
         concat(content_tag(:span, 'Extraction Error', class: 'label label-danger')) if submission.extraction_error?
         concat(content_tag(:span, 'Capped', class: 'label label-default')) if submission.late? && submission.assignment.late_capping?
       end
