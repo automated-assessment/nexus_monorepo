@@ -4,7 +4,7 @@
     <% if @submission.feedback_items.empty? %>
       <p>No feedback available yet. Please come back to this page later to view feedback.
     <% else %>
-      <% @submission.feedback_items.each do |feedback_item| %>
+      <% @submission.feedback_items.order(created_at: :desc).each do |feedback_item| %>
         <div class="panel panel-info">
           <div class="panel-heading">
             <h3 class="panel-title"><%= feedback_item.marking_tool.name %></h3>
