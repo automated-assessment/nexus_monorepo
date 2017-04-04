@@ -8,14 +8,14 @@
 
     <h3>{{vm.provider.alias|firstName}}'s submission:</h3> <br/>
 
-    <div ng-show="vm.isZip">
-        <a class="btn btn-primary" ng-href="{{vm.download}}" download>
+    <div ng-show="vm.core.isArchive">
+        <a class="btn btn-primary" ng-href="{{vm.core.download}}" download>
             Download submission
         </a>
 
     </div>
 
-    <div ng-repeat="snippet in vm.snippets">
+    <div ng-repeat="snippet in vm.submission">
         <h4>{{snippet.fileName}}:</h4>
         <p>
         <div ng-bind-html="snippet.content">

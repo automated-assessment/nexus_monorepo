@@ -8,19 +8,13 @@
     angular.module('PeerFeedback')
         .controller('ProviderController', ProviderController);
 
-    ProviderController.$inject = ['$stateParams', 'provider', 'allocationNetwork', 'notificationService','gitNetwork','submission','snippetSubmission','archiveSubmission','snippets'];
+    ProviderController.$inject = ['$stateParams', 'provider', 'allocationNetwork', 'notificationService','submission'];
 
-    function ProviderController($stateParams, provider, allocationNetwork, notificationService,gitNetwork,submission,snippetSubmission,archiveSubmission,snippets) {
-
-
+    function ProviderController($stateParams, provider, allocationNetwork, notificationService,submission) {
 
         const vm = this;
         activate();
 
-        gitNetwork.getZip("",vm.core.branch)
-            .then(function(response){
-                vm.download = response.data;
-            });
 
         vm.mark.hoveringOver = function (value) {
             vm.mark.overStar = value;
@@ -49,18 +43,12 @@
 
         function activate() {
             vm.core = {
-                aid: $stateParams.aid,
-                branch:submission.branch,
-                sha:submission.sha,
                 receiverSid: $stateParams.receiverSid,
-                providerSid: $stateParams.providerSid,
-                snippet: {}
+                providerSid: $stateParams.providerSid
             };
-            vm.isZip = false;
             vm.provider = provider;
-            vm.snippets = snippets;
+            vm.submission = submission;
 
-            vm.isZip = archiveSubmission.isZip();
             vm.mark = {
                 rate:0,
                 max:10,
@@ -68,7 +56,7 @@
             };
         }
 
-        //TODO: Add a modal in to ensure that provider wishes to navigate away, if changes have been made to the form.
+
         //TODO: Display git submission - priority
 
 

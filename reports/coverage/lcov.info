@@ -277,7 +277,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:/Users/adamellis/IdeaProjects/Feedback/app/services/snippetSubmission.factory.js
+SF:/Users/adamellis/IdeaProjects/Feedback/app/services/snippetSubmission.allocationDisplay.js
 FN:4,(anonymous_1)
 FN:14,gitSubmission
 FN:21,getSnippets
@@ -346,7 +346,7 @@ BRF:2
 BRH:0
 end_of_record
 TN:
-SF:/Users/adamellis/IdeaProjects/Feedback/app/services/network/allocationNetwork.factory.js
+SF:/Users/adamellis/IdeaProjects/Feedback/app/services/network/allocationNetwork.allocationDisplay.js
 FN:6,(anonymous_1)
 FN:15,allocationService
 FN:26,getReceivers
@@ -461,7 +461,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:/Users/adamellis/IdeaProjects/Feedback/app/services/network/assignmentNetwork.factory.js
+SF:/Users/adamellis/IdeaProjects/Feedback/app/services/network/assignmentNetwork.allocationDisplay.js
 FN:4,(anonymous_1)
 FN:11,assignmentService
 FN:20,getAllAssignments
@@ -491,7 +491,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:/Users/adamellis/IdeaProjects/Feedback/app/services/network/gitNetwork.factory.js
+SF:/Users/adamellis/IdeaProjects/Feedback/app/services/network/gitNetwork.allocationDisplay.js
 FN:4,(anonymous_1)
 FN:11,gitService
 FN:21,getTree
@@ -522,7 +522,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:/Users/adamellis/IdeaProjects/Feedback/app/services/network/submissionNetwork.factory.js
+SF:/Users/adamellis/IdeaProjects/Feedback/app/services/network/submissionNetwork.allocationDisplay.js
 FN:4,(anonymous_1)
 FN:11,submissionService
 FN:21,getAllSubmissions

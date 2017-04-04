@@ -11,7 +11,6 @@
         const vm = this;
 
         activate();
-        console.log(assignment);
         vm.assignment = assignment;
         vm.assignment.dateCreated = vm.dates[0];
 
@@ -36,7 +35,6 @@
 
         function activate() {
             vm.providerCounts = providerCounts;
-
             //TODO retrieve previous assignmentConfigs by date
             vm.dates = [new Date().toDateString(), new Date().toDateString()];
         }

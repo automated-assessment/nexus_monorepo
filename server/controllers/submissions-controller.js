@@ -3,11 +3,9 @@
  */
 
 const Submission = require('../datasets/submissionModel');
-const allocationUtils = require('./allocation-utils');
-const responseSender = require('./response-sender');
+const allocationUtils = require('./../utilities/allocation-utils');
+const responseUtils = require('./../utilities/response-utils');
 const crypto = require('crypto');
-const request = require('request-promise');
-const unzip = require('unzip');
 
 
 module.exports.getAllSubmissions = function(req,res){
@@ -42,120 +40,36 @@ module.exports.getAssignmentSubmissions = function(req,res){
         })
 };
 
-
-module.exports.getSubmissionCore = function(req,res){
-
-    const query = {
-        sid:req.params.sid
-    };
-
-    const projection = {
-        providers:0
-    };
-
-    Submission.find(query,projection)
-        .then(function(response){
-            res.send(response);
-        })
-};
-
-
-module.exports.getSubmissionProviders = function(req,res){
+module.exports.getGitData = function(sid){
 
     const query = {
-        sid:req.params.receiversid
-    };
-
-
-    Submission.findOne(query)
-        .then(function(response){
-            res.send(response);
-        })
-};
-
-module.exports.getSubmissionReceivers = function(req,res){
-
-    Submission.aggregate(
-
-        {
-            $unwind:"$providers"
-        },
-        {
-            $match:{
-                "providers.providersid":Number(req.params.providersid)
-            }
-        },
-        {
-            $addFields:{
-                "root":{
-                    "sid":"$providers.providersid",
-                    "student":"$providers.student",
-                    "studentemail":"$providers.studentemail",
-                },
-                "tempreceivers":{
-                    "receiversid":"$sid",
-                    "student":"$student",
-                    "alias":"$providers.alias",
-                    "studentemail":"$studentemail",
-                    "currentForm":"$providers.currentForm",
-                    "provided":"$providers.provided",
-                    "dateCreated":"$dateCreated"
-                }
-            }
-        },
-        {
-            $group:{
-                _id:Math.random(),
-                "providersid":{$addToSet:"$root.sid"},
-                "student":{$addToSet:"$root.student"},
-                "studentemail":{$addToSet:"$root.studentemail"},
-                "receivers":{$addToSet:"$tempreceivers"},
-                "dateCreated":{$addToSet:"$dateCreated"}
-            },
-        },
-        {$unwind:'$providersid'},{$unwind:'$student'},{$unwind:'$studentemail'}
-
-
-    )
-        .then(function(response){
-            if(response){
-                response = response[0];
-            }
-            res.send(response);
-
-        });
-
-};
-
-
-
-
-module.exports.getGitData = function(req,res){
-
-    const query = {
-        sid:req.params.sid
+        sid:sid
     };
 
     const projection = {
         sha:1,
-        branch:1
+        branch:1,
+        cloneurl:1
     };
 
-    Submission.findOne(query,projection)
+    //TODO: Use this to pass in the repo
+    return Submission.findOne(query,projection)
         .then(function(response){
-            res.send(response);
+            return response;
         })
 };
 
 //TODO: Remove duplication of SHA and branch from submissions and allocations
-module.exports.createSubmission = function(req,res){
-    console.log(req.body);
+module.exports.createSubmission = function(req,res,next){
     checkPreExisting(req.body.sid)
         .then(function(preExistingSubmission){
             if(!preExistingSubmission) {
+                queryAssignment(submission)
+                    .then()
                 const submission = new Submission(req.body);
                 submission.dateCreated = new Date();
                 submission.submissionHash = crypto.randomBytes(20).toString('hex');
+
                 submission.save(function(response){
                     allocationUtils.runAllocation(submission);
                 });
@@ -163,10 +77,12 @@ module.exports.createSubmission = function(req,res){
             } else {
                 console.log("Error: submission exists");
             }
-            responseSender.sendResponse(req);
+            responseUtils.sendResponse(req,res,next);
         });
-    res.status(200).send();
+    res.status(200).send("Successful");
 };
+
+
 
 
 const checkPreExisting =  function(sid){

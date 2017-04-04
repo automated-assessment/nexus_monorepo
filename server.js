@@ -37,7 +37,6 @@ app.use('/node_modules',express.static(__dirname+'/node_modules'));
 //Submissions
 app.get('/api/submissions',submissionsController.getAllSubmissions);
 app.get('/api/submissions/:sid',submissionsController.getOneSubmission);
-app.get('/api/submissions/:sid/git',submissionsController.getGitData);
 //probably better ways to build this api
 app.post('/mark',submissionsController.createSubmission);
 
@@ -52,24 +51,19 @@ app.get('/api/assignments/:aid',assignmentsController.getOneAssignment);
 app.get('/api/assignments/:aid/submissions',submissionsController.getAssignmentSubmissions);
 app.put('/api/assignments/:aid',assignmentsController.updateAssignment);
 
-app.get('/api/git/:repo/:branch',gitController.getArchiveLink);
 
+app.get('/api/git/:sid',gitController.getGitSubmission);
 
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/index.html');
 });
 
-app.get('http://www.google.com',function(req,res){
-    console.log("Hitting google");
-});
-
-
-function debugRoutes(){
-    app.use(function (req, res, next) {
-        console.log(req.method, req.url, req.body);
-        next();
-    });
-}
+// function debugRoutes(){
+//     app.use(function (req, res, next) {
+//         console.log(req.method, req.url, req.body);
+//         next();
+//     });
+// }
 
 app.listen(port,function(){
     console.log(`Listening on port: ${port}`);

@@ -59,11 +59,14 @@ const allocate = function(assignment,submission){
                 allocationArray.push(backwardAssociation);
             });
 
+            if(allocationArray.length != 0){
+                console.log(allocationArray);
+                Allocation.insertMany(allocationArray)
+                    .then(function(response){
+                        console.log("Allocation complete");
+                    })
+            }
 
-            Allocation.insertMany(allocationArray)
-                .then(function(response){
-                    console.log("Allocation complete");
-                })
 
 
         });
@@ -72,6 +75,7 @@ const allocate = function(assignment,submission){
 
 
 const associate = function(receiver,provider,assignment){
+    //this is actually an Allocation object. it should be created and treated as such.
     return {
         currentForm:assignment.formBuild,
         receiverSid:receiver.sid,

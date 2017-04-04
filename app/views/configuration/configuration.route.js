@@ -26,7 +26,8 @@
                                 return response.data;
                             } else {
                                 return {
-                                    aid:$stateParams.aid
+                                    aid:$stateParams.aid,
+                                    providerCount:2
                                 };
                             }
 

@@ -14,7 +14,7 @@
                 </tr>
             </thead>
             <tbody>
-                    <tr ng-repeat="receiver in vm.submission.provideTo.receivers" >
+                    <tr ng-repeat="receiver in vm.submission.provideTo" >
                         <td><a ui-sref="frameState.providerState({receiverSid:{{receiver.receiverSid}},providerSid:{{vm.submission.core.sid}},aid:{{vm.submission.core.aid}},alias:'{{receiver.alias}}'})">
                             {{receiver.alias}} ({{receiver.receiverSid}})
                         </a></td>
@@ -40,13 +40,13 @@
                 <tbody>
 
 
-                    <tr ng-repeat="provider in vm.submission.receivedFrom.providers" ng-show="provider.provided">
+                    <tr ng-repeat="provider in vm.submission.receivedFrom" ng-show="provider.display">
                         <td><a ui-sref="frameState.receiverState({receiverSid:{{vm.submission.core.sid}},providerSid:{{provider.providerSid}}})">
                             {{provider.alias}} ({{provider.providerSid}})
                         </a></td>
                         <td>{{provider.dateAllocated | date: 'shortDate'}}</td>
                         <td>{{provider.dateModified | date:'shortDate'}}</td>
-                        <td>{{provider.providerMark}}</td>
+                        <td>{{provider.providerMark | percent}}</td>
 
                     </tr>
 

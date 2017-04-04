@@ -3,7 +3,7 @@
 <form class="form-horizontal">
     <!--Number of allocations form-group-->
     <div class="form-group">
-        <label class="col-sm-2 control-label">Number of allocations:</label>
+        <label class="col-sm-2 control-label">Allocations:</label>
         <div class="col-sm-1">
             <select class="form-control"
                     ng-options="number as number for number in vm.providerCounts"
@@ -34,7 +34,7 @@
                 <label for="contributionCheckbox">
                     <input type="checkbox" name="checkboxes" id="contributionCheckbox"
                            ng-model="vm.assignment.awaitBiDirection">
-                    Await bidirectional relationship before allocation
+                    Bidirectional feedback
                 </label>
             </div>
 
@@ -43,7 +43,7 @@
                 <label for="biDirectionCheckbox">
                     <input type="checkbox" name="checkboxes" id="biDirectionCheckbox"
                            ng-model="vm.assignment.contributeFinalMark">
-                    Contribute final mark
+                    Send mark to Nexus
                 </label>
             </div>
         </div>

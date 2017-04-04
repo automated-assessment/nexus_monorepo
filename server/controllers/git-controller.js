@@ -1,29 +1,46 @@
 /**
  * Created by adamellis on 19/03/2017.
  */
-const request = require('request-promise');
-const owner = process.env.NEXUS_GITHUB_ORG;
-const token = process.env.NEXUS_GITHUB_TOKEN;
 
+const gitUtils = require('../utilities/git-utils');
+const submissionsController = require('./submissions-controller');
 module.exports.getArchiveLink = function(req,res){
-    let path = "";
-    const queryString = `/repos/${owner}/${req.params.repo}/zipball/${req.params.branch}`;
+    // const queryString = `/repos/${owner}/${req.params.repo}/zipball/${req.params.branch}`;
+    // const options = {
+    //     resolveWithFullResponse:true,
+    //     followRedirect:function(response) {
+    //         return response.headers['location'];
+    //     }
+    // };
+    // queryGit(queryString, options)
+    //     .then(function(response){
+    //         res.send(response);
+    //     })
 
-    const options = {
-        url:'https://github.kcl.ac.uk/api/v3'+queryString,
-        headers:{
-            'Authorization': `token ${token}`,
-            'Accept': 'application/vnd.github.v3.raw'
-        },
-        resolveWithFullResponse:true,
-        followRedirect:function(response){
-           path = response.headers['location'];
-           return true;
-        }
-    };
-    request(options)
-        .then(function(response){
-            res.send(path);
-        });
 };
+
+module.exports.getGitSubmission = function(req,res){
+    const gitData = submissionsController.getGitData(req.params.sid)
+        .then(function(response){
+            response.cloneurl = parseClone(response.cloneurl);
+            console.log(response.cloneurl, response.branch, response.sha);
+            gitUtils.getSubmission(response.cloneurl,response.branch,response.sha)
+                .then(function(response){
+                    res.send(response);
+                })
+        });
+
+
+};
+
+function parseClone(url){
+    const splitSlash = url.split('/');
+    let repoUrl = splitSlash[splitSlash.length-1];
+    repoUrl = repoUrl.substring(0,repoUrl.length-4);
+    return repoUrl;
+}
+
+
+
+
 

@@ -6,7 +6,6 @@ const Allocation = require('../datasets/allocationModel');
 const Submission = require('../datasets/submissionModel');
 
 module.exports.getProviders = function(req,res){
-    console.log(req.params);
     Submission.aggregate([
         {
             $lookup:{

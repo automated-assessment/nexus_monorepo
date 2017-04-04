@@ -1,50 +1,52 @@
 /**
  * Created by adamellis on 14/03/2017.
  */
-(function(){
+(function () {
     angular
         .module('PeerFeedback')
-        .config(['$stateProvider',function($stateProvider){
+        .config(['$stateProvider', function ($stateProvider) {
             $stateProvider
-                .state('frameState.providerState',{
-                    url:'/provider?receiverSid?providerSid',
-                    params:{
-                        receiverSid:null,
-                        providerSid:null,
-                        aid:null
+                .state('frameState.providerState', {
+                    url: '/provider?receiverSid?providerSid',
+                    params: {
+                        receiverSid: null,
+                        providerSid: null,
+                        aid: null
                     },
-                    templateUrl:'app/views/provider/provider.html',
-                    controller:'ProviderController as vm',
-                    resolve:{
-
-
-                        submission:['$stateParams','submissionNetwork',function($stateParams,submissionNetwork){
-                            return submissionNetwork.getGitData($stateParams.receiverSid)
-                                .then(function(response){
-                                    return response.data;
-                                })
-                        }],
-
-                        snippets:['$stateParams','snippetSubmission','submission',function($stateParams,snippetSubmission,submission){
-                            return snippetSubmission.getSnippets($stateParams.aid, submission.branch, submission.sha);
-                        }],
-
-                        provider:['$stateParams','allocationNetwork',function($stateParams,allocationNetwork){
-                            return allocationNetwork.getOneAllocation($stateParams.receiverSid,$stateParams.providerSid)
-                                .then(function(response){
-                                    return response.data;
-                                });
-                        }],
-
-
-
-
-
+                    templateUrl: 'app/views/provider/provider.html',
+                    controller: 'ProviderController as vm',
+                    resolve: {
+                        submission: submission,
+                        provider: provider,
 
                     }
                 });
 
+            submission.$inject = ['$stateParams', 'gitNetwork','$sce'];
+            provider.$inject = ['$stateParams','allocationNetwork'];
+
+            function submission($stateParams, gitNetwork,$sce) {
+                return gitNetwork.getGitSubmission($stateParams.receiverSid)
+                    .then(function (response) {
+                        return trustHtml(response.data,$sce);
+                    });
+            }
+
+
+            function provider($stateParams, allocationNetwork) {
+                return allocationNetwork.getOneAllocation($stateParams.receiverSid, $stateParams.providerSid)
+                    .then(function (response) {
+                        return response.data;
+                    });
+            }
+
+            function trustHtml(contentsArray,$sce){
+                for(let i=0;i<contentsArray.length;i++){
+                    contentsArray[i].content = $sce.trustAsHtml(contentsArray[i].content);
+                }
+                return contentsArray;
+            }
+
         }]);
 }());
 
-//should get submission (i.e. git data) and then pass this into provider, so that provider is not actually accessing the submission. cleaner code.
