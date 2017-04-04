@@ -27,10 +27,9 @@ module.exports = mongoose.model('Submission',{
     submissionHash:String,
     //The date the submission was created.
     dateCreated:String,
-    //The assignment configuration for the submission.
     configuration:{
-        awaitBidirection:Boolean,
-        sendMark:Boolean
+        awaitBiDirection:Boolean,
+        contributeFinalMark:Boolean
     }
 });
 

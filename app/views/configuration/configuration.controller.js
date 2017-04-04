@@ -18,7 +18,6 @@
 
 
         function updateAssignment() {
-            console.log("Hello");
             assignmentNetwork.updateAssignment(vm.assignment.aid, vm.assignment)
                 .then(function (response) {
                         const successMessage = "Assignment configuration saved successfully.";

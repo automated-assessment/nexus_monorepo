@@ -2,46 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9892a55a-b0d5-40db-bb65-18fe84bb52eb" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/layout/frame.controller.spec.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/services/allocationDisplay.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/utilities/git-utils.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/utilities/response-utils.js" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/services/submission/snippetSubmission.factory.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/server/controllers/response-sender.js" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/server/controllers/allocation-utils.js" afterPath="$PROJECT_DIR$/server/utilities/allocation-utils.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.env" afterPath="$PROJECT_DIR$/.env" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/services/network/gitNetwork.factory.js" afterPath="$PROJECT_DIR$/app/services/network/gitNetwork.factory.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/services/allocationDisplay.js" afterPath="$PROJECT_DIR$/app/services/allocationDisplay.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/allocation/allocation.controller.js" afterPath="$PROJECT_DIR$/app/views/allocation/allocation.controller.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/allocation/allocation.html" afterPath="$PROJECT_DIR$/app/views/allocation/allocation.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/configuration/configuration.controller.js" afterPath="$PROJECT_DIR$/app/views/configuration/configuration.controller.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/configuration/configuration.html" afterPath="$PROJECT_DIR$/app/views/configuration/configuration.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/configuration/configuration.route.js" afterPath="$PROJECT_DIR$/app/views/configuration/configuration.route.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/provider/provider.controller.js" afterPath="$PROJECT_DIR$/app/views/provider/provider.controller.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/provider/provider.html" afterPath="$PROJECT_DIR$/app/views/provider/provider.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/provider/provider.route.js" afterPath="$PROJECT_DIR$/app/views/provider/provider.route.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/git.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/git.service.js.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/gitSubmission.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/gitSubmission.service.js.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/allocation.network.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/allocation.network.service.js.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/allocation.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/allocation.service.js.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/allocation.service.spec.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/allocation.service.spec.js.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/assignment.network.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/assignment.network.service.js.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/assignment.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/assignment.service.js.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/git.network.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/git.network.service.js.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/submission.network.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/submission.network.service.js.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/submission.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/submission.service.js.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov.info" afterPath="$PROJECT_DIR$/reports/coverage/lcov.info" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.js" afterPath="$PROJECT_DIR$/server.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/allocations-controller.js" afterPath="$PROJECT_DIR$/server/controllers/allocations-controller.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/assignments-controller.js" afterPath="$PROJECT_DIR$/server/controllers/assignments-controller.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/git-controller.js" afterPath="$PROJECT_DIR$/server/controllers/git-controller.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/submissions-controller.js" afterPath="$PROJECT_DIR$/server/controllers/submissions-controller.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/datasets/allocationModel.js" afterPath="$PROJECT_DIR$/server/datasets/allocationModel.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/datasets/assignmentModel.js" afterPath="$PROJECT_DIR$/server/datasets/assignmentModel.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/datasets/submissionModel.js" afterPath="$PROJECT_DIR$/server/datasets/submissionModel.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/scripts/seeds.js" afterPath="$PROJECT_DIR$/server/scripts/seeds.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/utilities/allocation-utils.js" afterPath="$PROJECT_DIR$/server/utilities/allocation-utils.js" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -68,11 +39,33 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="allocationDisplay.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/services/allocationDisplay.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="209">
+              <caret line="29" column="20" lean-forward="true" selection-start-line="29" selection-start-column="20" selection-end-line="29" selection-end-column="20" />
+              <folding>
+                <element signature="e#0#46#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="allocation.controller.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/allocation/allocation.controller.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="17" column="30" lean-forward="true" selection-start-line="17" selection-start-column="30" selection-end-line="17" selection-end-column="30" />
+            <state relative-caret-position="315">
+              <caret line="21" column="52" lean-forward="false" selection-start-line="21" selection-start-column="52" selection-end-line="21" selection-end-column="52" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="git-controller.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/controllers/git-controller.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="480">
+              <caret line="38" column="9" lean-forward="true" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
               <folding />
             </state>
           </provider>
@@ -81,91 +74,9 @@
       <file leaf-file-name="submissions-controller.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server/controllers/submissions-controller.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="880">
-              <caret line="86" column="0" lean-forward="true" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="assignments-controller.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server/controllers/assignments-controller.js">
-          <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="370">
-              <caret line="41" column="7" lean-forward="true" selection-start-line="41" selection-start-column="7" selection-end-line="41" selection-end-column="7" />
+              <caret line="58" column="10" lean-forward="false" selection-start-line="58" selection-start-column="10" selection-end-line="58" selection-end-column="10" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="allocations-controller.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server/controllers/allocations-controller.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="7" column="48" lean-forward="false" selection-start-line="7" selection-start-column="48" selection-end-line="7" selection-end-column="48" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="allocation-utils.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/server/utilities/allocation-utils.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="27" column="3" lean-forward="true" selection-start-line="27" selection-start-column="3" selection-end-line="27" selection-end-column="3" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="submissionModel.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server/datasets/submissionModel.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="370">
-              <caret line="32" column="16" lean-forward="false" selection-start-line="32" selection-start-column="16" selection-end-line="32" selection-end-column="16" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="configuration.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/configuration/configuration.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="331">
-              <caret line="50" column="9" lean-forward="true" selection-start-line="50" selection-start-column="9" selection-end-line="50" selection-end-column="9" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="allocation.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/allocation/allocation.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="855">
-              <caret line="57" column="0" lean-forward="true" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="allocation.route.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/allocation/allocation.route.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="339">
-              <caret line="37" column="18" lean-forward="false" selection-start-line="37" selection-start-column="18" selection-end-line="37" selection-end-column="18" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="allocationDisplay.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/services/allocationDisplay.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="145">
-              <caret line="13" column="34" lean-forward="false" selection-start-line="13" selection-start-column="34" selection-end-line="13" selection-end-column="34" />
-              <folding>
-                <element signature="e#0#46#0" expanded="false" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -270,12 +181,10 @@
         <option value="$PROJECT_DIR$/app/services/submission/archiveSubmission.service.js" />
         <option value="$PROJECT_DIR$/app/services/submission/snippetSubmission.factory.js" />
         <option value="$PROJECT_DIR$/app/services/submission/archiveSubmission.factory.js" />
-        <option value="$PROJECT_DIR$/server/datasets/assignmentModel.js" />
         <option value="$PROJECT_DIR$/app/layout/frame.controller.spec.js" />
         <option value="$PROJECT_DIR$/app/services/network/submissionNetwork.factory.js" />
         <option value="$PROJECT_DIR$/server/datasets/allocationModel.js" />
         <option value="$PROJECT_DIR$/server.js" />
-        <option value="$PROJECT_DIR$/server/controllers/git-controller.js" />
         <option value="$PROJECT_DIR$/server/controllers/allocations-controller.js" />
         <option value="$PROJECT_DIR$/app/services/network/gitNetwork.factory.js" />
         <option value="$PROJECT_DIR$/.env" />
@@ -286,20 +195,22 @@
         <option value="$PROJECT_DIR$/app/views/provider/provider.route.js" />
         <option value="$PROJECT_DIR$/app/views/provider/provider.controller.js" />
         <option value="$PROJECT_DIR$/app/views/provider/provider.html" />
-        <option value="$PROJECT_DIR$/app/views/configuration/configuration.controller.js" />
         <option value="$PROJECT_DIR$/app/views/configuration/configuration.route.js" />
         <option value="$PROJECT_DIR$/server/utilities/response-utils.js" />
         <option value="$PROJECT_DIR$/app/services/factory.js" />
         <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/app/services/displayReceived.factory.js" />
-        <option value="$PROJECT_DIR$/app/views/allocation/allocation.controller.js" />
         <option value="$PROJECT_DIR$/app/views/allocation/allocation.html" />
-        <option value="$PROJECT_DIR$/app/services/allocationDisplay.js" />
-        <option value="$PROJECT_DIR$/server/datasets/submissionModel.js" />
-        <option value="$PROJECT_DIR$/app/views/configuration/configuration.html" />
-        <option value="$PROJECT_DIR$/server/controllers/submissions-controller.js" />
-        <option value="$PROJECT_DIR$/server/controllers/assignments-controller.js" />
         <option value="$PROJECT_DIR$/server/utilities/allocation-utils.js" />
+        <option value="$PROJECT_DIR$/server/datasets/assignmentModel.js" />
+        <option value="$PROJECT_DIR$/app/views/configuration/configuration.controller.js" />
+        <option value="$PROJECT_DIR$/app/views/configuration/configuration.html" />
+        <option value="$PROJECT_DIR$/server/controllers/assignments-controller.js" />
+        <option value="$PROJECT_DIR$/server/datasets/submissionModel.js" />
+        <option value="$PROJECT_DIR$/app/views/allocation/allocation.controller.js" />
+        <option value="$PROJECT_DIR$/server/controllers/submissions-controller.js" />
+        <option value="$PROJECT_DIR$/server/controllers/git-controller.js" />
+        <option value="$PROJECT_DIR$/app/services/allocationDisplay.js" />
       </list>
     </option>
   </component>
@@ -1210,7 +1121,7 @@
       <workItem from="1490889162406" duration="10194000" />
       <workItem from="1491081684810" duration="6331000" />
       <workItem from="1491212721491" duration="13839000" />
-      <workItem from="1491238723811" duration="26011000" />
+      <workItem from="1491238723811" duration="30748000" />
     </task>
     <task id="LOCAL-00001" summary="Integrating VCS with intellij">
       <created>1486377894740</created>
@@ -1499,11 +1410,18 @@
       <option name="project" value="LOCAL" />
       <updated>1490032992599</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Submissions works">
+      <created>1491322696883</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1491322696883</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="798775000" />
+    <option name="totallyTimeSpent" value="803512000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1530,7 +1448,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3268206" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Mongo Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.08839191" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22280702" sideWeight="0.46122777" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08245614" sideWeight="0.46122777" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32956383" sideWeight="0.4937833" order="6" side_tool="false" content_ui="combo" />
@@ -1576,7 +1494,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Rendering and saving directives implemented. Changed pids to objects to allow for 'currentForm'. Given currentForm to said object when form is submitted by student. currentForm is json of the form submitted." />
     <MESSAGE value="Provider MVP is essentially built. Need to finish up on receiver and tie it all together with routing." />
     <MESSAGE value="Received view built, now to render the JSON form" />
     <MESSAGE value="Refactored configuration directory" />
@@ -1601,7 +1518,8 @@
     <MESSAGE value="Pulling a git submission and populating to view&#10;Need to sort something for ZIP" />
     <MESSAGE value="Submission works now for zips and regular files. Needs lots of refactoring and consideration for alien repositories." />
     <MESSAGE value="Refactored to make the snippet/zip submission system work cleaner. Need to move to resolve then done with this req&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactored to make the snippet/zip submission system work cleaner. Need to move to resolve then done with this req&#10;" />
+    <MESSAGE value="Submissions works" />
+    <option name="LAST_COMMIT_MESSAGE" value="Submissions works" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1698,13 +1616,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/datasets/assignmentModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="3" lean-forward="true" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/app.module.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1730,6 +1641,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
           <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1780,24 +1692,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="810">
           <caret line="54" column="22" lean-forward="false" selection-start-line="54" selection-start-column="22" selection-end-line="54" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/utilities/git-utils.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="121">
-          <caret line="84" column="54" lean-forward="true" selection-start-line="84" selection-start-column="12" selection-end-line="84" selection-end-column="54" />
-          <folding>
-            <element signature="e#0#46#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/controllers/git-controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="331">
-          <caret line="32" column="0" lean-forward="true" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1876,26 +1770,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/configuration/configuration.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="33" column="0" lean-forward="true" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/provider/provider.controller.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="585">
           <caret line="47" column="14" lean-forward="true" selection-start-line="47" selection-start-column="14" selection-end-line="47" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/configuration/configuration.route.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="29" column="51" lean-forward="true" selection-start-line="29" selection-start-column="51" selection-end-line="29" selection-end-column="51" />
           <folding />
         </state>
       </provider>
@@ -1924,36 +1802,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/services/allocationDisplay.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="145">
-          <caret line="13" column="34" lean-forward="false" selection-start-line="13" selection-start-column="34" selection-end-line="13" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#46#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/allocation/allocation.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="855">
           <caret line="57" column="0" lean-forward="true" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/allocation/allocation.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="17" column="30" lean-forward="true" selection-start-line="17" selection-start-column="30" selection-end-line="17" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/datasets/submissionModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="370">
-          <caret line="32" column="16" lean-forward="false" selection-start-line="32" selection-start-column="16" selection-end-line="32" selection-end-column="16" />
           <folding />
         </state>
       </provider>
@@ -1968,16 +1820,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/configuration/configuration.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="331">
-          <caret line="50" column="9" lean-forward="true" selection-start-line="50" selection-start-column="9" selection-end-line="50" selection-end-column="9" />
+        <state relative-caret-position="211">
+          <caret line="45" column="11" lean-forward="true" selection-start-line="45" selection-start-column="11" selection-end-line="45" selection-end-column="11" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/controllers/assignments-controller.js">
+    <entry file="file://$PROJECT_DIR$/server/utilities/allocation-utils.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="370">
-          <caret line="41" column="7" lean-forward="true" selection-start-line="41" selection-start-column="7" selection-end-line="41" selection-end-column="7" />
+        <state relative-caret-position="0">
+          <caret line="17" column="66" lean-forward="true" selection-start-line="17" selection-start-column="66" selection-end-line="17" selection-end-column="66" />
           <folding />
         </state>
       </provider>
@@ -1990,19 +1842,87 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/controllers/submissions-controller.js">
+    <entry file="file://$PROJECT_DIR$/server/datasets/assignmentModel.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="880">
-          <caret line="86" column="0" lean-forward="true" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
+        <state relative-caret-position="360">
+          <caret line="24" column="0" lean-forward="true" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/utilities/allocation-utils.js">
+    <entry file="file://$PROJECT_DIR$/app/views/configuration/configuration.route.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="27" column="3" lean-forward="true" selection-start-line="27" selection-start-column="3" selection-end-line="27" selection-end-column="3" />
+        <state relative-caret-position="384">
+          <caret line="29" column="51" lean-forward="true" selection-start-line="29" selection-start-column="51" selection-end-line="29" selection-end-column="51" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/controllers/assignments-controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="55" column="19" lean-forward="false" selection-start-line="55" selection-start-column="19" selection-end-line="55" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/datasets/submissionModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="30" column="21" lean-forward="true" selection-start-line="30" selection-start-column="21" selection-end-line="30" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/configuration/configuration.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="66" lean-forward="false" selection-start-line="20" selection-start-column="66" selection-end-line="20" selection-end-column="66" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/utilities/git-utils.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="90" column="6" lean-forward="true" selection-start-line="90" selection-start-column="6" selection-end-line="90" selection-end-column="6" />
+          <folding>
+            <element signature="e#0#46#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/controllers/submissions-controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="370">
+          <caret line="58" column="10" lean-forward="false" selection-start-line="58" selection-start-column="10" selection-end-line="58" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/controllers/git-controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="38" column="9" lean-forward="true" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/allocation/allocation.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="52" lean-forward="false" selection-start-line="21" selection-start-column="52" selection-end-line="21" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/services/allocationDisplay.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="29" column="20" lean-forward="true" selection-start-line="29" selection-start-column="20" selection-end-line="29" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#46#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

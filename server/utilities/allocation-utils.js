@@ -13,31 +13,6 @@ const randomName = require('node-random-name');
  * Entrypoint to running the allocation algorithm.
  * @param submission
  */
-module.exports.runAllocation = function(submission){
-    queryAssignment(submission)
-        .then(function(assignment){
-            if(assignment){
-                allocate(assignment,submission);
-            } else {
-                console.log("No assignment found");
-            }
-
-        });
-
-};
-/**
- * Queries the assignment for this particular submission
- * @param submission
- * @returns Promise of a single matching assignment
- */
-const queryAssignment = function(submission){
-    return Assignment.findOne({aid:submission.aid},{_id:0,providerCount:1,formBuild:1})
-        .then(function(assignment){
-            return assignment;
-        })
-
-};
-
 
 /**
  * Allocates the providers as given by the queryProviders promise,
@@ -46,48 +21,40 @@ const queryAssignment = function(submission){
  * @param assignment
  * @param submission
  */
-const allocate = function(assignment,submission){
+module.exports.runAllocation = function (submission, assignment) {
+
     const allocationArray = [];
-
-
     queryRandomProviders(assignment, submission)
-        .then(function(randomProviders){
-            randomProviders.forEach(function(randomProvider){
+        .then(function (randomProviders) {
+            randomProviders.forEach(function (randomProvider) {
                 const forwardAssociation = associate(submission, randomProvider, assignment);
-                const backwardAssociation = associate(randomProvider,submission, assignment);
+                const backwardAssociation = associate(randomProvider, submission, assignment);
                 allocationArray.push(forwardAssociation);
                 allocationArray.push(backwardAssociation);
             });
-
-            if(allocationArray.length != 0){
+            if (allocationArray.length != 0) {
                 console.log(allocationArray);
                 Allocation.insertMany(allocationArray)
-                    .then(function(response){
+                    .then(function (response) {
                         console.log("Allocation complete");
                     })
             }
-
-
-
         });
 };
 
-
-
-const associate = function(receiver,provider,assignment){
+const associate = function (receiver, provider, assignment) {
     //this is actually an Allocation object. it should be created and treated as such.
     return {
-        currentForm:assignment.formBuild,
-        receiverSid:receiver.sid,
-        providerSid:provider.sid,
-        alias:randomName({seed:Math.random()}),
-        provided:false,
-        dateAllocated:new Date(),
-        dateModified:new Date(),
-        providerMark:null
+        currentForm: assignment.formBuild,
+        receiverSid: receiver.sid,
+        providerSid: provider.sid,
+        alias: randomName({seed: Math.random()}),
+        provided: false,
+        dateAllocated: new Date(),
+        dateModified: new Date(),
+        providerMark: null
     }
 };
-
 
 
 /**
@@ -99,8 +66,7 @@ const associate = function(receiver,provider,assignment){
  * @returns Promise of an array of providers
  */
 
-//Needs optimizing
-const queryRandomProviders = function(assignment,submission) {
+const queryRandomProviders = function (assignment, submission) {
     return Submission.aggregate(
         [
             {
@@ -108,17 +74,16 @@ const queryRandomProviders = function(assignment,submission) {
                     $and: [
                         {studentuid: {$ne: submission.studentuid}},
                         {aid: submission.aid}
-                        ]
+                    ]
                 }
             },
             {
-                $lookup:
-                    {
-                        from:"allocations",
-                        localField:"sid",
-                        foreignField:"receiverSid",
-                        as:"providers"
-                    }
+                $lookup: {
+                    from: "allocations",
+                    localField: "sid",
+                    foreignField: "receiverSid",
+                    as: "providers"
+                }
             },
             {
                 $addFields: {
@@ -132,10 +97,11 @@ const queryRandomProviders = function(assignment,submission) {
             },
             {
                 $sample: {
-                    size: assignment.providerCount}
+                    size: assignment.providerCount
+                }
             },
             {
-                $project:{sid:1,branch:1,sha:1}
+                $project: {sid: 1, branch: 1, sha: 1}
             }
         ])
 

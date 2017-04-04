@@ -6,6 +6,7 @@ const Submission = require('../datasets/submissionModel');
 const allocationUtils = require('./../utilities/allocation-utils');
 const responseUtils = require('./../utilities/response-utils');
 const crypto = require('crypto');
+const assignmentsController = require('./assignments-controller');
 
 
 module.exports.getAllSubmissions = function(req,res){
@@ -52,7 +53,6 @@ module.exports.getGitData = function(sid){
         cloneurl:1
     };
 
-    //TODO: Use this to pass in the repo
     return Submission.findOne(query,projection)
         .then(function(response){
             return response;
@@ -64,17 +64,25 @@ module.exports.createSubmission = function(req,res,next){
     checkPreExisting(req.body.sid)
         .then(function(preExistingSubmission){
             if(!preExistingSubmission) {
-                queryAssignment(submission)
-                    .then()
+
                 const submission = new Submission(req.body);
-                submission.dateCreated = new Date();
                 submission.submissionHash = crypto.randomBytes(20).toString('hex');
+                submission.dateCreated = new Date();
 
-                submission.save(function(response){
-                    allocationUtils.runAllocation(submission);
-                });
-
+                assignmentsController.getAssignment(submission)
+                    .then(function(assignment){
+                        if(assignment){
+                            submission.configuration = assignment.additionalConfiguration;
+                            console.log(assignment);
+                            submission.save(function(){
+                                allocationUtils.runAllocation(submission,assignment);
+                            });
+                        } else{
+                            console.log("No assignment found err");
+                        }
+                    });
             } else {
+                res.status(400).send("Error, submission exists");
                 console.log("Error: submission exists");
             }
             responseUtils.sendResponse(req,res,next);

@@ -22,15 +22,16 @@ module.exports.getArchiveLink = function(req,res){
 module.exports.getGitSubmission = function(req,res){
     const gitData = submissionsController.getGitData(req.params.sid)
         .then(function(response){
-            response.cloneurl = parseClone(response.cloneurl);
-            console.log(response.cloneurl, response.branch, response.sha);
-            gitUtils.getSubmission(response.cloneurl,response.branch,response.sha)
-                .then(function(response){
-                    res.send(response);
-                })
+            if(response.cloneurl){
+                response.cloneurl = parseClone(response.cloneurl);
+                gitUtils.getSubmission(response.cloneurl,response.branch,response.sha)
+                    .then(function(response){
+                        res.send(response);
+                    })
+            } else {
+                res.send();
+            }
         });
-
-
 };
 
 function parseClone(url){

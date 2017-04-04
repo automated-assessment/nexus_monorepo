@@ -40,6 +40,24 @@ module.exports.updateAssignment = function(req,res){
             res.send(response);
 
     });
+};
 
 
+module.exports.getAssignment = function(submission){
+
+    const query = {
+        aid:submission.aid,
+    };
+
+    const projection = {
+        _id:0,
+        providerCount:1,
+        formBuild:1,
+        additionalConfiguration:1
+    };
+
+    return Assignment.findOne(query,projection)
+        .then(function(assignment){
+            return assignment;
+        });
 };

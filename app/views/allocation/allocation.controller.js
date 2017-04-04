@@ -19,9 +19,7 @@
             receivedFrom: providers.providers
         };
 
-        vm.submission.receivedFrom.forEach(function(provider){
-            provider.display = allocationDisplay.getDisplay(vm.submission,provider.receiverSid, provider.providerSid);
-        });
+        allocationDisplay.getDisplay(vm.submission);
         //console.log(allocationDisplay.receivedOnly(vm.submission));
 
         //console.log(vm.submission);
