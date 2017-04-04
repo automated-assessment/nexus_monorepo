@@ -8,9 +8,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const bodyParser = require('body-parser');
-
-
-
 const app = express();
 
 const port = process.env.PORT || 5000;
@@ -25,13 +22,12 @@ const gitController = require(__dirname + '/server/controllers/git-controller.js
 
 mongoose.connect(`mongodb://${dbHost}/peerfeedback`);
 
-app.use(bodyParser.json());
 app.use('/app',express.static(__dirname + '/app')); //change to public to fit convention
 app.use('/css',express.static(__dirname+'/css'));
 app.use('/node_modules',express.static(__dirname+'/node_modules'));
 
-// debugRoutes();
 
+// debugRoutes();
 
 
 //Submissions
@@ -53,6 +49,7 @@ app.put('/api/assignments/:aid',assignmentsController.updateAssignment);
 
 
 app.get('/api/git/:sid',gitController.getGitSubmission);
+
 
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/index.html');
