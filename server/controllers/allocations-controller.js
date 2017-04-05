@@ -6,76 +6,111 @@ const Allocation = require('../datasets/allocationModel');
 const Submission = require('../datasets/submissionModel');
 
 module.exports.getProviders = function(req,res){
-    Submission.aggregate([
-        {
-            $lookup:{
-                from:"allocations",
-                localField:"sid",
-                foreignField:"receiverSid",
-                as:"providers"
+
+    if(req.user.sid === Number(req.params.receiverSid)){
+        Submission.aggregate([
+            {
+                $lookup:{
+                    from:"allocations",
+                    localField:"sid",
+                    foreignField:"receiverSid",
+                    as:"providers"
+                }
+            },
+            {
+                $match:{"providers.receiverSid":Number(req.params.receiverSid)}
+            },
+            {
+                $project:{"providers":1}
             }
-        },
-        {
-            $match:{"providers.receiverSid":Number(req.params.receiverSid)}
-        },
-        {
-            $project:{"providers":1}
-        }
-    ])
-        .then(function(response){
-            response = response[0];
-            res.send(response);
-        })
+        ])
+            .then(function(response){
+                response = response[0];
+                res.send(response);
+            })
+    } else {
+        res.status(401).send("Unauthorised");
+    }
+
 };
 
 module.exports.getReceivers = function(req,res){
-    Submission.aggregate(
-        {
-            $lookup:{
-                from:"allocations",
-                localField:"sid",
-                foreignField:"providerSid",
-                as:"receivers"
-            }
-        },
-        {
-            $match:{"receivers.providerSid":Number(req.params.providerSid)}
-        },
-        {
-            $project:{"receivers":1}
-        })
-        .then(function(response){
-            response = response[0];
-            res.send(response);
-        })
+    if(req.user.sid === Number(req.params.providerSid)){
+        Submission.aggregate(
+            {
+                $lookup:{
+                    from:"allocations",
+                    localField:"sid",
+                    foreignField:"providerSid",
+                    as:"receivers"
+                }
+            },
+            {
+                $match:{"receivers.providerSid":Number(req.params.providerSid)}
+            },
+            {
+                $project:{"receivers":1}
+            })
+            .then(function(response){
+                response = response[0];
+                res.send(response);
+            })
+    } else {
+       res.status(401).send("Unauthorised");
+    }
+
 };
 
 module.exports.updateAllocation = function(req,res){
-    console.log(req.params.receiverSid,req.params.providerSid);
-    const query = {
-        receiverSid:req.params.receiverSid,
-        providerSid:req.params.providerSid
-    };
 
-    console.log(req.body);
-    const update = {
-        $set:req.body
-    };
+    if(req.user.sid === Number(req.params.providerSid)){
+        const query = {
+            receiverSid:req.params.receiverSid,
+            providerSid:req.params.providerSid
+        };
 
-    Allocation.findOneAndUpdate(query,update)
-        .then(function(response){
-            res.send(response);
-        });
+
+        const update = {
+            $set:req.body
+        };
+
+        Allocation.findOneAndUpdate(query,update)
+            .then(function(response){
+                res.send(response);
+            });
+    } else{
+        res.status(401).send("Unauthorised");
+    }
+
 };
 
 module.exports.getOneAllocation = function (req,res) {
+
     const query = {
-        receiverSid:req.params.receiverSid,
-        providerSid:req.params.providerSid
+        receiverSid: req.params.receiverSid,
+        providerSid: req.params.providerSid
     };
 
-    Allocation.findOne(query)
-        .then(function(response){
-            res.send(response);
-        })
+    if(req.user.sid === Number(req.params.providerSid)) {
+        const projection = {
+            receiverReport:0
+        };
+        Allocation.findOne(query)
+            .then(function (response) {
+                res.send(response);
+            })
+    } else if(req.user.sid === Number(req.params.receiverSid)){
+        const projection = {
+            providerReport:0
+        };
+        Allocation.findOne(query)
+            .then(function (response) {
+                res.send(response);
+            })
+
+    } else {
+        res.status(401).send("Unauthorised");
+    }
+
+
 };

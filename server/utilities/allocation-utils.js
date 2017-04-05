@@ -24,7 +24,7 @@ const randomName = require('node-random-name');
 module.exports.runAllocation = function (submission, assignment) {
 
     const allocationArray = [];
-    queryRandomProviders(assignment, submission)
+    return queryRandomProviders(assignment, submission)
         .then(function (randomProviders) {
             randomProviders.forEach(function (randomProvider) {
                 const forwardAssociation = associate(submission, randomProvider, assignment);
@@ -33,11 +33,7 @@ module.exports.runAllocation = function (submission, assignment) {
                 allocationArray.push(backwardAssociation);
             });
             if (allocationArray.length != 0) {
-                console.log(allocationArray);
-                Allocation.insertMany(allocationArray)
-                    .then(function (response) {
-                        console.log("Allocation complete");
-                    })
+                return Allocation.insertMany(allocationArray);
             }
         });
 };

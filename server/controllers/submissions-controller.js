@@ -9,94 +9,104 @@ const crypto = require('crypto');
 const assignmentsController = require('./assignments-controller');
 
 
-module.exports.getAllSubmissions = function(req,res){
+module.exports.getAllSubmissions = function (req, res) {
 
     Submission.find()
-        .then(function(response){
-           res.send(response);
+        .then(function (response) {
+            res.send(response);
         });
 };
 
-module.exports.getOneSubmission = function(req,res){
+module.exports.getOneSubmission = function (req, res) {
 
-    const query = {
-        sid:req.params.sid
-    };
+    if (req.user.sid === Number(req.params.sid)) {
+        const query = {
+            sid: req.params.sid
+        };
 
-    Submission.findOne(query)
-        .then(function(response){
-            res.send(response);
-        })
+        Submission.findOne(query)
+            .then(function (response) {
+                res.send(response);
+            })
+    } else {
+        res.status(401).send("Unauthorised");
+    }
+
 };
 
-module.exports.getAssignmentSubmissions = function(req,res){
+module.exports.getAssignmentSubmissions = function (req, res) {
 
     const query = {
-        aid:req.params.aid
+        aid: req.params.aid
     };
 
     Submission.find(query)
-        .then(function(response){
+        .then(function (response) {
             res.send(response);
         })
 };
 
-module.exports.getGitData = function(sid){
+module.exports.getGitData = function (sid) {
 
     const query = {
-        sid:sid
+        sid: sid
     };
 
     const projection = {
-        sha:1,
-        branch:1,
-        cloneurl:1
+        sha: 1,
+        branch: 1,
+        cloneurl: 1
     };
 
-    return Submission.findOne(query,projection)
-        .then(function(response){
+    return Submission.findOne(query, projection)
+        .then(function (response) {
             return response;
         })
 };
 
-//TODO: Remove duplication of SHA and branch from submissions and allocations
-module.exports.createSubmission = function(req,res,next){
-    checkPreExisting(req.body.sid)
-        .then(function(preExistingSubmission){
-            if(!preExistingSubmission) {
-
-                const submission = new Submission(req.body);
-                submission.submissionHash = crypto.randomBytes(20).toString('hex');
-                submission.dateCreated = new Date();
-
-                assignmentsController.getAssignment(submission)
-                    .then(function(assignment){
-                        if(assignment){
-                            submission.configuration = assignment.additionalConfiguration;
-                            console.log(assignment);
-                            submission.save(function(){
-                                allocationUtils.runAllocation(submission,assignment);
-                            });
-                        } else{
-                            console.log("No assignment found err");
+//TODO: check duplication of SHA and branch from submissions and allocations
+module.exports.createSubmission = function (req, res) {
+    let submission = new Submission(req.body);
+    assignmentsController.getAssignment(submission)
+        .then(function (assignment) {
+            if (assignment) {
+                checkPreExisting(submission.sid)
+                    .then(function (preExistingSubmission) {
+                        let promise = "";
+                        if (preExistingSubmission) {
+                            res.status(200).send("Remark");
+                            submission = preExistingSubmission;
+                        } else {
+                            promise = saveAndAllocate(submission,assignment,res);
                         }
+                        Promise.resolve(promise)
+                            .then(function (response) {
+                                responseUtils.sendResponse(submission, assignment);
+                            });
                     });
             } else {
-                res.status(400).send("Error, submission exists");
-                console.log("Error: submission exists");
+                res.status(404).send("Assignment does not exist");
             }
-            responseUtils.sendResponse(req,res,next);
         });
-    res.status(200).send("Successful");
 };
 
+function saveAndAllocate(submission,assignment,res){
+    submission.configuration = assignment.additionalConfiguration;
+    submission.submissionHash = crypto.randomBytes(20).toString('hex');
+    submission.dateCreated = new Date();
+    return submission.save()
+        .then(function (submission) {
+            res.status(200).send("Saved");
+            return allocationUtils.runAllocation(submission, assignment);
+        },function(err){
+            res.status(400).send("Error submitting");
+        });
+}
 
-
-
-const checkPreExisting =  function(sid){
-    return Submission.findOne({sid:sid})
-        .then(function(response){
-           return response;
+const checkPreExisting = function (sid) {
+    return Submission.findOne({sid: sid})
+        .then(function (response) {
+            return response;
         })
 };
 

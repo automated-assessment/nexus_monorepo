@@ -38,6 +38,7 @@
     "mongoose": "^4.8.1",
     "node-random-name": "^1.0.1",
     "passport": "^0.3.2",
+    "passport-http": "^0.3.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.0",
     "unzip": "^0.1.11"

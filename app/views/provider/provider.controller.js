@@ -2,8 +2,6 @@
  * Created by adamellis on 06/02/2017.
  */
 
-
-//This needs a lot of work
 (function () {
     angular.module('PeerFeedback')
         .controller('ProviderController', ProviderController);
@@ -29,7 +27,9 @@
                 provided: true,
                 dateModified: new Date()
             };
-            allocationNetwork.updateAllocation(vm.core.receiverSid, vm.core.providerSid, update)
+
+
+            allocationNetwork.updateAllocation(vm.core.receiverSid, vm.core.providerSid,vm.core.hash, update)
                 .then(function (response) {
                         const successMessage = "Your feedback has been successfully submitted. Thank you";
                         notificationService.create(successMessage, notificationService.SUCCESS);
@@ -44,7 +44,8 @@
         function activate() {
             vm.core = {
                 receiverSid: $stateParams.receiverSid,
-                providerSid: $stateParams.providerSid
+                providerSid: $stateParams.providerSid,
+                hash:$stateParams.hash
             };
             vm.provider = provider;
             vm.submission = submission;
@@ -55,9 +56,6 @@
                 isReadOnly:false
             };
         }
-
-
-        //TODO: Display git submission - priority
 
 
     }

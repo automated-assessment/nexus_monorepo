@@ -46,7 +46,7 @@
     <button class="btn btn-primary" ng-click="vm.updateFeedback()">Save</button>
 
 
-    <a ui-sref="frameState.allocationState({sid:{{vm.core.providerSid}}})">
+    <a ui-sref="frameState.allocationState({sid:{{vm.core.providerSid}},hash:'{{vm.core.hash}}'})">
         <button class="btn btn-primary">Back</button>
     </a>
 

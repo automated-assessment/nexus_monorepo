@@ -9,7 +9,6 @@ const TOKEN = process.env.NEXUS_GITHUB_TOKEN;
 module.exports.getSubmission = function (repo, branch, sha) {
     const getFiles = getTree(repo, branch, sha)
         .then(function (response) {
-            console.log(response);
             response = JSON.parse(response);
             return parseTree(response.tree);
         });
@@ -97,3 +96,5 @@ function queryGit(query) {
             return err;
         });
 }
+
+//TODO: EIther return request or print?

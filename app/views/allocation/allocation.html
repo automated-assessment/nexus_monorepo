@@ -1,30 +1,40 @@
 <section>
-    Viewing submission: {{vm.submission.core.sid}} in assignment: {{vm.submission.core.aid}} for {{vm.submission.core.student}}
+    Viewing submission: {{vm.submission.core.sid}} in assignment: {{vm.submission.core.aid}} for
+    {{vm.submission.core.student}}
     <br/><br/>
     <div class="jumbotron">
+
+        <!--Holding page-->
+        <div ng-hide="vm.submission.provideTo || vm.submission.receivedFrom">
+            Nothing to see here yet, please check back again soon.
+            This page will update once we match you with some other students - we'll email you when that happens.
+        </div>
+
+        <!--Allocation-->
         <div ng-show="vm.submission.provideTo">
-        <h3>Provide feedback for the following students:</h3>
-        <table class="table table-hover">
-            <thead>
+            <h3>Provide feedback for the following students:</h3>
+            <table class="table table-hover">
+                <thead>
                 <tr>
                     <th>Alias</th>
                     <th>Allocated on</th>
                     <th>Last modified</th>
                     <th>Mark</th>
                 </tr>
-            </thead>
-            <tbody>
-                    <tr ng-repeat="receiver in vm.submission.provideTo" >
-                        <td><a ui-sref="frameState.providerState({receiverSid:{{receiver.receiverSid}},providerSid:{{vm.submission.core.sid}},aid:{{vm.submission.core.aid}},alias:'{{receiver.alias}}'})">
+                </thead>
+                <tbody>
+                <tr ng-repeat="receiver in vm.submission.provideTo">
+                    <td>
+                        <a ui-sref="frameState.providerState({receiverSid:{{receiver.receiverSid}},providerSid:{{vm.submission.core.sid}},aid:{{vm.submission.core.aid}},hash:'{{vm.submission.core.submissionHash}}',alias:'{{receiver.alias}}'})">
                             {{receiver.alias}} ({{receiver.receiverSid}})
                         </a></td>
-                        <td>{{receiver.dateAllocated | date: 'shortDate'}}</td>
-                        <td>{{receiver.dateModified | date:'shortDate'}}</td>
-                        <td>{{receiver.providerMark | percent}}</td>
-                    </tr>
+                    <td>{{receiver.dateAllocated | date: 'shortDate'}}</td>
+                    <td>{{receiver.dateModified | date:'shortDate'}}</td>
+                    <td>{{receiver.providerMark | percent}}</td>
+                </tr>
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
         </div>
         <div ng-show="vm.submission.receivedFrom">
             <h3>Received feedback from the following students:</h3>
@@ -40,15 +50,16 @@
                 <tbody>
 
 
-                    <tr ng-repeat="provider in vm.submission.receivedFrom" ng-show="provider.display">
-                        <td><a ui-sref="frameState.receiverState({receiverSid:{{vm.submission.core.sid}},providerSid:{{provider.providerSid}}})">
+                <tr ng-repeat="provider in vm.submission.receivedFrom" ng-show="provider.display">
+                    <td>
+                        <a ui-sref="frameState.receiverState({receiverSid:{{vm.submission.core.sid}},providerSid:{{provider.providerSid}},hash:'{{vm.submission.core.submissionHash}}'})">
                             {{provider.alias}} ({{provider.providerSid}})
                         </a></td>
-                        <td>{{provider.dateAllocated | date: 'shortDate'}}</td>
-                        <td>{{provider.dateModified | date:'shortDate'}}</td>
-                        <td>{{provider.providerMark | percent}}</td>
+                    <td>{{provider.dateAllocated | date: 'shortDate'}}</td>
+                    <td>{{provider.dateModified | date:'shortDate'}}</td>
+                    <td>{{provider.providerMark | percent}}</td>
 
-                    </tr>
+                </tr>
 
 
                 </tbody>

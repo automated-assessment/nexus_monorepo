@@ -27,8 +27,13 @@
             return $http.get(`/api/assignments/${aid}/submissions`);
         }
 
-        function getOneSubmission(sid){
-            return $http.get(`api/submissions/${sid}`);
+        function getOneSubmission(sid,hash){
+           const token = window.btoa(`${sid}:${hash}`);
+            return $http.get(`api/submissions/${sid}`,{
+                headers:{
+                    'Authorization':`Basic ${token}`
+                }
+            });
         }
 
         function getGitData(sid){

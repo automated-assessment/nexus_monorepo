@@ -20,7 +20,7 @@ module.exports.getArchiveLink = function(req,res){
 };
 
 module.exports.getGitSubmission = function(req,res){
-    const gitData = submissionsController.getGitData(req.params.sid)
+    const gitData = submissionsController.getGitData(req.params.receiverSid)
         .then(function(response){
             if(response.cloneurl){
                 response.cloneurl = parseClone(response.cloneurl);

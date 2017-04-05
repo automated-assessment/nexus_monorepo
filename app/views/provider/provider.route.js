@@ -7,7 +7,7 @@
         .config(['$stateProvider', function ($stateProvider) {
             $stateProvider
                 .state('frameState.providerState', {
-                    url: '/provider?receiverSid?providerSid',
+                    url: '/provider?receiverSid?providerSid?hash',
                     params: {
                         receiverSid: null,
                         providerSid: null,
@@ -34,7 +34,7 @@
 
 
             function provider($stateParams, allocationNetwork) {
-                return allocationNetwork.getOneAllocation($stateParams.receiverSid, $stateParams.providerSid)
+                return allocationNetwork.getOneAllocation($stateParams,allocationNetwork.PROVIDER)
                     .then(function (response) {
                         return response.data;
                     });

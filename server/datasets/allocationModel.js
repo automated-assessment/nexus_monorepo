@@ -22,5 +22,15 @@ module.exports = mongoose.model('Allocation',{
     //Represents whether the provider has provided feedback.
     provided:Boolean,
     //The mark given to the receiver by the provider.
-    providerMark:Number
+    providerMark:Number,
+    //The receiver's report
+    receiverReport:{
+        report:Boolean,
+        reason:String
+    },
+    //The provider's report
+    providerReport:{
+        report:Boolean,
+        reason:String
+    }
 });

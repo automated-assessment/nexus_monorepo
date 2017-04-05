@@ -4,32 +4,43 @@
 
 //This needs editing to remove any data that is not required.
 const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+const Schema = mongoose.Schema;
 
-module.exports = mongoose.model('Submission',{
+
+
+const submissionSchema = new Schema({
     //The unique of the submission.
-    sid:Number,
+    sid: Number,
     //The referential id of the assignment.
-    aid:Number,
+    aid: Number,
     //The name of the student.
-    student:String,
+    student: String,
     //The Neuxs unique id of the student.
-    studentuid:Number,
+    studentuid: Number,
     //The email of the student.
-    studentemail:String,
+    studentemail: String,
     //The SHA-1 hash for the student's git submission commit.
-    sha:String,
+    sha: String,
     //The git branch the student has committed their work to.
-    branch:String,
+    branch: String,
     //The clone url of the repository, used to extract the repository.
-    cloneurl:String,
+    cloneurl: String,
     //The randomly generated, unique cryptographic hash key used to authorise
     //the submitting student to view this submission, their receivers and their providers.
-    submissionHash:String,
+    submissionHash: String,
     //The date the submission was created.
-    dateCreated:String,
-    configuration:{
-        awaitBiDirection:Boolean,
-        contributeFinalMark:Boolean
+    dateCreated: String,
+    configuration: {
+        awaitBiDirection: Boolean,
+        contributeFinalMark: Boolean
     }
 });
+submissionSchema.methods.verifyPassword = function(candidateHash){
+    console.log("candidate:"+ candidateHash,"actual:" + this.submissionHash);
+    return this.submissionHash === candidateHash;
+};
+
+module.exports = mongoose.model('Submission',submissionSchema);
+
 

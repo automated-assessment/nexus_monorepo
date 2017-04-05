@@ -7,7 +7,7 @@
         .config(['$stateProvider',function($stateProvider){
             $stateProvider
                 .state('frameState.receiverState',{
-                    url:'/receiver?receiverSid,providerSid',
+                    url:'/receiver?receiverSid,providerSid?hash',
                     params:{
                         receiverSid:null,
                         providerSid:null,
@@ -17,7 +17,7 @@
                     controller:'ReceiverController as vm',
                     resolve:{
                         receiver:['$stateParams','allocationNetwork',function($stateParams, allocationNetwork){
-                            return allocationNetwork.getOneAllocation($stateParams.receiverSid,$stateParams.providerSid)
+                            return allocationNetwork.getOneAllocation($stateParams,allocationNetwork.RECEIVER)
                                 .then(function(response){
                                     return response.data;
                                 });

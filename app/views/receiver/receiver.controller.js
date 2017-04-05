@@ -21,7 +21,8 @@
             vm.core = {
                 aid:$stateParams.aid,
                 receiverSid:$stateParams.receiverSid,
-                providerSid:$stateParams.providerSid
+                providerSid:$stateParams.providerSid,
+                hash:$stateParams.hash
             };
 
             vm.receiver = receiver;

@@ -2,45 +2,78 @@
  * Created by adamellis on 14/03/2017.
  */
 
-(function(){
+(function () {
     'use strict';
 
     angular
         .module('PeerFeedback')
-        .factory('allocationNetwork',allocationNetwork);
+        .factory('allocationNetwork', allocationNetwork);
 
     allocationNetwork.$inject = ['$http'];
 
-    function allocationNetwork($http){
+    function allocationNetwork($http) {
 
         return {
-            getReceivers:getReceivers,
-            getProviders:getProviders,
-            getOneAllocation:getOneAllocation,
-            updateAllocation:updateAllocation
+            getReceivers: getReceivers,
+            getProviders: getProviders,
+            getOneAllocation: getOneAllocation,
+            updateAllocation: updateAllocation,
+            PROVIDER:"provider",
+            RECEIVER:"receiver"
         };
 
 
         //Get the student's receivers
-        function getReceivers(providerSid){
-            return $http.get(`/api/allocations/receivers/${providerSid}`);
+        function getReceivers(providerSid, hash) {
+            const token = window.btoa(`${providerSid}:${hash}`);
+            return $http.get(`/api/allocations/receivers/${providerSid}`,
+                {
+                    headers: {
+                        'Authorization': `Basic ${token}`
+                    }
+                });
         }
 
         //Get the student's providers
-        function getProviders(receiverSid){
-            return $http.get(`/api/allocations/providers/${receiverSid}`);
+        function getProviders(receiverSid, hash) {
+            const token = window.btoa(`${receiverSid}:${hash}`);
+            return $http.get(`/api/allocations/providers/${receiverSid}`,
+                {
+                    headers: {
+                        'Authorization': `Basic ${token}`
+                    }
+                });
         }
 
-        function getOneAllocation(receiverSid,providerSid){
-            return $http.get(`/api/allocations/${receiverSid}/${providerSid}`);
+        function getOneAllocation($stateParams, loadPattern) {
+            const providerSid = $stateParams.providerSid;
+            const receiverSid = $stateParams.receiverSid;
+            const hash = $stateParams.hash;
+            let token ="";
+            if (loadPattern === this.PROVIDER) {
+                token = window.btoa(`${providerSid}:${hash}`);
+            } else if (loadPattern === this.RECEIVER) {
+                token = window.btoa(`${receiverSid}:${hash}`);
+
+            } else {
+                console.log("Select a loadPattern");
+            }
+            return $http.get(`/api/allocations/${receiverSid}/${providerSid}`, {
+                headers: {
+                    'Authorization': `Basic ${token}`
+                }
+            });
         }
 
         //Update a particular allocation.
-        function updateAllocation(receiverSid,providerSid,update){
-            return $http.put(`/api/allocations/${receiverSid}/${providerSid}`,update);
+        function updateAllocation(receiverSid, providerSid, hash, update) {
+            const token = window.btoa(`${providerSid}:${hash}`);
+            return $http.put(`/api/allocations/${receiverSid}/${providerSid}`, update, {
+                headers: {
+                    'Authorization': `Basic ${token}`
+                }
+            });
         }
-
-        //TODO: Return whether bidirectional ready to display if so configured by academic
 
 
     }

@@ -7,7 +7,7 @@
         .config(['$stateProvider',function($stateProvider){
             $stateProvider
                 .state('frameState.allocationState',{
-                    url:'/allocation?sid',
+                    url:'/allocation?sid?hash',
                     templateUrl:'app/views/allocation/allocation.html',
                     controller:'AllocationController as vm',
                     resolve:{
@@ -27,7 +27,7 @@
             //Allocation view
             function receivers(allocationNetwork,$stateParams){
                 if($stateParams.sid){
-                    return allocationNetwork.getReceivers($stateParams.sid)
+                    return allocationNetwork.getReceivers($stateParams.sid,$stateParams.hash)
                         .then(function(response){
                             return response.data;
                         })
@@ -36,7 +36,7 @@
 
             function providers(allocationNetwork,$stateParams){
                 if($stateParams.sid){
-                    return allocationNetwork.getProviders($stateParams.sid)
+                    return allocationNetwork.getProviders($stateParams.sid,$stateParams.hash)
                         .then(function(response){
                             return response.data;
                         })
@@ -45,7 +45,7 @@
 
             function submission(submissionNetwork,$stateParams){
                 if($stateParams.sid){
-                    return submissionNetwork.getOneSubmission($stateParams.sid)
+                    return submissionNetwork.getOneSubmission($stateParams.sid,$stateParams.hash)
                         .then(function(response){
                             return response.data;
                         })

@@ -23,17 +23,20 @@
     }
 
     function getDisplay(submission) {
-        const receiverSid = submission.core.sid;
-        if (submission.core.configuration.awaitBiDirection) {
-            submission.receivedFrom.forEach(function (provider) {
-                provider.display = hasProvided(submission, receiverSid,provider.providerSid)
-                    && hasReceived(submission, receiverSid, provider.providerSid);
-            });
-        } else {
-            submission.receivedFrom.forEach(function (provider) {
-                provider.display = hasReceived(submission, receiverSid, provider.providerSid);
-            });
+        if(submission.receivedFrom){
+            const receiverSid = submission.core.sid;
+            if (submission.core.configuration.awaitBiDirection) {
+                submission.receivedFrom.forEach(function (provider) {
+                    provider.display = hasProvided(submission, receiverSid,provider.providerSid)
+                        && hasReceived(submission, receiverSid, provider.providerSid);
+                });
+            } else {
+                submission.receivedFrom.forEach(function (provider) {
+                    provider.display = hasReceived(submission, receiverSid, provider.providerSid);
+                });
+            }
         }
+
 
     }
 
