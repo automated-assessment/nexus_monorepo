@@ -1,35 +1,29 @@
 require 'set'
+require 'uri'
 
 class WorkflowUtils
   class << self
-    # Given an assignment with marking tool contexts
+    # Given marking tool contexts and service dependency information
     # Constructs a workflow using a hash where each key is a marking service
-    # and its value is an array of tools that it depends on, such that the tool
-    # cannot run until every tool in the array has returned a mark
-    # Runs in O(n) linear time where n is the number of marking tool contexts
-    def construct_workflow(marking_tool_contexts)
-      return {} if marking_tool_contexts.empty?
-
-      # If each marking tool context depends on another, then there would be a cycle
-      # in the workflow graph. Correct workflows in Nexus are defined as DAGs
-      cycle = !(marking_tool_contexts.map(&:depends_on).include? [])
-      raise StandardError, 'All marking tools depend on another marking service! Please remove the cycle' if cycle
-
-      active_services = {}
-      marking_tool_contexts.each do |mtc|
-        tool = MarkingTool.find_by(id: mtc.marking_tool_id)
-        raise StandardError, "Error with marking tool #{tool.name}. Marking services cannot depend on themselves" if mtc.depends_on.include? tool.uid
-        depends_on = Set.new MarkingTool.where(uid: mtc.depends_on).pluck(:uid)
-        # Set a key in the hash to be the tool uid for the current mtc
-        # Set the value to be the array of tools it depends on before it can run
-        active_services[tool.uid] = depends_on
+    # and its value is a set of tools that it depends on, such that the tool
+    # cannot run until every tool in the set has returned a mark
+    def construct_workflow(marking_tool_contexts, dependencies)
+      workflow = {}
+      marking_tool_contexts.each do |key, value|
+        marking_tool = MarkingTool.find(value[:marking_tool_id])
+        workflow[marking_tool.uid] = Set.new
+        next unless dependencies
+        workflow[marking_tool.uid] = Set.new dependencies[key] if dependencies[key]
+        if workflow[marking_tool.uid].include? marking_tool.uid
+          raise StandardError, "Error with marking tool #{marking_tool.name}. Marking services cannot depend on themselves"
+        end
       end
 
       # Validate Workflow
-      workflow = active_services.deep_dup
-      valid = valid_workflow?(workflow)
-      raise StandardError, 'Please remove the circular dependency' unless valid
-      active_services
+      copy_of_workflow = workflow.deep_dup
+      valid = valid_workflow?(copy_of_workflow)
+      raise StandardError, 'Please remove the circular dependency between services' unless valid
+      workflow
     end
 
     # Given a submission with an active service hash
@@ -82,6 +76,52 @@ class WorkflowUtils
         end
       end
       visited.delete service
+    end
+
+    # Given an assignment with marking tool contexts
+    # Constructs the dataflow definition for the whole assignment
+    # Returns a hash where each key is a marking service that outputs some file
+    # and each value is an array of marking services that take that file as input
+    # in the context of the assignment
+    def construct_dataflow(marking_tool_contexts)
+      return {} if marking_tool_contexts.empty?
+      dataflow = {}
+      handled_files = Set.new # Prevents more than one tool passing on one file type
+      handled_tools = Set.new
+      marking_tool_contexts.each do |context|
+        marking_tool = context.marking_tool
+        next unless marking_tool.output # Prevent a nil entry into hash
+
+        # Move on if file type has already been handled by another tool
+        next if handled_files.include? marking_tool.output
+        handled_files.add marking_tool.output
+        # Get array of marking service urls such that the tool takes in the given
+        # file type as input
+        tools = MarkingTool.find(marking_tool_contexts.map(&:marking_tool_id)).select do |tool|
+          (tool.input.eql? marking_tool.output) && !(tool.uid.eql? marking_tool.uid)
+        end
+        tools_that_require_files = []
+        tools.each do |tool|
+          next unless tool.access_token
+          tool_entry = {}
+          uri = URI(tool.url)
+          uri.path = '/data'
+          tool_entry['url'] = uri.to_s
+          tool_entry['auth_token'] = tool.access_token
+          tools_that_require_files << tool_entry.to_json
+          handled_tools.add tool.url
+        end
+        tools_that_require_files.each do |tool|
+          tool_hash = JSON.parse(tool)
+          handled_tools.add tool_hash['url']
+        end
+        # Add tool to handled tools since dataflow only goes in one direction
+        handled_tools.add marking_tool.url
+        dataflow[marking_tool.uid] = tools_that_require_files
+        # Can return once all tools have been dealt with.
+        return dataflow if handled_tools.size == marking_tool_contexts.size
+      end
+      dataflow
     end
 
     private

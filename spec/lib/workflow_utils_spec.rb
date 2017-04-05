@@ -1,41 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe WorkflowUtils do
-  let(:mt_1) { create(:marking_tool) }
-  let(:mt_2) { create(:marking_tool) }
-  let(:mt_3) { create(:marking_tool) }
-  let(:mt_4) { create(:marking_tool) }
-  let(:mt_5) { create(:marking_tool) }
-
-  let(:mtc_1) { MarkingToolContext.new }
-  let(:mtc_2) { MarkingToolContext.new }
-  let(:mtc_3) { MarkingToolContext.new }
-  let(:mtc_4) { MarkingToolContext.new }
-
-  before(:each) do
-    MarkingTool.delete_all
-    MarkingToolContext.delete_all
-    mtc_1.marking_tool = mt_1
-    mtc_1.weight = 25
-    mtc_1.condition = 0
-    mtc_1.depends_on = []
-
-    mtc_2.marking_tool = mt_2
-    mtc_2.weight = 25
-    mtc_2.condition = 0
-    mtc_2.depends_on = []
-
-    mtc_3.marking_tool = mt_3
-    mtc_3.weight = 25
-    mtc_3.condition = 0
-    mtc_3.depends_on = []
-
-    mtc_4.marking_tool = mt_4
-    mtc_4.weight = 25
-    mtc_4.condition = 0
-    mtc_4.depends_on = []
-  end
-
   describe '#construct_workflow' do
     context 'with 0 marking services assigned' do
       it 'returns straight away with no changes' do
@@ -349,6 +314,14 @@ RSpec.describe WorkflowUtils do
         workflow = described_class.construct_workflow(active_services)
         actual = described_class.simulate_workflow(workflow, mt_2.uid)
         expect(expected).to eq actual
+      end
+    end
+  end
+  describe '#construct_dataflow' do
+    context 'with 0 marking services assigned' do
+      it 'returns straight away with no changes' do
+        actual = described_class.construct_dataflow([])
+        expect(actual).to eq({})
       end
     end
   end

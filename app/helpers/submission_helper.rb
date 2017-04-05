@@ -1,3 +1,5 @@
+require 'set'
+
 module SubmissionHelper
   def display_final_mark(submission)
     if submission.pending?
