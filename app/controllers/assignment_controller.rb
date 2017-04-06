@@ -79,7 +79,7 @@ class AssignmentController < ApplicationController
       marking_tool_contexts = params[:assignment][:marking_tool_contexts_attributes]
       active_services = params[:assignment][:active_services]
       @assignment.active_services = WorkflowUtils.construct_workflow(marking_tool_contexts, active_services)
-      @assignment.dataflow = WorkflowUtils.construct_dataflow(@assignment.marking_tool_contexts)
+      @assignment.dataflow = WorkflowUtils.construct_dataflow(@assignment.active_services)
       @assignment.save!
     rescue StandardError => e
       error_flash_and_cleanup!(e.message)

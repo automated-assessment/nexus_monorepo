@@ -83,48 +83,45 @@ class WorkflowUtils
     # Returns a hash where each key is a marking service that outputs some file
     # and each value is an array of marking services that take that file as input
     # in the context of the assignment
-    def construct_dataflow(marking_tool_contexts)
-      return {} if marking_tool_contexts.empty?
+    def construct_dataflow(workflow)
+      return {} if workflow.empty?
+      workflow_copy = workflow.deep_dup
       dataflow = {}
-      handled_files = Set.new # Prevents more than one tool passing on one file type
-      handled_tools = Set.new
-      marking_tool_contexts.each do |context|
-        marking_tool = context.marking_tool
-        next unless marking_tool.output # Prevent a nil entry into hash
-
-        # Move on if file type has already been handled by another tool
-        next if handled_files.include? marking_tool.output
-        handled_files.add marking_tool.output
-        # Get array of marking service urls such that the tool takes in the given
-        # file type as input
-        tools = MarkingTool.find(marking_tool_contexts.map(&:marking_tool_id)).select do |tool|
-          (tool.input.eql? marking_tool.output) && !(tool.uid.eql? marking_tool.uid)
+      handled_files = {} # Prevents more than one tool passing on one file type
+      until workflow_copy.empty?
+        tools = next_services_to_invoke(workflow_copy)
+        marking_tools = MarkingTool.where(uid: tools)
+        marking_tools.each do |tool|
+          trim_workflow!(workflow_copy, tool.uid)
+          next unless tool.output
+          unless handled_files[tool.output]
+            handled_files[tool.output] = tool.uid
+            dataflow[tool.uid] = []
+          end
         end
-        tools_that_require_files = []
-        tools.each do |tool|
-          next unless tool.access_token
-          tool_entry = {}
-          uri = URI(tool.url)
-          uri.path = '/data'
-          tool_entry['url'] = uri.to_s
-          tool_entry['auth_token'] = tool.access_token
-          tools_that_require_files << tool_entry.to_json
-          handled_tools.add tool.url
-        end
-        tools_that_require_files.each do |tool|
-          tool_hash = JSON.parse(tool)
-          handled_tools.add tool_hash['url']
-        end
-        # Add tool to handled tools since dataflow only goes in one direction
-        handled_tools.add marking_tool.url
-        dataflow[marking_tool.uid] = tools_that_require_files
-        # Can return once all tools have been dealt with.
-        return dataflow if handled_tools.size == marking_tool_contexts.size
       end
+
+      workflow.each do |tool, _|
+        marking_tool = MarkingTool.find_by(uid: tool)
+        next unless marking_tool && marking_tool.access_token
+        if handled_files[marking_tool.input] && !handled_files[marking_tool.input].eql?(tool)
+          dataflow[handled_files[marking_tool.input]] << tool_data_entry(marking_tool)
+        end
+      end
+
       dataflow
     end
 
     private
+
+    def tool_data_entry(tool)
+      tool_entry = {}
+      uri = URI(tool.url)
+      uri.path = '/data'
+      tool_entry['url'] = uri.to_s
+      tool_entry['auth_token'] = tool.access_token
+      tool_entry
+    end
 
     # Given a hash defining a workflow
     # Return true if it is a valid DAG
