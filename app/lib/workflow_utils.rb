@@ -10,7 +10,7 @@ class WorkflowUtils
     def construct_workflow(marking_tool_contexts, dependencies)
       workflow = {}
       marking_tool_contexts.each do |key, value|
-        marking_tool = MarkingTool.find(value[:marking_tool_id])
+        marking_tool = MarkingTool.find(value['marking_tool_id'])
         workflow[marking_tool.uid] = Set.new
         next unless dependencies
         workflow[marking_tool.uid] = Set.new dependencies[key] if dependencies[key]
