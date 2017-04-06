@@ -34,7 +34,7 @@
     </div>
     <div class="panel-body">
       <% all_marking_tools.each do |mt| %>
-        <%= f.check_box(:depends_on, { multiple: true }, mt.uid, nil) %>
+        <%= check_box_tag "assignment[active_services][#{f.options[:child_index]}][]", mt.uid, false, { multiple: true } %>
         <%= mt.name %>
       <% end %>
     </div>
@@ -46,5 +46,4 @@
       <hr />
     </div>
   <% end %>
-
 </div>

@@ -2,7 +2,6 @@ class AssignmentController < ApplicationController
   include ApplicationHelper
   require_relative '../lib/git_utils'
   require_relative '../lib/workflow_utils'
-  require_relative '../lib/dataflow_utils'
 
   before_action :authenticate_user!
   before_action :authenticate_admin!, except: [:mine, :show]
@@ -43,6 +42,7 @@ class AssignmentController < ApplicationController
     if course
       @assignment.course = course
       @assignment.marking_tool_contexts.build
+      @assignment.active_services = {}
 
       # Set default values
       @assignment.start = DateTime.now
@@ -65,6 +65,7 @@ class AssignmentController < ApplicationController
 
   def create
     @assignment = Assignment.new(assignment_params)
+
     unless @assignment.save
       error_flash_and_cleanup!(@assignment.errors.full_messages[0])
       return
@@ -74,10 +75,11 @@ class AssignmentController < ApplicationController
       error_flash_and_cleanup!('Error creating repository for assignment!')
       return
     end
-
     begin
-      @assignment.active_services = WorkflowUtils.construct_workflow(@assignment.marking_tool_contexts)
-      @assignment.dataflow = DataflowUtils.construct_dataflow(@assignment.marking_tool_contexts)
+      marking_tool_contexts = params[:assignment][:marking_tool_contexts_attributes]
+      active_services = params[:assignment][:active_services]
+      @assignment.active_services = WorkflowUtils.construct_workflow(marking_tool_contexts, active_services)
+      @assignment.dataflow = WorkflowUtils.construct_dataflow(@assignment.marking_tool_contexts)
       @assignment.save!
     rescue StandardError => e
       error_flash_and_cleanup!(e.message)
@@ -185,7 +187,8 @@ class AssignmentController < ApplicationController
                                        :allow_zip,
                                        :allow_git,
                                        :allow_ide,
-                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :condition, depends_on: []])
+                                       :active_services,
+                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :condition])
   end
 
   def return_assignment!
