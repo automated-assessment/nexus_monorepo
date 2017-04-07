@@ -7,7 +7,7 @@
         .config(['$stateProvider',function($stateProvider){
             $stateProvider
                 .state('frameState.academicState',{
-                    url:'/academic',
+                    url:'/academic?token?email',
                     templateUrl:'app/views/academic/academic.html',
                     controller:'AcademicController as vm',
                     resolve:{

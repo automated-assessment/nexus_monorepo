@@ -7,7 +7,7 @@
         .config(['$stateProvider',function($stateProvider){
             $stateProvider
                 .state('frameState.allocationState',{
-                    url:'/allocation?sid?hash',
+                    url:'/allocation?sid?token',
                     templateUrl:'app/views/allocation/allocation.html',
                     controller:'AllocationController as vm',
                     resolve:{
@@ -27,25 +27,29 @@
             //Allocation view
             function receivers(allocationNetwork,$stateParams){
                 if($stateParams.sid){
-                    return allocationNetwork.getReceivers($stateParams.sid,$stateParams.hash)
+                    return allocationNetwork.getReceivers($stateParams.sid,$stateParams.token)
                         .then(function(response){
                             return response.data;
                         })
+                } else{
+                    return {};
                 }
             }
 
             function providers(allocationNetwork,$stateParams){
                 if($stateParams.sid){
-                    return allocationNetwork.getProviders($stateParams.sid,$stateParams.hash)
+                    return allocationNetwork.getProviders($stateParams.sid,$stateParams.token)
                         .then(function(response){
                             return response.data;
                         })
+                } else{
+                    return {};
                 }
             }
 
             function submission(submissionNetwork,$stateParams){
                 if($stateParams.sid){
-                    return submissionNetwork.getOneSubmission($stateParams.sid,$stateParams.hash)
+                    return submissionNetwork.getOneSubmission($stateParams.sid,$stateParams.token)
                         .then(function(response){
                             return response.data;
                         })

@@ -6,11 +6,13 @@
         .module('PeerFeedback')
         .controller('AcademicController',AcademicController);
 
-    AcademicController.$inject = ['allSubmissions','$http','gitNetwork'];
+    AcademicController.$inject = ['$stateParams','allSubmissions','$http','gitNetwork'];
 
-    function AcademicController(allSubmissions,$http,gitNetwork){
+    function AcademicController($stateParams,allSubmissions,$http,gitNetwork){
         const vm = this;
         vm.submissions = allSubmissions;
 
+        vm.email = $stateParams.email;
+        vm.token = $stateParams.token;
     }
 }());

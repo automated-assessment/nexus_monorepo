@@ -22,7 +22,7 @@
                 aid:$stateParams.aid,
                 receiverSid:$stateParams.receiverSid,
                 providerSid:$stateParams.providerSid,
-                hash:$stateParams.hash
+                token:$stateParams.token
             };
 
             vm.receiver = receiver;

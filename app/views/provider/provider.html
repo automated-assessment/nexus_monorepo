@@ -32,7 +32,6 @@
     <p><form render-form current-form="vm.provider.currentForm" disable="vm.readOnly"></form></p>
 
     Please indicate how well you think the student performed:
-    <!--TODO: Say if should or should not be included -->
 
     <span uib-rating ng-model="vm.mark.rate" max="vm.mark.max" read-only="vm.mark.isReadonly"
           on-hover="vm.mark.hoveringOver(value)" on-leave="vm.mark.overStar = null"
@@ -45,8 +44,7 @@
     <br/><br/>
     <button class="btn btn-primary" ng-click="vm.updateFeedback()">Save</button>
 
-
-    <a ui-sref="frameState.allocationState({sid:{{vm.core.providerSid}},hash:'{{vm.core.hash}}'})">
+    <a ui-sref="frameState.allocationState({sid:{{vm.core.providerSid}},token:'{{vm.core.token}}'})">
         <button class="btn btn-primary">Back</button>
     </a>
 

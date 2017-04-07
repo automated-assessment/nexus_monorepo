@@ -24,15 +24,21 @@ module.exports.getOneSubmission = function (req, res) {
             sid: req.params.sid
         };
 
-        Submission.findOne(query)
+        exports.queryOneSubmission(query)
             .then(function (response) {
                 res.send(response);
             })
+
     } else {
         res.status(401).send("Unauthorised");
     }
 
 };
+
+module.exports.queryOneSubmission = function (query) {
+    return Submission.findOne(query);
+};
+
 
 module.exports.getAssignmentSubmissions = function (req, res) {
 
@@ -40,10 +46,16 @@ module.exports.getAssignmentSubmissions = function (req, res) {
         aid: req.params.aid
     };
 
-    Submission.find(query)
+    exports.queryAssignmentSubmissions(query)
         .then(function (response) {
             res.send(response);
         })
+
+};
+
+
+module.exports.queryAssignmentSubmissions = function (query) {
+    return Submission.find(query);
 };
 
 module.exports.getGitData = function (sid) {
@@ -65,50 +77,56 @@ module.exports.getGitData = function (sid) {
 };
 
 //TODO: check duplication of SHA and branch from submissions and allocations
+
 module.exports.createSubmission = function (req, res) {
     let submission = new Submission(req.body);
-    assignmentsController.getAssignment(submission)
-        .then(function (assignment) {
-            if (assignment) {
-                checkPreExisting(submission.sid)
-                    .then(function (preExistingSubmission) {
-                        let promise = "";
-                        if (preExistingSubmission) {
-                            res.status(200).send("Remark");
-                            submission = preExistingSubmission;
-                        } else {
-                            promise = saveAndAllocate(submission,assignment,res);
-                        }
-                        Promise.resolve(promise)
-                            .then(function (response) {
-                                responseUtils.sendResponse(submission, assignment);
-                            });
-                    });
+    exports.queryOneSubmission({sid: submission.sid})
+        .then(function (preExistingSubmission) {
+            //preExistingSubmission = false;
+            let isNew;
+            if (preExistingSubmission) {
+                isNew = false;
+                submission = preExistingSubmission;
+                res.status(200).send("Remarked submission");
             } else {
-                res.status(404).send("Assignment does not exist");
+                isNew = true;
+                submission.token = crypto.randomBytes(20).toString('hex');
+                submission.dateCreated = new Date();
             }
-        });
-};
+            const url = `<iframe src="http://localhost:3050/#!/frame/allocation?sid=${submission.sid}&token=${submission.token}" height="500" width="1000"`
+            assignmentsController.queryAssignment({aid: submission.aid})
+                .then(function (assignment) {
+                    const promises = [];
+                    if (assignment) {
+                        submission.academicEmail = assignment.email;
+                    }
+                    if (!preExistingSubmission) {
+                        promises.push(submission.save()
+                            .then(function () {
+                                res.status(200).send();
+                                return allocationUtils.runAllocation(submission, assignment)
+                                    .then(function (response) {
+                                        console.log("Complete");
+                                    })
+                            }));
+                    }
+                    Promise.resolve(promises)
+                        .then(function (response) {
+                            console.log("Promise.resolve worked for save()");
+                            if(assignment){
+                                responseUtils.sendResponse(submission, assignment);
+                            } else {
+                                responseUtils.sendFeedback(url, submission.sid);
+                            }
 
-function saveAndAllocate(submission,assignment,res){
-    submission.configuration = assignment.additionalConfiguration;
-    submission.submissionHash = crypto.randomBytes(20).toString('hex');
-    submission.dateCreated = new Date();
-    return submission.save()
-        .then(function (submission) {
-            res.status(200).send("Saved");
-            return allocationUtils.runAllocation(submission, assignment);
-        },function(err){
-            res.status(400).send("Error submitting");
-        });
-}
+                        })
+                });
 
-const checkPreExisting = function (sid) {
-    return Submission.findOne({sid: sid})
-        .then(function (response) {
-            return response;
+
         })
 };
 
-
+module.exports.queryUpdateOneSubmission = function(query,update,options){
+    return Submission.findOneAndUpdate(query,update,options);
+}
 

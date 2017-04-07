@@ -39,8 +39,7 @@ module.exports.runAllocation = function (submission, assignment) {
 };
 
 const associate = function (receiver, provider, assignment) {
-    //this is actually an Allocation object. it should be created and treated as such.
-    return {
+    return new Allocation({
         currentForm: assignment.formBuild,
         receiverSid: receiver.sid,
         providerSid: provider.sid,
@@ -49,7 +48,7 @@ const associate = function (receiver, provider, assignment) {
         dateAllocated: new Date(),
         dateModified: new Date(),
         providerMark: null
-    }
+    });
 };
 
 

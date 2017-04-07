@@ -27,11 +27,11 @@
             return $http.get(`/api/assignments/${aid}/submissions`);
         }
 
-        function getOneSubmission(sid,hash){
-           const token = window.btoa(`${sid}:${hash}`);
+        function getOneSubmission(sid,token){
+           const authToken = window.btoa(`${sid}:${token}`);
             return $http.get(`api/submissions/${sid}`,{
                 headers:{
-                    'Authorization':`Basic ${token}`
+                    'Authorization':`Basic ${authToken}`
                 }
             });
         }

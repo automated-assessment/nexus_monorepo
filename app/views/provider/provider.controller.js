@@ -29,7 +29,7 @@
             };
 
 
-            allocationNetwork.updateAllocation(vm.core.receiverSid, vm.core.providerSid,vm.core.hash, update)
+            allocationNetwork.updateAllocation(vm.core.receiverSid, vm.core.providerSid,vm.core.token, update)
                 .then(function (response) {
                         const successMessage = "Your feedback has been successfully submitted. Thank you";
                         notificationService.create(successMessage, notificationService.SUCCESS);
@@ -41,11 +41,14 @@
 
         };
 
+        vm.report = function(){
+            console.log("Report");
+        };
         function activate() {
             vm.core = {
                 receiverSid: $stateParams.receiverSid,
                 providerSid: $stateParams.providerSid,
-                hash:$stateParams.hash
+                token:$stateParams.token
             };
             vm.provider = provider;
             vm.submission = submission;

@@ -11,16 +11,17 @@ module.exports.sendResponse = function(submission,assignment){
     const promiseArray = [];
     const awaitMark = assignment.additionalConfiguration.contributeFinalMark;
     if(!awaitMark){
-        promiseArray.push(sendMark(100,submission.sid));
+        promiseArray.push(exports.sendMark(100,submission.sid));
     }
     const html =
-        `<iframe src="http://localhost:3050/#!/frame/allocation?sid=${submission.sid}&hash=${submission.submissionHash}" height="500" width="1000"`;
-    promiseArray.push(sendFeedback(html,submission.sid));
+        `<iframe src="http://localhost:3050/#!/frame/allocation?sid=${submission.sid}&token=${submission.token}" height="500" width="1000"`;
+    promiseArray.push(exports.sendFeedback(html,submission.sid));
 
     return Promise.all(promiseArray);
 };
 
-const sendMark= function(mark, sid){
+
+module.exports.sendMark= function(mark, sid){
     const url = `${NEXUS_BASE_URL}/report_mark/${sid}/${NEXUS_TOOL_CANONICAL_NAME}`;
     const body = {
         mark:mark
@@ -28,7 +29,7 @@ const sendMark= function(mark, sid){
     return sendRequest(body,url);
 };
 
-const sendFeedback = function (html, sid){
+module.exports.sendFeedback = function (html, sid){
     const url = `${NEXUS_BASE_URL}/report_feedback/${sid}/${NEXUS_TOOL_CANONICAL_NAME}`;
     return sendRequest({body:html},url);
 };

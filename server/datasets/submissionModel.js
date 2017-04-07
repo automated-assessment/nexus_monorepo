@@ -20,25 +20,22 @@ const submissionSchema = new Schema({
     studentuid: Number,
     //The email of the student.
     studentemail: String,
-    //The SHA-1 hash for the student's git submission commit.
+    //The SHA-1 for the student's git submission commit.
     sha: String,
     //The git branch the student has committed their work to.
     branch: String,
     //The clone url of the repository, used to extract the repository.
     cloneurl: String,
-    //The randomly generated, unique cryptographic hash key used to authorise
+    //The randomly generated, unique cryptographic key used to authorise
     //the submitting student to view this submission, their receivers and their providers.
-    submissionHash: String,
+    token: String,
     //The date the submission was created.
     dateCreated: String,
-    configuration: {
-        awaitBiDirection: Boolean,
-        contributeFinalMark: Boolean
-    }
+    //The email of the academic to uniquely identify the academic
+    academicEmail:String
 });
-submissionSchema.methods.verifyPassword = function(candidateHash){
-    console.log("candidate:"+ candidateHash,"actual:" + this.submissionHash);
-    return this.submissionHash === candidateHash;
+submissionSchema.methods.verifyPassword = function(candidatetoken){
+    return this.token === candidatetoken;
 };
 
 module.exports = mongoose.model('Submission',submissionSchema);

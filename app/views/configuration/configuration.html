@@ -1,28 +1,25 @@
 <div class="page-header"><h3>Configuration</h3></div>
 
+
 <form class="form-horizontal">
     <!--Number of allocations form-group-->
     <div class="form-group">
         <label class="col-sm-2 control-label">Allocations:</label>
         <div class="col-sm-1">
-            <select class="form-control"
+            <select tooltip-placement="right" uib-tooltip="{{vm.tooltip.providerCount}}" uib-tooltip-class="tooltip" class="form-control"
                     ng-options="number as number for number in vm.providerCounts"
                     ng-model="vm.assignment.providerCount"></select>
         </div>
-        <!-- //TODO: Move to ui-bootstrap tooltip -->
-        <span class="help-block">The maximum number of one-way allocations between any two submissions.</span>
     </div>
 
     <!--Previous form form-group-->
     <div class="form-group">
         <label class="col-sm-2 control-label">Use previous form:</label>
         <div class="col-sm-3">
-            <select class="form-control"
+            <select tooltip-placement="right" uib-tooltip="{{vm.tooltip.usePreviousForm}}" uib-tooltip-class="tooltip" class="form-control"
                     ng-options="date as date for date in vm.dates"
                     ng-model="vm.assignment.dateCreated"></select>
         </div>
-        <!-- //TODO: Move to ui-bootstrap tooltip -->
-        <span class="help-block">Load a form previously used.</span>
     </div>
 
     <!-- Additional options form-group -->
@@ -30,8 +27,9 @@
         <label class="col-md-2 control-label">Additional options</label>
         <div class="col-md-4">
             <!--Contribute to final mark checkbox-->
+
             <div class="checkbox">
-                <label for="contributionCheckbox">
+                <label tooltip-placement="right" uib-tooltip="{{vm.tooltip.bidirectionalFeedback}}" for="contributionCheckbox" >
                     <input type="checkbox" name="checkboxes" id="contributionCheckbox"
                            ng-model="vm.assignment.additionalConfiguration.awaitBiDirection">
                     Bidirectional feedback
@@ -40,7 +38,8 @@
 
             <!--Await bidirection checkbox -->
             <div class="checkbox">
-                <label for="biDirectionCheckbox">
+
+                <label tooltip-placement="right" uib-tooltip="{{vm.tooltip.sendMarkToNexus}}" for="biDirectionCheckbox">
                     <input type="checkbox" name="checkboxes" id="biDirectionCheckbox"
                            ng-model="vm.assignment.additionalConfiguration.contributeFinalMark">
                     Send mark to Nexus

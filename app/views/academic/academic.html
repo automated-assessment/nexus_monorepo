@@ -6,9 +6,15 @@
     Search by sid:<input ng-model="searchText.sid">
     Search by name:<input ng-model="searchText.student">
 
+    {{vm.token}}
+    {{vm.email}}
 
-    <div ng-repeat="submission in vm.submissions|filter:searchText">{{submission.student}} submitted {{submission.sid}}</div>
-
-
-    <a ng-href="http://www.google.com">Google</a>
+    <uib-accordion>
+        <div ng-repeat="submission in vm.submissions|filter:searchText">
+            <accordion header="{{submission.student}} submitted {{submission.sid}}">
+                {{submission}}
+            </accordion>
+        </div>
+        </div>
+    </uib-accordion>
 </section>

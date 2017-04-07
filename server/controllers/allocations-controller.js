@@ -4,28 +4,15 @@
 
 const Allocation = require('../datasets/allocationModel');
 const Submission = require('../datasets/submissionModel');
+const markUtils = require('../utilities/mark-utils');
+
+const submissionsController = require('./submissions-controller');
 
 module.exports.getProviders = function(req,res){
 
     if(req.user.sid === Number(req.params.receiverSid)){
-        Submission.aggregate([
-            {
-                $lookup:{
-                    from:"allocations",
-                    localField:"sid",
-                    foreignField:"receiverSid",
-                    as:"providers"
-                }
-            },
-            {
-                $match:{"providers.receiverSid":Number(req.params.receiverSid)}
-            },
-            {
-                $project:{"providers":1}
-            }
-        ])
+        exports.queryProviders({receiverSid:Number(req.params.receiverSid)})
             .then(function(response){
-                response = response[0];
                 res.send(response);
             })
     } else {
@@ -34,25 +21,35 @@ module.exports.getProviders = function(req,res){
 
 };
 
+module.exports.queryProviders = function(query){
+    return Submission.aggregate([
+        {
+            $lookup:{
+                from:"allocations",
+                localField:"sid",
+                foreignField:"receiverSid",
+                as:"providers"
+            }
+        },
+        {
+            $match:{"providers.receiverSid":query.receiverSid}
+        },
+        {
+            $project:{"providers":1}
+        }
+    ])
+        .then(function(response){
+            return response[0];
+        })
+
+};
+
+
+
 module.exports.getReceivers = function(req,res){
     if(req.user.sid === Number(req.params.providerSid)){
-        Submission.aggregate(
-            {
-                $lookup:{
-                    from:"allocations",
-                    localField:"sid",
-                    foreignField:"providerSid",
-                    as:"receivers"
-                }
-            },
-            {
-                $match:{"receivers.providerSid":Number(req.params.providerSid)}
-            },
-            {
-                $project:{"receivers":1}
-            })
+        exports.queryReceivers({providerSid:Number(req.params.providerSid)})
             .then(function(response){
-                response = response[0];
                 res.send(response);
             })
     } else {
@@ -61,7 +58,30 @@ module.exports.getReceivers = function(req,res){
 
 };
 
+module.exports.queryReceivers = function(query){
+
+    return Submission.aggregate(
+        {
+            $lookup:{
+                from:"allocations",
+                localField:"sid",
+                foreignField:"providerSid",
+                as:"receivers"
+            }
+        },
+        {
+            $match:{"receivers.providerSid":query.providerSid}
+        },
+        {
+            $project:{"receivers":1}
+        })
+        .then(function(response){
+            return response[0];
+        })
+};
+
 module.exports.updateAllocation = function(req,res){
+
 
     if(req.user.sid === Number(req.params.providerSid)){
         const query = {
@@ -76,13 +96,14 @@ module.exports.updateAllocation = function(req,res){
 
         Allocation.findOneAndUpdate(query,update)
             .then(function(response){
+                markUtils.updateMark(response);
                 res.send(response);
             });
     } else{
         res.status(401).send("Unauthorised");
     }
-
 };
+
 
 module.exports.getOneAllocation = function (req,res) {
 

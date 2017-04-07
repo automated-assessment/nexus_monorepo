@@ -10,9 +10,6 @@ module.exports = mongoose.model('Assignment',{
     providerCount:Number,
     //The form as built by the academic, to be used by all providers.
     formBuild:String,
-    //The randomly generated, unique cryptographic hash key used to authorise
-    //this teacher to view this assignment.
-    teacherHash:String,
     //The date the assignment configuration was created.
     dateCreated:Date,
     additionalConfiguration:{
@@ -20,6 +17,8 @@ module.exports = mongoose.model('Assignment',{
         awaitBiDirection:Boolean,
         //Represents whether 'send final mark to Nexus' is ticked.
         contributeFinalMark:Boolean
-    }
+    },
+    //The academics email address
+    email:String
 });
 

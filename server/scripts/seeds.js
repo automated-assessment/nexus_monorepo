@@ -10,7 +10,7 @@ const request = require('request-promise');
 //commits arent blobs. what am i thinking?!
 
 //create blobs, create tree from blobs, create commit, push commit.
-const TOKEN = process.env.NEXUS_GITHUB_TOKEN;
+token = process.env.NEXUS_GITHUB_TOKEN;
 commitQuery()
     .then(function(response){
         console.log(response);

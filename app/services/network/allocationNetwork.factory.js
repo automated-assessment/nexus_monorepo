@@ -24,23 +24,23 @@
 
 
         //Get the student's receivers
-        function getReceivers(providerSid, hash) {
-            const token = window.btoa(`${providerSid}:${hash}`);
+        function getReceivers(providerSid, token) {
+            const authToken = window.btoa(`${providerSid}:${token}`);
             return $http.get(`/api/allocations/receivers/${providerSid}`,
                 {
                     headers: {
-                        'Authorization': `Basic ${token}`
+                        'Authorization': `Basic ${authToken}`
                     }
                 });
         }
 
         //Get the student's providers
-        function getProviders(receiverSid, hash) {
-            const token = window.btoa(`${receiverSid}:${hash}`);
+        function getProviders(receiverSid, token) {
+            const authToken = window.btoa(`${receiverSid}:${token}`);
             return $http.get(`/api/allocations/providers/${receiverSid}`,
                 {
                     headers: {
-                        'Authorization': `Basic ${token}`
+                        'Authorization': `Basic ${authToken}`
                     }
                 });
         }
@@ -48,29 +48,27 @@
         function getOneAllocation($stateParams, loadPattern) {
             const providerSid = $stateParams.providerSid;
             const receiverSid = $stateParams.receiverSid;
-            const hash = $stateParams.hash;
-            let token ="";
+            let authToken =$stateParams.token;
             if (loadPattern === this.PROVIDER) {
-                token = window.btoa(`${providerSid}:${hash}`);
+                authToken = window.btoa(`${providerSid}:${authToken}`);
             } else if (loadPattern === this.RECEIVER) {
-                token = window.btoa(`${receiverSid}:${hash}`);
-
+                authToken = window.btoa(`${receiverSid}:${authToken}`);
             } else {
                 console.log("Select a loadPattern");
             }
             return $http.get(`/api/allocations/${receiverSid}/${providerSid}`, {
                 headers: {
-                    'Authorization': `Basic ${token}`
+                    'Authorization': `Basic ${authToken}`
                 }
             });
         }
 
         //Update a particular allocation.
-        function updateAllocation(receiverSid, providerSid, hash, update) {
-            const token = window.btoa(`${providerSid}:${hash}`);
+        function updateAllocation(receiverSid, providerSid, token, update) {
+            const authToken = window.btoa(`${providerSid}:${token}`);
             return $http.put(`/api/allocations/${receiverSid}/${providerSid}`, update, {
                 headers: {
-                    'Authorization': `Basic ${token}`
+                    'Authorization': `Basic ${authToken}`
                 }
             });
         }

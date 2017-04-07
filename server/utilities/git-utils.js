@@ -7,15 +7,16 @@ const OWNER = process.env.NEXUS_GITHUB_ORG;
 const TOKEN = process.env.NEXUS_GITHUB_TOKEN;
 
 module.exports.getSubmission = function (repo, branch, sha) {
-    const getFiles = getTree(repo, branch, sha)
+    return getTree(repo, branch, sha)
         .then(function (response) {
+            if(response.error){
+                return null;
+            }
             response = JSON.parse(response);
-            return parseTree(response.tree);
+            const fileNames = parseTree(response.tree);
+            return getContentArray(fileNames, repo,branch);
         });
-    return getFiles
-        .then(function (fileNames) {
-            return getContentArray(fileNames,repo,branch);
-        });
+
 };
 
 function getContentArray(fileNames,repo,branch) {
@@ -97,4 +98,3 @@ function queryGit(query) {
         });
 }
 
-//TODO: EIther return request or print?

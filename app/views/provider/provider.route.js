@@ -7,7 +7,7 @@
         .config(['$stateProvider', function ($stateProvider) {
             $stateProvider
                 .state('frameState.providerState', {
-                    url: '/provider?receiverSid?providerSid?hash',
+                    url: '/provider?receiverSid?providerSid?token',
                     params: {
                         receiverSid: null,
                         providerSid: null,
@@ -26,7 +26,7 @@
             provider.$inject = ['$stateParams','allocationNetwork'];
 
             function submission($stateParams, gitNetwork,$sce) {
-                return gitNetwork.getGitSubmission($stateParams.receiverSid)
+                return gitNetwork.getGitSubmission($stateParams)
                     .then(function (response) {
                         return trustHtml(response.data,$sce);
                     });

@@ -7,7 +7,7 @@
         .config(['$stateProvider',function($stateProvider){
             $stateProvider
                 .state('frameState.receiverState',{
-                    url:'/receiver?receiverSid,providerSid?hash',
+                    url:'/receiver?receiverSid,providerSid?token',
                     params:{
                         receiverSid:null,
                         providerSid:null,

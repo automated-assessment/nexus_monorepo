@@ -4,12 +4,16 @@
 
 const BasicStrategy = require('passport-http').BasicStrategy;
 const Submission = require('../datasets/submissionModel');
-module.exports.studentStrategy = new BasicStrategy(
-    function (sid, hash, done) {
 
+module.exports.studentStrategy = new BasicStrategy(
+    function (sid, token, done) {
+        console.log("Wrong one");
         Submission.findOne({sid: sid})
             .then(function (submission) {
-                if (submission.verifyPassword(hash)) {
+                if(!submission){
+                    return done(null,false)
+                }
+                if (submission.verifyPassword(token)) {
                     console.log('accepted');
                     return done(null, submission);
                 } else {

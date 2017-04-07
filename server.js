@@ -35,31 +35,31 @@ app.use(bodyParser.json());
 app.use('/app',express.static(__dirname + '/app')); //change to public to fit convention
 app.use('/css',express.static(__dirname+'/css'));
 app.use('/node_modules',express.static(__dirname+'/node_modules'));
-passport.use(passportUtils.studentStrategy);
 
-const studentAuth = passport.authenticate('basic',{session:false});
+passport.use('basic',passportUtils.studentStrategy);
 
+const basicAuth = passport.authenticate('basic',{session:false});
 
 
 //Submissions
 app.get('/api/submissions',submissionsController.getAllSubmissions);
-app.get('/api/submissions/:sid',studentAuth,submissionsController.getOneSubmission);
+app.get('/api/submissions/:sid',basicAuth,submissionsController.getOneSubmission);
 app.post('/mark',submissionsController.createSubmission);
 
-app.get('/api/allocations/providers/:receiverSid',studentAuth,allocationsController.getProviders);
-app.get('/api/allocations/receivers/:providerSid',studentAuth,allocationsController.getReceivers);
+app.get('/api/allocations/providers/:receiverSid',basicAuth,allocationsController.getProviders);
+app.get('/api/allocations/receivers/:providerSid',basicAuth,allocationsController.getReceivers);
 
-app.get('/api/allocations/:receiverSid/:providerSid',studentAuth,allocationsController.getOneAllocation);
-app.put('/api/allocations/:receiverSid/:providerSid',studentAuth,allocationsController.updateAllocation);
+app.get('/api/allocations/:receiverSid/:providerSid',basicAuth,allocationsController.getOneAllocation);
+app.put('/api/allocations/:receiverSid/:providerSid',basicAuth,allocationsController.updateAllocation);
 
 
 //Assignments
 app.get('/api/assignments',assignmentsController.getAllAssignments);
-app.get('/api/assignments/:aid',assignmentsController.getOneAssignment);
+app.get('/api/assignments/:aid',basicAuth,assignmentsController.getOneAssignment);
 app.get('/api/assignments/:aid/submissions',submissionsController.getAssignmentSubmissions);
 app.put('/api/assignments/:aid',assignmentsController.updateAssignment);
 
-app.get('/api/git/:receiverSid',gitController.getGitSubmission);
+app.get('/api/git/:receiverSid',basicAuth,gitController.getGitSubmission);
 
 
 app.get('/',function(req,res){

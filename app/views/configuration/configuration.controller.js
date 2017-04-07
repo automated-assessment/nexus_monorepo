@@ -5,14 +5,15 @@
     angular.module('PeerFeedback')
         .controller('ConfigurationController', ConfigurationController);
 
-    ConfigurationController.$inject = ['notificationService', 'assignment', 'assignmentNetwork', 'providerCounts'];
+    ConfigurationController.$inject = ['notificationService', 'assignment', 'assignmentNetwork', 'providerCounts','tooltip','$stateParams'];
 
-    function ConfigurationController(notificationService, assignment, assignmentNetwork, providerCounts) {
+    function ConfigurationController(notificationService, assignment, assignmentNetwork, providerCounts,tooltip,$stateParams) {
         const vm = this;
 
+        console.log($stateParams);
+
         activate();
-        vm.assignment = assignment;
-        vm.assignment.dateCreated = vm.dates[0];
+
 
         vm.updateAssignment = updateAssignment;
 
@@ -29,13 +30,15 @@
                         notificationService.create(failMessage, notificationService.FAILURE);
                     })
         }
-        //TODO implement contribution
 
 
         function activate() {
+            vm.tooltip = tooltip;
             vm.providerCounts = providerCounts;
             //TODO retrieve previous assignmentConfigs by date
             vm.dates = [new Date().toDateString(), new Date().toDateString()];
+            vm.assignment = assignment;
+            vm.assignment.dateCreated = vm.dates[0];
         }
 
     }
