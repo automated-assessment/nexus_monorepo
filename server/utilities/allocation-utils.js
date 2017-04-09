@@ -44,6 +44,7 @@ const associate = function (receiver, provider, assignment) {
         currentForm: assignment.formBuild,
         receiverSid: receiver.sid,
         providerSid: provider.sid,
+        aid:assignment.aid,
         alias: randomName({seed: Math.random()}),
         provided: false,
         dateAllocated: new Date(),

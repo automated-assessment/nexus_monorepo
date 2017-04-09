@@ -12,8 +12,8 @@ module.exports.studentStrategy = new BasicStrategy(
         console.log("Hit student strategy");
         Submission.findOne({sid: sid})
             .then(function (submission) {
-                if(!submission){
-                    return done(null,false);
+                if (!submission) {
+                    return done(null, false);
                 }
                 if (submission.verifyToken(token)) {
                     return done(null, submission);
@@ -27,24 +27,39 @@ module.exports.studentStrategy = new BasicStrategy(
 
     }
 );
-
+//can either authenticate on behalf of submission or as aid
 module.exports.academicStrategy = new BasicStrategy(
-    function(aid,password,done){
+    function (id, password, done) {
+        console.log(id, password);
         console.log("Hit academic strategy");
-        Assignment.findOne({aid:aid})
-            .then(function(assignment){
-                if(!assignment){
-                    return done(null,false);
-                }
-                if(password === academicToken && assignment.verifyEmail(assignment.email)){
-                    console.log("hit");
-                    return done(null,assignment);
-                } else {
-                    return done(null,false);
-                }
-            }, function(err){
-                return done(null,false);
+        if (!id) {
+            return done(null, false);
+        }
+        const testAssignment = Assignment.findOne({aid: id})
+            .then(function (assignment) {
+                return assignment
             });
-
+        testAssignment.then(function (potentialAssignment) {
+            if (potentialAssignment) {
+                if (password === academicToken) {
+                    return done(null, potentialAssignment);
+                }
+            }
+            Submission.findOne({sid: id})
+                .then(function (submission) {
+                    Assignment.findOne({aid: submission.aid})
+                        .then(function (assignment) {
+                            if (password === academicToken && assignment.email === submission.academicEmail) {
+                                return done(null, submission);
+                            } else {
+                                return done(null, false);
+                            }
+                        }, function (err) {
+                            return done(null, false);
+                        });
+                }, function (err) {
+                    return done(null, false)
+                });
+        })
     }
-);
+)

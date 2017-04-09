@@ -10,7 +10,6 @@
     function ConfigurationController(notificationService, assignment, assignmentNetwork, providerCounts,tooltip,$stateParams) {
         const vm = this;
 
-        console.log($stateParams);
 
         activate();
 
@@ -19,7 +18,7 @@
 
 
         function updateAssignment() {
-            console.log(vm.assignment);
+
             assignmentNetwork.updateAssignment(vm.assignment.aid, vm.assignment)
                 .then(function (response) {
                         const successMessage = "Assignment configuration saved successfully.";

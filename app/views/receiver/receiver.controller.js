@@ -22,8 +22,15 @@
                 aid:$stateParams.aid,
                 receiverSid:$stateParams.receiverSid,
                 providerSid:$stateParams.providerSid,
-                token:$stateParams.token
             };
+
+            vm.auth ={
+                token:$stateParams.token,
+                email:$stateParams.email
+            };
+
+            vm.academic=$stateParams.academic;
+
 
             vm.receiver = receiver;
 

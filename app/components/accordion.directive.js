@@ -25,15 +25,22 @@
             templateUrl:'/app/templates/accordion.tpl',
         };
 
-        function link(scope,elem,attrs){
-            const vm = scope.vm;
+        function link(scope,elem,attrs,vm){
+
             vm.submission = {};
+                vm.auth = {
+                    token:'foo',
+                    email:'test'
+                };
+            vm.academic = true;
             vm.submission.core = scope.vm.submissionCore;
-            console.log(vm.submission.core);
             const auth = {
                 user:$stateParams.aid,
                 token:$stateParams.token
             };
+            vm.token = 'foo';
+
+            vm.academic = true;
             $stateParams.sid = vm.submission.core.sid;
             allocationNetwork.getReceivers($stateParams,auth)
                 .then(function(response){

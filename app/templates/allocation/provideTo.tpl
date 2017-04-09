@@ -12,7 +12,7 @@
         <tbody>
         <tr ng-repeat="receiver in vm.submission.provideTo" ng-class="{danger: !receiver.provided}">
             <td>
-                <a ui-sref="frameState.providerState({receiverSid:{{receiver.receiverSid}},providerSid:{{vm.submission.core.sid}},aid:{{vm.submission.core.aid}},token:'{{vm.submission.core.token}}',name:'{{receiver.alias}}'})">
+                <a ui-sref="frameState.providerState({receiverSid:{{receiver.receiverSid}},providerSid:{{vm.submission.core.sid}},aid:{{vm.submission.core.aid}},token:'{{vm.auth.token}}',email:'{{vm.auth.email}}',academic:'{{vm.academic}}'})">
                     {{receiver.alias}} ({{receiver.receiverSid}})
                 </a></td>
             <td>{{receiver.dateAllocated | date: 'shortDate'}}</td>

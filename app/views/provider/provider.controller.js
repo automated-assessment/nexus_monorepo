@@ -13,7 +13,7 @@
         const vm = this;
         activate();
 
-
+        console.log(submission);
         vm.mark.hoveringOver = function (value) {
             vm.mark.overStar = value;
             vm.mark.percent = 100 * (value / vm.mark.max);
@@ -29,7 +29,7 @@
             };
 
 
-            allocationNetwork.updateAllocation(vm.core.receiverSid, vm.core.providerSid,vm.core.token, update)
+            allocationNetwork.updateAllocation(vm.core.receiverSid, vm.core.providerSid,vm.auth.token, update)
                 .then(function (response) {
                         const successMessage = "Your feedback has been successfully submitted. Thank you";
                         notificationService.create(successMessage, notificationService.SUCCESS);
@@ -48,8 +48,13 @@
             vm.core = {
                 receiverSid: $stateParams.receiverSid,
                 providerSid: $stateParams.providerSid,
-                token:$stateParams.token
+                aid:$stateParams.aid
             };
+            vm.auth = {
+                token:$stateParams.token,
+                email:$stateParams.email
+            };
+            vm.academic = $stateParams.academic;
             vm.provider = provider;
             vm.submission = submission;
 

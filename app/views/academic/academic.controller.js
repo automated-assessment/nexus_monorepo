@@ -11,9 +11,7 @@
     function AcademicController($stateParams,assignmentSubmissions){
         const vm = this;
 
-        vm.email = $stateParams.email;
-        vm.token = $stateParams.token;
-        console.log(assignmentSubmissions);
         vm.submissions = assignmentSubmissions;
+
     }
 }());

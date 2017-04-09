@@ -18,15 +18,19 @@
             assignmentSubmissions.$inject = ['$stateParams','submissionNetwork'];
 
             function assignmentSubmissions($stateParams,submissionNetwork){
-                const auth = {
-                    user:$stateParams.aid,
-                    token:$stateParams.token
-                };
+                if($stateParams.aid && $stateParams.token){
+                    const auth = {
+                        user:$stateParams.aid,
+                        token:$stateParams.token
+                    };
+                    return submissionNetwork.getAssignmentSubmissions($stateParams,auth)
+                        .then(function(response){
+                            return response.data;
+                        })
 
-                return submissionNetwork.getAssignmentSubmissions($stateParams,auth)
-                    .then(function(response){
-                        return response.data;
-                    })
+                }
+
+
 
             }
         }]);

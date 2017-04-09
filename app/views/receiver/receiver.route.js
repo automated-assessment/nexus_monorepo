@@ -11,7 +11,9 @@
                     params:{
                         receiverSid:null,
                         providerSid:null,
-                        aid:null
+                        aid:null,
+                        email:null,
+                        academic:false,
                     },
                     templateUrl:'app/views/receiver/receiver.html',
                     controller:'ReceiverController as vm',

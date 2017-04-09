@@ -1,11 +1,19 @@
 <section>
 
-
-
     <form render-form current-form="vm.receiver.currentForm" disable="vm.readOnly"></form>
 
-    <a ui-sref="frameState.allocationState({sid:{{vm.core.receiverSid}}, token:'{{vm.core.token}}'})">
-        <button class="btn btn-primary" >Back</button>
+    <button class="btn btn-primary" ng-click="vm.updateFeedback()">Save</button>
+
+    <span ng-hide="{{vm.academic}}">
+    <a ui-sref="frameState.allocationState({sid:{{vm.core.receiverSid}},token:'{{vm.auth.token}}'})">
+        <button class="btn btn-primary">Back</button>
     </a>
+    </span>
+
+    <span ng-show="{{vm.academic}}">
+    <a ui-sref="frameState.academicState({aid:'{{vm.core.aid}}',token:'{{vm.auth.token}}',email:'{{vm.auth.email}}'})">
+    <button class="btn btn-primary">Back</button>
+    </a>
+    </span>
 
 </section>

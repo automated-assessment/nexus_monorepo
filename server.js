@@ -55,7 +55,7 @@ app.post('/mark',submissionsController.createSubmission);
 app.get('/api/allocations/providers/:receiverSid',academicThenStudentAuth,allocationsController.getProviders);
 app.get('/api/allocations/receivers/:providerSid',academicThenStudentAuth,allocationsController.getReceivers);
 
-app.get('/api/allocations/:receiverSid/:providerSid',studentAuth,allocationsController.getOneAllocation);
+app.get('/api/allocations/:receiverSid/:providerSid',academicThenStudentAuth,allocationsController.getOneAllocation);
 app.put('/api/allocations/:receiverSid/:providerSid',studentAuth,allocationsController.updateAllocation);
 
 
@@ -65,7 +65,7 @@ app.get('/api/assignments/:aid',assignmentsController.getOneAssignment);
 app.get('/api/assignments/:aid/submissions',academicAuth,submissionsController.getAssignmentSubmissions);
 app.put('/api/assignments/:aid',assignmentsController.updateAssignment);
 
-app.get('/api/git/:receiverSid',studentAuth,gitController.getGitSubmission);
+app.get('/api/git/:receiverSid',academicThenStudentAuth,gitController.getGitSubmission);
 
 
 app.get('/',function(req,res){

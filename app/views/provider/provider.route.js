@@ -11,7 +11,9 @@
                     params: {
                         receiverSid: null,
                         providerSid: null,
-                        aid: null
+                        aid:null,
+                        email:null,
+                        academic:false
                     },
                     templateUrl: 'app/views/provider/provider.html',
                     controller: 'ProviderController as vm',

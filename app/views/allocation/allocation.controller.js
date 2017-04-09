@@ -6,14 +6,19 @@
         .controller('AllocationController', AllocationController);
 
 
-    AllocationController.$inject = ['submission', 'receivers', 'providers','allocationDisplay'];
-    function AllocationController(submission, receivers, providers,allocationDisplay) {
+    AllocationController.$inject = ['$stateParams','submission', 'receivers', 'providers','allocationDisplay'];
+    function AllocationController($stateParams,submission, receivers, providers,allocationDisplay) {
 
 
 
         const vm = this;
 
+
+        vm.auth = {
+            token: $stateParams.token
+        };
         vm.submission = {
+
             core: submission,
             provideTo: receivers.receivers,
             receivedFrom: providers.providers

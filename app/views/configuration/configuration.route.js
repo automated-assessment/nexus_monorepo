@@ -31,6 +31,7 @@
                                 return {
                                     aid:$stateParams.aid,
                                     providerCount:2,
+                                    email:$stateParams.email,
                                     additionalConfiguration:{
                                         awaitBiDirection:false,
                                         contributeFinalMark:false

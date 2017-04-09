@@ -10,11 +10,9 @@
         </tr>
         </thead>
         <tbody>
-
-
-        <tr ng-repeat="provider in vm.submission.receivedFrom" ng-show="provider.display">
+        <tr ng-repeat="provider in vm.submission.receivedFrom" ng-show="provider.display||vm.academic">
             <td>
-                <a ui-sref="frameState.receiverState({receiverSid:{{vm.submission.core.sid}},providerSid:{{provider.providerSid}},token:'{{vm.submission.core.token}}',name:'{{provider.alias}}'})">
+                <a ui-sref="frameState.receiverState({receiverSid:{{vm.submission.core.sid}},providerSid:{{provider.providerSid}},aid:{{vm.submission.core.aid}},token:'{{vm.auth.token}}',email:'{{vm.auth.email}}',academic:'{{vm.academic}}'})">
                     {{provider.alias}} ({{provider.providerSid}})
                 </a></td>
             <td>{{provider.dateAllocated | date: 'shortDate'}}</td>
