@@ -10,18 +10,18 @@ const responseUtils = require('../utilities/response-utils');
 module.exports.updateMark = function (allocation) {
     submissionsController.queryOneSubmission({sid: allocation.receiverSid})
         .then(function (submission) {
-            assignmentsController.queryAssignment({aid: submission.aid})
+            assignmentsController.queryOneAssignment({aid: submission.aid})
                 .then(function (assignment) {
-                    if(assignment.additionalConfiguration.contributeFinalMark){
+                    if(assignment && assignment.additionalConfiguration.contributeFinalMark){
+                        console.log("HIT BIGTIME");
                         const providerCount = assignment.providerCount;
                         allocationsController.queryProviders({receiverSid: submission.sid})
                             .then(function (allocation) {
                                 const mark = checkAndCalculate(allocation.providers,providerCount);
+                                console.log(mark);
                                 if(typeof mark === "number"){
+
                                     responseUtils.sendMark(mark,submission.sid)
-                                        .then(function(response){
-                                            console.log(response);
-                                        })
                                 }
                             });
                     }
@@ -34,7 +34,6 @@ module.exports.updateMark = function (allocation) {
 
 
 function checkAndCalculate(providers, providerCount) {
-
     if (providerCount !== providers.length) {
         return;
     }

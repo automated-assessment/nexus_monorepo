@@ -7,8 +7,6 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const Schema = mongoose.Schema;
 
-
-
 const submissionSchema = new Schema({
     //The unique of the submission.
     sid: Number,
@@ -32,9 +30,11 @@ const submissionSchema = new Schema({
     //The date the submission was created.
     dateCreated: String,
     //The email of the academic to uniquely identify the academic
-    academicEmail:String
+    academicEmail:String,
+    //The submission has been successfully allocated
+    isAllocated:Boolean
 });
-submissionSchema.methods.verifyPassword = function(candidatetoken){
+submissionSchema.methods.verifyToken = function(candidatetoken){
     return this.token === candidatetoken;
 };
 

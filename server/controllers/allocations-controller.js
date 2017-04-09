@@ -9,8 +9,7 @@ const markUtils = require('../utilities/mark-utils');
 const submissionsController = require('./submissions-controller');
 
 module.exports.getProviders = function(req,res){
-
-    if(req.user.sid === Number(req.params.receiverSid)){
+    if(req.user.sid === Number(req.params.receiverSid) || true){
         exports.queryProviders({receiverSid:Number(req.params.receiverSid)})
             .then(function(response){
                 res.send(response);
@@ -47,7 +46,9 @@ module.exports.queryProviders = function(query){
 
 
 module.exports.getReceivers = function(req,res){
-    if(req.user.sid === Number(req.params.providerSid)){
+    //email address needs to be checked against a student not an assignment
+    if(req.user.sid === Number(req.params.providerSid)||true){
+        console.log("Hello");
         exports.queryReceivers({providerSid:Number(req.params.providerSid)})
             .then(function(response){
                 res.send(response);

@@ -8,36 +8,52 @@
         .module('PeerFeedback')
         .directive('accordion', accordion);
 
-   // accordion.$inject = [''];
+   accordion.$inject = ['$stateParams','allocationNetwork'];
 
     /* @ngInject */
-    function accordion() {
+    function accordion($stateParams,allocationNetwork) {
         return {
-            bindToController: true,
-            controller: accordionController,
-            controllerAs: 'vm',
             link: link,
+            bindToController:true,
+            controller:accordionController,
+            controllerAs:'vm',
             restrict: 'E',
             scope: {
-                header:'@'
+               submissionCore:'<',
+                email:'<'
             },
-            template:'<div uib-accordion-group class="panel-default" heading="{{vm.header}}" is-open="false"><ng-transclude></ng-transclude></div>',
-            transclude:true
+            templateUrl:'/app/templates/accordion.tpl',
         };
 
+        function link(scope,elem,attrs){
+            const vm = scope.vm;
+            vm.submission = {};
+            vm.submission.core = scope.vm.submissionCore;
+            console.log(vm.submission.core);
+            const auth = {
+                user:$stateParams.aid,
+                token:$stateParams.token
+            };
+            $stateParams.sid = vm.submission.core.sid;
+            allocationNetwork.getReceivers($stateParams,auth)
+                .then(function(response){
+                    vm.submission.provideTo = response.data.receivers;
+                });
 
-        function link(scope, element, attrs) {
-            console.log(scope);
+            allocationNetwork.getProviders($stateParams,auth)
+                .then(function(response){
+                    vm.submission.receivedFrom = response.data.providers;
+                })
+
         }
     }
 
-
-
-
     /* @ngInject */
-    function accordionController() {
-        const vm = this;
 
+    accordionController.$inject = ['allocationNetwork'];
+
+    function accordionController(allocationNetwork) {
+        const vm = this;
 
     }
 

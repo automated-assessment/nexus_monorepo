@@ -26,6 +26,12 @@ const gitController = require(__dirname + '/server/controllers/git-controller.js
 mongoose.Promise= global.Promise;
 mongoose.connect(`mongodb://${dbHost}/peerfeedback`);
 
+//Begin: Not my code
+process.on('SIGINT', function() {
+    process.exit();
+});
+//End: Not my code
+
 
 const app = express();
 
@@ -37,29 +43,29 @@ app.use('/css',express.static(__dirname+'/css'));
 app.use('/node_modules',express.static(__dirname+'/node_modules'));
 
 passport.use('basic',passportUtils.studentStrategy);
-
-const basicAuth = passport.authenticate('basic',{session:false});
-
+passport.use('academic',passportUtils.academicStrategy);
+const studentAuth = passport.authenticate('basic',{session:false});
+const academicAuth = passport.authenticate('academic',{session:false});
+const academicThenStudentAuth = passport.authenticate(['academic','basic'],{session:false});
 
 //Submissions
-app.get('/api/submissions',submissionsController.getAllSubmissions);
-app.get('/api/submissions/:sid',basicAuth,submissionsController.getOneSubmission);
+app.get('/api/submissions/:sid',academicThenStudentAuth,submissionsController.getOneSubmission);
 app.post('/mark',submissionsController.createSubmission);
 
-app.get('/api/allocations/providers/:receiverSid',basicAuth,allocationsController.getProviders);
-app.get('/api/allocations/receivers/:providerSid',basicAuth,allocationsController.getReceivers);
+app.get('/api/allocations/providers/:receiverSid',academicThenStudentAuth,allocationsController.getProviders);
+app.get('/api/allocations/receivers/:providerSid',academicThenStudentAuth,allocationsController.getReceivers);
 
-app.get('/api/allocations/:receiverSid/:providerSid',basicAuth,allocationsController.getOneAllocation);
-app.put('/api/allocations/:receiverSid/:providerSid',basicAuth,allocationsController.updateAllocation);
+app.get('/api/allocations/:receiverSid/:providerSid',studentAuth,allocationsController.getOneAllocation);
+app.put('/api/allocations/:receiverSid/:providerSid',studentAuth,allocationsController.updateAllocation);
 
 
 //Assignments
 app.get('/api/assignments',assignmentsController.getAllAssignments);
-app.get('/api/assignments/:aid',basicAuth,assignmentsController.getOneAssignment);
-app.get('/api/assignments/:aid/submissions',submissionsController.getAssignmentSubmissions);
+app.get('/api/assignments/:aid',assignmentsController.getOneAssignment);
+app.get('/api/assignments/:aid/submissions',academicAuth,submissionsController.getAssignmentSubmissions);
 app.put('/api/assignments/:aid',assignmentsController.updateAssignment);
 
-app.get('/api/git/:receiverSid',basicAuth,gitController.getGitSubmission);
+app.get('/api/git/:receiverSid',studentAuth,gitController.getGitSubmission);
 
 
 app.get('/',function(req,res){

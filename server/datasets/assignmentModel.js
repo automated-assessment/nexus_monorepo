@@ -2,23 +2,46 @@
  * Created by adamellis on 06/02/2017.
  */
 const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 
-module.exports = mongoose.model('Assignment',{
+const Schema = mongoose.Schema;
+
+const assignmentSchema = new Schema({
     //The unique id of the assignment.
-    aid:Number,
+    aid: Number,
     //The maximum number of allocations for a submission
-    providerCount:Number,
+    providerCount: Number,
     //The form as built by the academic, to be used by all providers.
-    formBuild:String,
+    formBuild: String,
     //The date the assignment configuration was created.
-    dateCreated:Date,
-    additionalConfiguration:{
+    dateCreated: Date,
+    additionalConfiguration: {
         //Represents whether 'await bidirectional feedback' is ticked.
-        awaitBiDirection:Boolean,
+        awaitBiDirection: Boolean,
         //Represents whether 'send final mark to Nexus' is ticked.
-        contributeFinalMark:Boolean
+        contributeFinalMark: Boolean
     },
     //The academics email address
-    email:String
+    email: String
 });
+
+
+
+assignmentSchema.methods.verifyEmail = function (candidateEmail) {
+    return this.email === candidateEmail;
+};
+
+assignmentSchema.methods.isAcademicOf = function (sid) {
+    const submissionsController = require('../controllers/submissions-controller');
+    const assignment = this;
+    console.log(assignment);
+    return submissionsController.queryOneSubmission({sid: sid})
+        .then(function (submission) {
+            if(submission){
+                return assignment.email === submission.academicEmail;
+            }
+        })
+};
+
+module.exports = mongoose.model('Assignment', assignmentSchema);
 

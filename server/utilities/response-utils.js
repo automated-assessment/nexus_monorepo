@@ -8,11 +8,12 @@ const NEXUS_TOOL_CANONICAL_NAME = process.env.NEXUS_TOOL_CANONICAL_NAME || 'peer
 const request = require('request-promise');
 
 module.exports.sendResponse = function(submission,assignment){
+    console.log(submission);
     const promiseArray = [];
-    const awaitMark = assignment.additionalConfiguration.contributeFinalMark;
-    if(!awaitMark){
+    if(assignment && !assignment.additionalConfiguration.contributeFinalMark){
         promiseArray.push(exports.sendMark(100,submission.sid));
     }
+
     const html =
         `<iframe src="http://localhost:3050/#!/frame/allocation?sid=${submission.sid}&token=${submission.token}" height="500" width="1000"`;
     promiseArray.push(exports.sendFeedback(html,submission.sid));
@@ -44,5 +45,9 @@ function sendRequest(body, url) {
         json: true,
         body:body
     };
-    return request(requestOptions);
+    return request(requestOptions)
+        .then(function(){
+        },function(){
+            console.log("Already sent feedback");
+        })
 }

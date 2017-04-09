@@ -24,9 +24,9 @@
 
 
         //Get the student's receivers
-        function getReceivers(providerSid, token) {
-            const authToken = window.btoa(`${providerSid}:${token}`);
-            return $http.get(`/api/allocations/receivers/${providerSid}`,
+        function getReceivers($stateParams, auth) {
+            const authToken = window.btoa(`${auth.user}:${auth.token}`);
+            return $http.get(`/api/allocations/receivers/${$stateParams.sid}`,
                 {
                     headers: {
                         'Authorization': `Basic ${authToken}`
@@ -35,9 +35,9 @@
         }
 
         //Get the student's providers
-        function getProviders(receiverSid, token) {
-            const authToken = window.btoa(`${receiverSid}:${token}`);
-            return $http.get(`/api/allocations/providers/${receiverSid}`,
+        function getProviders($stateParams, auth) {
+            const authToken = window.btoa(`${auth.user}:${auth.token}`);
+            return $http.get(`/api/allocations/providers/${$stateParams.sid}`,
                 {
                     headers: {
                         'Authorization': `Basic ${authToken}`
@@ -45,6 +45,7 @@
                 });
         }
 
+        //setup for auth
         function getOneAllocation($stateParams, loadPattern) {
             const providerSid = $stateParams.providerSid;
             const receiverSid = $stateParams.receiverSid;
@@ -64,6 +65,7 @@
         }
 
         //Update a particular allocation.
+        //do not need to auth academic
         function updateAllocation(receiverSid, providerSid, token, update) {
             const authToken = window.btoa(`${providerSid}:${token}`);
             return $http.put(`/api/allocations/${receiverSid}/${providerSid}`, update, {

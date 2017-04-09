@@ -1,20 +1,20 @@
 <section>
-    This is academic
-    <br/>
-
 
     Search by sid:<input ng-model="searchText.sid">
     Search by name:<input ng-model="searchText.student">
 
-    {{vm.token}}
-    {{vm.email}}
+    <div ng-hide="vm.email && vm.token">
+        UNAUTHORISED
+    </div>
+
 
     <uib-accordion>
         <div ng-repeat="submission in vm.submissions|filter:searchText">
-            <accordion header="{{submission.student}} submitted {{submission.sid}}">
-                {{submission}}
+            <accordion submission-core="submission" email="vm.email">
+                Hello
             </accordion>
         </div>
-        </div>
+
     </uib-accordion>
+
 </section>

@@ -31,6 +31,7 @@ module.exports.runAllocation = function (submission, assignment) {
                 const backwardAssociation = associate(randomProvider, submission, assignment);
                 allocationArray.push(forwardAssociation);
                 allocationArray.push(backwardAssociation);
+                console.log(allocationArray);
             });
             if (allocationArray.length != 0) {
                 return Allocation.insertMany(allocationArray);

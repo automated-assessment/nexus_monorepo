@@ -13,6 +13,7 @@
             save:save
         };
 
+        //Begin: Not my code
         function save(container,json){
             const originalFormData = JSON.parse(json);
             const formData = new FormData(container);
@@ -51,9 +52,6 @@
             }
             return JSON.stringify(originalFormData);
         }
-
-        function disable(){
-            //TODO: Disable the form
-        }
+        //End: Not my code
     }
 }());

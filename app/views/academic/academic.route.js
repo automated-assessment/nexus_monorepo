@@ -7,21 +7,27 @@
         .config(['$stateProvider',function($stateProvider){
             $stateProvider
                 .state('frameState.academicState',{
-                    url:'/academic?token?email',
+                    url:'/academic?aid?token?email',
                     templateUrl:'app/views/academic/academic.html',
                     controller:'AcademicController as vm',
                     resolve:{
-                        allSubmissions:allSubmissions
+                        assignmentSubmissions:assignmentSubmissions
                     }
                 });
 
-            allSubmissions.$inject = ['submissionNetwork'];
+            assignmentSubmissions.$inject = ['$stateParams','submissionNetwork'];
 
-            function allSubmissions(submissionNetwork){
-                return submissionNetwork.getAllSubmissions()
+            function assignmentSubmissions($stateParams,submissionNetwork){
+                const auth = {
+                    user:$stateParams.aid,
+                    token:$stateParams.token
+                };
+
+                return submissionNetwork.getAssignmentSubmissions($stateParams,auth)
                     .then(function(response){
                         return response.data;
                     })
+
             }
         }]);
 }());

@@ -13,62 +13,12 @@
 
         <!--Allocation-->
         <div ng-show="vm.submission.provideTo">
-            <h3>Provide feedback for the following students:</h3>
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>Alias</th>
-                    <th>Allocated on</th>
-                    <th>Last modified</th>
-                    <th>Mark</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="receiver in vm.submission.provideTo" ng-class="{danger: !receiver.provided}">
-                    <td>
-                        <a ui-sref="frameState.providerState({receiverSid:{{receiver.receiverSid}},providerSid:{{vm.submission.core.sid}},aid:{{vm.submission.core.aid}},token:'{{vm.submission.core.token}}',alias:'{{receiver.alias}}'})">
-                            {{receiver.alias}} ({{receiver.receiverSid}})
-                        </a></td>
-                    <td>{{receiver.dateAllocated | date: 'shortDate'}}</td>
-                    <td>{{receiver.dateModified | date:'shortDate'}}</td>
-                    <td>{{receiver.providerMark | percent}}</td>
-                </tr>
 
-                </tbody>
-            </table>
+            <div ng-include="'app/templates/provideTo.tpl'"></div>
         </div>
         <div ng-show="vm.submission.receivedFrom">
-            <h3>Received feedback from the following students:</h3>
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>Alias</th>
-                    <th>Allocated on</th>
-                    <th>Last modified</th>
-                    <th>Mark</th>
-                </tr>
-                </thead>
-                <tbody>
 
-
-                <tr ng-repeat="provider in vm.submission.receivedFrom" ng-show="provider.display">
-                    <td>
-                        <a ui-sref="frameState.receiverState({receiverSid:{{vm.submission.core.sid}},providerSid:{{provider.providerSid}},token:'{{vm.submission.core.token}}'})">
-                            {{provider.alias}} ({{provider.providerSid}})
-                        </a></td>
-                    <td>{{provider.dateAllocated | date: 'shortDate'}}</td>
-                    <td>{{provider.dateModified | date:'shortDate'}}</td>
-                    <td>{{provider.providerMark | percent}}</td>
-
-                </tr>
-
-
-                </tbody>
-
-
-            </table>
-
-
+            <div ng-include="'app/templates/receivedFrom.tpl'"></div>
         </div>
     </div>
 </section>

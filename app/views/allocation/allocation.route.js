@@ -27,7 +27,11 @@
             //Allocation view
             function receivers(allocationNetwork,$stateParams){
                 if($stateParams.sid){
-                    return allocationNetwork.getReceivers($stateParams.sid,$stateParams.token)
+                    const auth = {
+                        user:$stateParams.sid,
+                        token:$stateParams.token
+                    };
+                    return allocationNetwork.getReceivers($stateParams,auth)
                         .then(function(response){
                             return response.data;
                         })
@@ -38,7 +42,11 @@
 
             function providers(allocationNetwork,$stateParams){
                 if($stateParams.sid){
-                    return allocationNetwork.getProviders($stateParams.sid,$stateParams.token)
+                    const auth = {
+                        user:$stateParams.sid,
+                        token:$stateParams.token
+                    };
+                    return allocationNetwork.getProviders($stateParams,auth)
                         .then(function(response){
                             return response.data;
                         })
@@ -48,8 +56,12 @@
             }
 
             function submission(submissionNetwork,$stateParams){
+                const auth = {
+                    user:$stateParams.sid,
+                    token:$stateParams.token
+                };
                 if($stateParams.sid){
-                    return submissionNetwork.getOneSubmission($stateParams.sid,$stateParams.token)
+                    return submissionNetwork.getOneSubmission($stateParams,auth)
                         .then(function(response){
                             return response.data;
                         })
