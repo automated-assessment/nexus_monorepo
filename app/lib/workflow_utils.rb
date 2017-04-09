@@ -8,11 +8,12 @@ class WorkflowUtils
     # and its value is a set of tools that it depends on, such that the tool
     # cannot run until every tool in the set has returned a mark
     def construct_workflow(marking_tool_contexts, dependencies)
+      return {} unless marking_tool_contexts && !marking_tool_contexts.empty?
       workflow = {}
       marking_tool_contexts.each do |key, value|
         marking_tool = MarkingTool.find(value['marking_tool_id'])
         workflow[marking_tool.uid] = Set.new
-        next unless dependencies
+        next unless dependencies && !dependencies.empty?
         workflow[marking_tool.uid] = Set.new dependencies[key] if dependencies[key]
         if workflow[marking_tool.uid].include? marking_tool.uid
           raise StandardError, "Error with marking tool #{marking_tool.name}. Marking services cannot depend on themselves"
