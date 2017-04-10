@@ -11,9 +11,9 @@
                     params: {
                         receiverSid: null,
                         providerSid: null,
-                        aid:null,
-                        email:null,
-                        academic:false
+                        aid: null,
+                        email: null,
+                        academic: false
                     },
                     templateUrl: 'app/views/provider/provider.html',
                     controller: 'ProviderController as vm',
@@ -24,11 +24,24 @@
                     }
                 });
 
-            submission.$inject = ['$stateParams', 'gitNetwork','$sce'];
-            provider.$inject = ['$stateParams','allocationNetwork'];
+            submission.$inject = ['$stateParams', 'gitNetwork', '$sce'];
+            provider.$inject = ['$stateParams', 'allocationNetwork'];
 
-            function submission($stateParams, gitNetwork,$sce) {
-                return gitNetwork.getGitSubmission($stateParams)
+            function submission($stateParams, gitNetwork, $sce) {
+                console.log($stateParams);
+                let auth;
+                if($stateParams.academic){
+                    auth = {
+                        user:$stateParams.aid,
+                        token:$stateParams.token
+                    }
+                } else {
+                    auth = {
+                        user:$stateParams.providerSid,
+                        token:$stateParams.token
+                    }
+                }
+                return gitNetwork.getGitSubmission($stateParams,auth)
                     .then(function (response) {
                         return trustHtml(response.data,$sce);
                     });
@@ -36,14 +49,27 @@
 
 
             function provider($stateParams, allocationNetwork) {
-                return allocationNetwork.getOneAllocation($stateParams,allocationNetwork.PROVIDER)
+                let auth;
+                if ($stateParams.academic) {
+                    auth = {
+                        user: $stateParams.aid,
+                        token: $stateParams.token
+                    }
+                } else {
+                    auth = {
+                        user: $stateParams.providerSid,
+                        token: $stateParams.token
+                    }
+                }
+
+                return allocationNetwork.getOneAllocation($stateParams, auth)
                     .then(function (response) {
                         return response.data;
                     });
             }
 
-            function trustHtml(contentsArray,$sce){
-                for(let i=0;i<contentsArray.length;i++){
+            function trustHtml(contentsArray, $sce) {
+                for (let i = 0; i < contentsArray.length; i++) {
                     contentsArray[i].content = $sce.trustAsHtml(contentsArray[i].content);
                 }
                 return contentsArray;

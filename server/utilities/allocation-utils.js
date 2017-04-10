@@ -26,12 +26,12 @@ module.exports.runAllocation = function (submission, assignment) {
     const allocationArray = [];
     return queryRandomProviders(assignment, submission)
         .then(function (randomProviders) {
+            console.log(randomProviders);
             randomProviders.forEach(function (randomProvider) {
                 const forwardAssociation = associate(submission, randomProvider, assignment);
                 const backwardAssociation = associate(randomProvider, submission, assignment);
                 allocationArray.push(forwardAssociation);
                 allocationArray.push(backwardAssociation);
-                console.log(allocationArray);
             });
             if (allocationArray.length != 0) {
                 return Allocation.insertMany(allocationArray);
@@ -40,12 +40,18 @@ module.exports.runAllocation = function (submission, assignment) {
 };
 
 const associate = function (receiver, provider, assignment) {
+    console.log("receiver",receiver);
+    console.log("provider",provider);
     return new Allocation({
         currentForm: assignment.formBuild,
         receiverSid: receiver.sid,
         providerSid: provider.sid,
-        aid:assignment.aid,
-        alias: randomName({seed: Math.random()}),
+        title:{
+            alias: randomName({seed: Math.random()}),
+            receiverName:receiver.student,
+            providerName:provider.student
+        },
+
         provided: false,
         dateAllocated: new Date(),
         dateModified: new Date(),
@@ -98,7 +104,7 @@ const queryRandomProviders = function (assignment, submission) {
                 }
             },
             {
-                $project: {sid: 1, branch: 1, sha: 1}
+                $project: {sid: 1,student:1}
             }
         ])
 

@@ -1,6 +1,12 @@
 <div class="page-header"><h3>Configuration</h3></div>
 
 
+
+<div ng-show="vm.assignment.preExists">
+    Feedback for this assignment: <a ui-sref=frameState.academicState({{vm.academicUrlParams}}) class="btn btn-primary">Assignment control panel</a>
+    <hr/>
+</div>
+
 <form class="form-horizontal">
     <!--Number of allocations form-group-->
     <div class="form-group">
@@ -9,16 +15,6 @@
             <select tooltip-placement="right" uib-tooltip="{{vm.tooltip.providerCount}}" uib-tooltip-class="tooltip" class="form-control"
                     ng-options="number as number for number in vm.providerCounts"
                     ng-model="vm.assignment.providerCount"></select>
-        </div>
-    </div>
-
-    <!--Previous form form-group-->
-    <div class="form-group">
-        <label class="col-sm-2 control-label">Use previous form:</label>
-        <div class="col-sm-3">
-            <select tooltip-placement="right" uib-tooltip="{{vm.tooltip.usePreviousForm}}" uib-tooltip-class="tooltip" class="form-control"
-                    ng-options="date as date for date in vm.dates"
-                    ng-model="vm.assignment.dateCreated"></select>
         </div>
     </div>
 
@@ -48,12 +44,15 @@
         </div>
     </div>
     <br/>
-
+<p>
     <h4>Build provider's form</h4>
     <hr/>
     <build-form vm="vm"></build-form>
-
+    </p>
+    <br/>
 </form>
+
+
 <br/>
 <button class="btn btn-primary" ng-click="vm.updateAssignment()">Save</button>
 </section>

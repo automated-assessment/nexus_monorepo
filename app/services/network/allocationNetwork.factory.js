@@ -31,7 +31,12 @@
                     headers: {
                         'Authorization': `Basic ${authToken}`
                     }
-                });
+                })
+                .then(function(response){
+                    console.log(response);
+                    return response;
+                })
+
         }
 
         //Get the student's providers
@@ -46,18 +51,9 @@
         }
 
         //setup for auth
-        function getOneAllocation($stateParams, loadPattern) {
-            const providerSid = $stateParams.providerSid;
-            const receiverSid = $stateParams.receiverSid;
-            let authToken =$stateParams.token;
-            if (loadPattern === this.PROVIDER) {
-                authToken = window.btoa(`${providerSid}:${authToken}`);
-            } else if (loadPattern === this.RECEIVER) {
-                authToken = window.btoa(`${receiverSid}:${authToken}`);
-            } else {
-                console.log("Select a loadPattern");
-            }
-            return $http.get(`/api/allocations/${receiverSid}/${providerSid}`, {
+        function getOneAllocation($stateParams, auth) {
+            const authToken = window.btoa(`${auth.user}:${auth.token}`);
+            return $http.get(`/api/allocations/${$stateParams.receiverSid}/${$stateParams.providerSid}`, {
                 headers: {
                     'Authorization': `Basic ${authToken}`
                 }

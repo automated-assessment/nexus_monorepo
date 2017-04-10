@@ -33,7 +33,7 @@
                     };
                     return allocationNetwork.getReceivers($stateParams,auth)
                         .then(function(response){
-                            return response.data;
+                            return response.data.receivers;
                         })
                 } else{
                     return {};
@@ -48,7 +48,7 @@
                     };
                     return allocationNetwork.getProviders($stateParams,auth)
                         .then(function(response){
-                            return response.data;
+                            return response.data.providers;
                         })
                 } else{
                     return {};

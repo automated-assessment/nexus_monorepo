@@ -8,7 +8,6 @@ const NEXUS_TOOL_CANONICAL_NAME = process.env.NEXUS_TOOL_CANONICAL_NAME || 'peer
 const request = require('request-promise');
 
 module.exports.sendResponse = function(submission,assignment){
-    console.log(submission);
     const promiseArray = [];
     if(assignment && !assignment.additionalConfiguration.contributeFinalMark){
         promiseArray.push(exports.sendMark(100,submission.sid));

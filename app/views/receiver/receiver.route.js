@@ -19,7 +19,20 @@
                     controller:'ReceiverController as vm',
                     resolve:{
                         receiver:['$stateParams','allocationNetwork',function($stateParams, allocationNetwork){
-                            return allocationNetwork.getOneAllocation($stateParams,allocationNetwork.RECEIVER)
+                            console.log($stateParams);
+                            let auth;
+                            if($stateParams.email){
+                                auth = {
+                                    user:$stateParams.aid,
+                                    token:$stateParams.token
+                                }
+                            } else {
+                                auth = {
+                                    user:$stateParams.receiverSid,
+                                    token:$stateParams.token
+                                }
+                            }
+                            return allocationNetwork.getOneAllocation($stateParams,auth)
                                 .then(function(response){
                                     return response.data;
                                 });

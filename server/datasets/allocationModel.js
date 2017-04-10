@@ -8,8 +8,6 @@ module.exports = mongoose.model('Allocation',{
     receiverSid:Number,
     //The referential submission id of the provider.
     providerSid:Number,
-    //The id of the assignment to which this belongs.
-    aid:Number,
     //The current feedback form from the provider.
     currentForm:String,
     //The date the allocation was created.
@@ -20,7 +18,11 @@ module.exports = mongoose.model('Allocation',{
     //The alias assigned to the allocation. This alias will be
     //viewed by the provider when providing feedback and by the
     //receiver when viewing feedback.
-    alias:String,
+    title: {
+        alias:String,
+        receiverName:String,
+        providerName:String
+    },
     //Represents whether the provider has provided feedback.
     provided:Boolean,
     //The mark given to the receiver by the provider.

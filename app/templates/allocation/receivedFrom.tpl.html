@@ -12,8 +12,9 @@
         <tbody>
         <tr ng-repeat="provider in vm.submission.receivedFrom" ng-show="provider.display||vm.academic">
             <td>
-                <a ui-sref="frameState.receiverState({receiverSid:{{vm.submission.core.sid}},providerSid:{{provider.providerSid}},aid:{{vm.submission.core.aid}},token:'{{vm.auth.token}}',email:'{{vm.auth.email}}',academic:'{{vm.academic}}'})">
-                    {{provider.alias}} ({{provider.providerSid}})
+                <!--<a ui-sref="frameState.receiverState({receiverSid:{{vm.submission.core.sid}},providerSid:{{provider.providerSid}},aid:{{vm.submission.core.aid}},token:'{{vm.auth.token}}',email:'{{vm.auth.email}}',academic:'{{vm.academic}}'})">-->
+                <a ui-sref="frameState.receiverState({{provider.urlParams}})">
+                    {{provider.title.alias}} ({{provider.providerSid}})
                 </a></td>
             <td>{{provider.dateAllocated | date: 'shortDate'}}</td>
             <td>{{provider.dateModified | date:'shortDate'}}</td>

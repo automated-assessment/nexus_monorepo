@@ -65,7 +65,7 @@ app.get('/api/assignments/:aid',assignmentsController.getOneAssignment);
 app.get('/api/assignments/:aid/submissions',academicAuth,submissionsController.getAssignmentSubmissions);
 app.put('/api/assignments/:aid',assignmentsController.updateAssignment);
 
-app.get('/api/git/:receiverSid',academicThenStudentAuth,gitController.getGitSubmission);
+app.get('/api/git/:sid',academicThenStudentAuth,gitController.getGitSubmission);
 
 
 app.get('/',function(req,res){

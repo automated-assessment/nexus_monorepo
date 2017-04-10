@@ -7,19 +7,28 @@ const submissionsController = require('./submissions-controller');
 const allocationsController = require('./allocations-controller');
 
 module.exports.getGitSubmission = function (req, res) {
-    //need to confirm that this user is a provider
-    allocationsController.queryReceivers({providerSid: req.user.sid})
-        .then(function (response) {
-            let auth = false;
-            const receivers = response.receivers;
 
-            for (let i = 0; i < receivers.length; i++) {
-                if (receivers[i].receiverSid === Number(req.params.receiverSid)) {
-                    auth = true;
+    let auth = false;
+    let studentAuth;
+    if (req.user.email) {
+        auth = true;
+    }
+    if (req.user.sid && !auth) {
+        studentAuth = allocationsController.queryReceivers({providerSid: req.user.sid}, {null: 0})
+            .then(function (response) {
+                const receivers = response.receivers;
+                for (let i = 0; i < receivers.length; i++) {
+                    if (receivers[i].receiverSid === Number(req.params.sid)) {
+                        auth = true;
+                    }
                 }
-            }
+            });
+    }
+
+    Promise.resolve(studentAuth)
+        .then(function () {
             if (auth) {
-                const gitData = submissionsController.getGitData(req.params.receiverSid)
+                const gitData = submissionsController.getGitData(req.params.sid)
                     .then(function (response) {
                         if (response.cloneurl) {
                             response.cloneurl = parseClone(response.cloneurl);
@@ -34,11 +43,9 @@ module.exports.getGitSubmission = function (req, res) {
             } else {
                 res.status(401).send("Unauthorised");
             }
-        });
-
+        })
 };
 
-//TODO:Unconfuse receiverSid and providerSid
 
 function parseClone(url) {
     const splitSlash = url.split('/');

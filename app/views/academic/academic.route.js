@@ -7,7 +7,7 @@
         .config(['$stateProvider',function($stateProvider){
             $stateProvider
                 .state('frameState.academicState',{
-                    url:'/academic?aid?token?email',
+                    url:'/academic?aid?token',
                     templateUrl:'app/views/academic/academic.html',
                     controller:'AcademicController as vm',
                     resolve:{
@@ -25,13 +25,16 @@
                     };
                     return submissionNetwork.getAssignmentSubmissions($stateParams,auth)
                         .then(function(response){
-                            return response.data;
+                            if(response.data){
+                                return response.data;
+                            } else {
+                                return "";
+                            }
+
                         })
-
                 }
-
-
-
             }
+
+
         }]);
 }());

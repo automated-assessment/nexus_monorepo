@@ -10,10 +10,8 @@ const assignmentsController = require('./assignments-controller');
 
 
 module.exports.getAllSubmissions = function (req, res) {
-    console.log(req.user.email);
     Submission.find({aid: Number(req.params.aid), academicEmail: String(req.user.email)})
         .then(function (response) {
-            console.log(response);
             res.send(response);
         });
 };
@@ -58,8 +56,6 @@ module.exports.queryOneSubmission = function (query) {
 
 module.exports.getAssignmentSubmissions = function (req, res) {
 
-
-    console.log("Received req")
     if(req.user.aid === Number(req.params.aid)){
 
         const query = {
@@ -156,8 +152,6 @@ module.exports.allocateAndRespond = function (request) {
     const submission = request.submission.value;
     const assignment = request.assignment;
     if (request.submission.allocate) {
-        console.log("Allocation running");
-
         promise = allocationUtils.runAllocation(submission,request.assignment)
             .then(function(){
                 return exports.queryUpdateOneSubmission({sid:submission.sid},{isAllocated:true});

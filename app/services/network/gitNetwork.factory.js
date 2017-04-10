@@ -15,8 +15,9 @@
             getGitSubmission:getGitSubmission
         };
 
-        function getGitSubmission($stateParams) {
-            const authToken = btoa(`${$stateParams.providerSid}:${$stateParams.token}`);
+        function getGitSubmission($stateParams,auth) {
+
+            const authToken = btoa(`${auth.user}:${auth.token}`);
             return $http.get(`/api/git/${$stateParams.receiverSid}`,{
                 headers:{
                     'Authorization':`Basic ${authToken}`

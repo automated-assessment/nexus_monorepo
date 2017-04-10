@@ -1,27 +1,28 @@
 /**
  * Created by adamellis on 06/02/2017.
  */
-(function() {
+(function () {
     angular.module('PeerFeedback')
         .controller('ConfigurationController', ConfigurationController);
 
-    ConfigurationController.$inject = ['notificationService', 'assignment', 'assignmentNetwork', 'providerCounts','tooltip','$stateParams'];
+    ConfigurationController.$inject = ['$scope','notificationService', 'assignment', 'assignmentNetwork', 'providerCounts', 'tooltip', 'academicUrlParams'];
 
-    function ConfigurationController(notificationService, assignment, assignmentNetwork, providerCounts,tooltip,$stateParams) {
+    function ConfigurationController($scope,notificationService, assignment, assignmentNetwork, providerCounts, tooltip, academicUrlParams) {
         const vm = this;
 
-
         activate();
-
 
         vm.updateAssignment = updateAssignment;
 
 
         function updateAssignment() {
 
+            vm.assignment.preExists = true;
+
             assignmentNetwork.updateAssignment(vm.assignment.aid, vm.assignment)
                 .then(function (response) {
-                        const successMessage = "Assignment configuration saved successfully.";
+
+                        const successMessage = "Assignment configuration saved successfully. " ;
                         notificationService.create(successMessage, notificationService.SUCCESS);
                     },
                     function () {
@@ -32,12 +33,12 @@
 
 
         function activate() {
-            vm.tooltip = tooltip;
-            vm.providerCounts = providerCounts;
-            //TODO retrieve previous assignmentConfigs by date
-            vm.dates = [new Date().toDateString(), new Date().toDateString()];
+            vm.academicUrlParams = academicUrlParams;
             vm.assignment = assignment;
-            vm.assignment.dateCreated = vm.dates[0];
+            vm.providerCounts = providerCounts;
+            vm.tooltip = tooltip;
+            //TODO retrieve previous assignmentConfigs by date
+
         }
 
     }

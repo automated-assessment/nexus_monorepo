@@ -63,12 +63,8 @@ module.exports.updateAssignment = function (req, res) {
 };
 
 function runUpdates(i, submissions, assignment) {
-
-    if(i===submissions.length){
-        return;
-    }
-    if (i < submissions.length) {
-        console.log("Running an allocation");
+    if (i <submissions.length) {
+        console.log("Running allocation for ",i);
         const updateSubmission = submissionsController.queryUpdateOneSubmission({sid: submissions[i].sid}, {academicEmail: assignment.email});
         const request = {
             submission: {
@@ -78,12 +74,20 @@ function runUpdates(i, submissions, assignment) {
             },
             assignment: assignment
         };
-        const allocateWithResponse = submissionsController.allocateAndRespond(request);
+        updateSubmission
+            .then(function(){
+                submissionsController.allocateAndRespond(request)
+                    .then(function(){
+                        runUpdates(i=i+1, submissions, assignment)
+                    })
+            });
 
-        Promise.all([updateSubmission, allocateWithResponse])
-            .then(function () {
-                runUpdates(i+1, submissions, assignment)
-            })
+
+        // Promise.all([updateSubmission, allocateWithResponse])
+        //     .then(function () {
+        //         console.log("Complete for ",i);
+        //
+        //     })
     }
 
 

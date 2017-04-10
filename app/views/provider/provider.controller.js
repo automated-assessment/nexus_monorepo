@@ -13,7 +13,6 @@
         const vm = this;
         activate();
 
-        console.log(submission);
         vm.mark.hoveringOver = function (value) {
             vm.mark.overStar = value;
             vm.mark.percent = 100 * (value / vm.mark.max);
