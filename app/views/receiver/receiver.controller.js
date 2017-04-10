@@ -33,6 +33,9 @@
 
 
             vm.receiver = receiver;
+            if(vm.academic){
+                vm.receiver.title.alias = $stateParams.name;
+            }
 
             vm.readOnly = true;
         }

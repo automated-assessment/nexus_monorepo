@@ -48,7 +48,8 @@
                             receiver.urlParams = {
                                 aid:vm.submission.core.aid,
                                 token:$stateParams.token,
-                                academic:true
+                                academic:true,
+                                name:receiver.title.receiverName
                             };
                             receiver.urlParams.receiverSid = receiver.receiverSid;
                             receiver.urlParams.providerSid = receiver.providerSid;
@@ -66,7 +67,8 @@
                             provider.urlParams = {
                                 aid:vm.submission.core.aid,
                                 token:$stateParams.token,
-                                academic:true
+                                academic:true,
+                                name:provider.title.providerName
                             };
                             provider.urlParams.receiverSid  = provider.receiverSid;
                             provider.urlParams.providerSid = provider.providerSid;

@@ -13,6 +13,7 @@
         const vm = this;
         activate();
 
+
         vm.mark.hoveringOver = function (value) {
             vm.mark.overStar = value;
             vm.mark.percent = 100 * (value / vm.mark.max);
@@ -54,7 +55,12 @@
                 email:$stateParams.email
             };
             vm.academic = $stateParams.academic;
+
             vm.provider = provider;
+            if(vm.academic){
+                vm.provider.title.alias = $stateParams.name;
+            }
+
             vm.submission = submission;
 
             vm.mark = {

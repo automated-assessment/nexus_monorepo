@@ -13,7 +13,8 @@
                         providerSid: null,
                         aid: null,
                         email: null,
-                        academic: false
+                        academic: false,
+                        name:null
                     },
                     templateUrl: 'app/views/provider/provider.html',
                     controller: 'ProviderController as vm',

@@ -14,6 +14,7 @@
                         aid:null,
                         email:null,
                         academic:false,
+                        name:null
                     },
                     templateUrl:'app/views/receiver/receiver.html',
                     controller:'ReceiverController as vm',
