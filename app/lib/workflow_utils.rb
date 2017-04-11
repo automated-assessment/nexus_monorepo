@@ -97,19 +97,26 @@ class WorkflowUtils
           next unless tool.output
           unless handled_files[tool.output]
             handled_files[tool.output] = tool.uid
-            dataflow[tool.uid] = []
           end
         end
       end
 
-      workflow.each do |tool, _|
-        marking_tool = MarkingTool.find_by(uid: tool)
-        next unless marking_tool && marking_tool.access_token
-        if handled_files[marking_tool.input] && !handled_files[marking_tool.input].eql?(tool)
-          dataflow[handled_files[marking_tool.input]] << tool_data_entry(marking_tool)
+      visited = Set.new
+      workflow_copy = workflow.deep_dup
+      until workflow_copy.empty?
+        tools = next_services_to_invoke(workflow_copy)
+        marking_tools = MarkingTool.where(uid: tools)
+        marking_tools.each do |tool|
+          trim_workflow!(workflow_copy, tool.uid)
+          next unless tool.input
+          next unless handled_files[tool.input] && visited.include?(handled_files[tool.input])
+          unless dataflow[handled_files[tool.input]]
+            dataflow[handled_files[tool.input]] = []
+          end
+          dataflow[handled_files[tool.input]] << tool_data_entry(tool)
         end
+        visited.merge(tools)
       end
-
       dataflow
     end
 

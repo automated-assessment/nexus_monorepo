@@ -173,7 +173,6 @@ RSpec.describe WorkflowUtils do
         expected = [mt_0.uid]
 
         active_services = described_class.construct_workflow(contexts, dependencies)
-        puts active_services
         actual = described_class.next_services_to_invoke(active_services)
         expect(actual).to eq expected
       end
@@ -347,7 +346,6 @@ RSpec.describe WorkflowUtils do
         }
 
         workflow = described_class.construct_workflow(contexts, dependencies)
-        puts workflow
         expected = Set.new [mt_1.uid, mt_2.uid, mt_3.uid]
         actual = described_class.simulate_workflow(workflow, mt_0.uid)
         expect(expected).to eq actual
