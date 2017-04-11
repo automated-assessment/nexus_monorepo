@@ -42,6 +42,10 @@ class SendSubmissionJob < ActiveJob::Base
   private
 
   def build_json_payload(marking_tool_uid)
+    nextservices = []
+    if @submission.assignment.dataflow[marking_tool_uid]
+      nextservices = @submission.assignment.dataflow[marking_tool_uid]
+    end
     payload = {
       student: @submission.user.name,
       studentuid: @submission.user.id,
@@ -51,7 +55,7 @@ class SendSubmissionJob < ActiveJob::Base
       cloneurl: @submission.augmented_clone_url,
       branch: @submission.gitbranch,
       sha: @submission.commithash,
-      nextservices: @submission.assignment.dataflow[marking_tool_uid]
+      nextservices: nextservices
     }
     payload.to_json
   end
