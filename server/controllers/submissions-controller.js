@@ -17,36 +17,17 @@ module.exports.getAllSubmissions = function (req, res) {
 };
 
 module.exports.getOneSubmission = function (req, res) {
-    let auth;
-    let promise;
-    if (req.user.sid === Number(req.params.sid)|| true) {
-        auth = true;
+    if (req.user.sid === Number(req.params.sid) || req.user.email) {
+        const query = {
+            sid: req.params.sid
+        };
+        exports.queryOneSubmission(query)
+            .then(function (response) {
+                res.send(response);
+            })
     } else {
-
-        promise = req.user.isAcademicOf(req.params.sid)
-            .then(function (isAuth) {
-                auth = isAuth;
-            });
-
-
+        res.status(401).send("Unauthorised");
     }
-    Promise.resolve(promise)
-        .then(function () {
-            if (auth) {
-                const query = {
-                    sid: req.params.sid
-                };
-
-                exports.queryOneSubmission(query)
-                    .then(function (response) {
-                        res.send(response);
-                    })
-            } else {
-                res.status(401).send("Unauthorised");
-            }
-        });
-
-
 };
 
 module.exports.queryOneSubmission = function (query) {
@@ -55,12 +36,11 @@ module.exports.queryOneSubmission = function (query) {
 
 
 module.exports.getAssignmentSubmissions = function (req, res) {
-
-    if(req.user.aid === Number(req.params.aid)){
+    console.log(req.user);
+    if (req.user.aid === Number(req.params.aid)) {
 
         const query = {
-            aid: req.params.aid,
-            academicEmail:req.user.email
+            aid: req.params.aid
         };
 
         exports.queryAssignmentSubmissions(query)
@@ -97,14 +77,13 @@ module.exports.getGitData = function (sid) {
         })
 };
 
-//This needs fixing
 module.exports.createSubmission = function (req, res) {
 
     let request = {
         submission: {
             exists: false,
             value: new Submission(req.body),
-            allocate:true
+            allocate: true
         },
         assignment: null
     };
@@ -115,19 +94,20 @@ module.exports.createSubmission = function (req, res) {
                 request.submission.exists = true;
                 request.submission.value = preExistingSubmission;
                 res.status(200).send("Remarked submission successfully");
-            }});
-    const assignmentExists = assignmentsController.queryOneAssignment({aid:req.body.aid})
-        .then(function(assignment){
-            if(assignment){
+            }
+        });
+    const assignmentExists = assignmentsController.queryOneAssignment({aid: req.body.aid})
+        .then(function (assignment) {
+            if (assignment) {
                 request.assignment = assignment;
             } else {
                 request.submission.allocate = false;
             }
         });
 
-    Promise.all([assignmentExists,isNewSubmission])
-        .then(function(){
-            if(!request.submission.exists){
+    Promise.all([assignmentExists, isNewSubmission])
+        .then(function () {
+            if (!request.submission.exists) {
                 const submission = new Submission(req.body);
                 submission.token = crypto.randomBytes(20).toString('hex');
                 submission.dateCreated = new Date();
@@ -152,9 +132,9 @@ module.exports.allocateAndRespond = function (request) {
     const submission = request.submission.value;
     const assignment = request.assignment;
     if (request.submission.allocate) {
-        promise = allocationUtils.runAllocation(submission,request.assignment)
-            .then(function(){
-                return exports.queryUpdateOneSubmission({sid:submission.sid},{isAllocated:true});
+        promise = allocationUtils.runAllocation(submission, request.assignment)
+            .then(function () {
+                return exports.queryUpdateOneSubmission({sid: submission.sid}, {isAllocated: true});
             });
     }
 
@@ -163,7 +143,6 @@ module.exports.allocateAndRespond = function (request) {
             responseUtils.sendResponse(submission, assignment);
         });
 };
-
 
 
 module.exports.queryUpdateOneSubmission = function (query, update, options) {

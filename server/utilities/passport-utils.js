@@ -34,35 +34,15 @@ module.exports.academicStrategy = new BasicStrategy(
         }
         const testAssignment = Assignment.findOne({aid: id})
             .then(function (assignment) {
-                return assignment
-            });
-        testAssignment.then(function (potentialAssignment) {
-                if (potentialAssignment) {
-                    if (password === academicToken) {
-                        return done(null, potentialAssignment);
-                    }
+                if (assignment && password === academicToken) {
+                    return done(null, assignment);
+                } else if (password === academicToken) {
+                    return done(null, true);
+                } else {
+                    return done(null, false);
                 }
-                Submission.findOne({sid: id})
-                    .then(function (submission) {
-                        if (submission) {
-                            Assignment.findOne({aid: submission.aid})
-                                .then(function (assignment) {
-                                    if (password === academicToken && assignment.email === submission.academicEmail) {
-                                        return done(null, submission);
-                                    } else {
-                                        return done(null, false);
-                                    }
-                                }, function (err) {
-                                    return done(null, false);
-                                });
-                        } else {
-                            return done(null,false);
-                        }
-
-                    },function(err){
-                        return done(null,false);
-                    })
-            }
-        )
+            },function(error){
+                return done(null,false);
+            });
     }
 );

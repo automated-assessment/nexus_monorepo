@@ -6,9 +6,9 @@
     angular.module('PeerFeedback')
         .controller('ProviderController', ProviderController);
 
-    ProviderController.$inject = ['$stateParams', 'provider', 'allocationNetwork', 'notificationService','submission'];
+    ProviderController.$inject = ['$stateParams', 'provider', 'allocationNetwork', 'notification','submission'];
 
-    function ProviderController($stateParams, provider, allocationNetwork, notificationService,submission) {
+    function ProviderController($stateParams, provider, allocationNetwork, notification,submission) {
 
         const vm = this;
         activate();
@@ -32,11 +32,11 @@
             allocationNetwork.updateAllocation(vm.core.receiverSid, vm.core.providerSid,vm.auth.token, update)
                 .then(function (response) {
                         const successMessage = "Your feedback has been successfully submitted. Thank you";
-                        notificationService.create(successMessage, notificationService.SUCCESS);
+                        notification.create(successMessage, notification.SUCCESS);
                     },
                     function (err) {
                         const failMessage = "There was an error submitting your feedback, please try again later.";
-                        notificationService.create(failMessage, notificationService.FAILURE);
+                        notification.create(failMessage, notification.FAILURE);
                     })
 
         };

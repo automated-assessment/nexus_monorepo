@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">60% </span>
+        <span class="strong">30% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>3/5</span>
+        <span class='fraction'>3/10</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">0% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>0/0</span>
+        <span class='fraction'>0/2</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">50% </span>
@@ -35,13 +35,13 @@
         <span class='fraction'>2/4</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">60% </span>
+        <span class="strong">30% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>3/5</span>
+        <span class='fraction'>3/10</span>
       </div>
     </div>
   </div>
-  <div class='status-line medium'></div>
+  <div class='status-line low'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -74,7 +74,23 @@
 29
 30
 31
-32</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
@@ -89,6 +105,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -114,17 +146,33 @@
         .config(['$stateProvider',function($stateProvider){
             $stateProvider
                 .state('frameState.receiverState',{
-                    url:'/receiver?receiverSid,providerSid',
+                    url:'/receiver?receiverSid,providerSid?token',
                     params:{
                         receiverSid:null,
                         providerSid:null,
-                        aid:null
+                        aid:null,
+                        email:null,
+                        academic:false,
+                        name:null
                     },
                     templateUrl:'app/views/receiver/receiver.html',
                     controller:'ReceiverController as vm',
                     resolve:{
-                        receiver:['$stateParams','allocationService',<span class="fstat-no" title="function not covered" >function($stateParams, allocationService){</span>
-<span class="cstat-no" title="statement not covered" >                            return allocationService.getOneAllocation($stateParams.receiverSid,$stateParams.providerSid)</span>
+                        receiver:['$stateParams','allocationNetwork',<span class="fstat-no" title="function not covered" >function($stateParams, allocationNetwork){</span>
+<span class="cstat-no" title="statement not covered" >                            console.log($stateParams);</span>
+<span class="cstat-no" title="statement not covered" >                            let auth;</span>
+<span class="cstat-no" title="statement not covered" >                            if($stateParams.email){</span>
+<span class="cstat-no" title="statement not covered" >                                auth = {</span>
+                                    user:$stateParams.aid,
+                                    token:$stateParams.token
+                                }
+                            } else {
+<span class="cstat-no" title="statement not covered" >                                auth = {</span>
+                                    user:$stateParams.receiverSid,
+                                    token:$stateParams.token
+                                }
+                            }
+<span class="cstat-no" title="statement not covered" >                            return allocationNetwork.getOneAllocation($stateParams,auth)</span>
                                 .then(<span class="fstat-no" title="function not covered" >function(response){</span>
 <span class="cstat-no" title="statement not covered" >                                    return response.data;</span>
                                 });
@@ -142,7 +190,7 @@
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Mar 19 2017 02:05:07 GMT+0000 (GMT)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Apr 16 2017 01:00:37 GMT+0100 (BST)
 </div>
 </div>
 <script src="../../../prettify.js"></script>

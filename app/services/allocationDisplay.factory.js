@@ -23,10 +23,11 @@
 
         function getDisplay(submission) {
             if(submission.receivedFrom){
-
                 const receiverSid = submission.core.sid;
+                console.log(submission.core.aid);
                 assignmentNetwork.getOneAssignment(submission.core.aid)
                     .then(function(response){
+                        console.log(response);
                         const awaitBiDirection = response.data.additionalConfiguration.awaitBiDirection;
                         if(awaitBiDirection){
                             submission.receivedFrom.forEach(function (provider) {

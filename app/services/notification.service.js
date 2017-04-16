@@ -3,7 +3,7 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .service('notificationService',['$anchorScroll',function($anchorScroll){
+        .service('notification',['$anchorScroll',function($anchorScroll){
 
 
             const notification = {

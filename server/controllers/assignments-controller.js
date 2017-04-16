@@ -31,7 +31,6 @@ module.exports.queryOneAssignment = function (query) {
 
 module.exports.updateAssignment = function (req, res) {
 
-
     const query = {
         aid: req.params.aid
     };
@@ -68,7 +67,7 @@ function runUpdates(i, submissions, assignment) {
         const updateSubmission = submissionsController.queryUpdateOneSubmission({sid: submissions[i].sid}, {academicEmail: assignment.email});
         const request = {
             submission: {
-                exists: false,
+                exists: false, //true?
                 value: submissions[i],
                 allocate: true
             },

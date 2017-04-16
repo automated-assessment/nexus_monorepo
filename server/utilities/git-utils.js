@@ -35,7 +35,7 @@ function getContentArray(fileNames,repo,branch) {
     }
     return Promise.all(promiseArray)
         .then(function () {
-            return contentArray;
+            return contentArray.reverse();
         });
 }
 

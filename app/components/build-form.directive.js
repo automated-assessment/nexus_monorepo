@@ -26,6 +26,7 @@
         }
 
         function watchAndDestroy(scope, elem, form) {
+
             const fakeWatcher = $interval(function () {
                 scope.vm.assignment.formBuild = form.formData;
             }, 500);

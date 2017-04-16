@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">30% </span>
+        <span class="strong">31.58% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>6/20</span>
+        <span class='fraction'>6/19</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">100% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>1/6</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">30% </span>
+        <span class="strong">31.58% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>6/20</span>
+        <span class='fraction'>6/19</span>
       </div>
     </div>
   </div>
@@ -100,78 +100,78 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * Created by adamellis on 06/02/2017.
  */
-(function() {
+(function () {
     angular.module('PeerFeedback')
         .controller('ConfigurationController', ConfigurationController);
 &nbsp;
-    ConfigurationController.$inject = ['notificationService', 'assignment', 'assignmentService', 'providerCounts'];
+    ConfigurationController.$inject = ['$scope','notification', 'assignment', 'assignmentNetwork', 'providerCounts', 'tooltip', 'academicUrlParams'];
 &nbsp;
-<span class="fstat-no" title="function not covered" >    function ConfigurationController(notificationService, assignment, assignmentService, providerCounts) {</span>
+<span class="fstat-no" title="function not covered" >    function ConfigurationController($scope,notification, assignment, assignmentNetwork, providerCounts, tooltip, academicUrlParams) {</span>
 <span class="cstat-no" title="statement not covered" >        const vm = this;</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        activate();</span>
-<span class="cstat-no" title="statement not covered" >        console.log(assignment);</span>
-<span class="cstat-no" title="statement not covered" >        vm.assignment = assignment;</span>
-<span class="cstat-no" title="statement not covered" >        vm.assignment.dateCreated = vm.dates[0];</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        vm.updateAssignment = updateAssignment;</span>
 &nbsp;
 &nbsp;
 <span class="fstat-no" title="function not covered" >        function updateAssignment() {</span>
-<span class="cstat-no" title="statement not covered" >            console.log("Hello");</span>
-<span class="cstat-no" title="statement not covered" >            assignmentService.updateAssignment(vm.assignment.aid, vm.assignment)</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            vm.assignment.preExists = true;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            assignmentNetwork.updateAssignment(vm.assignment.aid, vm.assignment)</span>
                 .then(<span class="fstat-no" title="function not covered" >function (response) {</span>
-<span class="cstat-no" title="statement not covered" >                        const successMessage = "Assignment configuration saved successfully.";</span>
-<span class="cstat-no" title="statement not covered" >                        notificationService.create(successMessage, notificationService.SUCCESS);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                        const successMessage = "Assignment configuration saved successfully. " ;</span>
+<span class="cstat-no" title="statement not covered" >                        notification.create(successMessage, notification.SUCCESS);</span>
                     },
 <span class="fstat-no" title="function not covered" >                    function () {</span>
 <span class="cstat-no" title="statement not covered" >                        const failMessage = "Assignment configuration failed to save, please try again.";</span>
-<span class="cstat-no" title="statement not covered" >                        notificationService.create(failMessage, notificationService.FAILURE);</span>
+<span class="cstat-no" title="statement not covered" >                        notification.create(failMessage, notification.FAILURE);</span>
                     })
         }
-        //TODO implement contribution
-        //TODO implement bidirectional
 &nbsp;
 &nbsp;
 <span class="fstat-no" title="function not covered" >        function activate() {</span>
+<span class="cstat-no" title="statement not covered" >            vm.academicUrlParams = academicUrlParams;</span>
+<span class="cstat-no" title="statement not covered" >            vm.assignment = assignment;</span>
 <span class="cstat-no" title="statement not covered" >            vm.providerCounts = providerCounts;</span>
-&nbsp;
+<span class="cstat-no" title="statement not covered" >            vm.tooltip = tooltip;</span>
             //TODO retrieve previous assignmentConfigs by date
-<span class="cstat-no" title="statement not covered" >            vm.dates = [new Date().toDateString(), new Date().toDateString()];</span>
+&nbsp;
         }
 &nbsp;
     }
@@ -181,7 +181,7 @@
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Mar 19 2017 02:05:07 GMT+0000 (GMT)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Apr 16 2017 01:00:37 GMT+0100 (BST)
 </div>
 </div>
 <script src="../../../prettify.js"></script>

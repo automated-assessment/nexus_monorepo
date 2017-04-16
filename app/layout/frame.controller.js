@@ -3,10 +3,10 @@
  */
 (function(){
     angular.module('PeerFeedback')
-        .controller('frameController',['$rootScope','notificationService',function($rootScope,notificationService){
+        .controller('frameController',['$rootScope','notification',function($rootScope,notification){
 
             $rootScope.$on('$stateChangeStart',function(event){
-               notificationService.hide();
+               notification.hide();
             });
 
         }]);

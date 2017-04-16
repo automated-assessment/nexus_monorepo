@@ -57,6 +57,7 @@ module.exports.queryProviders = function (query,project) {
 module.exports.getReceivers = function (req, res) {
     let projection = {null:0};
     if (req.user.sid === Number(req.params.providerSid) || req.user.email) {
+
         if(!req.user.email){
             projection = {
                 "receivers.title.receiverName":0,
@@ -99,8 +100,6 @@ module.exports.queryReceivers = function (query,project) {
 };
 
 module.exports.updateAllocation = function (req, res) {
-
-
     if (req.user.sid === Number(req.params.providerSid)) {
         const query = {
             receiverSid: req.params.receiverSid,
@@ -124,7 +123,6 @@ module.exports.updateAllocation = function (req, res) {
 
 
 module.exports.getOneAllocation = function (req, res) {
-
     let projection = {};
     if (!req.user.email) {
        projection = {
@@ -137,7 +135,7 @@ module.exports.getOneAllocation = function (req, res) {
         providerSid: req.params.providerSid
     };
 
-    if (req.user.sid === Number(req.params.providerSid) || req.user.sid === Number(req.params.receiverSid) || req.user.email) {
+    if (req.user.sid === Number(req.params.providerSid) || req.user.sid === Number(req.params.receiverSid) || req.user === true ||req.user.email) {
         Allocation.findOne(query, projection)
             .then(function (response) {
                 res.send(response);

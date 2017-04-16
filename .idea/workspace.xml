@@ -2,14 +2,93 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9892a55a-b0d5-40db-bb65-18fe84bb52eb" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/app.constants.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/services/submission/archiveSubmission.factory.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/server/utilities/submissions-util.js" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/services/allocationDisplay.js" afterPath="$PROJECT_DIR$/app/services/allocationDisplay.factory.js" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/services/feedbackForm.js" afterPath="$PROJECT_DIR$/app/services/feedbackForm.factory.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/components/accordion.directive.js" afterPath="$PROJECT_DIR$/app/components/accordion.directive.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/components/build-form.directive.js" afterPath="$PROJECT_DIR$/app/components/build-form.directive.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/components/notification.directive.js" afterPath="$PROJECT_DIR$/app/components/notification.directive.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/layout/frame.controller.js" afterPath="$PROJECT_DIR$/app/layout/frame.controller.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/layout/frame.html" afterPath="$PROJECT_DIR$/app/layout/frame.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/layout/notification.html" afterPath="$PROJECT_DIR$/app/layout/notification.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/services/network/allocationNetwork.factory.js" afterPath="$PROJECT_DIR$/app/services/network/allocationNetwork.factory.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/services/network/assignmentNetwork.factory.js" afterPath="$PROJECT_DIR$/app/services/network/assignmentNetwork.factory.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/services/notification.service.js" afterPath="$PROJECT_DIR$/app/services/notification.service.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/templates/accordion.tpl" afterPath="$PROJECT_DIR$/app/templates/accordion.tpl" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/templates/allocation/provideTo.tpl.html" afterPath="$PROJECT_DIR$/app/templates/allocation/provideTo.tpl.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/templates/allocation/receivedFrom.tpl.html" afterPath="$PROJECT_DIR$/app/templates/allocation/receivedFrom.tpl.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/configuration/configuration.controller.js" afterPath="$PROJECT_DIR$/app/views/configuration/configuration.controller.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/configuration/configuration.route.js" afterPath="$PROJECT_DIR$/app/views/configuration/configuration.route.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/provider/provider.controller.js" afterPath="$PROJECT_DIR$/app/views/provider/provider.controller.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/provider/provider.route.js" afterPath="$PROJECT_DIR$/app/views/provider/provider.route.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/receiver/receiver.controller.js" afterPath="$PROJECT_DIR$/app/views/receiver/receiver.controller.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/receiver/receiver.route.js" afterPath="$PROJECT_DIR$/app/views/receiver/receiver.route.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/app.constants.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/app.constants.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/app.module.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/app.module.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/app.route.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/app.route.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/components/build-form.directive.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/components/build-form.directive.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/components/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/components/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/components/notification.directive.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/components/notification.directive.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/components/render-form.directive.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/components/render-form.directive.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/filters/firstName.filters.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/filters/firstName.filters.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/filters/firstName.filters.spec.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/filters/firstName.filters.spec.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/filters/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/filters/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/filters/percent.filters.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/filters/percent.filters.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/filters/percent.filters.spec.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/filters/percent.filters.spec.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/layout/frame.controller.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/layout/frame.controller.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/layout/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/layout/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/git.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/git.service.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/gitSubmission.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/gitSubmission.service.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/allocation.network.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/allocation.network.service.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/allocation.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/allocation.service.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/allocation.service.spec.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/allocation.service.spec.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/assignment.network.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/assignment.network.service.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/assignment.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/assignment.service.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/git.network.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/git.network.service.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/submission.network.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/submission.network.service.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/submission.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/network/submission.service.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/notification.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/notification.service.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/providerForm.service.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/providerForm.service.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/values/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/values/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/values/providerCounts.values.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/values/providerCounts.values.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/academic/academic.controller.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/academic/academic.controller.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/academic/academic.controller.spec.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/academic/academic.controller.spec.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/academic/academic.route.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/academic/academic.route.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/academic/academic.route.spec.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/academic/academic.route.spec.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/academic/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/academic/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/allocation/allocation.controller.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/allocation/allocation.controller.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/allocation/allocation.controller.spec.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/allocation/allocation.controller.spec.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/allocation/allocation.route.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/allocation/allocation.route.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/allocation/allocation.route.spec.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/allocation/allocation.route.spec.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/allocation/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/allocation/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/configuration/configuration.controller.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/configuration/configuration.controller.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/configuration/configuration.controller.spec.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/configuration/configuration.controller.spec.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/configuration/configuration.route.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/configuration/configuration.route.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/configuration/configuration.route.spec.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/configuration/configuration.route.spec.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/configuration/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/configuration/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/provider/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/provider/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/provider/provider.controller.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/provider/provider.controller.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/provider/provider.controller.spec.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/provider/provider.controller.spec.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/provider/provider.route.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/provider/provider.route.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/provider/provider.route.spec.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/provider/provider.route.spec.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/receiver/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/receiver/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/receiver/receiver.controller.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/receiver/receiver.controller.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/receiver/receiver.route.js.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/receiver/receiver.route.js.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/index.html" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov-report/prettify.js" afterPath="$PROJECT_DIR$/reports/coverage/lcov-report/prettify.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reports/coverage/lcov.info" afterPath="$PROJECT_DIR$/reports/coverage/lcov.info" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.js" afterPath="$PROJECT_DIR$/server.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/allocations-controller.js" afterPath="$PROJECT_DIR$/server/controllers/allocations-controller.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/assignments-controller.js" afterPath="$PROJECT_DIR$/server/controllers/assignments-controller.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/controllers/submissions-controller.js" afterPath="$PROJECT_DIR$/server/controllers/submissions-controller.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/utilities/allocation-utils.js" afterPath="$PROJECT_DIR$/server/utilities/allocation-utils.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/utilities/git-utils.js" afterPath="$PROJECT_DIR$/server/utilities/git-utils.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/utilities/passport-utils.js" afterPath="$PROJECT_DIR$/server/utilities/passport-utils.js" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -36,101 +115,101 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="provider.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/provider/provider.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="65" lean-forward="true" selection-start-line="3" selection-start-column="65" selection-end-line="3" selection-end-column="65" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="provideTo.tpl.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/templates/allocation/provideTo.tpl.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="49">
-              <caret line="8" column="34" lean-forward="true" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="provider.route.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/provider/provider.route.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="203">
-              <caret line="16" column="33" lean-forward="false" selection-start-line="16" selection-start-column="33" selection-end-line="16" selection-end-column="33" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="receivedFrom.tpl.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/templates/allocation/receivedFrom.tpl.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="137">
-              <caret line="15" column="87" lean-forward="false" selection-start-line="15" selection-start-column="86" selection-end-line="15" selection-end-column="87" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="provider.controller.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/provider/provider.controller.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="233">
-              <caret line="61" column="13" lean-forward="true" selection-start-line="61" selection-start-column="13" selection-end-line="61" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="receiver.route.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/receiver/receiver.route.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="16" column="33" lean-forward="false" selection-start-line="16" selection-start-column="33" selection-end-line="16" selection-end-column="33" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="receiver.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/receiver/receiver.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="18" column="23" lean-forward="false" selection-start-line="18" selection-start-column="23" selection-end-line="18" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="receiver.controller.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/receiver/receiver.controller.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="262">
-              <caret line="35" column="26" lean-forward="true" selection-start-line="35" selection-start-column="26" selection-end-line="35" selection-end-column="26" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="server.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="346">
-              <caret line="67" column="64" lean-forward="false" selection-start-line="67" selection-start-column="64" selection-end-line="67" selection-end-column="64" />
+            <state relative-caret-position="277">
+              <caret line="67" column="0" lean-forward="true" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="allocations-controller.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="assignments-controller.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/controllers/assignments-controller.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="31" column="55" lean-forward="false" selection-start-line="31" selection-start-column="55" selection-end-line="31" selection-end-column="55" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="allocations-controller.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server/controllers/allocations-controller.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
+            <state relative-caret-position="91">
+              <caret line="124" column="55" lean-forward="false" selection-start-line="124" selection-start-column="55" selection-end-line="124" selection-end-column="55" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="allocationDisplay.factory.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/services/allocationDisplay.factory.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="331">
+              <caret line="33" column="34" lean-forward="false" selection-start-line="33" selection-start-column="34" selection-end-line="33" selection-end-column="34" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="passport-utils.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/utilities/passport-utils.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="226">
+              <caret line="39" column="18" lean-forward="false" selection-start-line="39" selection-start-column="18" selection-end-line="39" selection-end-column="18" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="assignmentNetwork.factory.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/services/network/assignmentNetwork.factory.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="220">
               <caret line="28" column="0" lean-forward="true" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="submissions-controller.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/controllers/submissions-controller.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1">
+              <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="git-controller.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/controllers/git-controller.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="361">
+              <caret line="44" column="13" lean-forward="false" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="mark-utils.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server/utilities/mark-utils.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="allocationNetwork.factory.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/services/network/allocationNetwork.factory.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="36" column="16" lean-forward="false" selection-start-line="36" selection-start-column="16" selection-end-line="36" selection-end-column="16" />
               <folding />
             </state>
           </provider>
@@ -150,9 +229,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>form</find>
-      <find>request</find>
-      <find>Allocation</find>
       <find>getSubmissionCore</find>
       <find>gitNetwork</find>
       <find>getGt</find>
@@ -179,7 +255,10 @@
       <find>vm.auth</find>
       <find>vm.submission.provide</find>
       <find>console.log</find>
+      <find>notificationService</find>
+      <find>archiveSubmission</find>
       <find>console</find>
+      <find>updateAssignment</find>
     </findStrings>
     <replaceStrings>
       <replace>allocationNet</replace>
@@ -196,6 +275,7 @@
       <replace>feedbackForm</replace>
       <replace>hash</replace>
       <replace>token</replace>
+      <replace>notification</replace>
     </replaceStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/app</dir>
@@ -217,20 +297,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/server/utilities/git-utils.js" />
-        <option value="$PROJECT_DIR$/app/services/network/assignmentNetwork.factory.js" />
-        <option value="$PROJECT_DIR$/.env" />
-        <option value="$PROJECT_DIR$/index.html" />
-        <option value="$PROJECT_DIR$/app/templates/accordion.html" />
-        <option value="$PROJECT_DIR$/app/templates/provideTo.tpl.html" />
-        <option value="$PROJECT_DIR$/app/templates/receivedFrom.tpl.html" />
-        <option value="$PROJECT_DIR$/app/services/feedbackForm.js" />
-        <option value="$PROJECT_DIR$/server/utilities/submissions-util.js" />
-        <option value="$PROJECT_DIR$/server/utilities/mark-utils.js" />
-        <option value="$PROJECT_DIR$/server/datasets/submissionModel.js" />
-        <option value="$PROJECT_DIR$/server/datasets/assignmentModel.js" />
-        <option value="$PROJECT_DIR$/app/services/network/submissionNetwork.factory.js" />
-        <option value="$PROJECT_DIR$/app/templates/receivedFrom.tpl" />
         <option value="$PROJECT_DIR$/app/templates/provideTo.tpl" />
         <option value="$PROJECT_DIR$/app/templates/provider/submission.tpl" />
         <option value="$PROJECT_DIR$/app/templates/provider/feedback.tpl" />
@@ -238,36 +304,50 @@
         <option value="$PROJECT_DIR$/app/views/academic/academic.controller.js" />
         <option value="$PROJECT_DIR$/app/views/provider/provider.html" />
         <option value="$PROJECT_DIR$/app/views/academic/academic.route.js" />
-        <option value="$PROJECT_DIR$/app/views/configuration/configuration.route.js" />
-        <option value="$PROJECT_DIR$/app/views/configuration/configuration.html" />
-        <option value="$PROJECT_DIR$/server/controllers/submissions-controller.js" />
-        <option value="$PROJECT_DIR$/server/utilities/response-utils.js" />
-        <option value="$PROJECT_DIR$/server/utilities/passport-utils.js" />
-        <option value="$PROJECT_DIR$/server/controllers/assignments-controller.js" />
         <option value="$PROJECT_DIR$/server/datasets/allocationModel.js" />
         <option value="$PROJECT_DIR$/app/templates/allocation/receivedFrom.tpl" />
-        <option value="$PROJECT_DIR$/server/utilities/allocation-utils.js" />
         <option value="$PROJECT_DIR$/app/templates/allocation/provideTo.tpl" />
-        <option value="$PROJECT_DIR$/app/views/configuration/configuration.controller.js" />
-        <option value="$PROJECT_DIR$/app/templates/accordion.tpl" />
         <option value="$PROJECT_DIR$/app/views/allocation/allocation.route.js" />
-        <option value="$PROJECT_DIR$/server/controllers/allocations-controller.js" />
         <option value="$PROJECT_DIR$/app/views/academic/academic.html" />
-        <option value="$PROJECT_DIR$/server.js" />
         <option value="$PROJECT_DIR$/server/controllers/git-controller.js" />
         <option value="$PROJECT_DIR$/app/views/allocation/allocation.html" />
-        <option value="$PROJECT_DIR$/app/services/allocationDisplay.js" />
         <option value="$PROJECT_DIR$/app/services/network/gitNetwork.factory.js" />
-        <option value="$PROJECT_DIR$/app/services/network/allocationNetwork.factory.js" />
         <option value="$PROJECT_DIR$/app/views/allocation/allocation.controller.js" />
         <option value="$PROJECT_DIR$/app/views/receiver/receiver.html" />
         <option value="$PROJECT_DIR$/app/components/accordion.directive.js" />
-        <option value="$PROJECT_DIR$/app/views/provider/provider.route.js" />
         <option value="$PROJECT_DIR$/app/views/receiver/receiver.route.js" />
-        <option value="$PROJECT_DIR$/app/views/provider/provider.controller.js" />
         <option value="$PROJECT_DIR$/app/views/receiver/receiver.controller.js" />
-        <option value="$PROJECT_DIR$/app/templates/allocation/provideTo.tpl.html" />
+        <option value="$PROJECT_DIR$/app/views/provider/provider.route.js" />
+        <option value="$PROJECT_DIR$/app/services/allocationDisplay.js" />
+        <option value="$PROJECT_DIR$/app/layout/notification.html" />
+        <option value="$PROJECT_DIR$/app/layout/frame.html" />
         <option value="$PROJECT_DIR$/app/templates/allocation/receivedFrom.tpl.html" />
+        <option value="$PROJECT_DIR$/app/templates/accordion.tpl" />
+        <option value="$PROJECT_DIR$/server/utilities/allocation-utils.js" />
+        <option value="$PROJECT_DIR$/app/templates/allocation/provideTo.tpl.html" />
+        <option value="$PROJECT_DIR$/app/views/configuration/configuration.html" />
+        <option value="$PROJECT_DIR$/app/components/notification.directive.js" />
+        <option value="$PROJECT_DIR$/app/layout/frame.controller.js" />
+        <option value="$PROJECT_DIR$/app/services/notification.service.js" />
+        <option value="$PROJECT_DIR$/app/views/provider/provider.controller.js" />
+        <option value="$PROJECT_DIR$/reports/coverage/lcov-report/app/components/notification.directive.js.html" />
+        <option value="$PROJECT_DIR$/reports/coverage/lcov-report/app/layout/frame.controller.js.html" />
+        <option value="$PROJECT_DIR$/reports/coverage/lcov-report/app/services/notification.service.js.html" />
+        <option value="$PROJECT_DIR$/reports/coverage/lcov-report/app/views/configuration/configuration.controller.js.html" />
+        <option value="$PROJECT_DIR$/app/services/network/allocationNetwork.factory.js" />
+        <option value="$PROJECT_DIR$/index.html" />
+        <option value="$PROJECT_DIR$/server/utilities/git-utils.js" />
+        <option value="$PROJECT_DIR$/server/utilities/response-utils.js" />
+        <option value="$PROJECT_DIR$/app/views/configuration/configuration.route.js" />
+        <option value="$PROJECT_DIR$/app/views/configuration/configuration.controller.js" />
+        <option value="$PROJECT_DIR$/app/components/build-form.directive.js" />
+        <option value="$PROJECT_DIR$/app/services/network/assignmentNetwork.factory.js" />
+        <option value="$PROJECT_DIR$/server/controllers/assignments-controller.js" />
+        <option value="$PROJECT_DIR$/server/utilities/passport-utils.js" />
+        <option value="$PROJECT_DIR$/server/controllers/submissions-controller.js" />
+        <option value="$PROJECT_DIR$/app/services/allocationDisplay.factory.js" />
+        <option value="$PROJECT_DIR$/server.js" />
+        <option value="$PROJECT_DIR$/server/controllers/allocations-controller.js" />
       </list>
     </option>
   </component>
@@ -291,10 +371,9 @@
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectFrameBounds">
-    <option name="x" value="3" />
     <option name="y" value="23" />
     <option name="width" value="1280" />
-    <option name="height" value="684" />
+    <option name="height" value="681" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -346,20 +425,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="Feedback">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -418,24 +484,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="datasets" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Feedback" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Feedback" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="server" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="controllers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -469,10 +517,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="receiver" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -534,95 +578,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="allocation" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Feedback" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Feedback" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="academic" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Feedback" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Feedback" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="templates" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Feedback" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Feedback" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="templates" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="provider" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Feedback" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Feedback" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="templates" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="allocation" />
+              <option name="myItemId" value="values" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -680,24 +636,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="layout" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Feedback" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Feedback" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="components" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -705,7 +643,20 @@
         </subPane>
       </pane>
       <pane id="Scratches" />
-      <pane id="PackagesPane" />
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="Feedback">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1366,14 +1317,10 @@
       <workItem from="1491394707791" duration="5708000" />
       <workItem from="1491402422412" duration="28793000" />
       <workItem from="1491444286696" duration="3716000" />
-      <workItem from="1491481223542" duration="126196000" />
-    </task>
-    <task id="LOCAL-00001" summary="Integrating VCS with intellij">
-      <created>1486377894740</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1486377894740</updated>
+      <workItem from="1491481223542" duration="126375000" />
+      <workItem from="1491826315550" duration="1640000" />
+      <workItem from="1492126933237" duration="3367000" />
+      <workItem from="1492289436589" duration="12721000" />
     </task>
     <task id="LOCAL-00002" summary="Configuration now sends to mongodb">
       <created>1486399600135</created>
@@ -1711,11 +1658,18 @@
       <option name="project" value="LOCAL" />
       <updated>1491803299368</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="Included name instead of alias">
+      <created>1491804370317</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1491804370326</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="988068000" />
+    <option name="totallyTimeSpent" value="1005975000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1727,7 +1681,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="3" y="23" width="1280" height="684" extended-state="6" />
+    <frame x="0" y="23" width="1280" height="681" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1738,22 +1692,22 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23508772" sideWeight="0.5387722" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4631579" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3263158" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.46181172" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Mongo Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.08839191" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13250883" sideWeight="0.46122777" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25577265" sideWeight="0.46122777" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23990306" sideWeight="0.4937833" order="6" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.32956383" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.51929826" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19893429" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24933687" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.24959612" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26171243" sideWeight="0.5062167" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41578948" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26171243" sideWeight="0.5062167" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1788,7 +1742,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Included an if statement to check if the submission has already been submitted, for idempotence of the tool." />
     <MESSAGE value="Refactored to extract rendering form commonality from receiver and provider. Need to further refactor so that this is in its own directory. Server-side refactoring required too" />
     <MESSAGE value="Lot's of refactoring to do, need to DRY it up. Just came back from meeting 21/02/2017" />
     <MESSAGE value="Built a bootstrap notification system as a custom directive that can be called using $scope.createNotification(text,type)." />
@@ -1813,7 +1766,8 @@
     <MESSAGE value="Seems to be working, back to academic" />
     <MESSAGE value="Academic view works, back to auth" />
     <MESSAGE value="Everything seems to just about be holding together..." />
-    <option name="LAST_COMMIT_MESSAGE" value="Everything seems to just about be holding together..." />
+    <MESSAGE value="Included name instead of alias" />
+    <option name="LAST_COMMIT_MESSAGE" value="Included name instead of alias" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1826,380 +1780,17 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/components/build-form.directive.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/components/render-form.directive.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="18" lean-forward="false" selection-start-line="20" selection-start-column="18" selection-end-line="20" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/services/feedbackForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-314">
-          <caret line="14" column="0" lean-forward="true" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/utilities/mark-utils.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="38" column="5" lean-forward="true" selection-start-line="38" selection-start-column="5" selection-end-line="38" selection-end-column="5" />
-          <folding>
-            <element signature="e#0#46#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/academic/academic.controller.spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/academic/academic.route.spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/allocation/allocation.route.spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="246">
-          <caret line="74" column="0" lean-forward="true" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/services/network/submissionNetwork.factory.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="20" column="72" lean-forward="false" selection-start-line="20" selection-start-column="72" selection-end-line="20" selection-end-column="72" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/allocation/allocation.controller.spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/templates/success.tpl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="15" lean-forward="false" selection-start-line="0" selection-start-column="15" selection-end-line="0" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/templates/provider/submission.tpl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="6" lean-forward="false" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/templates/provider/feedback.tpl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.env">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="18" lean-forward="false" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/configuration/configuration.controller.spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/configuration/configuration.route.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="348">
-          <caret line="42" column="50" lean-forward="false" selection-start-line="42" selection-start-column="50" selection-end-line="42" selection-end-column="50" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/academic/academic.route.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="273">
-          <caret line="37" column="0" lean-forward="false" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/utilities/response-utils.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="86">
-          <caret line="9" column="62" lean-forward="false" selection-start-line="9" selection-start-column="62" selection-end-line="9" selection-end-column="62" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/utilities/submissions-util.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/utilities/passport-utils.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="82">
-          <caret line="34" column="9" lean-forward="false" selection-start-line="34" selection-start-column="8" selection-end-line="34" selection-end-column="9" />
-          <folding>
-            <element signature="e#0#46#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/datasets/assignmentModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="24" column="17" lean-forward="true" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/controllers/assignments-controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="116">
-          <caret line="64" column="49" lean-forward="false" selection-start-line="64" selection-start-column="49" selection-end-line="64" selection-end-column="49" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/configuration/configuration.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="4" column="38" lean-forward="false" selection-start-line="4" selection-start-column="38" selection-end-line="4" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/datasets/submissionModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="34" column="23" lean-forward="true" selection-start-line="34" selection-start-column="23" selection-end-line="34" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/utilities/allocation-utils.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="607">
-          <caret line="113" column="0" lean-forward="true" selection-start-line="113" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/configuration/configuration.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/datasets/allocationModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="24" column="6" lean-forward="true" selection-start-line="24" selection-start-column="6" selection-end-line="24" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/academic/academic.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5">
-          <caret line="23" column="96" lean-forward="false" selection-start-line="23" selection-start-column="96" selection-end-line="23" selection-end-column="96" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/controllers/submissions-controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1912">
-          <caret line="152" column="42" lean-forward="false" selection-start-line="152" selection-start-column="42" selection-end-line="152" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/controllers/git-controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="44" column="13" lean-forward="true" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/templates/accordion.tpl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="68" lean-forward="false" selection-start-line="3" selection-start-column="68" selection-end-line="3" selection-end-column="68" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/allocation/allocation.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="18" column="13" lean-forward="true" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/services/allocationDisplay.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="24" column="36" lean-forward="true" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/services/network/allocationNetwork.factory.spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-165">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/provider/provider.route.spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/allocation/allocation.route.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="48" lean-forward="true" selection-start-line="20" selection-start-column="48" selection-end-line="20" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/services/network/gitNetwork.factory.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="24" column="15" lean-forward="false" selection-start-line="24" selection-start-column="15" selection-end-line="24" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/services/network/allocationNetwork.factory.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="27" lean-forward="false" selection-start-line="34" selection-start-column="27" selection-end-line="34" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/academic/academic.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/allocation/allocation.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="44" column="45" lean-forward="true" selection-start-line="44" selection-start-column="45" selection-end-line="44" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/components/accordion.directive.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="70" column="64" lean-forward="false" selection-start-line="70" selection-start-column="64" selection-end-line="70" selection-end-column="64" />
-          <folding>
-            <element signature="e#0#46#0" expanded="false" />
-            <marker date="1491803372000" expanded="true" signature="685:970" ph="//..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/receiver/receiver.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="18" column="23" lean-forward="false" selection-start-line="18" selection-start-column="23" selection-end-line="18" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/provider/provider.route.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="16" column="33" lean-forward="false" selection-start-line="16" selection-start-column="33" selection-end-line="16" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/provider/provider.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
-          <caret line="3" column="65" lean-forward="true" selection-start-line="3" selection-start-column="65" selection-end-line="3" selection-end-column="65" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/provider/provider.controller.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="61" column="13" lean-forward="true" selection-start-line="61" selection-start-column="13" selection-end-line="61" selection-end-column="13" />
-          <folding />
+          <caret line="3" column="65" lean-forward="false" selection-start-line="3" selection-start-column="65" selection-end-line="3" selection-end-column="65" />
         </state>
       </provider>
     </entry>
@@ -2207,46 +1798,386 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="16" column="33" lean-forward="false" selection-start-line="16" selection-start-column="33" selection-end-line="16" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/receiver/receiver.controller.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
-          <caret line="35" column="26" lean-forward="true" selection-start-line="35" selection-start-column="26" selection-end-line="35" selection-end-column="26" />
+        <state relative-caret-position="525">
+          <caret line="35" column="26" lean-forward="false" selection-start-line="35" selection-start-column="26" selection-end-line="35" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/academic/academic.route.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="145">
+          <caret line="21" column="21" lean-forward="false" selection-start-line="21" selection-start-column="20" selection-end-line="21" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/academic/academic.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/utilities/submissions-util.js" />
+    <entry file="file://$PROJECT_DIR$/app/layout/notification.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="35" lean-forward="false" selection-start-line="4" selection-start-column="35" selection-end-line="4" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/layout/frame.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="10" lean-forward="false" selection-start-line="3" selection-start-column="10" selection-end-line="3" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/templates/allocation/receivedFrom.tpl.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="44" lean-forward="false" selection-start-line="17" selection-start-column="44" selection-end-line="17" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/components/accordion.directive.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1365">
+          <caret line="93" column="0" lean-forward="false" selection-start-line="93" selection-start-column="0" selection-end-line="93" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#46#0" expanded="false" />
+            <marker date="1491803372000" expanded="true" signature="685:970" ph="//..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/templates/accordion.tpl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="106" lean-forward="false" selection-start-line="1" selection-start-column="106" selection-end-line="1" selection-end-column="106" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/templates/allocation/provideTo.tpl.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="16" lean-forward="true" selection-start-line="16" selection-start-column="16" selection-end-line="16" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/datasets/allocationModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="24" column="6" lean-forward="false" selection-start-line="24" selection-start-column="6" selection-end-line="24" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/utilities/allocation-utils.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="317">
+          <caret line="48" column="0" lean-forward="false" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Feedback.iml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="9" lean-forward="true" selection-start-line="20" selection-start-column="9" selection-end-line="20" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/services/feedbackForm.factory.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="13" column="10" lean-forward="true" selection-start-line="13" selection-start-column="10" selection-end-line="13" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/components/notification.directive.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="81">
+          <caret line="8" column="36" lean-forward="false" selection-start-line="8" selection-start-column="36" selection-end-line="8" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/layout/frame.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="93">
+          <caret line="8" column="15" lean-forward="false" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
+          <folding>
+            <marker date="1492300824000" expanded="true" signature="58:329" ph="{...}" />
+            <marker date="1492300824000" expanded="true" signature="133:325" ph="[...]" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/services/notification.service.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="18" lean-forward="false" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/provider/provider.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="81">
+          <caret line="38" column="57" lean-forward="false" selection-start-line="38" selection-start-column="57" selection-end-line="38" selection-end-column="57" />
+          <folding>
+            <marker date="1492300824000" expanded="true" signature="61:2276" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/coverage/lcov-report/app/components/notification.directive.js.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="73">
+          <caret line="91" column="90" lean-forward="false" selection-start-line="91" selection-start-column="90" selection-end-line="91" selection-end-column="90" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/coverage/lcov-report/app/layout/frame.controller.js.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="73">
+          <caret line="77" column="69" lean-forward="false" selection-start-line="77" selection-start-column="69" selection-end-line="77" selection-end-column="69" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/coverage/lcov-report/app/services/notification.service.js.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="81">
+          <caret line="126" column="18" lean-forward="false" selection-start-line="126" selection-start-column="18" selection-end-line="126" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/coverage/lcov-report/app/views/configuration/configuration.controller.js.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="73">
+          <caret line="158" column="78" lean-forward="false" selection-start-line="158" selection-start-column="78" selection-end-line="158" selection-end-column="78" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/coverage/lcov-report/app/views/provider/provider.controller.js.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="213" column="6" lean-forward="false" selection-start-line="213" selection-start-column="6" selection-end-line="213" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/app.constants.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/app.route.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/services/submission/archiveSubmission.factory.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-60">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/utilities/git-utils.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="37" column="41" lean-forward="false" selection-start-line="37" selection-start-column="41" selection-end-line="37" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="55" column="0" lean-forward="false" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/utilities/response-utils.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="15" column="10" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/provider/provider.route.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1050">
+          <caret line="70" column="34" lean-forward="false" selection-start-line="70" selection-start-column="34" selection-end-line="70" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/services/network/gitNetwork.factory.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="296">
+          <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/services/network/submissionNetwork.factory.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="20" column="72" lean-forward="false" selection-start-line="20" selection-start-column="72" selection-end-line="20" selection-end-column="72" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/services/network/allocationNetwork.factory.spec.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-30">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/configuration/configuration.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="292">
+          <caret line="32" column="18" lean-forward="false" selection-start-line="32" selection-start-column="18" selection-end-line="32" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/configuration/configuration.route.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="880">
+          <caret line="67" column="5" lean-forward="true" selection-start-line="67" selection-start-column="5" selection-end-line="67" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/configuration/configuration.controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="142">
+          <caret line="15" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/components/build-form.directive.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="30" column="62" lean-forward="false" selection-start-line="30" selection-start-column="62" selection-end-line="30" selection-end-column="62" />
+          <folding>
+            <marker date="1492339443000" expanded="true" signature="11:1021" ph="{...}" />
+            <marker date="1492339443000" expanded="true" signature="166:1019" ph="{...}" />
+            <marker date="1492339443000" expanded="true" signature="752:1013" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/services/network/allocationNetwork.factory.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="36" column="16" lean-forward="false" selection-start-line="36" selection-start-column="16" selection-end-line="36" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/controllers/git-controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="44" column="13" lean-forward="false" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/controllers/assignments-controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="31" column="55" lean-forward="false" selection-start-line="31" selection-start-column="55" selection-end-line="31" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/utilities/mark-utils.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/utilities/passport-utils.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="39" column="18" lean-forward="false" selection-start-line="39" selection-start-column="18" selection-end-line="39" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/controllers/submissions-controller.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1">
+          <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/services/network/assignmentNetwork.factory.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="28" column="0" lean-forward="true" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/services/allocationDisplay.factory.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="331">
+          <caret line="33" column="34" lean-forward="false" selection-start-line="33" selection-start-column="34" selection-end-line="33" selection-end-column="34" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="346">
-          <caret line="67" column="64" lean-forward="false" selection-start-line="67" selection-start-column="64" selection-end-line="67" selection-end-column="64" />
+        <state relative-caret-position="277">
+          <caret line="67" column="0" lean-forward="true" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server/controllers/allocations-controller.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="28" column="0" lean-forward="true" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/templates/allocation/provideTo.tpl.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="49">
-          <caret line="8" column="34" lean-forward="true" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/templates/allocation/receivedFrom.tpl.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="15" column="87" lean-forward="false" selection-start-line="15" selection-start-column="86" selection-end-line="15" selection-end-column="87" />
+        <state relative-caret-position="91">
+          <caret line="124" column="55" lean-forward="false" selection-start-line="124" selection-start-column="55" selection-end-line="124" selection-end-column="55" />
           <folding />
         </state>
       </provider>

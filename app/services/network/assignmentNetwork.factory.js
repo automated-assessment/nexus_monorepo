@@ -27,9 +27,17 @@
             return $http.get(`/api/assignments/${aid}`)
         }
 
-        function updateAssignment(aid,data){
-            return $http.put(`/api/assignments/${aid}`,data);
+        function updateAssignment($stateParams,auth,assignmentData){
+            const authToken = window.btoa(`${auth.user}:${auth.token}`);
+            return $http.put(`/api/assignments/${$stateParams.aid}`,assignmentData,
+                {
+                    headers: {
+                        'Authorization': `Basic ${authToken}`
+                    }
+                })
+
         }
+
 
     }
 }());

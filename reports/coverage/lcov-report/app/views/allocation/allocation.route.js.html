@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">50% </span>
+        <span class="strong">39.13% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>9/18</span>
+        <span class='fraction'>9/23</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
@@ -35,13 +35,13 @@
         <span class='fraction'>2/8</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">50% </span>
+        <span class="strong">39.13% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>9/18</span>
+        <span class='fraction'>9/23</span>
       </div>
     </div>
   </div>
-  <div class='status-line medium'></div>
+  <div class='status-line low'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -97,7 +97,23 @@
 52
 53
 54
-55</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
@@ -128,8 +144,14 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -137,12 +159,22 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -160,7 +192,7 @@
         .config(['$stateProvider',function($stateProvider){
             $stateProvider
                 .state('frameState.allocationState',{
-                    url:'/allocation?sid',
+                    url:'/allocation?sid?token',
                     templateUrl:'app/views/allocation/allocation.html',
                     controller:'AllocationController as vm',
                     resolve:{
@@ -171,34 +203,50 @@
                     }
                 });
 &nbsp;
-            receivers.$inject = ['allocationService','$stateParams'];
-            providers.$inject = ['allocationService','$stateParams'];
-            submission.$inject = ['submissionService','$stateParams'];
+            receivers.$inject = ['allocationNetwork','$stateParams'];
+            providers.$inject = ['allocationNetwork','$stateParams'];
+            submission.$inject = ['submissionNetwork','$stateParams'];
 &nbsp;
             //
 &nbsp;
             //Allocation view
-<span class="fstat-no" title="function not covered" >            function receivers(allocationService,$stateParams){</span>
+<span class="fstat-no" title="function not covered" >            function receivers(allocationNetwork,$stateParams){</span>
 <span class="cstat-no" title="statement not covered" >                if($stateParams.sid){</span>
-<span class="cstat-no" title="statement not covered" >                    return allocationService.getReceivers($stateParams.sid)</span>
+<span class="cstat-no" title="statement not covered" >                    const auth = {</span>
+                        user:$stateParams.sid,
+                        token:$stateParams.token
+                    };
+<span class="cstat-no" title="statement not covered" >                    return allocationNetwork.getReceivers($stateParams,auth)</span>
                         .then(<span class="fstat-no" title="function not covered" >function(response){</span>
-<span class="cstat-no" title="statement not covered" >                            return response.data;</span>
+<span class="cstat-no" title="statement not covered" >                            return response.data.receivers;</span>
                         })
+                } else{
+<span class="cstat-no" title="statement not covered" >                    return {};</span>
                 }
             }
 &nbsp;
-<span class="fstat-no" title="function not covered" >            function providers(allocationService,$stateParams){</span>
+<span class="fstat-no" title="function not covered" >            function providers(allocationNetwork,$stateParams){</span>
 <span class="cstat-no" title="statement not covered" >                if($stateParams.sid){</span>
-<span class="cstat-no" title="statement not covered" >                    return allocationService.getProviders($stateParams.sid)</span>
+<span class="cstat-no" title="statement not covered" >                    const auth = {</span>
+                        user:$stateParams.sid,
+                        token:$stateParams.token
+                    };
+<span class="cstat-no" title="statement not covered" >                    return allocationNetwork.getProviders($stateParams,auth)</span>
                         .then(<span class="fstat-no" title="function not covered" >function(response){</span>
-<span class="cstat-no" title="statement not covered" >                            return response.data;</span>
+<span class="cstat-no" title="statement not covered" >                            return response.data.providers;</span>
                         })
+                } else{
+<span class="cstat-no" title="statement not covered" >                    return {};</span>
                 }
             }
 &nbsp;
-<span class="fstat-no" title="function not covered" >            function submission(submissionService,$stateParams){</span>
+<span class="fstat-no" title="function not covered" >            function submission(submissionNetwork,$stateParams){</span>
+<span class="cstat-no" title="statement not covered" >                const auth = {</span>
+                    user:$stateParams.sid,
+                    token:$stateParams.token
+                };
 <span class="cstat-no" title="statement not covered" >                if($stateParams.sid){</span>
-<span class="cstat-no" title="statement not covered" >                    return submissionService.getOneSubmission($stateParams.sid)</span>
+<span class="cstat-no" title="statement not covered" >                    return submissionNetwork.getOneSubmission($stateParams,auth)</span>
                         .then(<span class="fstat-no" title="function not covered" >function(response){</span>
 <span class="cstat-no" title="statement not covered" >                            return response.data;</span>
                         })
@@ -211,7 +259,7 @@
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Mar 19 2017 02:05:07 GMT+0000 (GMT)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Apr 16 2017 01:00:37 GMT+0100 (BST)
 </div>
 </div>
 <script src="../../../prettify.js"></script>

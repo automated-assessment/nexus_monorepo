@@ -29,7 +29,6 @@
             provider.$inject = ['$stateParams', 'allocationNetwork'];
 
             function submission($stateParams, gitNetwork, $sce) {
-                console.log($stateParams);
                 let auth;
                 if($stateParams.academic){
                     auth = {

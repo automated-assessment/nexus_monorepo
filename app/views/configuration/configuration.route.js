@@ -53,8 +53,8 @@
                 return {
                     providerCount: "Select the maximum number of allocations for a submission of this assignment.",
                     usePreviousForm: "Reuse a form you previously built.",
-                    bidirectionalFeedback: "Withold student feedback until they've both submitted feedback for each other.",
-                    sendMarkToNexus: "Send the average of the final mark directly to Nexus."
+                    bidirectionalFeedback: "Withold a student's feedback until that student has provided their own feedback.",
+                    sendMarkToNexus: "Send the average of received marks directly to Nexus."
                 }
             }
 

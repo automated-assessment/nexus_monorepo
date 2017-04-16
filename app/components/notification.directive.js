@@ -4,9 +4,9 @@
 (function(){
     angular
         .module('PeerFeedback')
-        .directive('notification',['notificationService',function(notificationService){
+        .directive('notification',['notification',function(notification){
            function link(scope){
-               scope.notification = notificationService.get();
+               scope.notification = notification.get();
            }
 
            return {

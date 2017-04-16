@@ -106,7 +106,7 @@ const queryRandomProviders = function (assignment, submission) {
             {
                 $project: {sid: 1,student:1}
             }
-        ])
+        ]);
 
 };
 
