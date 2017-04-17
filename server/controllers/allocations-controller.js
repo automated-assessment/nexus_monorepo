@@ -27,6 +27,8 @@ module.exports.getProviders = function (req, res) {
 
 };
 
+
+
 module.exports.queryProviders = function (query,project) {
     return Submission.aggregate([
         {
@@ -135,7 +137,10 @@ module.exports.getOneAllocation = function (req, res) {
         providerSid: req.params.providerSid
     };
 
-    if (req.user.sid === Number(req.params.providerSid) || req.user.sid === Number(req.params.receiverSid) || req.user === true ||req.user.email) {
+    if (req.user.sid === Number(req.params.providerSid)
+        || req.user.sid === Number(req.params.receiverSid)
+        || req.user === true
+        ||req.user.email) {
         Allocation.findOne(query, projection)
             .then(function (response) {
                 res.send(response);

@@ -20,7 +20,7 @@
                 formData: scope.vm.assignment.formBuild,
                 showActionButtons: false,
                 controlPosition:'left',
-                disableFields:['checkbox']
+                disableFields:['autocomplete','button','checkbox','file']
             }).data('formBuilder');
             watchAndDestroy(scope, elem, form);
         }

@@ -3,7 +3,6 @@
  */
 
 
-const Assignment = require('../datasets/assignmentModel');
 const Allocation = require('../datasets/allocationModel');
 const Submission = require('../datasets/submissionModel');
 

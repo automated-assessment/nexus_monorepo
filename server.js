@@ -38,7 +38,7 @@ const app = express();
 //Initialise app router
 app.use(passport.initialize());
 app.use(bodyParser.json());
-app.use('/app',express.static(__dirname + '/app')); //change to public to fit convention
+app.use('/app',express.static(__dirname + '/app'));
 app.use('/css',express.static(__dirname+'/css'));
 app.use('/node_modules',express.static(__dirname+'/node_modules'));
 

@@ -36,7 +36,6 @@ module.exports.queryOneSubmission = function (query) {
 
 
 module.exports.getAssignmentSubmissions = function (req, res) {
-    console.log(req.user);
     if (req.user.aid === Number(req.params.aid)) {
 
         const query = {

@@ -48,46 +48,59 @@ module.exports.updateAssignment = function (req, res) {
             const checkPrevious = submissionsController.queryAssignmentSubmissions({isAllocated: false})
                 .then(function (submissions) {
                     const submissionsToUpdate = [];
+                    let p = Promise.resolve();
                     for (let i = 0; i < submissions.length; i++) {
                         if (!submissions[i].isAllocated) {
-                            submissionsToUpdate.push(submissions[i]);
+                            p = p.then(function () {
+                                console.log("Running allocation for" + i);
+                                const query = {
+                                    sid: submissions[i].sid,
+                                };
+                                const update = {
+                                    academicEmail: assignment.email
+                                };
+                                return submissionsController.queryUpdateOneSubmission(query, update)
+                                    .then(function (response) {
+                                        const request = {
+                                            submission: {
+                                                exists: true,
+                                                value: submissions[i],
+                                                allocate: true
+                                            },
+                                            assignment: assignment
+                                        };
+                                        return submissionsController.allocateAndRespond(request);
+                                    });
+                            })
                         }
                     }
-                    runUpdates(0, submissionsToUpdate, assignment);
-                    res.send(assignment);
                 });
-
-
+            res.send(assignment);
         });
 };
 
-function runUpdates(i, submissions, assignment) {
-    if (i <submissions.length) {
-        console.log("Running allocation for ",i);
-        const updateSubmission = submissionsController.queryUpdateOneSubmission({sid: submissions[i].sid}, {academicEmail: assignment.email});
-        const request = {
-            submission: {
-                exists: false, //true?
-                value: submissions[i],
-                allocate: true
-            },
-            assignment: assignment
-        };
-        updateSubmission
-            .then(function(){
-                submissionsController.allocateAndRespond(request)
-                    .then(function(){
-                        runUpdates(i=i+1, submissions, assignment)
-                    })
-            });
-
-
-        // Promise.all([updateSubmission, allocateWithResponse])
-        //     .then(function () {
-        //         console.log("Complete for ",i);
-        //
-        //     })
-    }
-
-
-}
+// function runUpdates(i, submissions, assignment) {
+//     if (i <submissions.length) {
+//         console.log("Running allocation for ",i);
+//         const updateSubmission = submissionsController.queryUpdateOneSubmission({sid: submissions[i].sid}, {academicEmail: assignment.email});
+//         const request = {
+//             submission: {
+//                 exists: false, //true?
+//                 value: submissions[i],
+//                 allocate: true
+//             },
+//             assignment: assignment
+//         };
+//         updateSubmission
+//             .then(function(){
+//                 submissionsController.allocateAndRespond(request)
+//                     .then(function(){
+//                         runUpdates(i=i+1, submissions, assignment)
+//                     })
+//             });
+//
+//
+//     }
+//
+//
+// }

@@ -5,37 +5,39 @@
 const request = require('request-promise');
 const OWNER = process.env.NEXUS_GITHUB_ORG;
 const TOKEN = process.env.NEXUS_GITHUB_TOKEN;
-
 module.exports.getSubmission = function (repo, branch, sha) {
     return getTree(repo, branch, sha)
         .then(function (response) {
-            if(response.error){
+            if (response.error) {
                 return null;
             }
             response = JSON.parse(response);
             const fileNames = parseTree(response.tree);
-            return getContentArray(fileNames, repo,branch);
+            return getContentArray(fileNames, repo, branch);
         });
 
 };
 
-function getContentArray(fileNames,repo,branch) {
-    const promiseArray = [];
-    const contentArray = [];
+
+function getContentArray(fileNames, repo, branch) {
+    const snippets =[];
+    let p = Promise.resolve();
     for (let i = 0; i < fileNames.length; i++) {
-        const promise = getContents(repo, branch, fileNames[i])
-            .then(function (response) {
-                const snippet = {
-                    fileName: fileNames[i],
-                    content: response
-                };
-                contentArray.push(snippet);
+        p = p
+            .then(function () {
+                return getContents(repo, branch, fileNames[i])
+                    .then(function(response){
+                        const snippet = {
+                            fileName: fileNames[i],
+                            content:response
+                        };
+                        snippets.push(snippet);
+                    });
             });
-        promiseArray.push(promise);
     }
-    return Promise.all(promiseArray)
-        .then(function () {
-            return contentArray.reverse();
+    return Promise.resolve(p)
+        .then(function(response){
+            return snippets;
         });
 }
 
@@ -66,13 +68,6 @@ function parseTree(tree) {
     });
     return filePaths;
 }
-
-// module.exports.getZip = function(req,res){
-//     //This will get the zip
-// }
-
-
-//should probably handle all the git stuff here too
 
 
 function queryGit(query) {

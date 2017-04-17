@@ -7,13 +7,12 @@ const submissionsController = require('./submissions-controller');
 const allocationsController = require('./allocations-controller');
 
 module.exports.getGitSubmission = function (req, res) {
-
     let auth = false;
     let studentAuth;
     if (req.user.email) {
         auth = true;
     }
-    if (req.user.sid && !auth) {
+    if (!auth && req.user.sid) {
         studentAuth = allocationsController.queryReceivers({providerSid: req.user.sid}, {null: 0})
             .then(function (response) {
                 const receivers = response.receivers;
