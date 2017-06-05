@@ -44,7 +44,9 @@ services:
     depends_on:
       - syslog
   sneakers:
-    build: nexus/
+    build:
+      context: nexus/
+      dockerfile: Dockerfile
     command: start-sneakers
     volumes:
       - ./nexus:/home/app/src
