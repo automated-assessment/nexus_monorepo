@@ -53,6 +53,7 @@ class AssignmentController < ApplicationController
       @assignment.max_attempts = 0
 
       @assignment.allow_late = true
+      @assignment.is_unique = false
       @assignment.late_cap = 40
 
       @assignment.allow_zip = true
