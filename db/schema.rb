@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160921235603) do
+ActiveRecord::Schema.define(version: 20170606124406) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 20160921235603) do
     t.integer  "max_attempts"
     t.datetime "latedeadline"
     t.boolean  "feedback_only", default: false
+    t.boolean  "is_unique"
   end
 
   add_index "assignments", ["course_id"], name: "index_assignments_on_course_id"

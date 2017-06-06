@@ -169,6 +169,7 @@ class AssignmentController < ApplicationController
                                        :start,
                                        :deadline,
                                        :allow_late,
+                                       :is_unique,
                                        :feedback_only,
                                        :late_cap,
                                        :latedeadline,

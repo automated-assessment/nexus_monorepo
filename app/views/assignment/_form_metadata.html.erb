@@ -58,6 +58,18 @@
 </div>
 
 <div class="form-group">
+  <%= f.label 'Unique Assignment Options', class: 'col-lg-2 control-label' %>
+  <div class="col-lg-10">
+    <div class="checkbox">
+      <label>
+        <%= f.check_box :is_unique %>
+        Is the assignment unique?
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
   <%= f.label :late_cap, 'Late grade cap (%)', class: 'col-lg-2 control-label' %>
   <div class="col-lg-10">
     <%= f.number_field :late_cap, in: 0..100, step: 1, class: 'form-control' %>
