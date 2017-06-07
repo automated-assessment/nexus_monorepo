@@ -66,6 +66,14 @@
         Is the assignment unique?
       </label>
     </div>
+	<div class="parameterstring">
+		<%= f.label :parameter_string, 'Parameters and their desired Types', class: 'col-lg-2 control-label' %>
+	    <%= f.text_field :parameter_string, class: 'form-control', value: @assignment.parameter_string %>
+	</div>
+	<div class="descriptionstring">
+		<%= f.label :description_string, 'Description of the assignment in template syntax', class: 'col-lg-2 control-label' %>
+		<%= f.text_field :description_string, class: 'form-control', value: @assignment.description_string %>
+	</div>
   </div>
 </div>
 
