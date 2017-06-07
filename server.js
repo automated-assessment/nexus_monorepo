@@ -20,7 +20,20 @@ app.post('/unique_gen', function (request, response) {
         for student with id: ${request.body.studentuid}`);
 		
 		//Collecting template parameters and their desired types
-			
+		var parameterStr = request.body.parameter_string;
+		var parameterPairs = parameterStr.split([',']);
+		var parameterNameArr = new Array();
+		var parameterTypeArr = new Array();
+		
+		for(var i = 0; i < parameterPairs.length; i++) {
+			parameterNameArr[i] = parameterPairs[i].split(':')[0];
+			parameterTypeArr[i] = parameterPairs[i].split(':')[1];
+		}
+		
+		for(var i = 0; i < parameterPairs.length; i++) {
+			console.log(parameterNameArr[i] + " : " + parameterTypeArr[i]);
+		}
+		
         //TODO Aydin: Do generation.
         //TODO Aydin: Put generated files
 		
