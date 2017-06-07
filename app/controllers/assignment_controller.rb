@@ -171,6 +171,8 @@ class AssignmentController < ApplicationController
                                        :deadline,
                                        :allow_late,
                                        :is_unique,
+                                       :parameter_string,
+                                       :description_string,
                                        :feedback_only,
                                        :late_cap,
                                        :latedeadline,
