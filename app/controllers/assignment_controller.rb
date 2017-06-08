@@ -186,10 +186,38 @@ class AssignmentController < ApplicationController
 
   def return_assignment!
     assignment = Assignment.find_by(id: params[:id])
+    if (assignment.is_unique == true)
+      Rails.logger.info 'Assignment is unique, requesting generation for description'
+      
+      uri = URI.parse('http://unique-assignment-tool:3009/desc_gen')
+      
+      Net::HTTP.start(uri.host, uri.port) do |http|
+        req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
+
+        req.body = {
+          aid: assignment.id,
+          studentid: current_user.id,
+          is_unique: assignment.is_unique,
+          description_string: assignment.description_string
+        }.to_json
+
+        res = http.request(req)
+        Rails.logger.info res.body
+        if res.code =~ /2../
+          Rails.logger.info 'Success on generating description for unique assignment'
+          assignment.description = res.body
+        else         
+          Rails.logger.info 'Error on generating description for unique assignment'
+          assignment.description = 'ERROR: Error on generation of description. Get in contact with your lecturer for further details.'
+        end
+      end
+    end
+    Rails.logger.info 'Done if-else check on unique assignment check'  
+    Rails.logger.info assignment
     unless assignment
       flash.now[:error] = "Assignment #{params[:id]} does not exist"
       render 'mine', status: 404
     end
     assignment
-  end
+ end
 end
