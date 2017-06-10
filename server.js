@@ -26,6 +26,8 @@ app.use(errorhandler({
 }));
 
 app.post('/desc_gen', function (request, response) {
+	var error = false;
+	
     console.log('Unique assignment desscription generation request received.');
 	console.log(`Request for generating description for assignment with id: ${request.body.aid},
 	for student with id: ${request.body.studentid}`);
@@ -50,23 +52,52 @@ app.post('/desc_gen', function (request, response) {
 
 	lineReader1.on('line', function (line) {
 	  valueArray[1].push(line);
+	}).on('close', function() {
+		var lineReader2 = require('readline').createInterface({
+		  input: require('fs').createReadStream(process.cwd()+'/1')
+		});
+
+		lineReader2.on('line', function (line) {
+		  valueArray[2].push(line);
+		}).on('close', function() {
+			
+		  //TODO Aydin: Do generation.
+		  var writeFs = require('fs');
+		  fs.writeFile(process.cwd()+'/description.py.dna',descriptionString, function(err) {
+		  	console.log(err);
+			error = true;
+		  	response.send('Something went wrong inside the system. Contact your lecturer for further queries. ERROR STEP 1');
+		  })
+		  
+		  if (error) {
+		  var pythonExec = require('python-shell');
+
+		  var argsList = ['description.py.dna'];
+		  for(var i = 0; i < valueArray[studentID].length; i++) {
+			argsList.push(valueArray[i]);
+		  }
+
+		  var options = {
+			mode: 'text',
+			pythonPath: process.cwd(),
+			args: argsList			  
+		  }
+
+		  pythonExec.run('ribosome.py', options, function (err, results) {
+			  if (err) {
+				  console.log(err);
+				  response.send('Something went wrong inside the system. Contact your lecturer for further queries. ERROR STEP 2');
+			  }
+			  else {
+				console.log('results: %j', results);
+				console.log(`Sent description for assignment with id: ${request.body.aid},
+				for student with id: ${request.body.studentid}`);
+				response.send(result);
+			  }
+			});
+		  }
+		});
 	});
-
-	var lineReader2 = require('readline').createInterface({
-	  input: require('fs').createReadStream(process.cwd()+'/1')
-	});
-
-	lineReader2.on('line', function (line) {
-	  valueArray[2].push(line);
-	});
-	
-	console.log(valueArray);
-
-	//TODO Aydin: Do generation.
-
-	console.log(`Sent description for assignment with id:{request.body.aid},
-	for student with id: ${request.body.studentid}`);
-	response.send('Unique generation is still under construction.');
 })
 
 app.post('/unique_gen', function (request, response) {
@@ -108,3 +139,10 @@ app.post('/unique_gen', function (request, response) {
 app.listen(port, function () {
     console.log('Test UAT listening on port: ' + port);
 })
+
+
+
+
+
+
+

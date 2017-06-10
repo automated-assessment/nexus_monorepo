@@ -1,7 +1,9 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env python
+
+from __future__ import print_function
 
 #
-# Copyright (c) 2014 Martin Sustrik  All rights reserved.
+# Copyright (c) 2015 Ali Zaidi  All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"),
@@ -22,21 +24,29 @@
 # IN THE SOFTWARE.
 #
 
-################################################################################
-#  RNA prologue code.                                                          #
-################################################################################
+####################
+# Helper functions #
+####################
 
-# In theory, helpers could be placed into a separate module file to keep
-# the RNA lean and tidy, however, embedding the whole thing into each RNA
-# file makes the ribosome dependencies and deployment much simpler.
+def __line__():
+    """Return the line number from which this functions got called.
+    http://stackoverflow.com/q/6810999"""
+    import inspect
+    frame = inspect.stack()[1][0]
+    return inspect.getframeinfo(frame).lineno
 
-PROLOGUE_LINE = __LINE__
-PROLOGUE = '#!/usr/bin/env ruby
+
+#################
+# Prologue code #
+#################
+
+PROLOGUE_LINE = __line__()
+PROLOGUE = """#!/usr/bin/env python
 
 #
 # The initial part of this file belongs to the ribosome project.
 #
-# Copyright (c) 2014 Martin Sustrik  All rights reserved.
+# Copyright (c) 2015 Ali Zaidi  All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"),
@@ -57,535 +67,448 @@ PROLOGUE = '#!/usr/bin/env ruby
 # IN THE SOFTWARE.
 #
 
-module Ribosome
+from __future__ import print_function, division
 
-    # Class Block represents a rectangular area of text.
-    class Block
+import sys
+import re
 
-        attr_accessor :text, :width
 
-        def initialize(s)
-            @text = []
-            @width = 0
-            return if s == nil
+class Block:
+    # Block represents a rectangular area of text.
 
-            # Split the string into individual lines.
-			start = 0
-			loop do
-				i = s.index("\n", start) || s.size
-				@text << (i == start ? "" : s[start..i - 1])
-                @width = [@width, @text.last.size].max
-				start = i + 1
-				break if start > s.size
-			end
-        end
+    def __init__(self, s):
+        self.text = ['']
+        self.width = 0
+        if len(s) > 0:
+            self.text = s.splitlines()
+            self.width = max(map(lambda x: len(x), self.text))
 
-        # Weld the supplied block to the right side of this block.
-        def add_right(block)
+    # Weld the supplied block to the right of this block
+    def add_right(self, block):
+        for i, l in enumerate(block.text):
+            try:
+                self.text[i] += ' ' * (self.width - len(self.text[i])) + l
+            except:
+                self.text.append((' ' * self.width) + l)
+        self.width += block.width
 
-            # Merge the blocks while taking care to add whitespace
-            # where they do not align properly.
-            i = 0
-            for l in block.text
-                if(@text[i])
-                    @text[i] += (" " * (@width - @text[i].size)) + l
-                else
-                    @text << (" " * @width) + l
-                end
-                i += 1
-            end
+    # Weld the supplied block to the bottom of this block
+    def add_bottom(self, block):
+        self.text += block.text
+        self.width = max([self.width, block.width])
 
-            # Adjust the overall width of the block.
-            @width += block.width
-            
-        end
+    # Trim the whitespace from the block
+    def trim(self):
+        top = bottom = left = right = -1
+        for i, l in enumerate(self.text):
+            if not l.strip() == '':
+                # line is not empty
+                if top == -1: top = i
+                bottom = i
+                ls = len(l) - len(l.lstrip())
+                left = ls if left == -1 else min([left, ls])
+                rs = len(l.rstrip())
+                right = rs if right == -1 else max([right, rs])
+        if bottom == -1:
+            # empty block
+            self.text = ['']
+            self.width = 0
+            return
+        # Strip off the top and bottom whitespace.
+        self.text = self.text[top:bottom+1]
+        # Strip off the whitespace on the left and on the right.
+        self.text = [l.rstrip()[left:right+1] for l in self.text]
+        # Adjust the overall width of the block.
+        self.width = max([len(l) for l in self.text])
+        
+    def write(self, out, tabsize):
+        for l in self.text:
+            # If required, replace the initial whitespace by tabs.
+            if tabsize > 0:
+                ws = len(l) - len(l.lstrip())
+                l = '\t' * (ws // tabsize) + ' ' * (ws % tabsize) + l.lstrip()
+            # Write an individual line to the output file.
+            out.write(l + '\\n')
 
-        # Weld the supplied block to the bottom side of this block.
-        def add_bottom(block)
-            @text += block.text
-            @width = [@width, block.width].max
-        end
-
-        # Trim the whitespace from the block.
-        def trim()
-
-            # Find the boundaries of the text.
-            top = -1
-            bottom = -1
-            left = -1
-            right = -1
-
-            i = 0
-            for l in @text
-                if(!l.lstrip().empty?)
-                    top = i if top == -1
-                    bottom = i;
-                    if (left == -1)
-                        left = l.size() - l.lstrip().size()
-                    else
-                        left = [left, l.size() - l.lstrip().size()].min
-                    end
-                    if (right == -1)
-                        right = l.rstrip().size()
-                    else
-                        right = [right, l.rstrip().size()].max
-                    end
-                end
-                i += 1
-            end
-
-            # The case of block with no text whatsoever.
-            if bottom == -1
-                @text = []
-                @width = 0
-                return
-            end
-
-            # Strip off the top and bottom whitespace.
-            @text = @text[top..bottom]
-
-            # Strip off the whitespace on the left and on the right.
-            for i in 0..@text.size() - 1
-                @text[i] = @text[i].rstrip()[left..right]
-                @text[i] = "" if @text[i] == nil
-            end
-
-            # Adjust the overall width of the block.
-            @width = (@text.max {|x,y| x.size <=> y.size} || "").size
-
-        end
-
-        def write(out, tabsize)
-            for l in @text
-
-                # If required, replace the initial whitespace by tabs.
-                if(tabsize > 0)
-                    ws = l.size - l.lstrip.size
-                    l = "\t" * (ws / tabsize) +
-                        " " * (ws % tabsize) + l.lstrip
-                end
-
-                # Write an individual line to the output file.
-                out.write(l)
-                out.write("\n")
-            end
-        end
-
-        # Returns offset of the last line in the block.
-        def last_offset()
-            return 0 if @text.empty?
-            return @text.last.size - @text.last.lstrip.size
-        end
-
-    end
+    # Returns offset of the last line in block
+    def last_offset(self):
+        if len(self.text) == 0: return 0
+        return len(self.text[-1]) - len(self.text[-1].lstrip())
 
     # Size of a tab. If set to zero, tabs are not generated.
-    @tabsize = 0
+    _tabsize = 0
 
-    # The output file, or, alternativly, stdout.
-    @outisafile = false
-    @out = $stdout
+    # The output file, or, alternatively, stdout.
+    outisafile = False
+    out = sys.stdout
 
-    # This is the ribosome call stack. At each level there is a list of
+    # This is ribosome call stack. At each level there is a list of
     # text blocks generated up to that point.
-    @stack = [[]]
+    stack = [[]]
 
     # Redirects output to the specified file.
-    def Ribosome.output(filename)
-        close()
-        @outisafile = true
-        @out = File.open(filename, "w")
-    end
-
+    @staticmethod
+    def output(filename):
+        Block.close()
+        Block.outisafile = True
+        Block.out = open(filename, "w")
+    
     # Redirects output to the specified file.
     # New stuff is added to the existing content of the file.
-    def Ribosome.append(filename)
-        close()
-        @outisafile = true
-        @out = File.open(filename, "a")
-    end
+    @staticmethod
+    def append(filename):
+        Block.close()
+        Block.outisafile = True
+        Block.out = open(filename, "a")
 
-    # Redirects output to the stdout.
-    def Ribosome.stdout()
-        close()
-        @outisafile = false
-        @out = $stdout
-    end
+    # Redirect output to the stdout.
+    @staticmethod
+    def stdout():
+        Block.close()
+        Block.outisafile = False
+        Block.out = sys.stdout
 
-    # Sets the size of the tab.
-    def Ribosome.tabsize(size)
-        @tabsize = size
-    end
+    # Sets the size of the tab
+    @staticmethod
+    def tabsize(size):
+        Block._tabsize = size
 
     # Flush the data to the currently open file and close it.
-    def Ribosome.close()
-        for b in @stack.last
-            b.write(@out, @tabsize)
-        end
-        @stack = [[]]
-        @out.close() if @outisafile
-    end
+    @staticmethod
+    def close():
+        for b in Block.stack[-1]:
+            b.write(Block.out, Block._tabsize)
+        Block.stack = [[]]
+        if Block.outisafile: Block.out.close()
 
     # Adds one . line from the DNA file.
-    def Ribosome.add(line, bind)
+    @staticmethod
+    def add(line, bind):
 
         # If there is no previous line, add one.
-        if(@stack.last.empty?)
-            @stack.last << Block.new("")
-        end
+        if(len(Block.stack[-1]) == 0):
+            Block.stack[-1].append(Block(''))
 
         # In this block we will accumulate the expanded line.
-        block = @stack.last.last
+        block = Block.stack[-1][-1]
 
         # Traverse the line and convert it into a block.
         i = 0
-        while true
-            j = line.index(/[@&][1-9]?\{/, i)
-            j = line.size if j == nil
+        while True:
+            j = re.search(r'[@&][1-9]?\{', line[i:])
+            j = len(line) if j == None else j.start()+i
 
-            # Process constant block of text.
-            if (i != j)
-                block.add_right(Block.new(line[i..j - 1]))
-            end
+            # Process constant blocks of text.
+            if i != j:
+                block.add_right(Block(line[i:j]))
 
-            break if line.size == j
+            if len(line) == j: break
 
-            # Process an embedded expression.
+            # Process an embedded expression
             i = j
             j += 1
             level = 0
-            if (line[j] >= ?1 && line[j] <= ?9)
-                level = line[j].ord
+            if line[j] in [str(x) for x in range(1, 10)]:
+                level = int(line[j])
                 j += 1
-            end
-
             # Find corresponding }.
-            par = 0;
-            while true
-                if(line[j] == ?{)
+            par = 0
+            while True:
+                if line[j] == '{':
                     par += 1
-                elsif(line[j] == ?})
+                elif line[j] == '}':
                     par -= 1
-                end
-                break if par == 0
+                if par == 0: break
                 j += 1
-                if j >= line.size
-                    raise SyntaxError.new("Unmatched {")
-                end
-            end
-
+                if j >= len(line):
+                    raise Exception('Unmatched {')
+       
             # Expression of higher indirection levels are simply brought
             # down by one level.
-            if(level > 0)
-                if line [i + 1] == ?1
-                    block.add_right(Block.new("@" + line[i + 2..j]))
-                else
-                    line[i + 1] = (line [i + 1].ord - 1).chr
-                    block.add_right(Block.new(line[i..j]))
-                end
+            if level > 0:
+                if line[i+1] == '1':
+                    block.add_right(Block('@' + line[(i+2):(j+1)]))
+                else:
+                    ll = list(line)
+                    ll[i+1] = str(int(ll[i+1]) - 1)
+                    line = ''.join(ll)
+                    block.add_right(Block(line[i:(j+1)]))
                 i = j + 1
-                next
-            end
-
+                continue
             # We are at the lowest level of embeddedness so we have to
             # evaluate the embedded expression straight away.
-            expr = line[(level == 0 ? i + 2 : i + 3)..j - 1]
-            @stack.push([])
+            idx = i+2 if level == 0 else i+3
+            expr = line[idx:j]
+            Block.stack.append([])
             val = eval(expr, bind)
-            top = @stack.pop()
-            if(top.empty?)
-                val = Block.new(val.to_s)
-            else
-                val = Block.new("")
-                for b in top
+            top = Block.stack.pop()
+            if len(top) == 0:
+                val = Block(str(val))
+            else:
+                val = Block("")
+                for b in top:
                     val.add_bottom(b)
-                end
-            end
-            val.trim if line[i] == ?@
+            if line[i] == '@': val.trim()
             block.add_right(val)
             i = j + 1
-        end
-    end
-
+    
     # Adds newline followed by one . line from the DNA file.
-    def Ribosome.dot(line, bind)
-        @stack.last << Block.new("")
-        add(line, bind)
-    end
+    @staticmethod
+    def dot(line, bind):
+        Block.stack[-1].append(Block(''))
+        Block.add(line, bind)
 
-    # Adds newline followed by leading whitespace copied from the previous line
+    # Adds newline followed by leading whitespaces copied from the previous line
     # and one line from the DNA file.
-    def Ribosome.align(line, bind)
-        if @stack.last.empty?
+    @staticmethod
+    def align(line, bind):
+        if len(Block.stack[-1]) == 0:
             n = 0
-        else
-            n = @stack.last.last.last_offset
-        end
-        @stack.last << Block.new("")
-        add(" " * n, nil)
-        add(line, bind)
-    end
+        else:
+            n = Block.stack[-1][-1].last_offset()
+        Block.stack[-1].append(Block(''))
+        Block.add(' ' * n, None)
+        Block.add(line, bind)
 
-    #  Report an error that happened when executing RNA file.
-    def Ribosome.rethrow(e, rnafile, linemap)
-        i = 0
-        for i in 0..e.backtrace.size - 1
-            l = e.backtrace[i]
-            if l.start_with?(rnafile + ":")
-                stop = l.index(":", rnafile.size + 1) || l.size
-                num = l[rnafile.size + 1..stop - 1].to_i
-                for j in 0..linemap.size - 1
-                    break if linemap[j][0] == nil || linemap[j][0] > num
-                end
+    # Report an error that happened when executing RNA file.
+    @staticmethod
+    def rethrow(e, rnafile, linemap):
+        import traceback
+        exc = traceback.format_exc()
+        ls = exc.splitlines()[1:-1]
+        for i, l in enumerate(ls):
+            l = l.strip()
+            if l.startswith('File "<%s>"' % rnafile):
+                num = int(l.split(',')[1].replace('line', ''))
+                for j, m in enumerate(linemap):
+                    if m[0] == None or m[0] > num: break
                 j -= 1
                 num = num - linemap[j][0] + linemap[j][2]
-                l = "#{linemap[j][1]}:#{num}#{l[stop..-1]}"
-                e.backtrace[i] = l
-            end
-        end
-        raise e
-    end
+                ts = l/split(',')
+                l = ', '.join(['File "<%s>"' % linemap[j][1], 
+                               'line %d' % num, 
+                               ts[-1]])
+                print(l)
+        sys.exit(1)
 
-end
+            
+# Escape sequence for @
+at = '@'
 
-# Escape function for @
-def at()
-    return "@"
-end
+# Escape sequence for &
+amp = '&'
 
-# Escape function for &
-def amp()
-    return "&"
-end
+# Escape sequence for /
+slash = '/'
+    
 
-# Escape function for /
-def slash()
-    return "/"
-end
+"""
 
-################################################################################
-# The code that belongs to the ribosome project ends at this point of the      #
-# RNA file and so does the associated license. What follows is the code        #
-# generated from the DNA file.                                                 #
-################################################################################
+import os
+import sys
+import argparse
+import re
 
-'
+# Set up the arguments parser.
+parser = argparse.ArgumentParser(
+    prog="ribosome code generator, version 1.17",
+    usage="%(prog)s [options] <dna_file> [-- <arguments-to-dna>*]")
+parser.add_argument('dna', type=argparse.FileType('r'))
+parser.add_argument('--rna', action='store_true')
 
-################################################################################
-#  DNA helper functions.                                                       #
-################################################################################
-
-def usage()
-    $stderr.write "usage: ribosome.rb [options] <dna-file> <args-passed-to-dna-script>\n"
-    exit(1)
-end
-
-# Print out the error and terminate the generation.
-def dnaerror(s)
-    $stderr.write("#{$dnastack.last[1]}:#{$dnastack.last[2]} - #{s}\n")
-    exit(1)
-end
-
-# Generate new line(s) into the RNA file.
-def rnawrite(s)
-    $linemap << [$rnaln, $dnastack.last[1], $dnastack.last[2]]
-    $rna.write(s)
-    $rnaln += s.count("\n")
-end
-
-################################################################################
-#  Main function.                                                              #
-################################################################################
-
-# Parse the command line arguments.
-if(ARGV.size() < 1 || ARGV[0] == "-h" || ARGV[0] == "--help")
-    usage()
-end
-if ARGV[0] == "-v" || ARGV[0] == "--version"
-    puts "ribosome code generator, version 1.17"
-    exit(1)
-end
-if ARGV[0] == "--rna"
-    if(ARGV.size() < 2)
-        usage()
-    end
-    rnaopt = true
-    dnafile = ARGV[1]
-else
-    rnaopt = false
-    dnafile = ARGV[0]
-end
+# Pwd
+__dir__ = os.path.dirname(os.path.realpath(__file__))
 
 # Given that we can 'require' other DNA files, we need to keep a stack of
 # open DNA files. We also keep the name of the file and the line number to
 # be able to report errors. We'll also keep track of the directory the DNA file
 # is in to be able to correctly expand relative paths in /!include commands.
-$dnastack = [[nil, "ribosome.rb", PROLOGUE_LINE + 1, Dir.pwd]]
+dnastack = [(None, 'ribosome.py', PROLOGUE_LINE + 1, __dir__)]
 
-if rnaopt
-    $rna = $stdout
-else
-    # Create the RNA file.
-    if(dnafile[-4..-1] == ".dna")
-        $rnafile = dnafile[0..-5] + ".rna"
-    else
-        $rnafile = dnafile + ".rna"
-    end
-    $rna = File.open($rnafile, "w")
-end
-$rnaln = 1
-$linemap = []
+# Handle to output stream
+rna = None
 
-# Generate RNA prologue code.
+# Line counter
+rnaln = 1
+
+# Lines
+linemap = []
+
+# DNA helper functions
+def dnaerror(s):
+    print("%s:%s - %s" %(dnastack[-1][1], dnastack[-1][2], s), file=sys.stderr)
+
+# Generate new line(s) into the RNA file.
+def rnawrite(s):
+    global rnaln
+    global dnastack
+    linemap.append([rnaln, dnastack[-1][1], dnastack[-1][2]])
+    rna.write(s)
+    rnaln += len(s.splitlines())
+
+args, unknown = parser.parse_known_args()
+
+# Handle the CLI arguments.
+if args.rna:
+    rna = sys.stdout
+
+else:
+    name, ext = os.path.splitext(args.dna.name)
+    rnafile = name + '.rna'
+    rna = open(rnafile, 'w')
+
+# Generate RNA Prologue code
 rnawrite(PROLOGUE)
-if (!rnaopt)
-    rnawrite("begin\n\n")
-end
+if not args.rna:
+    rnawrite('try:\n')
 
 # Process the DNA file.
-dirname = File.expand_path(File.dirname(dnafile))
-$dnastack.push [File.open(dnafile, "r"), dnafile, 0, dirname]
-loop do
+dirname = os.path.dirname(os.path.realpath(args.dna.name))
+dnastack.append([args.dna, args.dna.name, 0, dirname])
 
-    # Get next line. Unwind the include stack as necessary.
-    line = nil
-    loop do
-        line = $dnastack.last[0].gets()
-        break if line != nil
-        $dnastack.pop[0].close()
-        break if $dnastack.size == 1
-    end
-    break if line == nil
+while True:
 
-    # We are counting lines so that we can report line numbers in errors.
-    $dnastack.last[2] += 1
+    # Get the next line. Unwind the include stack as necessary.
+    line = None
+    while True:
+        line = dnastack[-1][0].readline()
+        if line != '': break
+        dnastack.pop()[0].close()
+        if len(dnastack) == 1: break
 
-    # All Ruby lines are copied to the RNA file verbatim.
-    if line.size == 0 || line[0] != ?\.
-        rnawrite(line)
-        next
-    end
+    if line == '': break
 
-    # Removes dot from the beginning of the line and
+    # we are counting lines so we can report line numbers in errors
+    dnastack[-1][2] += 1
+
+
+    # @alixedi - Now that we are doing this in Python, we must have some way
+    # of dealing with indentation - for instance, this does not work:
+    # for i in [1, 2, 3]:
+    # .    @{i}
+    # Neither does this work:
+    # for i in [1, 2, 3]:
+    #     .@{i}
+    # I want to be able to support the former.
+
+    # Lets save the left and right spaces, if any
+    lspace = line.replace(line.lstrip(), '')
+    # Add 4 spaces to accommodate our try except clause if not rna
+    if not args.rna:
+        lspace = lspace + ' ' * 4
+    rspace = line.replace(line.rstrip(), '')
+    # followed by stripping the line
+    line = line.strip()
+
+    # All Python lines are copies to the RNA file verbatim
+    if len(line) == 0 or not line[0] in ['.']:
+        rnawrite(lspace + line + rspace)
+        continue
+
+    # Removes dot from the beginning of the line and 
     # trailing $ sign, if present.
-    line = line[1..-2]
-    line = line[0..-2] if line[-1] == ?$
+    line = line[1:]
 
-    # Make sure there are no tabs in the line.
-    if(line.index(?\t) != nil)
-        dnaerror("tab found in the line, replace it by space")
-    end
+    if len(line) > 0:
+        if line[-1] == '$': line = line[0:-1]
+
+    # Make sure there are no tabs in the line
+    if not line.find('\t') == -1:
+        dnaerror('tab found in the line, replace it by space')
 
     # Find first two non-whitespace which can possibly form a command.
-    firsttwo = line.lstrip[0..1]
+    try:
+        firsttwo = line.lstrip()[0:2]
+    except:
+        firsttwo = None
 
     # /+ means that the line is appended to the previous line.
-    if(firsttwo == "/+")
-        rnawrite("Ribosome.add(#{line.lstrip[2..-1].inspect()}, binding)\n")
-        next
-    end
+    if firsttwo == '/+':
+        rnawrite('''%sBlock.add('%s', locals())%s''' % (lspace, line.lstrip()[2:], rspace))
 
-    # /= means that the line is aligned with the previous line.
-    if(firsttwo == "/=")
-        rnawrite("Ribosome.align(#{line.lstrip[2..-1].inspect()}, binding)\n")
-        next
-    end
+    # /= means that the lines is aligned with the previous line.
+    elif firsttwo == '/=':
+        rnawrite('''%sBlock.align('%s', locals())%s''' % (lspace, line.lstrip()[2:], rspace))
 
-    # /! means that a command follows.
-    if(firsttwo == "/!")
-        line =  line.lstrip[2..-1]
-        match = /^[0-9A-Za-z_]+/.match(line)
-        if(match == nil)
-            dnaerror("/! should be followed by an identifier")
-        end
-        command = match[0]
-        
+    # /! means a command follows.
+    elif firsttwo == '/!':
+        line = line.lstrip()[2:]
+        match = re.match(r'^[0-9A-Za-z_]+', line)
+        if match == None:
+            dnaerror('/! should be followed by an identifier')
+        command = match.group(0)
+
         # A subset of commands is simply translated to corresponding
         # commands in the RNA file.
-        if (["output", "append", "stdout", "tabsize"].include?(command))
-            rnawrite("Ribosome.#{line}\n")
-            next
-        end
+        if command in ['output', 'append', 'stdout', 'tabsize']:
+            rnawrite('%sBlock.%s%s' % (lspace, line, rspace))
+            continue
 
-        # The argument string will be added at the end of each interation of
+        # The argument string will be added at the end of each integration of
         # the following loop, except for the last one.
-        if(command == "separate")
-            def identity(x) x end
-	        separator = eval("identity#{line[8..-1]}")
-	        cname = "____separate_#{$rnaln}____"
-	        rnawrite("#{cname} = true\n")
-	        line = $dnastack.last[0].gets()
-	        $dnastack.last[2] += 1
-	        if(line == nil || line[0] == ?. ||
-	              (!line.index('while') && !line.index('until') &&
-	              !line.index('for') && !line.index('each') &&
-	              !line.index('upto') && line.index('downto') &&
-	              !line.index('times') && line.index('loop')))
-	            dnaerror("'separate' command must be followed by a loop")
-	        end
-	        rnawrite(line)
-	        rnawrite("if(#{cname})\n")
-	        rnawrite("    #{cname} = false\n")
-	        rnawrite("else\n")
-	        rnawrite("    Ribosome.add(#{separator.inspect()}, binding)\n")
-	        rnawrite("end\n")
-	        next
-        end
+        if command == 'separate':
+            identity = lambda x: x
+            separator = eval('identity(%s)' % line[8:])
+            cname = "____separate_%d____" % rnaln
+            rnawrite('%s%s = True%s' % (lspace, cname, rspace))
+            line = dnastack[-1][0].readline()
+            dnastack[-1][2] += 1
+            if line == None or line[0] == '.' \
+                            or (not 'for' in line and not 'while' in line):
+                dnaerror('"separate" command must be followed by a loop')
+            rnawrite(lspace + line + rspace)
+            rnawrite('%s    if %s:%s' % (lspace, cname, rspace))
+            rnawrite('%s        %s = False%s' % (lspace, cname, rspace))
+            rnawrite('%s    else:%s' % (lspace, rspace))
+            rnawrite('%s        Block.add("%s", locals())%s' % (lspace, separator, rspace))
+            continue
 
         # Open the file and put it on the top of the DNA stack. Relative paths
         # are expanded using the directory the parent DNA file resides in as
         # a starting point.
-        if(command == "include")
-            def identity(x) x end
-	        filename = eval("identity#{line[7..-1]}")
-            filename = File.expand_path(filename, $dnastack.last[3])
-            dirname = File.dirname(filename)
-            $dnastack.push([File.open(filename, "r"), filename, 0, dirname])
-            next
-        end
+        if command == 'include':
+            identity = lambda x: x
+            filename = eval('identity(%s)' % line[7:])
+            filename = os.path.join(dnastack[-1][3], filename)
+            dirname = os.path.dirname(filename)
+            dnastack.append([open(filename, 'r'), filename, 0, dirname])
+            continue
 
-        dnaerror("unknown command '#{command}'")
-    end
+        dnaerror('unknown command %s' % command)
 
-    # There's no command in the line. Process it in the standard way.
-    rnawrite("Ribosome.dot(#{line.inspect()}, binding)\n")
-
-end
+    else:
+        # There's no command in the line. Process it in the standard way.
+        rnawrite("""%sBlock.dot(%s, locals())%s""" % (lspace, repr(line), rspace))
 
 # Generate RNA epilogue code.
-$dnastack = [[nil, "ribosome", __LINE__ + 1]]
-$rna.write("\n")
-if !rnaopt
-    $rna.write("rescue Exception =>e\n")
-    $rna.write("    LINEMAP = [\n");
-    last = nil
-    for le in $linemap
-        if last == nil || le[1] != last[1] || le[0] - last [0] != le[2] - last[2]
-            $rna.write("        [#{le[0]}, #{le[1].inspect}, #{le[2]}],\n")
+dnastack = [[None, 'ribosome', __line__() + 1]]
+rna.write('\n')
+if not args.rna:
+    rna.write('except Exception as e:\n')
+    rna.write('    LINEMAP = [\n')
+    last = None
+    for le in linemap:
+        if (last == None) or \
+           (le[1] != last[1]) or \
+           ((le[0] - last[0]) != (le[2] - last[2])):
+            rna.write('        [%s, "%s", %s],\n' % (le[0], le[1], le[2]))
             last = le
-        end
-    end
-    $rna.write("        [nil]\n")
-    $rna.write("    ]\n");
-    $rna.write("    Ribosome.rethrow(e, " + $rnafile.inspect + ", LINEMAP)\n")
-    $rna.write("end\n")
-    $rna.write("\n")
-end
-$rna.write("Ribosome.close()\n")
-$rna.write("\n")
+    rna.write('        [None]\n')
+    rna.write('    ]\n')
+    rna.write('    Block.rethrow(e, "%s", LINEMAP)' % rnafile)
+    rna.write('\n')
+
+rna.write("\n")
+rna.write("Block.close()\n")
 
 # Flush the RNA file.
-$rna.close()
+rna.close()
 
-if !rnaopt
-
+if not args.rna:
+    import subprocess
     # Execute the RNA file. Pass it any arguments not used by ribosome.
-    result = system("ruby #{$rnafile} " + ARGV[1..-1].join(' '))
-
+    result = subprocess.call([sys.executable, rnafile] + unknown)
     # Delete the RNA file.
-    File.delete($rnafile)
+    os.remove(rnafile)
 
-    exit result
-
-end
-
+    sys.exit(result)
