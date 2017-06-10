@@ -63,37 +63,42 @@ app.post('/desc_gen', function (request, response) {
 			
 		  //TODO Aydin: Do generation.
 		  var writeFs = require('fs');
-		  fs.writeFile(process.cwd()+'/description.py.dna',descriptionString, function(err) {
-		  	console.log(err);
-			error = true;
-		  	response.send('Something went wrong inside the system. Contact your lecturer for further queries. ERROR STEP 1');
+		  writeFs.writeFile(process.cwd()+'/description.py.dna',descriptionString, function(err) {
+		  	console.log('Error from writing dna file: ' + err);
+			if (err != null) {
+				error = true;
+		  	    response.send('Something went wrong inside the system. Contact your lecturer for further queries. ERROR STEP 1');
+			}
 		  })
 		  
-		  if (error) {
-		  var pythonExec = require('python-shell');
+		  if (!error) {
+			console.log('Starting on generation')
+	      	var pythonExec = require('python-shell');
 
-		  var argsList = ['description.py.dna'];
-		  for(var i = 0; i < valueArray[studentID].length; i++) {
-			argsList.push(valueArray[i]);
-		  }
+		    var argsList = ['description.py.dna'];
+		    for(var i = 0; i < valueArray[studentID].length; i++) {
+			  argsList.push(valueArray[i]);
+		    }
 
-		  var options = {
-			mode: 'text',
-			pythonPath: process.cwd(),
-			args: argsList			  
-		  }
-
-		  pythonExec.run('ribosome.py', options, function (err, results) {
-			  if (err) {
-				  console.log(err);
-				  response.send('Something went wrong inside the system. Contact your lecturer for further queries. ERROR STEP 2');
-			  }
-			  else {
-				console.log('results: %j', results);
-				console.log(`Sent description for assignment with id: ${request.body.aid},
-				for student with id: ${request.body.studentid}`);
-				response.send(result);
-			  }
+		    var options = {
+		  	  mode: 'text',
+		      pythonPath: process.cwd(),
+			  args: argsList			  
+		    }
+            
+			console.log('Generation args taken.')
+			
+		    pythonExec.run('ribosome.py', options, function (err, results) {
+			    if (err) {
+				    console.log(err);
+				    response.send('Something went wrong inside the system. Contact your lecturer for further queries. ERROR STEP 2');
+			    }
+			    else {
+				  console.log('results: %j', results);
+				  console.log(`Sent description for assignment with id: ${request.body.aid},
+				  for student with id: ${request.body.studentid}`);
+				  response.send(result);
+			    }
 			});
 		  }
 		});
