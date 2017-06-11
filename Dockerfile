@@ -4,8 +4,6 @@ FROM node:boron
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-RUN chmod -R +x /usr/src/app/
-RUN chmod +x /usr/local/bin
 # Install app dependencies
 COPY package.json /usr/src/app/
 RUN npm install
