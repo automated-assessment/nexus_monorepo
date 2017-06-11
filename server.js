@@ -29,8 +29,7 @@ app.post('/desc_gen', function (request, response) {
 	var error = false;
 	
     console.log('Unique assignment desscription generation request received.');
-	console.log(`Request for generating description for assignment with id: ${request.body.aid},
-	for student with id: ${request.body.studentid}`);
+	console.log(`Request for generating description for assignment with id: ${request.body.aid}, for student with id: ${request.body.studentid}`);
 	
 	var studentID = request.body.studentid;
 	var descriptionString = request.body.description_string;
@@ -46,6 +45,7 @@ app.post('/desc_gen', function (request, response) {
 		parameterTypeArr[i] = parameterPairs[i].split(':')[1];
 	}
 	
+	//TODO Aydin: Values will be fetched from db or sth else in later stages
 	var lineReader1 = require('readline').createInterface({
 	  input: require('fs').createReadStream(process.cwd()+'/1')
 	});
@@ -54,14 +54,14 @@ app.post('/desc_gen', function (request, response) {
 	  valueArray[1].push(line);
 	}).on('close', function() {
 		var lineReader2 = require('readline').createInterface({
-		  input: require('fs').createReadStream(process.cwd()+'/1')
+		  input: require('fs').createReadStream(process.cwd()+'/2')
 		});
 
 		lineReader2.on('line', function (line) {
 		  valueArray[2].push(line);
 		}).on('close', function() {
 			
-		  //TODO Aydin: Do generation.
+		  //Writing the template to file to do generation
 		  var writeFs = require('fs');
 		  writeFs.writeFile(process.cwd()+'/description.py.dna',descriptionString, function(err) {
 		  	console.log('Error from writing dna file: ' + err);
@@ -72,32 +72,30 @@ app.post('/desc_gen', function (request, response) {
 		  })
 		  
 		  if (!error) {
+			//Executing generation with inputs
 			console.log('Starting on generation')
 	      	var pythonExec = require('python-shell');
 
 		    var argsList = ['description.py.dna'];
 		    for(var i = 0; i < valueArray[studentID].length; i++) {
-			  argsList.push(valueArray[i]);
+			  argsList.push(valueArray[studentID][i]);
 		    }
 
 		    var options = {
-		  	  mode: 'text',
-		      pythonPath: process.cwd(),
 			  args: argsList			  
 		    }
             
 			console.log('Generation args taken.')
 			
-		    pythonExec.run('ribosome.py', options, function (err, results) {
+		    pythonExec.run('/ribosome.py', options, function (err, results) {
 			    if (err) {
 				    console.log(err);
 				    response.send('Something went wrong inside the system. Contact your lecturer for further queries. ERROR STEP 2');
 			    }
 			    else {
 				  console.log('results: %j', results);
-				  console.log(`Sent description for assignment with id: ${request.body.aid},
-				  for student with id: ${request.body.studentid}`);
-				  response.send(result);
+				  console.log(`Sent description for assignment with id: ${request.body.aid}, for student with id: ${request.body.studentid}`);
+				  response.send(results[0]);
 			    }
 			});
 		  }

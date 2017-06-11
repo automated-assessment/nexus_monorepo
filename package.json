@@ -21,6 +21,7 @@
     "eslint-plugin-react": "^4.2.3",
     "express": "^4.13.4",
     "fs-extra": "^0.30.0",
-    "request": "^2.70.0"
+    "request": "^2.70.0",
+    "python-shell": "^0.4.0"
   }
 }
