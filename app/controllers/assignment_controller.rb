@@ -198,6 +198,7 @@ class AssignmentController < ApplicationController
           aid: assignment.id,
           studentid: current_user.id,
           is_unique: assignment.is_unique,
+          parameter_string: assignment.parameter_string,
           description_string: assignment.description_string
         }.to_json
 
