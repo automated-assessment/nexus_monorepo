@@ -43,7 +43,7 @@ class IntermediateMarkController < ApplicationController
         unless failed_services.empty?
           failed_tools = MarkingTool.where(uid: failed_services.to_a).map(&:name)
           feedback_body = other_feedback(marking_tool_context, failed_tools)
-          nexus = MarkingTool.find_by(uid: 'nexus')
+          nexus = nexus_for_feedback
           FeedbackItem.create(submission: @submission, marking_tool: nexus, body: feedback_body)
         end
       end
