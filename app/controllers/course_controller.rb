@@ -1,7 +1,9 @@
 class CourseController < ApplicationController
   include ApplicationHelper
+  require_relative '../lib/git_utils'
 
   before_action :authenticate_user!
+  before_action :authenticate_admin!, except: [:index, :mine, :show]
 
   def index
     @courses = Course.all
@@ -15,17 +17,14 @@ class CourseController < ApplicationController
   end
 
   def enrolment_list
-    return unless authenticate_admin!
     @course = return_course!
   end
 
   def new
-    return unless authenticate_admin!
     @course = Course.new
   end
 
   def create
-    return unless authenticate_admin!
     @course = Course.new(course_params)
     @course.teacher = current_user
 
@@ -37,12 +36,10 @@ class CourseController < ApplicationController
   end
 
   def edit
-    return unless authenticate_admin!
     @course = return_course!
   end
 
   def update
-    return unless authenticate_admin!
     @course = return_course!
     if @course.update_attributes(course_params)
       flash[:success] = 'Course updated'
@@ -50,6 +47,27 @@ class CourseController < ApplicationController
     else
       render 'edit'
     end
+  end
+
+  def destroy
+    course = return_course!
+    assignments = course.assignments
+
+    # Delete all remote repos for all assignments before deleting
+    # the assignment records themselves
+    all_repos_deleted = true
+    assignments.each do |assignment|
+      repo_deleted = GitUtils.delete_remote_assignment_repo!(assignment)
+      all_repos_deleted = false unless repo_deleted
+    end
+
+    Course.destroy(course.id)
+    if all_repos_deleted
+      flash[:success] = 'Course deleted successfully'
+    else
+      flash[:warning] = 'Course deleted successfully. However, one or more remote assignments were not removed from github'
+    end
+    redirect_to '/'
   end
 
   private

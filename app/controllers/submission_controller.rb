@@ -9,7 +9,7 @@ class SubmissionController < ApplicationController
   def show
     @submission = Submission.find(params[:id])
     # Only allow original submitter or admin users to see a submission
-    unless is_admin? || is_user?(@submission.user)
+    unless admin? || user?(@submission.user)
       @submission.log("Illegal attempt to access submission by user #{current_user.name} when submitting user was #{@submission.user.name}. Refusing access.", 'Warning')
       redirect_to(error_url('401'))
       return
@@ -57,7 +57,7 @@ class SubmissionController < ApplicationController
     end
 
     @submission.original_filename = uploaded_file.original_filename
-
+    @submission.active_services = @submission.assignment.active_services
     # Need to save the submission here so that save_file_name has access to its id
     # But if doing so, need to delete the submission again if copying the upload file goes wrong
     @submission.save!
@@ -134,6 +134,7 @@ class SubmissionController < ApplicationController
       return
     end
 
+    @submission.active_services = @submission.assignment.active_services
     # Record the fact that we have a safe git copy
     @submission.git_success = true
     @submission.save!
@@ -147,7 +148,9 @@ class SubmissionController < ApplicationController
 
   def create_ide
     return unless create_submission(false)
-
+    # Get marking service workflow from assignment
+    @submission.active_services = @submission.assignment.active_services
+    @submission.active_services = services
     # Need to save submission here so we can have an ID
     # If things go wrong before the safe point, we need to destroy it again.
     @submission.save!
@@ -255,7 +258,8 @@ class SubmissionController < ApplicationController
   def remark
     return unless authenticate_admin!
     @submission = Submission.find(params[:id])
-
+    @submission.active_services = @submission.assignment.active_services
+    @submission.save!
     if SubmissionUtils.remark!(@submission, current_user, flash)
       flash[:success] = 'Successfully sent submission for remarking.'
     end

@@ -1,6 +1,8 @@
 require 'csv'
 
 class Submission < ActiveRecord::Base
+  serialize :active_services, Hash
+
   belongs_to :assignment
   belongs_to :user
   has_many :intermediate_marks, dependent: :destroy
@@ -43,7 +45,7 @@ class Submission < ActiveRecord::Base
   end
 
   def calculate_final_mark_if_possible
-    return if intermediate_marks.any?(&:pending?)
+    return if intermediate_marks.reload.any?(&:pending?)
     log('All Marking Tools have reported. Calculating final mark...')
     final_mark = 0
     intermediate_marks.each do |im|
