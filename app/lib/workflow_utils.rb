@@ -9,18 +9,25 @@ class WorkflowUtils
     # cannot run until every tool in the set has returned a mark
     def construct_workflow(marking_tool_contexts, dependencies)
       return {} unless marking_tool_contexts && !marking_tool_contexts.empty?
-      workflow = {}
+      workflow = {} # Actual workflow definition.
       marking_tool_contexts.each do |key, value|
         marking_tool = MarkingTool.find(value['marking_tool_id'])
+        # Create new entry for the tool in the workflow
         workflow[marking_tool.uid] = Set.new
+
+        # Move on unless there are dependencies to process
         next unless dependencies && !dependencies.empty?
+
+        # Assign the dependent marking services to the entry just made in the
+        # workflow.
         workflow[marking_tool.uid] = Set.new dependencies[key] if dependencies[key]
         if workflow[marking_tool.uid].include? marking_tool.uid
           raise StandardError, "Error with marking tool #{marking_tool.name}. Marking services cannot depend on themselves"
         end
       end
 
-      # Validate Workflow
+      ### MARK: Validate Workflow
+      # Ruby is pass-by-value so make copy of workflow to be mutated.
       copy_of_workflow = workflow.deep_dup
       valid = valid_workflow?(copy_of_workflow)
       raise StandardError, 'Please remove the circular dependency between services' unless valid
@@ -30,11 +37,14 @@ class WorkflowUtils
     # Given a submission with an active service hash
     # Return an array with all the keys, coresponding to UIDs
     # such that their value in the hash is an empty array
-    # Runs in O(n) time where n is the number of keys in the hash.
+    # Empty array = the tool is ready to be invoked
     def next_services_to_invoke(workflow)
       to_invoke = []
+      # If, for some reason, workflow is nil, return empty
       return to_invoke unless workflow
+      # If workflow is not nil but empty, it will still return empty
       workflow.each do |tool, depends_set|
+        # Else, add all tools with empty dependency arrays
         to_invoke << tool if depends_set.empty?
       end
       to_invoke
@@ -45,7 +55,6 @@ class WorkflowUtils
     # Traverse the workflow to remove it as a dependent for each tool that depends on it
     # Those keys in the hash where the value is now an empty array are
     # now eligible for invocation
-    # Runs in O(n) where n is the number of keys in the hash
     def trim_workflow!(workflow, service)
       if workflow.delete(service)
         workflow.each do |_, depends_set|
@@ -70,6 +79,7 @@ class WorkflowUtils
       end
       until queue.empty?
         current_service = queue.shift # shift is equivalent to dequeue.
+        # Execute the block given at each node
         yield current_service if block_given?
         visited.add(current_service)
         workflow.each do |tool, depends_set|

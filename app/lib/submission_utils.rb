@@ -52,8 +52,7 @@ class SubmissionUtils
         begin
           raise ActiveRecord::RecordNotFound, "#{service.marking_tool_uid} does not exist" unless mt
 
-          # TODO: Change back to perform_later when submitting project
-          SendSubmissionJob.perform_now submission.id, mt
+          SendSubmissionJob.perform_later submission.id, mt
         rescue => e
           submission.log("Error trying to submit to #{mt.name}: #{e.class} #{e.message}", 'Error')
           submission.failed = true
