@@ -82,4 +82,14 @@ module ApplicationHelper
 
     @markdown.render(text).html_safe
   end
+
+  def nexus_for_feedback
+    nexus = MarkingTool.find_by(uid: 'nexus')
+    unless nexus
+      nexus = MarkingTool.create(name: 'Nexus',
+                                 uid: 'nexus',
+                                 url: "#{request.protocol}#{request.host_with_port}/")
+    end
+    nexus
+  end
 end
