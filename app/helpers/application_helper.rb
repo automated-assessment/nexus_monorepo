@@ -85,7 +85,7 @@ module ApplicationHelper
 
   def nexus_for_feedback
     nexus = MarkingTool.find_by(uid: 'nexus')
-    nexus = MarkingTool.create(name: 'Nexus', uid: 'nexus') unless nexus
+    nexus = MarkingTool.create(name: 'Nexus', uid: 'nexus', url: 'n/a') unless nexus
     nexus
   end
 end
