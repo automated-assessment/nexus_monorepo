@@ -2,6 +2,8 @@
  * Created by adamellis on 19/03/2017.
  */
 
+ "use strict";
+
 const gitUtils = require('../utilities/git-utils');
 const submissionsController = require('./submissions-controller');
 const allocationsController = require('./allocations-controller');
@@ -52,8 +54,3 @@ function parseClone(url) {
     repoUrl = repoUrl.substring(0, repoUrl.length - 4);
     return repoUrl;
 }
-
-
-
-
-

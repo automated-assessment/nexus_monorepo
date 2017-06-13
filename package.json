@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "seed": "node server/scripts/seeds.js",
-    "dev": "node server/scripts/devBase.js"
+    "dev": "node server/scripts/devBase.js",
+    "start": "node .",
+    "startdev": "nodemon . --use_strict"
   },
   "author": "",
   "license": "ISC",
@@ -43,6 +45,10 @@
     "request-promise": "^4.2.0",
     "unzip": "^0.1.11"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-preset-env": "^1.5.2",
+    "nodemon": "^1.11.0"
+  },
   "jshintConfig": {}
 }

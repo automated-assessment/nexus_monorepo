@@ -2,11 +2,13 @@
  * Created by adamellis on 06/02/2017.
  */
 
+ "use strict";
+
 require('dotenv').config();
 
 //env
-const port = process.env.PORT || 5000;
-const dbHost = process.env.DB_HOST || "localhost";
+const port = process.env.PORT || 3050;
+const dbHost = process.env.MONGO_HOST || "localhost";
 
 //packages
 const express = require('express');
@@ -74,7 +76,7 @@ app.get('/',function(req,res){
 });
 
 app.listen(port,function(){
-    console.log(`Listening on port: ${port}`);
+    console.log(`Listening on port: ${port}!`);
 });
 
 function debugRoutes(){

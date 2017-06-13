@@ -1,7 +1,7 @@
 /**
  * Created by adamellis on 03/03/2017.
  */
-
+"use strict";
 const Submission = require('../datasets/submissionModel');
 const allocationUtils = require('./../utilities/allocation-utils');
 const responseUtils = require('./../utilities/response-utils');
@@ -147,4 +147,3 @@ module.exports.allocateAndRespond = function (request) {
 module.exports.queryUpdateOneSubmission = function (query, update, options) {
     return Submission.findOneAndUpdate(query, update, options);
 };
-
