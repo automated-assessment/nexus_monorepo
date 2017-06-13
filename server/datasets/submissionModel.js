@@ -2,6 +2,8 @@
  * Created by adamellis on 06/02/2017.
  */
 
+"use strict";
+
 //This needs editing to remove any data that is not required.
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -39,5 +41,3 @@ submissionSchema.methods.verifyToken = function(candidatetoken){
 };
 
 module.exports = mongoose.model('Submission',submissionSchema);
-
-

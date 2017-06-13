@@ -2,12 +2,13 @@ FROM node:4
 
 RUN mkdir /src
 WORKDIR /src
+VOLUME /src
 
 COPY package.json /src
-RUN npm install --production --silent
+RUN npm install --silent
 
 COPY . /src
 
 EXPOSE 3050
 
-CMD ["npm", "start"]
+CMD ["npm", "run-script", "startdev"]

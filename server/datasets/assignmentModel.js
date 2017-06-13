@@ -1,6 +1,9 @@
 /**
  * Created by adamellis on 06/02/2017.
  */
+
+"use strict";
+
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
@@ -43,4 +46,3 @@ assignmentSchema.methods.isAcademicOf = function (sid) {
 };
 
 module.exports = mongoose.model('Assignment', assignmentSchema);
-

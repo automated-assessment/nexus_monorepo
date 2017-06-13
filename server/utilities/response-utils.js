@@ -1,6 +1,7 @@
 /**
  * Created by adamellis on 07/02/2017.
  */
+"use strict";
 
 const NEXUS_BASE_URL = process.env.NEXUS_BASE_URL || 'http://localhost:3000';
 const NEXUS_TOOL_CANONICAL_NAME = process.env.NEXUS_TOOL_CANONICAL_NAME || 'peerfeedback';
