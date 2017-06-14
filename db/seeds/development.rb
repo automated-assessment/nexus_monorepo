@@ -43,6 +43,15 @@ if ENV['DOCKER']
                      requires_config: false,
                      access_token: 'bar')
 
+### MARK: Configurable Tools
+# The domain of the web hook url and the config url are different
+# You must use the name of the docker service and the port exposed in the services
+# Dockerfile for the web hook url as it is used
+# by nexus which is part of the docker swarm network
+
+# You must use localhost and the port assigned to the docker container since
+# the browser does not have direct access to the Docker swarm network.
+
   MarkingTool.create(name: 'Config Tool',
                      description: 'Sample Configuration Tool',
                      url: 'http://config-tool:3000/mark',
@@ -50,7 +59,7 @@ if ENV['DOCKER']
                      input: nil,
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://config-tool:3000/static/config.html?aid=%{aid}',
+                     config_url: 'http://localhost:3002/static/config.html?aid=%{aid}',
                      access_token: 'bar')
 
   MarkingTool.create(name: 'IO Tool',
@@ -60,8 +69,17 @@ if ENV['DOCKER']
                      input: 'java',
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://io-tool:3000/#/static/config.html?aid=%{aid}',
+                     config_url: 'http://localhost:3004/#/static/config.html?aid=%{aid}',
                      access_token: 'bar')
+
+  MarkingTool.create(name: 'Peer Feedback',
+                     description: 'Peer Feedback Tool',
+                     url: 'http://peer-feedback:3050/mark',
+                     input: nil,
+                     output: nil,
+                     requires_config: true,
+                     config_url: "http://localhost:3005/#!/frame/configuration
+                                  ?aid=%{aid}&token=#{a.access_token}&email=#{u.email}")
 else
   puts 'Invoked locally'
   MarkingTool.create(name: 'Java Compilation',
@@ -101,4 +119,13 @@ else
                      requires_config: true,
                      config_url: 'http://localhost:3004/#/static/config.html?aid=%{aid}',
                      access_token: 'bar')
+
+  MarkingTool.create(name: 'Peer Feedback',
+                     description: 'Peer Feedback Tool',
+                     url: 'http://localhost:3005/mark',
+                     input: nil,
+                     output: nil,
+                     requires_config: true,
+                     config_url: "http://localhost:3005/#!/frame/configuration
+                                  ?aid=%{aid}&token=#{a.access_token}&email=#{u.email}")
 end
