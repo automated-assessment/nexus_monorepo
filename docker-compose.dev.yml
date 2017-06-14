@@ -14,3 +14,5 @@ services:
     build:
       context: peerfeedback/
       dockerfile: Dockerfile.dev
+    volumes:
+      - ./peerfeedback:/src
