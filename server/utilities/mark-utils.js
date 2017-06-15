@@ -4,7 +4,6 @@
 
 const submissionsController = require('../controllers/submissions-controller');
 const assignmentsController = require('../controllers/assignments-controller');
-const allocationsController = require('../controllers/allocations-controller');
 const responseUtils = require('../utilities/response-utils');
 
 module.exports.updateMark = function (allocation) {
@@ -13,12 +12,10 @@ module.exports.updateMark = function (allocation) {
             assignmentsController.queryOneAssignment({aid: submission.aid})
                 .then(function (assignment) {
                     if(assignment && assignment.additionalConfiguration.contributeFinalMark){
-                        console.log("HIT BIGTIME");
                         const providerCount = assignment.providerCount;
-                        allocationsController.queryProviders({receiverSid: submission.sid})
+                        submissionsController.queryProviders({receiverSid: submission.sid})
                             .then(function (allocation) {
                                 const mark = checkAndCalculate(allocation.providers,providerCount);
-                                console.log(mark);
                                 if(typeof mark === "number"){
 
                                     responseUtils.sendMark(mark,submission.sid)

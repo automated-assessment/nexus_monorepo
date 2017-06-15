@@ -2,6 +2,8 @@
  * Created by adamellis on 03/03/2017.
  */
 
+'use strict';
+
 const Submission = require('../datasets/submissionModel');
 const allocationUtils = require('./../utilities/allocation-utils');
 const responseUtils = require('./../utilities/response-utils');
@@ -125,7 +127,6 @@ module.exports.createSubmission = function (req, res) {
 
 };
 
-
 module.exports.allocateAndRespond = function (request) {
     let promise;
     const submission = request.submission.value;
@@ -146,5 +147,98 @@ module.exports.allocateAndRespond = function (request) {
 
 module.exports.queryUpdateOneSubmission = function (query, update, options) {
     return Submission.findOneAndUpdate(query, update, options);
+};
+
+module.exports.getProviders = function (req, res) {
+    let projection = {null:0};
+    if (req.user.sid === Number(req.params.receiverSid) || req.user.email) {
+        if(!req.user.email){
+            projection = {
+                "providers.title.receiverName":0,
+                "providers.title.providerName":0
+            };
+        }
+        exports.queryProviders({receiverSid: Number(req.params.receiverSid)},projection)
+            .then(function (response) {
+                res.send(response);
+            })
+    } else {
+        res.status(401).send("Unauthorised");
+    }
+
+};
+
+
+
+module.exports.queryProviders = function (query,project) {
+    return Submission.aggregate([
+        {
+            $lookup: {
+                from: "allocations",
+                localField: "sid",
+                foreignField: "receiverSid",
+                as: "providers"
+            }
+        },
+        {
+            $match: {"providers.receiverSid": query.receiverSid}
+        },
+        {
+            $project: {"providers": 1}
+        },
+        {
+            $project:project
+        }
+    ])
+        .then(function (response) {
+            return response[0];
+        })
+
+};
+
+
+module.exports.getReceivers = function (req, res) {
+    let projection = {null:0};
+    if (req.user.sid === Number(req.params.providerSid) || req.user.email) {
+
+        if(!req.user.email){
+            projection = {
+                "receivers.title.receiverName":0,
+                "receivers.title.providerName":0
+            };
+        }
+        exports.queryReceivers({providerSid: Number(req.params.providerSid)},projection)
+            .then(function (response) {
+                res.send(response);
+            })
+    } else {
+        res.status(401).send("Unauthorised");
+    }
+
+};
+
+module.exports.queryReceivers = function (query,project) {
+
+    return Submission.aggregate(
+        {
+            $lookup: {
+                from: "allocations",
+                localField: "sid",
+                foreignField: "providerSid",
+                as: "receivers"
+            }
+        },
+        {
+            $match: {"receivers.providerSid": query.providerSid}
+        },
+        {
+            $project: {"receivers": 1}
+        },
+        {
+            $project:project
+        })
+        .then(function (response) {
+            return response[0];
+        })
 };
 

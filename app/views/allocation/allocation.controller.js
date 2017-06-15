@@ -14,10 +14,6 @@
         const vm = this;
 
 
-        // <!--<a ui-sref="frameState.providerState({receiverSid:{{receiver.receiverSid}},providerSid:{{vm.submission.core.sid}},aid:{{vm.submission.core.aid}},token:'{{vm.auth.token}}',email:'{{vm.auth.email}}',academic:'{{vm.academic}}'})">-->
-
-
-
         vm.auth = {
             token: $stateParams.token
         };
@@ -25,10 +21,6 @@
         vm.submission = {};
         vm.submission.core = submission;
 
-
-
-        console.log(receivers);
-        console.log(providers);
 
 
         receivers.forEach(function(receiver){

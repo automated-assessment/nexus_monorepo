@@ -20,7 +20,6 @@ module.exports.getOneAssignment = function (req, res) {
 
     exports.queryOneAssignment(query)
         .then(function (response) {
-
             res.send(response);
         })
 };
@@ -52,7 +51,6 @@ module.exports.updateAssignment = function (req, res) {
                     for (let i = 0; i < submissions.length; i++) {
                         if (!submissions[i].isAllocated) {
                             p = p.then(function () {
-                                console.log("Running allocation for" + i);
                                 const query = {
                                     sid: submissions[i].sid,
                                 };
@@ -79,28 +77,4 @@ module.exports.updateAssignment = function (req, res) {
         });
 };
 
-// function runUpdates(i, submissions, assignment) {
-//     if (i <submissions.length) {
-//         console.log("Running allocation for ",i);
-//         const updateSubmission = submissionsController.queryUpdateOneSubmission({sid: submissions[i].sid}, {academicEmail: assignment.email});
-//         const request = {
-//             submission: {
-//                 exists: false, //true?
-//                 value: submissions[i],
-//                 allocate: true
-//             },
-//             assignment: assignment
-//         };
-//         updateSubmission
-//             .then(function(){
-//                 submissionsController.allocateAndRespond(request)
-//                     .then(function(){
-//                         runUpdates(i=i+1, submissions, assignment)
-//                     })
-//             });
-//
-//
-//     }
-//
-//
-// }
+

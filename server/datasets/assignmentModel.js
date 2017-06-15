@@ -34,7 +34,6 @@ assignmentSchema.methods.verifyEmail = function (candidateEmail) {
 assignmentSchema.methods.isAcademicOf = function (sid) {
     const submissionsController = require('../controllers/submissions-controller');
     const assignment = this;
-    console.log(assignment);
     return submissionsController.queryOneSubmission({sid: sid})
         .then(function (submission) {
             if(submission){

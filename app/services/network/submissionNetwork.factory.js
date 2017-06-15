@@ -11,12 +11,13 @@
     function submissionNetwork($http){
 
         return {
+            getReceivers: getReceivers,
+            getProviders: getProviders,
             getAssignmentSubmissions:getAssignmentSubmissions,
             getOneSubmission:getOneSubmission,
             getGitData:getGitData
         };
 
-        //Get all submissions for aid
         function getAssignmentSubmissions($stateParams,auth){
             const authToken = window.btoa(`${auth.user}:${auth.token}`);
             return $http.get(`/api/assignments/${$stateParams.aid}/submissions`,{
@@ -37,6 +38,31 @@
 
         function getGitData(sid){
             return $http.get(`/api/submissions/${sid}/git`);
+        }
+
+        function getReceivers($stateParams, auth) {
+            const authToken = window.btoa(`${auth.user}:${auth.token}`);
+            return $http.get(`/api/submissions/receivers/${$stateParams.sid}`,
+                {
+                    headers: {
+                        'Authorization': `Basic ${authToken}`
+                    }
+                })
+                .then(function(response){
+                    return response;
+                })
+
+        }
+
+
+        function getProviders($stateParams, auth) {
+            const authToken = window.btoa(`${auth.user}:${auth.token}`);
+            return $http.get(`/api/submissions/providers/${$stateParams.sid}`,
+                {
+                    headers: {
+                        'Authorization': `Basic ${authToken}`
+                    }
+                });
         }
     }
 }());

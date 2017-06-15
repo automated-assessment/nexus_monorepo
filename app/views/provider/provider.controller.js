@@ -43,7 +43,7 @@
         };
 
         vm.report = function(){
-            console.log("Report");
+
         };
         function activate() {
             vm.core = {

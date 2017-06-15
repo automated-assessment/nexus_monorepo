@@ -20,7 +20,6 @@
                     controller:'ReceiverController as vm',
                     resolve:{
                         receiver:['$stateParams','allocationNetwork',function($stateParams, allocationNetwork){
-                            console.log($stateParams);
                             let auth;
                             if($stateParams.email){
                                 auth = {

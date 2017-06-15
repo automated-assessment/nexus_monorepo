@@ -6,8 +6,6 @@
 
     <form render-form current-form="vm.receiver.currentForm" disable="vm.readOnly"></form>
 
-    <button class="btn btn-primary" ng-click="vm.updateFeedback()">Save</button>
-
     <span ng-hide="{{vm.academic}}">
     <a ui-sref="frameState.allocationState({sid:{{vm.core.receiverSid}},token:'{{vm.auth.token}}'})">
         <button class="btn btn-primary">Back</button>

@@ -13,7 +13,10 @@ module.exports.getSubmission = function (repo, branch, sha) {
             }
             response = JSON.parse(response);
             const fileNames = parseTree(response.tree);
-            return getContentArray(fileNames, repo, branch);
+            return getContentArray(fileNames, repo, branch)
+                .then(function(response){
+                    return response;
+                })
         });
 
 };

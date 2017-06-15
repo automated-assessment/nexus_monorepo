@@ -48,24 +48,45 @@ const studentAuth = passport.authenticate('basic',{session:false});
 const academicAuth = passport.authenticate('academic',{session:false});
 const academicThenStudentAuth = passport.authenticate(['academic','basic'],{session:false});
 
-//Submissions
-app.get('/api/submissions/:sid',academicThenStudentAuth,submissionsController.getOneSubmission);
+
+//A POST request to create a single submission, this is the entrypoint for Nexus.
+//No authentication possible.
 app.post('/mark',submissionsController.createSubmission);
 
-app.get('/api/allocations/providers/:receiverSid',academicThenStudentAuth,allocationsController.getProviders);
+//Submissions
+//A GET request for a single submission, specified by an SID.
+//Can be authenticated as an academic or student.
+app.get('/api/submissions/:sid',academicThenStudentAuth,submissionsController.getOneSubmission);
+//A GET request for a student's provider's submissions, specified by the SID of the receiver.
+//Can be authenticated as an academic or student.
+app.get('/api/submissions/providers/:receiverSid',academicThenStudentAuth,submissionsController.getProviders);
+//A GET request for a student's receiver's submissions, specified by the SID of the provider.
+//Can be authenticated as an academic or student.
+app.get('/api/submissions/receivers/:providerSid',academicThenStudentAuth,submissionsController.getReceivers);
 
-app.get('/api/allocations/receivers/:providerSid',academicThenStudentAuth,allocationsController.getReceivers);
-
+//Allocations
+//A GET request for an allocation (relational data) between two students, specified by a receiverSID and a providerSID.
+//Can be authenticated as an academic or student.
 app.get('/api/allocations/:receiverSid/:providerSid',academicThenStudentAuth,allocationsController.getOneAllocation);
+//A PUT request, updating an allocation (relational data) between two students, specified by a receiverSID and a providerSID.
+//Can be authenticated as a student.
 app.put('/api/allocations/:receiverSid/:providerSid',studentAuth,allocationsController.updateAllocation);
 
-
 //Assignments
+//A GET request for all assignments
+//No authentication necessary
 app.get('/api/assignments',assignmentsController.getAllAssignments);
+//A GET request for one assignment, specified by the AID of the academic.
+//Can be authenticated by an academic.
 app.get('/api/assignments/:aid',assignmentsController.getOneAssignment);
+//A GET request for all submissions belonging to an assignment, specified by an AID.
+//Can be authenticated as an academic.
 app.get('/api/assignments/:aid/submissions',academicAuth,submissionsController.getAssignmentSubmissions);
+//A PUT request for all assignments, specified by AID.
+//Can be authenticated as an academic.
 app.put('/api/assignments/:aid',academicAuth,assignmentsController.updateAssignment);
-
+//A GET request for a GitHub submission, specified by the SID of the submission.
+//Can be authenticated as an academic or student.
 app.get('/api/git/:sid',academicThenStudentAuth,gitController.getGitSubmission);
 
 
@@ -76,10 +97,3 @@ app.get('/',function(req,res){
 app.listen(port,function(){
     console.log(`Listening on port: ${port}`);
 });
-
-function debugRoutes(){
-    app.use(function (req, res, next) {
-        console.log(req.method, req.url, req.body);
-        next();
-    });
-}

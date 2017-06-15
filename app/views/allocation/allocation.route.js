@@ -18,20 +18,18 @@
                     }
                 });
 
-            receivers.$inject = ['allocationNetwork','$stateParams'];
-            providers.$inject = ['allocationNetwork','$stateParams'];
+            receivers.$inject = ['submissionNetwork','$stateParams'];
+            providers.$inject = ['submissionNetwork','$stateParams'];
             submission.$inject = ['submissionNetwork','$stateParams'];
 
-            //
-
             //Allocation view
-            function receivers(allocationNetwork,$stateParams){
+            function receivers(submissionNetwork,$stateParams){
                 if($stateParams.sid){
                     const auth = {
                         user:$stateParams.sid,
                         token:$stateParams.token
                     };
-                    return allocationNetwork.getReceivers($stateParams,auth)
+                    return submissionNetwork.getReceivers($stateParams,auth)
                         .then(function(response){
                             return response.data.receivers;
                         })
@@ -40,13 +38,13 @@
                 }
             }
 
-            function providers(allocationNetwork,$stateParams){
+            function providers(submissionNetwork,$stateParams){
                 if($stateParams.sid){
                     const auth = {
                         user:$stateParams.sid,
                         token:$stateParams.token
                     };
-                    return allocationNetwork.getProviders($stateParams,auth)
+                    return submissionNetwork.getProviders($stateParams,auth)
                         .then(function(response){
                             return response.data.providers;
                         })

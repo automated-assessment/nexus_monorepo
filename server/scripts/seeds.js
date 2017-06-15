@@ -6,14 +6,11 @@
 require('dotenv').config();
 const request = require('request-promise');
 
-//need to create a tree, need to add blobs and stuff to the tree and then commit that tree here...
-//commits arent blobs. what am i thinking?!
 
-//create blobs, create tree from blobs, create commit, push commit.
+
 token = process.env.NEXUS_GITHUB_TOKEN;
 commitQuery()
     .then(function(response){
-        console.log(response);
     });
 function commitQuery() {
 

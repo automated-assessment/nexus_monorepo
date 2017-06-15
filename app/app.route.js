@@ -2,7 +2,6 @@
  * Created by adamellis on 14/03/2017.
  */
 
-//This should contain the main route config.
 (function(){
     angular
         .module('PeerFeedback')

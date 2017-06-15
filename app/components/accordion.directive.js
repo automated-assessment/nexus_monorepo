@@ -8,10 +8,10 @@
         .module('PeerFeedback')
         .directive('accordion', accordion);
 
-   accordion.$inject = ['$stateParams','allocationNetwork'];
+   accordion.$inject = ['$stateParams','submissionNetwork'];
 
     /* @ngInject */
-    function accordion($stateParams,allocationNetwork) {
+    function accordion($stateParams,submissionNetwork) {
         return {
             link: link,
             bindToController:true,
@@ -39,7 +39,7 @@
 
             $stateParams.sid = vm.submission.core.sid;
 
-            allocationNetwork.getReceivers($stateParams,vm.auth)
+            submissionNetwork.getReceivers($stateParams,vm.auth)
                 .then(function(response){
                     if(response.data){
                         vm.submission.provideTo = response.data.receivers;
@@ -58,7 +58,7 @@
 
                 });
 
-            allocationNetwork.getProviders($stateParams,vm.auth)
+            submissionNetwork.getProviders($stateParams,vm.auth)
                 .then(function(response){
                     if(response.data){
                         vm.submission.receivedFrom = response.data.providers;
@@ -82,9 +82,7 @@
 
     /* @ngInject */
 
-    accordionController.$inject = ['allocationNetwork'];
-
-    function accordionController(allocationNetwork) {
+    function accordionController() {
         const vm = this;
 
     }
