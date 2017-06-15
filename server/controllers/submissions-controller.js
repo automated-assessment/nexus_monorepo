@@ -76,6 +76,7 @@ module.exports.getGitData = function (sid) {
 };
 
 module.exports.createSubmission = function (req, res) {
+  console.log("INVOKED");
 
     let request = {
         submission: {

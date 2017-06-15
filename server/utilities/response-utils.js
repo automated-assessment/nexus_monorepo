@@ -6,6 +6,7 @@
 const NEXUS_BASE_URL = process.env.NEXUS_BASE_URL || 'http://localhost:3000';
 const NEXUS_TOOL_CANONICAL_NAME = process.env.NEXUS_TOOL_CANONICAL_NAME || 'peerfeedback';
 const NEXUS_ACCESS_TOKEN = process.env.NEXUS_ACCESS_TOKEN || 'foo';
+const DOCKER_PORT = process.env.DOCKER_PORT || 3005;
 
 const request = require('request-promise');
 
@@ -16,7 +17,7 @@ module.exports.sendResponse = function(submission,assignment){
     }
 
     const html =
-        `<iframe src="http://localhost:3050/#!/frame/allocation?sid=${submission.sid}&token=${submission.token}" height="500" width="1000"`;
+        `<iframe src="http://localhost:${DOCKER_PORT}/#!/frame/allocation?sid=${submission.sid}&token=${submission.token}" height="500" width="1000"`;
     promiseArray.push(exports.sendFeedback(html,submission.sid));
 
     return Promise.all(promiseArray);
