@@ -43,14 +43,17 @@ if ENV['DOCKER']
                      requires_config: false,
                      access_token: 'bar')
 
-### MARK: Configurable Tools
-# The domain of the web hook url and the config url are different
-# You must use the name of the docker service and the port exposed in the services
-# Dockerfile for the web hook url as it is used
-# by nexus which is part of the docker swarm network
+  ### MARK: Configurable Tools
+  # The domain of the web hook url and the config url are different
+  # You must use the name of the docker service and the port exposed in the services
+  # Dockerfile for the web hook url as it is used
+  # by nexus which is part of the docker swarm network
 
-# You must use localhost and the port assigned to the docker container since
-# the browser does not have direct access to the Docker swarm network.
+  # You must use localhost and the port assigned to the docker container since
+  # the browser does not have direct access to the Docker swarm network.
+
+  # Note that localhost will only work in dev setups where everything,
+  # including the client browser runs on the same machine.
 
   MarkingTool.create(name: 'Config Tool',
                      description: 'Sample Configuration Tool',
