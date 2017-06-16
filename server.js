@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var errorhandler = require('errorhandler');
+var childProcess = require('child_process');
 var fs = require('fs');
 
 const app = express();
@@ -44,6 +45,14 @@ app.post('/desc_gen', function (request, response) {
 		parameterNameArr[i] = parameterPairs[i].split(':')[0];
 		parameterTypeArr[i] = parameterPairs[i].split(':')[1];
 	}
+	
+	//Appending variable-args assigning for generation commandline execution
+	var appendingString = "";
+	for(var i = 0; i < parameterNameArr.length; i++) {
+		var index = i + 1;
+		appendingString += parameterNameArr[i] + " = sys.argv[" + index.toString() + "];\n" 
+	}
+	descriptionString = appendingString + descriptionString;
 	
 	//TODO Aydin: Values will be fetched from db or sth else in later stages
 	var lineReader1 = require('readline').createInterface({
@@ -108,7 +117,8 @@ app.post('/unique_gen', function (request, response) {
     if(request.headers["nexus-access-token"] == accessToken) { 
         console.log(`Request for fetching files to mark assignment ${request.body.aid}, 
         submission id: ${request.body.sid},
-        for student with id: ${request.body.studentuid}`);
+        for student with id: ${request.body.studentuid},
+        request from ${request.body.toolname}.`);
 		
 		//Collecting template parameters and their desired types
 		var parameterStr = request.body.parameter_string;
@@ -125,12 +135,46 @@ app.post('/unique_gen', function (request, response) {
 			console.log(parameterNameArr[i] + " : " + parameterTypeArr[i]);
 		}
 		
-        //TODO Aydin: Do generation.
-        //TODO Aydin: Put generated files
-		
-        //TODO Aydin: Put access token here as well for auth.
-        console.log('Sent Hello World, ish...');
-        response.send('Unique generation is still under construction.');
+		if(request.body.toolname == "javac") {
+			const cloneURL = request.body.cloneURL;
+			const branch = request.body.branch;
+			
+			// clone repo. Simulating io test files atm
+			const sourceDir = process.cwd() + "/cloneFolder";
+			const childGitClone = childProcess.execSync(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`);
+			const childGitCheckout = childProcess.execSync(`git checkout ${request.body.sha}`, { cwd: sourceDir });
+			console.log(`Repostiory ${cloneURL} cloned.`);
+			
+			const fileNameRead = childProcess.execSync(`for n in *; do echo "$n"; done`, { cwd: sourceDir });
+			var fileNameList = fileNameRead.toString().split('\n');
+			var fileNames = [];
+			fileNameList.splice(fileNameList.indexOf('\n'), 1);
+			fileNameList.forEach(function(element) {
+				console.log(element);
+				if (fileNameList[fileNameList.indexOf(element)].indexOf(".py.dna") > 1) {
+					fileNames.push(element);
+				}
+			});
+			console.log(fileNames);
+			
+			for(var i = 0; i < fileNames.length; i++) {
+				console.log(fileNames[i]);
+				fs.readFile(sourceDir + `/${fileNames[i]}`, 'utf8', function (err,data) {
+				if (err) {
+				  return console.log(err);
+				}
+				console.log("File: " + fileNames[i]);
+				console.log(data.toString());
+				//TODO Aydin: Do generation.
+				//TODO Aydin: Send files
+				});
+			}
+
+			//TODO Aydin: Put access token here as well for auth.
+			console.log('Sent Hello World, ish...');
+			response.send('Unique generation is still under construction.');
+			const cleanUp = childProcess.execSync(`rm -rf cloneFolder`, { cwd: process.cwd() });
+		}
     }
     else {
       console.log('Token error. The token:');
