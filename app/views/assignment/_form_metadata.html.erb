@@ -6,10 +6,26 @@
 </div>
 
 <div class="form-group">
+  <%= f.label 'Is the assignment unique?', class: 'col-lg-2 control-label' %>
+  <div class="col-lg-10">
+  	<%= f.check_box :is_unique %>
+  </div>
+</div>
+
+<div class="form-group">
+  <%= f.label :parameter_string, 'Unique Assignment Parameters AndTypes', class: 'col-lg-2 control-label' %>
+  <div class="col-lg-10">
+  	<%= f.text_field :parameter_string, class: 'form-control', value: @assignment.parameter_string %>
+	<p>If the assignment is NOT unique, you can leave this space empty.</p>
+  </div>
+</div>
+
+<div class="form-group">
   <%= f.label :description, class: 'col-lg-2 control-label' %>
   <div class="col-lg-10">
     <%= f.text_area :description, class: 'form-control', size: '60x6' %>
     <p>Markdown is supported.</p>
+	<p>If the assignment is unique, the description must be in template syntax, with matching template variables.</p>
   </div>
 </div>
 
@@ -54,26 +70,6 @@
         Provide feedback only
       </label>
     </div>
-  </div>
-</div>
-
-<div class="form-group">
-  <%= f.label 'Unique Assignment Options', class: 'col-lg-2 control-label' %>
-  <div class="col-lg-10">
-    <div class="checkbox">
-      <label>
-        <%= f.check_box :is_unique %>
-        Is the assignment unique?
-      </label>
-    </div>
-	<div class="parameterstring">
-		<%= f.label :parameter_string, 'Parameters and their desired Types', class: 'col-lg-2 control-label' %>
-	    <%= f.text_field :parameter_string, class: 'form-control', value: @assignment.parameter_string %>
-	</div>
-	<div class="descriptionstring">
-		<%= f.label :description_string, 'Description of the assignment in template syntax', class: 'col-lg-2 control-label' %>
-		<%= f.text_area :description_string, class: 'form-control', value: @assignment.description_string %>
-	</div>
   </div>
 </div>
 

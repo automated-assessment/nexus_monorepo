@@ -68,6 +68,7 @@ class AssignmentController < ApplicationController
   def create
     return unless authenticate_admin!
     @assignment = Assignment.new(assignment_params)
+    @assignment.description_string = @assignment.description
     unless @assignment.save
       flash[:error] = @assignment.errors.full_messages[0]
       redirect_to action: 'new', cid: @assignment.course.id
@@ -99,6 +100,7 @@ class AssignmentController < ApplicationController
     @assignment = return_assignment!
     if @assignment
       if @assignment.update_attributes(assignment_params)
+        @assignment.description_string = @assignment.description
         flash[:success] = 'Assignment updated'
         redirect_to @assignment
       else
@@ -186,7 +188,9 @@ class AssignmentController < ApplicationController
 
   def return_assignment!
     assignment = Assignment.find_by(id: params[:id])
-    if (assignment.is_unique == true)
+    if (caller[0].index("edit") != nil)
+      assignment.description = assignment.description_string
+    elsif (assignment.is_unique == true)
       Rails.logger.info 'Assignment is unique, requesting generation for description'
       
       uri = URI.parse('http://unique-assignment-tool:3009/desc_gen')
