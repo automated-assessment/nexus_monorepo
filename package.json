@@ -22,6 +22,7 @@
     "express": "^4.13.4",
     "fs-extra": "^0.30.0",
     "request": "^2.70.0",
-    "python-shell": "^0.4.0"
+    "python-shell": "^0.4.0",
+	"mysql": "2.13.0"
   }
 }

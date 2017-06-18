@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var errorhandler = require('errorhandler');
 var childProcess = require('child_process');
 var fs = require('fs');
+var mysql = require('mysql');
 
 const app = express();
 const port = 3009;
@@ -13,6 +14,13 @@ if (!process.env.NEXUS_ACCESS_TOKEN) {
   console.log('Error: Specify NEXUS_ACCESS_TOKEN in environment');
   process.exit(1);
 }
+
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "root",
+  database: "uat"
+});
 
 //TODO Aydin: Solely for initial generation functionality. Values will be fetched from db in later stages
 var valueArray = new Array();
@@ -25,6 +33,37 @@ app.use(errorhandler({
     dumpExceptions: true,
     showStack: true
 }));
+
+app.post('/param_upload', function (request, response) {
+	con.connect(function(err) {
+	  if (err) {
+		  console.log(err);
+	  }
+	  else {
+	  console.log("Connected!");
+	  var sqlAssignments = "CREATE TABLE assignments (assign_id BIGINT NOT NULL AUTO_INCREMENT, PRIMARY KEY (assign_id))";
+	  con.query(sql, function (err, result) {
+		if (err) {
+			console.log(err);
+		}
+		else {
+		var sqlParameters = "CREATE TABLE parameters (param_id BIGINT NOT NULL AUTO_INCREMENT, param_name VARCHAR(50)," + 
+			"param_type ENUM ('boolean','int','float','double','string'), assign_id BIGINT NOT NULL, PRIMARY KEY (para" + 
+			"m_id), FOREIGN KEY (assign_id) REFERENCES Assignments(assign_id))";	
+		con.query(sql, function (err, result) {
+			if (err) {
+				console.log(err);
+			}
+			else {	
+				console.log("Tables created for the database.")
+			}
+		});
+	   }
+	  });
+	 }
+	});
+  };
+);
 
 app.post('/desc_gen', function (request, response) {
 	var error = false;
