@@ -1,11 +1,9 @@
-FROM node:4
+FROM node:8
 
 RUN mkdir /src
 WORKDIR /src
-VOLUME /src
 
 COPY package.json /src
-RUN npm install --silent
 
 COPY . /src
 
