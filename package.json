@@ -7,7 +7,7 @@
     "seed": "node server/scripts/seeds.js",
     "dev": "node server/scripts/devBase.js",
     "start": "node .",
-    "startdev": "nodemon . --use_strict"
+    "startdev": "nodemon ."
   },
   "author": "",
   "license": "ISC",
