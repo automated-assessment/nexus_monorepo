@@ -4,7 +4,6 @@
 
 const gitUtils = require('../utilities/git-utils');
 const submissionsController = require('./submissions-controller');
-const allocationsController = require('./allocations-controller');
 
 module.exports.getGitSubmission = function (req, res) {
     let auth = false;
@@ -13,7 +12,7 @@ module.exports.getGitSubmission = function (req, res) {
         auth = true;
     }
     if (!auth && req.user.sid) {
-        studentAuth = allocationsController.queryReceivers({providerSid: req.user.sid}, {null: 0})
+        studentAuth = submissionsController.queryReceivers({providerSid: req.user.sid}, {null: 0})
             .then(function (response) {
                 const receivers = response.receivers;
                 for (let i = 0; i < receivers.length; i++) {

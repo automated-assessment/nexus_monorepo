@@ -42,7 +42,7 @@
             }
 
             $httpBackend
-                .expectGET(`/api/allocations/receivers/${mockProviderSid}`)
+                .expectGET(`/api/submissions/receivers/${mockProviderSid}`)
                 .respond(200,mockResponse);
 
             $httpBackend.flush();
@@ -59,7 +59,7 @@
             }
 
             $httpBackend
-                .expectGET(`/api/allocations/providers/${mockReceiverSid}`)
+                .expectGET(`/api/submissions/providers/${mockReceiverSid}`)
                 .respond(200,mockResponse);
 
             $httpBackend.flush();

@@ -4,6 +4,7 @@
 
 const NEXUS_BASE_URL = process.env.NEXUS_BASE_URL || 'http://localhost:3000';
 const NEXUS_TOOL_CANONICAL_NAME = process.env.NEXUS_TOOL_CANONICAL_NAME || 'peerfeedback';
+const NEXUS_ACCESS_TOKEN = process.env.NEXUS_ACCESS_TOKEN || 'foo';
 
 const request = require('request-promise');
 
@@ -39,7 +40,7 @@ function sendRequest(body, url) {
         url:url,
         method: 'POST',
         headers: {
-            'Nexus-Access-Token': 'foo'
+            'Nexus-Access-Token': NEXUS_ACCESS_TOKEN
         },
         json: true,
         body:body

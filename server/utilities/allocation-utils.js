@@ -25,7 +25,6 @@ module.exports.runAllocation = function (submission, assignment) {
     const allocationArray = [];
     return queryRandomProviders(assignment, submission)
         .then(function (randomProviders) {
-            console.log(randomProviders);
             randomProviders.forEach(function (randomProvider) {
                 const forwardAssociation = associate(submission, randomProvider, assignment);
                 const backwardAssociation = associate(randomProvider, submission, assignment);
@@ -39,8 +38,6 @@ module.exports.runAllocation = function (submission, assignment) {
 };
 
 const associate = function (receiver, provider, assignment) {
-    console.log("receiver",receiver);
-    console.log("provider",provider);
     return new Allocation({
         currentForm: assignment.formBuild,
         receiverSid: receiver.sid,
