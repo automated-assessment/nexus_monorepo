@@ -2,8 +2,6 @@
  * Created by adamellis on 08/02/2017.
  */
 
-"use strict";
-
 require('dotenv').config();
 const request = require('request-promise');
 

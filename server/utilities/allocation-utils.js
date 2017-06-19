@@ -1,9 +1,6 @@
 /**
  * Created by adamellis on 17/02/2017.
  */
-
-"use strict";
-
 const Allocation = require('../datasets/allocationModel');
 const Submission = require('../datasets/submissionModel');
 

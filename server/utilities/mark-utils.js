@@ -1,7 +1,6 @@
 /**
  * Created by adamellis on 05/04/2017.
  */
-"use strict";
 
 const submissionsController = require('../controllers/submissions-controller');
 const assignmentsController = require('../controllers/assignments-controller');

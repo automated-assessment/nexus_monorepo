@@ -2,8 +2,6 @@
  * Created by adamellis on 05/04/2017.
  */
 
-"use strict";
-
 const BasicStrategy = require('passport-http').BasicStrategy;
 const Submission = require('../datasets/submissionModel');
 const Assignment = require('../datasets/assignmentModel');

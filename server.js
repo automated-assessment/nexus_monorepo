@@ -2,8 +2,6 @@
  * Created by adamellis on 06/02/2017.
  */
 
- "use strict";
-
 require('dotenv').config();
 
 //env

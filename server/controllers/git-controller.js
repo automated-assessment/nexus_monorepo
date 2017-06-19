@@ -2,8 +2,6 @@
  * Created by adamellis on 19/03/2017.
  */
 
- "use strict";
-
 const gitUtils = require('../utilities/git-utils');
 const submissionsController = require('./submissions-controller');
 

@@ -2,8 +2,6 @@
  * Created by adamellis on 03/04/2017.
  */
 
-"use strict";
-
 const request = require('request-promise');
 const OWNER = process.env.NEXUS_GITHUB_ORG;
 const TOKEN = process.env.NEXUS_GITHUB_TOKEN;
