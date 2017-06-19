@@ -46,5 +46,10 @@
     "babel-preset-env": "^1.5.2",
     "nodemon": "^1.11.0"
   },
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-preset-env": "^1.5.2",
+    "nodemon": "^1.11.0"
+  },
   "jshintConfig": {}
 }
