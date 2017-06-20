@@ -1,35 +1,4 @@
 <div class="form-group">
-  <%= f.label :title, class: 'col-lg-2 control-label' %>
-  <div class="col-lg-10">
-    <%= f.text_field :title, class: 'form-control', required: true %>
-  </div>
-</div>
-
-<div class="form-group">
-  <%= f.label 'Is the assignment unique?', class: 'col-lg-2 control-label' %>
-  <div class="col-lg-10">
-  	<%= f.check_box :is_unique %>
-  </div>
-</div>
-
-<div class="form-group">
-  <%= f.label :parameter_string, 'Unique Assignment Parameters AndTypes', class: 'col-lg-2 control-label' %>
-  <div class="col-lg-10">
-  	<%= f.text_field :parameter_string, class: 'form-control', value: @assignment.parameter_string %>
-	<p>If the assignment is NOT unique, you can leave this space empty.</p>
-  </div>
-</div>
-
-<div class="form-group">
-  <%= f.label :description, class: 'col-lg-2 control-label' %>
-  <div class="col-lg-10">
-    <%= f.text_area :description, class: 'form-control', size: '60x6' %>
-    <p>Markdown is supported.</p>
-	<p>If the assignment is unique, the description must be in template syntax, with matching template variables.</p>
-  </div>
-</div>
-
-<div class="form-group">
   <%= f.label :start, class: 'col-lg-2 control-label' %>
   <div class="col-lg-10">
     <%= f.datetime_field :start, class: 'form-control', id: 'startfield', value: @assignment.start.strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
