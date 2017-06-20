@@ -21,6 +21,18 @@
           <td class="<%= a.decorator_class %>">
             <%= pretty_datetime a.deadline %>
           </td>
+          <% if current_user.admin? %>
+            <td>
+              <%= link_to(delete_assignment_path(id: a.id), onclick: 'return confirmDeletion()') do %>
+                <button type="button" class="btn btn-xs btn-danger pull-right"><%= icon 'times' %> Delete</button>
+              <% end %>
+            </td>
+            <script>
+              function confirmDeletion() {
+                return confirm("This action will delete the assignment and all its submissions. Are you sure?");
+              }
+            </script>
+          <% end %>
         </tr>
       <% end %>
     </tbody>

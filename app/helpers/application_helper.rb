@@ -4,19 +4,16 @@ module ApplicationHelper
   end
 
   def authenticate_admin!
-    if is_admin?
-      return true
-    else
-      redirect_to(error_url '401')
-      return false
-    end
+    return true if admin?
+    redirect_to error_url('403'), status: 403
+    false
   end
 
-  def is_admin?
+  def admin?
     current_user && current_user.admin?
   end
 
-  def is_user? (user)
+  def user?(user)
     current_user && (current_user.id == user.id)
   end
 
@@ -38,6 +35,10 @@ module ApplicationHelper
     token = request.headers['HTTP_NEXUS_ACCESS_TOKEN']
     return false if token.nil?
     AccessToken.find_by(access_token: token).present?
+  end
+
+  def all_marking_tools
+    MarkingTool.where.not(uid: 'nexus')
   end
 
   def render_unauthorized_json
@@ -80,5 +81,15 @@ module ApplicationHelper
     @markdown ||= Redcarpet::Markdown.new(renderer, extensions)
 
     @markdown.render(text).html_safe
+  end
+
+  def nexus_for_feedback
+    nexus = MarkingTool.find_by(uid: 'nexus')
+    unless nexus
+      nexus = MarkingTool.create(name: 'Nexus',
+                                 uid: 'nexus',
+                                 url: "#{request.protocol}#{request.host_with_port}/")
+    end
+    nexus
   end
 end

@@ -1,5 +1,6 @@
 require 'net/http'
 require 'uri'
+require 'json'
 
 class SendSubmissionJob < ActiveJob::Base
   queue_as Rails.configuration.rabbit_mq_qname
@@ -8,34 +9,31 @@ class SendSubmissionJob < ActiveJob::Base
     Rails.logger.error "Encountered exception when trying to run submission job: #{e.inspect}."
   end
 
-  def perform(submission_id, marking_tool_id)
+  def perform(submission_id, marking_tool)
     Rails.logger.debug 'Actually inside SendSubmissionJob.perform.'
     @submission = Submission.find(submission_id)
-    @marking_tool = MarkingTool.find(marking_tool_id)
 
-    uri = URI.parse(@marking_tool.url)
-    @submission.log("Notifying #{@marking_tool.name} at #{uri}...", 'Debug')
-
+    uri = URI.parse(marking_tool.url)
+    @submission.log("Notifying #{marking_tool.name} at #{uri}...", 'Debug')
     Net::HTTP.start(uri.host, uri.port) do |http|
       req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
 
-      req.body = build_json_payload
-
+      req.body = build_json_payload(marking_tool.uid)
       res = http.request(req)
 
       if res.code =~ /2../
         # Successfully handed submission over to tool
-        @submission.log("Received #{res.code} #{res.message} from #{@marking_tool.name}", 'Success')
+        @submission.log("Received #{res.code} #{res.message} from #{marking_tool.name}", 'Success')
       else
-        @submission.log("Received #{res.code} #{res.message} from #{@marking_tool.name}: #{res.body}", 'Error')
+        @submission.log("Received #{res.code} #{res.message} from #{marking_tool.name}: #{res.body}", 'Error')
         record_fail!
       end
     end
 
   rescue StandardError => e
     Rails.logger.error "Error in SendSubmissionJob: #{e.class} #{e.message}"
-    unless @submission.nil? || @marking_tool.nil?
-      @submission.log("Error notifying #{@marking_tool.name}: #{e.class} #{e.message}", 'Error')
+    unless @submission.nil? || marking_tool.nil?
+      @submission.log("Error notifying #{marking_tool.name}: #{e.class} #{e.message}", 'Error')
     end
     record_fail!
     Rails.logger.error "Error backtrace was: #{e.backtrace}"
@@ -43,7 +41,11 @@ class SendSubmissionJob < ActiveJob::Base
 
   private
 
-  def build_json_payload
+  def build_json_payload(marking_tool_uid)
+    nextservices = []
+    if @submission.assignment.dataflow[marking_tool_uid]
+      nextservices = @submission.assignment.dataflow[marking_tool_uid]
+    end
     payload = {
       student: @submission.user.name,
       studentuid: @submission.user.id,
@@ -55,7 +57,8 @@ class SendSubmissionJob < ActiveJob::Base
       description_string: @submission.assignment.description_string,
       cloneurl: @submission.augmented_clone_url,
       branch: @submission.gitbranch,
-      sha: @submission.commithash
+      sha: @submission.commithash,
+      nextservices: nextservices
     }
     payload.to_json
   end

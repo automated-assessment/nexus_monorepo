@@ -71,6 +71,6 @@ group :test do
   gem 'rspec_junit_formatter', '0.2.2'
 end
 
-#gem 'bunny'
-#gem 'sneakers', '2.3.5'
+# gem 'bunny'
+# gem 'sneakers', '2.3.5'
 gem 'sneakers'

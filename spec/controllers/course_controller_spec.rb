@@ -47,10 +47,10 @@ RSpec.describe CourseController, type: :controller do
 
   describe 'GET #enrolment_list' do
     describe 'without admin permissions' do
-      it 'redirects and returns a 302 status code' do
+      it 'redirects and returns a 403 status code' do
         sign_in s
         get :enrolment_list, id: c.id
-        expect(response).to have_http_status :redirect
+        expect(response).to have_http_status 403
       end
     end
 
@@ -83,10 +83,10 @@ RSpec.describe CourseController, type: :controller do
     end
 
     describe 'without admin permissions' do
-      it 'redirects and returns a 302 status code' do
+      it 'redirects and returns a 403 status code' do
         sign_in s
         get :new
-        expect(response).to have_http_status :redirect
+        expect(response).to have_http_status 403
       end
     end
   end
@@ -112,10 +112,10 @@ RSpec.describe CourseController, type: :controller do
     end
 
     describe 'without admin permissions' do
-      it 'redirects and returns a 302 status code' do
+      it 'redirects and returns a 403 status code' do
         sign_in s
         get :edit, id: c.id
-        expect(response).to have_http_status :redirect
+        expect(response).to have_http_status 403
       end
     end
   end
@@ -132,10 +132,10 @@ RSpec.describe CourseController, type: :controller do
     end
 
     describe 'without admin permissions' do
-      it 'redirects and returns a 302 status code' do
+      it 'redirects and returns a 403 status code' do
         sign_in s
         post :create, course: attributes_for(:course)
-        expect(response).to have_http_status :redirect
+        expect(response).to have_http_status 403
       end
     end
   end
