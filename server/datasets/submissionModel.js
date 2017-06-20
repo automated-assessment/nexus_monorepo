@@ -39,5 +39,3 @@ submissionSchema.methods.verifyToken = function(candidatetoken){
 };
 
 module.exports = mongoose.model('Submission',submissionSchema);
-
-

@@ -1,7 +1,6 @@
 /**
  * Created by adamellis on 03/03/2017.
  */
-
 const Assignment = require('../datasets/assignmentModel');
 const submissionsController = require('./submissions-controller');
 const responseUtils = require('../utilities/response-utils');
@@ -76,5 +75,3 @@ module.exports.updateAssignment = function (req, res) {
             res.send(assignment);
         });
 };
-
-

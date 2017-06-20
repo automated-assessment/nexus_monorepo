@@ -1,6 +1,7 @@
 /**
  * Created by adamellis on 12/03/2017.
  */
+
 const mongoose = require('mongoose');
 
 module.exports = mongoose.model('Allocation',{

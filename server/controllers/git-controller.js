@@ -51,8 +51,3 @@ function parseClone(url) {
     repoUrl = repoUrl.substring(0, repoUrl.length - 4);
     return repoUrl;
 }
-
-
-
-
-

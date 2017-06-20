@@ -95,4 +95,3 @@ function queryGit(query) {
             return err;
         });
 }
-

@@ -1,9 +1,6 @@
 /**
  * Created by adamellis on 03/03/2017.
  */
-
-'use strict';
-
 const Submission = require('../datasets/submissionModel');
 const allocationUtils = require('./../utilities/allocation-utils');
 const responseUtils = require('./../utilities/response-utils');
@@ -79,6 +76,7 @@ module.exports.getGitData = function (sid) {
 };
 
 module.exports.createSubmission = function (req, res) {
+  console.log("INVOKED");
 
     let request = {
         submission: {
@@ -241,4 +239,3 @@ module.exports.queryReceivers = function (query,project) {
             return response[0];
         })
 };
-
