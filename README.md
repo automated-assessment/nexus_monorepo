@@ -13,6 +13,12 @@ ACADEMIC_TOKEN=foo
 
 Note: DB_HOST may need to be updated if running with Docker.
 
+## Running within the Automated Assessment Docker Swarm
+To run this within the Docker Swarm, follow the instructions in the README [here]().
+It is much easier to run it in this way as all the dependencies are dealt with already.
+
+If you do not want to run within the Docker Swarm, please follow the instructions below.
+
 ## Run Locally
 To run peer feedback locally, you will need to have [node.js](https://nodejs.org/en/)
 installed and [MongoDB](https://www.mongodb.com/) installed and running a local
