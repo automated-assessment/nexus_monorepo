@@ -1,6 +1,18 @@
 # Peer Feedback Marker
 The tool was developed using MongoDB, express.js, AngularJS and Node.js.
 
+If running outside a Docker compose swarm, make sure a file `.env.peerfeedback.list`
+is in the current directory with the following variables set:
+
+```
+DB_HOST=localhost
+NEXUS_TOOL_CANONICAL_NAME=peerfeedback
+NEXUS_ACCESS_TOKEN=foo
+ACADEMIC_TOKEN=foo
+```
+
+Note: DB_HOST may need to be updated if running with Docker.
+
 ## Run Locally
 To run peer feedback locally, you will need to have [node.js](https://nodejs.org/en/)
 installed and [MongoDB](https://www.mongodb.com/) installed and running a local
@@ -77,16 +89,20 @@ RUN npm install --production --silent
 
 CMD ["start"]
 ```
-To build the image for production, run `docker build .`.
+To build the image for production, run `docker build -t peer-feedback .`.
+`-t (--tag)` gives the image a name to refer to later.
 This is sufficient as the default place to look for the Docker file is `./Dockerfile`
 
-To build the image for development run `docker build -f ./Dockerfile-dev .`.
+To build the image for development run `docker build -f ./Dockerfile.dev -t peer-feedback .`.
 By using the `-f (--file)` flag, we can specify the location to the docker file.
 
 To run the container (a running image instance), an instance of a MongoDB, either locally
 or through Docker, will also need to be running, as peer feedback depends on using MongoDB as the data store.
+Trying to run `peer-feedback` without a mongo instance running, that it can access, will result in a
+`MongoError` being thrown.
 Node doesn't need to be running in Docker because the peerfeedback image is based on node.
 
-To run any of the images above, run `docker run .` or if you want to mount the code
-directory to the volume for development only, run `docker run -v .:/src .` to mount
+To run any of the images above, run `docker run peer-feedback` or if you want to mount the code
+directory to the volume for development only, run `docker run -v ${pwd}:/src .` to mount
 the current directory on the local machine to the `/src` directory in the container.
+We use `pwd` since the directory must be absolute, not relative.
