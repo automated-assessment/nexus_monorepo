@@ -88,5 +88,5 @@ or through Docker, will also need to be running, as peer feedback depends on usi
 Node doesn't need to be running in Docker because the peerfeedback image is based on node.
 
 To run any of the images above, run `docker run .` or if you want to mount the code
-directory to the volume for development only, run `docker run -v .:/src` to mount
+directory to the volume for development only, run `docker run -v .:/src .` to mount
 the current directory on the local machine to the `/src` directory in the container.
