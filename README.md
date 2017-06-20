@@ -14,7 +14,7 @@ ACADEMIC_TOKEN=foo
 Note: DB_HOST may need to be updated if running with Docker.
 
 ## Running within the Automated Assessment Docker Swarm
-To run this within the Docker Swarm, follow the instructions in the README [here]().
+To run this within the Docker Swarm, follow the instructions in the README  [here](https://github.kcl.ac.uk/automated-assessment/nexus-deployment).
 It is much easier to run it in this way as all the dependencies are dealt with already.
 
 If you do not want to run within the Docker Swarm, please follow the instructions below.
@@ -33,8 +33,7 @@ npm run-script startdev // For development
 If running for development, we use nodemon to automatically restart the node server
 when any changes are made to the code.
 
-## Run with Docker / within the Automated Assessment Docker Swarm
-### Just with Docker
+## Run with Docker
 All that is required here is that [Docker](https://www.docker.com/) is installed
 on your machine and running.
 
