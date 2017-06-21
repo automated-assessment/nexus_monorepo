@@ -31,7 +31,7 @@ if ENV['DOCKER']
                      input: 'java',
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://io-tool:3004/#/static/config.html?aid=%{aid}',
+                     config_url: 'http://io-tool:3004/#/config.html?aid=%{aid}',
                      access_token: 'bar')
 
   MarkingTool.create(name: 'Peer Feedback',
