@@ -26,12 +26,12 @@ if ENV['DOCKER']
 
   MarkingTool.create(name: 'IO Tool',
                      description: 'IO Tool',
-                     url: 'http://io-tool:3000/mark',
+                     url: 'http://io-tool:3001/mark',
                      uid: 'iotool',
                      input: 'java',
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://io-tool:3000/#/static/config.html?aid=%{aid}',
+                     config_url: 'http://io-tool:3004/#/config.html?aid=%{aid}',
                      access_token: 'bar')
 
   MarkingTool.create(name: 'Peer Feedback',
@@ -55,12 +55,12 @@ else
 
   MarkingTool.create(name: 'IO Tool',
                      description: 'IO Tool',
-                     url: 'http://localhost:3004/mark',
+                     url: 'http://localhost:3001/mark',
                      uid: 'iotool',
                      input: 'java',
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://localhost:3004/#/static/config.html?aid=%{aid}',
+                     config_url: 'http://localhost:3001/#config?aid=%{aid}',
                      access_token: 'bar')
 
   MarkingTool.create(name: 'Peer Feedback',

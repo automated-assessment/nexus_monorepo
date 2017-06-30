@@ -27,8 +27,8 @@ ActiveRecord::Schema.define(version: 20170618104332) do
     t.datetime "deadline"
     t.boolean  "allow_late"
     t.integer  "course_id"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
     t.integer  "late_cap"
     t.boolean  "allow_zip"
     t.boolean  "allow_git"
@@ -39,7 +39,6 @@ ActiveRecord::Schema.define(version: 20170618104332) do
     t.boolean  "feedback_only",      default: false
     t.boolean  "is_unique"
     t.string   "description_string"
-    t.boolean  "feedback_only",   default: false
     t.text     "active_services"
     t.text     "dataflow"
   end
