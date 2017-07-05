@@ -150,7 +150,6 @@ class SubmissionController < ApplicationController
     return unless create_submission(false)
     # Get marking service workflow from assignment
     @submission.active_services = @submission.assignment.active_services
-    @submission.active_services = services
     # Need to save submission here so we can have an ID
     # If things go wrong before the safe point, we need to destroy it again.
     @submission.save!
