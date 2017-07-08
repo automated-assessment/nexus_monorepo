@@ -19,13 +19,13 @@ class MarkingToolController < ApplicationController
 
   def update
     marking_tool = return_marking_tool!
+
     if marking_tool.update_attributes(marking_tool_params)
-      flash.now[:success] = 'Marking Tool updated'
+      flash[:success] = 'Marking Tool updated'
       redirect_to admin_panel_path
     else
-      flash.now[:error] = marking_tool.errors.full_messages
-      render 'edit'
-      return
+      flash[:error] = marking_tool.errors.full_messages[0]
+      redirect_to edit_marking_tool_path(marking_tool)
     end
   end
 
