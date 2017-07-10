@@ -7,6 +7,7 @@ var fs = require('fs');
 var mysql = require('mysql');
 var cors = require('cors');
 var wait = require('wait.for');
+var async = require('async');
 
 var paramString = "";
 
@@ -129,6 +130,7 @@ app.post('/desc_gen', jsonParser, function (request, response) {
 	var assignmentID = request.body.aid;
 	var descriptionString = request.body.description_string;
 	
+	//Fetching varialbes for particular assignment
 	var sql = `SELECT param_name,param_type FROM parameters WHERE assign_id = ${assignmentID};`;
 	dbcon.query(sql, function (err, rows, result) {
 	  if (err) {
@@ -162,21 +164,18 @@ app.post('/desc_gen', jsonParser, function (request, response) {
 
 		//Writing the template to file to do generation
 		fs.writeFileSync(process.cwd()+'/description.py.dna',descriptionString, 'utf8'); 
+		  
 		//Executing generation with inputs
 		console.log('Starting on generation')
 		var pythonExec = require('python-shell');
-
 		var argsList = ['description.py.dna'];
 		for(var i = 0; i < valueArray[studentID].length; i++) {
 		  argsList.push(valueArray[studentID][i]);
 		}
-
 		var options = {
 		  args: argsList			  
 		}  
-
 		console.log('Generation args taken.');
-
 		pythonExec.run('/ribosome.py', options, function (err, results) {
 			if (err) {
 				console.log(err);
@@ -193,16 +192,21 @@ app.post('/desc_gen', jsonParser, function (request, response) {
 });
 
 app.post('/io_gen', jsonParser, function (request, response) {
-    console.log('Unique assignment file generation request received.')
+    console.log('Unique assignment i/o generation request received.')
     if(request.headers["nexus-access-token"] == accessToken) { 
-        console.log(`Request for fetching files to mark assignment ${request.body.aid}, 
-        submission id: ${request.body.sid},
-        for student with id: ${request.body.studentuid},
-        request from ${request.body.toolname}.`);
+        console.log(`Request for generation to mark assignment ${request.body.aid}, 
+        for student with id: ${request.body.sid}.`);
 		
 		var studentID = request.body.sid;
 	    var assignmentID = request.body.aid;
+		var inputs = request.body.inputs;
+		var outputs = request.body.outputs;
+		var feedback = request.body.feedback;
+		var generatedInputs;
+		var generatedOutputs; 
+		var generatedFeedback;
 		
+		//Fetching varialbes for particular assignment
 		var sql = `SELECT param_name,param_type FROM parameters WHERE assign_id = ${assignmentID};`;
 		dbcon.query(sql, function (err, rows, result) {
 		  if (err) {
@@ -212,16 +216,147 @@ app.post('/io_gen', jsonParser, function (request, response) {
 			var parameterNameArr = new Array();
 			var parameterTypeArr = new Array();
 
-
 			for (var i in rows) {
 				parameterNameArr.push(rows[i].param_name);
 				parameterTypeArr.push(rows[i].param_type);
 			}  
 
-			//do generation based on io-tool  
+			//TODO Aydin: Solely for initial generation functionality. Values will be generated in later stages
+			var valueArray = new Array();
+			valueArray.push(new Array());
+			valueArray.push(new Array());
+			valueArray.push(new Array());
+			valueArray[1] = fs.readFileSync(process.cwd()+'/1', "utf8").toString().split("\n");
+			valueArray[2] = fs.readFileSync(process.cwd()+'/2', "utf8").toString().split("\n");
+			
+			console.log("DEBUG Aydin: " + valueArray);
 			  
-			console.log('Sent Hello World, ish...');
-			response.send('Unique generation is still under construction.');
+			//Appending variable-args assigning for generation commandline execution
+			var appendingString = "";
+			for(var i = 0; i < parameterNameArr.length; i++) {
+				var index = i + 1;
+				appendingString += parameterNameArr[i] + " = sys.argv[" + index.toString() + "];\n" 
+			}
+			  
+			var inputString = appendingString;
+			var outputString = appendingString;
+			var feedbackString = appendingString;
+			
+			for (var i = 0; i < inputs.length; i++) {
+				inputString += inputs[i] + "\n";
+			}
+			  
+			for (var i = 0; i < outputs.length; i++) {
+				outputString += outputs[i] + "\n";
+			}
+			  
+			for (var i = 0; i < feedback.length; i++) {
+				feedbackString += feedback[i] + "\n";
+			}
+			  
+			async.waterfall([
+				function(callback) {
+					//Writing the inputs to file to do generation
+					fs.writeFileSync(process.cwd()+'/iogen.py.dna',inputString, 'utf8');
+
+					//Executing generation with inputs
+					console.log('Starting on generation')
+					var pythonExec = require('python-shell');
+					var argsList = ['iogen.py.dna'];
+					for(var i = 0; i < valueArray[studentID].length; i++) {
+					  argsList.push(valueArray[studentID][i]);
+					}
+					console.log("DEBUG: args list 1: " + argsList);
+					var options = {
+					  args: argsList			  
+					}  
+					console.log('Generation args taken.');
+					pythonExec.run('/ribosome.py', options, function (err, results) {
+						if (err) {
+							console.log(err);
+							response.send(null);
+							callback(err, null);
+						}
+						else {
+						  console.log('results: %j', results);
+						  generatedInputs = results;
+						  callback(null, results);
+					   }
+					});
+				},
+				function(arg1, callback) {
+					//Writing the outputs to file to do generation
+					fs.writeFileSync(process.cwd()+'/iogen.py.dna',outputString, 'utf8');
+
+					//Executing generation with inputs
+					console.log('Starting on generation')
+					var pythonExec = require('python-shell');
+					var argsList = ['iogen.py.dna'];
+					for(var i = 0; i < valueArray[studentID].length; i++) {
+					  argsList.push(valueArray[studentID][i]);
+					}
+					console.log("DEBUG: args list 2: " + argsList);
+					var options = {
+					  args: argsList			  
+					} 
+					console.log('Generation args taken.');
+					pythonExec.run('/ribosome.py', options, function (err, results) {
+						if (err) {
+							console.log(err);
+							response.send(null);
+							callback(err, null);
+						}
+						else {
+						  console.log('results: %j', results);
+						  generatedOutputs = results;
+						  callback(null, results);
+					   }
+					});
+				},
+				function(arg1, callback) {
+					//Writing the outputs to file to do generation
+					fs.writeFileSync(process.cwd()+'/iogen.py.dna',feedbackString, 'utf8');
+
+					//Executing generation with inputs
+					console.log('Starting on generation')
+					var pythonExec = require('python-shell');
+					var argsList = ['iogen.py.dna'];
+					for(var i = 0; i < valueArray[studentID].length; i++) {
+					  argsList.push(valueArray[studentID][i]);
+					}
+					console.log("DEBUG: args list 2: " + argsList);
+					var options = {
+					  args: argsList			  
+					} 
+					console.log('Generation args taken.');
+					pythonExec.run('/ribosome.py', options, function (err, results) {
+						if (err) {
+							console.log(err);
+							response.send(null);
+							callback(err, null);
+						}
+						else {
+						  console.log('results: %j', results);
+						  generatedFeedback = results;
+						  callback(null, results);
+					   }
+					});
+				},
+				function(arg1, callback) {
+					console.log('Sent the generated i/o: ' + generatedInputs + " " + generatedOutputs + " " + generatedFeedback);
+					response.json({
+						generatedInputs: generatedInputs,
+						generatedOutputs: generatedOutputs,
+						generatedFeedback: generatedFeedback
+					});
+					callback(null, 'Success');
+				}
+			], function (err, result) {
+				console.log("Result of generation for i/o test with assignment with id: " + request.body.aid
+							+ ", wtih student id: " + request.body.sid + " is: " + result)
+				console.log("Errors from generation for i/o test with assignment with id: " + request.body.aid
+							+ ", wtih student id: " + request.body.sid + " is: " + err);
+			});
 		  }
 		});
     }
