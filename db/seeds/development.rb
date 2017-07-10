@@ -72,7 +72,7 @@ if ENV['DOCKER']
                      input: 'java',
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://localhost:3004/#/config?aid=%{aid}',
+                     config_url: 'http://localhost:3004/#/config?aid=%{aid}&sid=%{sid}&isUnique=%{isUnique}',
                      access_token: 'bar')
 
   MarkingTool.create(name: 'Peer Feedback',
@@ -120,7 +120,7 @@ else
                      input: 'java',
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://localhost:3001/#/config?aid=%{aid}',
+                     config_url: 'http://localhost:3004/#/config?aid=%{aid}&sid=%{sid}&isUnique=%{isUnique}',
                      access_token: 'bar')
 
   MarkingTool.create(name: 'Peer Feedback',

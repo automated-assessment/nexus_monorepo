@@ -27,7 +27,9 @@ class AssignmentController < ApplicationController
     if @assignment
       # augment template URLs with parameters
       params = {
-        aid: @assignment.id
+        aid: @assignment.id,
+        sid: current_user.id,
+        isUnique: @assignment.is_unique
       }
       @tools_with_augmented_urls = []
       @assignment.marking_tools.configurable.each do |t|
