@@ -1,8 +1,9 @@
 class DeadlineExtensionController < ApplicationController
   include ApplicationHelper
 
+  before_action :authenticate_admin!
+
   def create
-    return unless authenticate_admin!
     @deadline_extension = DeadlineExtension.new(deadline_extension_params)
 
     if @deadline_extension.save
@@ -19,7 +20,6 @@ class DeadlineExtensionController < ApplicationController
   end
 
   def update
-    return unless authenticate_admin!
     @deadline_extension = DeadlineExtension.find(params[:id])
     if @deadline_extension.update_attributes(deadline_extension_params)
       flash[:success] = 'Deadline extension updated'
@@ -31,7 +31,6 @@ class DeadlineExtensionController < ApplicationController
   end
 
   def destroy
-    return unless authenticate_admin!
     @deadline_extension = DeadlineExtension.find(params[:id])
 
     @assignment = @deadline_extension.assignment
@@ -46,7 +45,6 @@ class DeadlineExtensionController < ApplicationController
   end
 
   def new
-    return unless authenticate_admin!
     @deadline_extension = DeadlineExtension.new(assignment_id: params[:aid])
   end
 

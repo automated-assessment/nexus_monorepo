@@ -8,10 +8,10 @@ RSpec.describe AssignmentController, type: :controller do
 
   describe 'GET #new' do
     describe 'without admin permissions' do
-      it 'returns a 302 status code' do
+      it 'returns a 403 status code' do
         sign_in s
         get :new, cid: c.id
-        expect(response).to have_http_status 302
+        expect(response).to have_http_status 403
       end
     end
 
@@ -49,7 +49,7 @@ RSpec.describe AssignmentController, type: :controller do
 
   describe 'POST #create' do
     describe 'without admin permissions' do
-      it 'redirects and return a 302 status code' do
+      it 'redirects and return a 403 status code' do
         sign_in s
         post :create, assignment: {
           title: a.title,
@@ -64,7 +64,7 @@ RSpec.describe AssignmentController, type: :controller do
           allow_git: a.allow_git,
           allow_ide: a.allow_ide
         }
-        expect(response).to have_http_status 302
+        expect(response).to have_http_status 403
       end
     end
     describe 'with admin permissions' do
@@ -92,11 +92,11 @@ RSpec.describe AssignmentController, type: :controller do
 
   describe 'GET #edit' do
     describe 'without admin permissions' do
-      it 'redirects and returns a 302 status code' do
+      it 'redirects and returns a 403 status code' do
         sign_in s
         get :edit, id: a.id
-        expect(response).to have_http_status 302
-        expect(@assignment).to be_nil
+        expect(response).to have_http_status 403
+        expect(assigns(:assignment)).to be_nil
       end
     end
     describe 'with admin permissions' do
@@ -105,7 +105,7 @@ RSpec.describe AssignmentController, type: :controller do
           sign_in t
           get :edit, id: a.id + 1
           expect(flash[:error]).not_to be_nil
-          expect(@assignment).to be_nil
+          expect(assigns(:assignment)).to be_nil
           expect(response).to have_http_status 404
         end
       end
@@ -114,7 +114,7 @@ RSpec.describe AssignmentController, type: :controller do
           sign_in t
           get :edit, id: a.id
           expect(response).to have_http_status 200
-          expect(@assignment).to be_nil
+          expect(assigns(:assignment)).not_to be_nil
           expect(flash[:error]).to be_nil
         end
       end
@@ -123,13 +123,13 @@ RSpec.describe AssignmentController, type: :controller do
 
   describe 'PATCH #update' do
     describe 'without admin permissions' do
-      it 'redirects and returns a 302 status code' do
+      it 'redirects and returns a 403 status code' do
         sign_in s
         patch :update, id: a.id, assignment:
           {
             title: 'New Assignment Title'
           }
-        expect(response).to have_http_status 302
+        expect(response).to have_http_status 403
 
         # Check value didn't update
         assignment = Assignment.find_by(id: a.id)

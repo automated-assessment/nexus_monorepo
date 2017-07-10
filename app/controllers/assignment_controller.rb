@@ -1,8 +1,10 @@
 class AssignmentController < ApplicationController
   include ApplicationHelper
   require_relative '../lib/git_utils'
+  require_relative '../lib/workflow_utils'
 
   before_action :authenticate_user!
+  before_action :authenticate_admin!, except: [:mine, :show]
 
   def mine
   end
@@ -12,23 +14,22 @@ class AssignmentController < ApplicationController
   end
 
   def show_deadline_extensions
-    return unless authenticate_admin!
     @assignment = return_assignment!
   end
 
   def quick_config_confirm
-    return unless authenticate_admin!
     @assignment = return_assignment!
   end
 
   def configure_tools
-    return unless authenticate_admin!
     @assignment = return_assignment!
 
     if @assignment
       # augment template URLs with parameters
       params = {
-        aid: @assignment.id
+        aid: @assignment.id,
+        sid: current_user.id,
+        isUnique: @assignment.is_unique
       }
       @tools_with_augmented_urls = []
       @assignment.marking_tools.configurable.each do |t|
@@ -38,12 +39,12 @@ class AssignmentController < ApplicationController
   end
 
   def new
-    return unless authenticate_admin!
     @assignment = Assignment.new
     course = Course.find_by(id: params[:cid])
     if course
       @assignment.course = course
       @assignment.marking_tool_contexts.build
+      @assignment.active_services = {}
 
       # Set default values
       @assignment.start = DateTime.now
@@ -66,19 +67,25 @@ class AssignmentController < ApplicationController
   end
 
   def create
-    return unless authenticate_admin!
     @assignment = Assignment.new(assignment_params)
+    @assignment.description_string = @assignment.description
     unless @assignment.save
-      flash[:error] = @assignment.errors.full_messages[0]
-      redirect_to action: 'new', cid: @assignment.course.id
-      @assignment.destroy
+      error_flash_and_cleanup!(@assignment.errors.full_messages[0])
       return
     end
 
     unless GitUtils.setup_remote_assignment_repo!(@assignment)
-      flash[:error] = 'Error creating repository for assignment!'
-      redirect_to action: 'new', cid: @assignment.course.id
-      @assignment.destroy
+      error_flash_and_cleanup!('Error creating repository for assignment!')
+      return
+    end
+    begin
+      marking_tool_contexts = params[:assignment][:marking_tool_contexts_attributes]
+      active_services = params[:assignment][:active_services]
+      @assignment.active_services = WorkflowUtils.construct_workflow(marking_tool_contexts, active_services)
+      @assignment.dataflow = WorkflowUtils.construct_dataflow(@assignment.active_services)
+      @assignment.save!
+    rescue StandardError => e
+      error_flash_and_cleanup!(e.message)
       return
     end
 
@@ -87,18 +94,31 @@ class AssignmentController < ApplicationController
     else
       redirect_to action: 'show', id: @assignment.id
     end
+    if @assignment.is_unique == true
+      uri = URI.parse('http://unique-assignment-tool:3009/param_upload_finish')
+
+        Net::HTTP.start(uri.host, uri.port) do |http|
+          req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
+
+          req.body = {
+            aid: @assignment.id
+          }.to_json
+
+          Rails.logger.info "DEBUG!!: Body to send to UAT: " + req.body.to_s
+          res = http.request(req)
+        end
+    end
   end
 
   def edit
-    return unless authenticate_admin!
     @assignment = return_assignment!
   end
 
   def update
-    return unless authenticate_admin!
     @assignment = return_assignment!
     if @assignment
       if @assignment.update_attributes(assignment_params)
+        @assignment.description_string = @assignment.description
         flash[:success] = 'Assignment updated'
         redirect_to @assignment
       else
@@ -108,8 +128,21 @@ class AssignmentController < ApplicationController
     end
   end
 
+  def destroy
+    assignment = return_assignment!
+    repo_was_deleted = GitUtils.delete_remote_assignment_repo!(assignment)
+    if repo_was_deleted
+      course = assignment.course
+      course.log("Assignment #{assignment.id} deleted by #{current_user.name}")
+      Assignment.destroy(assignment.id)
+      flash[:success] = 'Assignment deleted successfully'
+    else
+      flash[:error] = 'Assignment was not deleted. Please try again'
+    end
+    redirect_to course
+  end
+
   def export_submissions_data
-    return unless authenticate_admin!
     @assignment = return_assignment!
     if @assignment
       headers['Content-Disposition'] = 'attachment; filename="submissions-data-export.csv"'
@@ -118,8 +151,6 @@ class AssignmentController < ApplicationController
   end
 
   def list_submissions
-    return unless authenticate_admin!
-
     @assignment = return_assignment!
 
     if @assignment
@@ -129,18 +160,14 @@ class AssignmentController < ApplicationController
   end
 
   def list_ordered_submissions
-    return unless authenticate_admin!
     @assignment = return_assignment!
   end
 
   def prepare_submission_repush
-    return unless authenticate_admin!
     @assignment = return_assignment!
   end
 
   def submission_repush
-    return unless authenticate_admin!
-
     @assignment = return_assignment!
     if @assignment
       min_id = params[:submissions][:min_id].to_i
@@ -171,7 +198,6 @@ class AssignmentController < ApplicationController
                                        :deadline,
                                        :allow_late,
                                        :is_unique,
-                                       :parameter_string,
                                        :description_string,
                                        :feedback_only,
                                        :late_cap,
@@ -181,12 +207,15 @@ class AssignmentController < ApplicationController
                                        :allow_zip,
                                        :allow_git,
                                        :allow_ide,
-                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id])
+                                       :active_services,
+                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :condition])
   end
 
   def return_assignment!
     assignment = Assignment.find_by(id: params[:id])
-    if (assignment.is_unique == true)
+    if (caller[0].index("edit") != nil)
+      assignment.description = assignment.description_string
+    elsif (assignment.is_unique == true)
       Rails.logger.info 'Assignment is unique, requesting generation for description'
       
       uri = URI.parse('http://unique-assignment-tool:3009/desc_gen')
@@ -198,7 +227,6 @@ class AssignmentController < ApplicationController
           aid: assignment.id,
           studentid: current_user.id,
           is_unique: assignment.is_unique,
-          parameter_string: assignment.parameter_string,
           description_string: assignment.description_string
         }.to_json
 
@@ -220,5 +248,11 @@ class AssignmentController < ApplicationController
       render 'mine', status: 404
     end
     assignment
- end
+  end
+
+  def error_flash_and_cleanup!(message)
+    flash[:error] = message
+    redirect_to action: 'new', cid: @assignment.course.id
+    @assignment.destroy
+  end
 end

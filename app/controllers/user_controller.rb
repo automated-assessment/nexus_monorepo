@@ -1,6 +1,7 @@
 class UserController < ApplicationController
   include ApplicationHelper
   before_action :authenticate_user!
+  before_action :authenticate_admin!, except: [:enrol, :unenrol]
 
   def enrol
     cid = params[:id]
@@ -21,7 +22,6 @@ class UserController < ApplicationController
   end
 
   def grant_admin
-    return unless authenticate_admin!
     @user = User.find(params[:id])
     @user.admin = true
     @user.save
@@ -33,7 +33,6 @@ class UserController < ApplicationController
   end
 
   def revoke_admin
-    return unless authenticate_admin!
     @user = User.find(params[:id])
     if @user.eql?(current_user)
       flash[:error] = 'You cannot revoke your own admin rights'
@@ -50,7 +49,6 @@ class UserController < ApplicationController
   end
 
   def delete
-    return unless authenticate_admin!
     @user = User.find(params[:id])
     if @user.eql?(current_user)
       flash[:error] = 'You cannot delete yourself'
@@ -60,6 +58,6 @@ class UserController < ApplicationController
     @user.destroy
 
     flash[:success] = "#{@user.name} has been removed"
-    redirect_to user_list_path    
+    redirect_to user_list_path
   end
 end

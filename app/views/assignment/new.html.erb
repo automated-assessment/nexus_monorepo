@@ -1,3 +1,4 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <div class="well">
   <h2>Create Assignment</h2>
   <h4 class="course-title"><%= icon 'book' %> <%= link_to @assignment.course.title, @assignment.course %></h4>
@@ -17,7 +18,7 @@
 
     <div class="marking-tools">
       <%= f.fields_for :marking_tool_contexts do |ff| %>
-        <%= render 'marking_tool_context_fields', f: ff %>
+        <%= render 'marking_tool_context_fields', f: ff%>
 
         <div class="add-tool-link">
           <%= link_to_add_association f, :marking_tool_contexts, partial: 'marking_tool_context_fields' do |link| %>
@@ -29,8 +30,27 @@
 
     <hr>
     <br />
+    
+    <script>	  
+	  var paramCounter = 1;
+	  function addInput(divName){
+	    paramCounter++;
+	    var additionHTML = `<label class='col-lg-2 control-label' for='parameter pair ` + paramCounter + `'>Parameter Pair ` + paramCounter + `</label>
+		   	    <div id="pair` + paramCounter + `" class='col-lg-10'>
+			        <label class="col-lg-2 control-label" for="parameter name">Parameter Name</label>
+				    <input type='text' name='param_name' id='param_name_` + paramCounter + `'><br/>
+				    <label class="col-lg-2 control-label" for="parameter type">Parameter Type</label>
+				    <input type='text' name='param_type' id='param_type_` + paramCounter + `'><br/>
+			    </div>`;
+	    document.getElementById(divName).innerHTML = document.getElementById(divName).innerHTML + additionHTML;
+	  }
 
-    <script>
+	  
+	  function taskFunction(){
+	    sendParamsToUat();
+	  	checkMarkingTools();
+	  }
+   
       function checkMarkingTools() {
         if (document.getElementById("assignment_marking_tool_contexts_attributes_0_marking_tool_id").selectedIndex != 0) {
           return true;
@@ -38,12 +58,51 @@
           return confirm("Are you sure you want to create an assignment without marking tools?");
         }
       }
+	  
+	  function sendParamsToUat() {
+	    var isUniqueFlag = document.getElementById('isuniqueflag').checked;
+        if(isUniqueFlag == true) {
+			var parameterString = "";
+			var paramSendCounter = 1;
+			var mainDivChildren = document.getElementById("paramField").children;
+			for(var i = 0; i < mainDivChildren.length; i++) {
+				if(mainDivChildren[i].id.indexOf('pair') == 0) {
+					var innerDivChildren = mainDivChildren[i].children;
+					for(var j = 0; j < innerDivChildren.length; j++) {
+						if(innerDivChildren[j].id.indexOf('param_name_') == 0) {
+							parameterString = parameterString.concat(innerDivChildren[j].value + ":");
+						}
+						else if((innerDivChildren[j].id.indexOf('param_type_') == 0) && (paramSendCounter != paramCounter)) {
+							parameterString = parameterString.concat(innerDivChildren[j].value + ",");
+							paramSendCounter++;
+						}
+						else if((innerDivChildren[j].id.indexOf('param_type_') == 0) && (paramSendCounter == paramCounter)) {
+							parameterString = parameterString.concat(innerDivChildren[j].value);
+						}
+					}
+				}
+			}  
+			try {
+				var request = new XMLHttpRequest();
+				var params = `parameter_string=${parameterString}`;
+				request.open('POST', 'http://localhost:3009/param_upload_start', true);
+				request.onreadystatechange = function() {if (request.readyState==4) confirm(document.getElementById("assign_id").value);};
+				request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				request.withCredentials = true;
+				request.send(params);
+			}
+			catch (err) {
+				confirm(err);
+			}
+		}
+	  }
     </script>
 
     <div class="form-group">
       <div class="col-lg-10 col-lg-offset-2">
-        <%= f.submit 'Create', class: 'btn btn-primary', onclick: "return checkMarkingTools()" %>
+        <%= f.submit 'Create', class: 'btn btn-primary', onclick: "taskFunction()" %>
       </div>
     </div>
   <% end %>
+  <br />
 </div>

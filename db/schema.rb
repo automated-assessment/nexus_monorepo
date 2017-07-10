@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170607090959) do
+ActiveRecord::Schema.define(version: 20170618104332) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -38,8 +38,9 @@ ActiveRecord::Schema.define(version: 20170607090959) do
     t.datetime "latedeadline"
     t.boolean  "feedback_only",      default: false
     t.boolean  "is_unique"
-    t.string   "parameter_string"
     t.string   "description_string"
+    t.text     "active_services"
+    t.text     "dataflow"
   end
 
   add_index "assignments", ["course_id"], name: "index_assignments_on_course_id"
@@ -119,6 +120,7 @@ ActiveRecord::Schema.define(version: 20170607090959) do
     t.datetime "created_at",                      null: false
     t.datetime "updated_at",                      null: false
     t.boolean  "configured",      default: false
+    t.integer  "condition"
   end
 
   add_index "marking_tool_contexts", ["assignment_id"], name: "index_marking_tool_contexts_on_assignment_id"
@@ -133,6 +135,9 @@ ActiveRecord::Schema.define(version: 20170607090959) do
     t.string   "uid"
     t.boolean  "requires_config", default: false
     t.text     "config_url"
+    t.string   "input"
+    t.string   "output"
+    t.string   "access_token"
   end
 
   add_index "marking_tools", ["uid"], name: "index_marking_tools_on_uid", unique: true
@@ -165,6 +170,7 @@ ActiveRecord::Schema.define(version: 20170607090959) do
     t.boolean  "mark_override",     default: false
     t.boolean  "failed"
     t.boolean  "git_success",       default: false
+    t.text     "active_services"
   end
 
   add_index "submissions", ["assignment_id"], name: "index_submissions_on_assignment_id"

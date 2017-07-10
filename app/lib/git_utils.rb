@@ -129,7 +129,7 @@ class GitUtils
     def setup_remote_assignment_repo!(assignment)
       repo_name = "assignment-#{assignment.id}"
       repo_desc = "Automatically created on #{DateTime.now.utc} by Nexus for assignment id #{assignment.id}"
-      client = Octokit::Client.new(login: Rails.configuration.ghe_user, password: Rails.configuration.ghe_password)
+      client = new_organisation_git_client
       res = client.create_repository(repo_name,
                                      organization: Rails.configuration.ghe_org,
                                      private: true,
@@ -145,6 +145,15 @@ class GitUtils
       Rails.logger.error "Error creating assignment repository for assignment #{assignment.id}, #{assignment.title}: #{e.inspect}"
       assignment.log("Error creating assignment repository: #{e.inspect}", 'Error')
       return false
+    end
+
+    # Delete remote repository for the given assignment
+    # Returns true if repository was destroyed
+    # Returns false otherwise
+    def delete_remote_assignment_repo!(assignment)
+      repo_name = owner_and_repo_name(assignment)
+      client = new_organisation_git_client
+      client.delete_repository(repo_name)
     end
 
     # Danger, Will Robinson!
@@ -179,17 +188,8 @@ class GitUtils
     def valid_repo?(submission)
       return true unless submission.studentrepo # We've constructed the repo ourselves so this should be OK by default
 
-      submission_user = submission.user
-      client = Octokit::Client.new(login: submission_user.ghe_login, access_token: submission_user.githubtoken)
-
-      # Split on / and grab the last two entries (user and repo name)
-      # Join the two with a slash and remove the .git extension
-      #
-      # By doing the URL manipulation, this eliminates the need for the
-      # a seperate call to Octokit::Repository all together, which returns
-      # a Repository object with owner and repo name instance fields, both of which
-      # the below line extracts from the submission.repourl
-      owner_repo = submission.repourl.split('/')[-2..-1].join('/')[0..-5]
+      client = new_user_git_client(submission.user)
+      owner_repo = owner_and_repo_name(submission)
 
       begin
         # Check repo/branch existence in one call, using the information extracted
@@ -222,6 +222,25 @@ class GitUtils
     # Gets all files to move except for ., .. and .git
     def all_files_except_git
       Dir.glob('*', File::FNM_DOTMATCH).delete_if { |file| file =~ /\A\.{1,2}\z|\A\.git\z/ }
+    end
+
+    def new_organisation_git_client
+      Octokit::Client.new(login: Rails.configuration.ghe_user, password: Rails.configuration.ghe_password)
+    end
+
+    def new_user_git_client(user)
+      Octokit::Client.new(login: user.ghe_login, access_token: user.githubtoken)
+    end
+
+    # Split on / and grab the last two entries (user and repo name)
+    # Join the two with a slash and remove the .git extension
+    #
+    # By doing the URL manipulation, this eliminates the need for the
+    # a seperate call to Octokit::Repository all together, which returns
+    # a Repository object with owner and repo name instance fields, both of which
+    # the below line extracts from the submission.repourl
+    def owner_and_repo_name(assignment_or_submission)
+      assignment_or_submission.repourl.split('/')[-2..-1].join('/')[0..-5]
     end
   end
 end
