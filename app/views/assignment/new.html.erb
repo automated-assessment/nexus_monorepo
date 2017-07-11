@@ -40,7 +40,15 @@
 			        <label class="col-lg-2 control-label" for="parameter name">Parameter Name</label>
 				    <input type='text' name='param_name' id='param_name_` + paramCounter + `'><br/>
 				    <label class="col-lg-2 control-label" for="parameter type">Parameter Type</label>
-				    <input type='text' name='param_type' id='param_type_` + paramCounter + `'><br/>
+					<select id='param_name_` + paramCounter + `'>
+					  <option value="1">int</option>
+					  <option value="2">float</option>
+					  <option value="3">double</option>
+					  <option value="4">string</option>
+					  <option value="5">boolean</option>
+					</select><br/>
+					<label class="col-lg-2 control-label" for="parameter constructs">Parameter Constructs</label>
+				    <input type='text' name='param_constructs' id='param_constructs_` + paramCounter + `'><br/>
 			    </div>`;
 	    document.getElementById(divName).innerHTML = document.getElementById(divName).innerHTML + additionHTML;
 	  }
@@ -72,11 +80,14 @@
 						if(innerDivChildren[j].id.indexOf('param_name_') == 0) {
 							parameterString = parameterString.concat(innerDivChildren[j].value + ":");
 						}
-						else if((innerDivChildren[j].id.indexOf('param_type_') == 0) && (paramSendCounter != paramCounter)) {
-							parameterString = parameterString.concat(innerDivChildren[j].value + ",");
+						else if(innerDivChildren[j].id.indexOf('param_type_') == 0) {
+							parameterString = parameterString.concat(innerDivChildren[j].options[innerDivChildren[j].selectedIndex].text + ":");
+						}
+						else if((innerDivChildren[j].id.indexOf('param_constructs_') == 0) && (paramSendCounter != paramCounter)) {
+							parameterString = parameterString.concat(innerDivChildren[j].value + "|");
 							paramSendCounter++;
 						}
-						else if((innerDivChildren[j].id.indexOf('param_type_') == 0) && (paramSendCounter == paramCounter)) {
+						else if((innerDivChildren[j].id.indexOf('param_constructs_') == 0) && (paramSendCounter == paramCounter)) {
 							parameterString = parameterString.concat(innerDivChildren[j].value);
 						}
 					}

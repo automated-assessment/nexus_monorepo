@@ -20,7 +20,15 @@
 			  <label class="col-lg-2 control-label" for="parameter name">Parameter Name</label>
 			  <input type="text" name="param_name" id="param_name_1"><br/>
 			  <label class="col-lg-2 control-label" for="parameter type">Parameter Type</label>
-			  <input type="text" name="param_type" id="param_type_1"><br/>
+			  <select id='param_name_1'>
+			    <option value="1">int</option>
+			    <option value="2">float</option>
+			    <option value="3">double</option>
+			    <option value="4">string</option>
+			    <option value="5">boolean</option>
+			  </select><br/>
+			  <label class="col-lg-2 control-label" for="parameter constructs">Parameter Constructs</label>
+			  <input type='text' name='param_constructs' id='param_constructs_1'><br/>
 		  </div>
 	 </div>
 	 <input type="button" value="Add a Parameter Pair" onClick="addInput('paramField');"></br></br>
