@@ -385,6 +385,7 @@ app.post('/mark', function(req, res) {
     var mkdir = spawnSync('mkdir', [userKNumber], {cwd:rawPath, timeout:2000});
 
     //Clone Repo
+	// TODO Include ınformatıon about branch and sha
     cloneGitRepo(cloneUrl, path);
 
     //Get All Files with .extension Java
@@ -473,7 +474,7 @@ app.post('/mark', function(req, res) {
 						sendRequest(urlF, {body: bodyF});
 					})
 					.catch(function (err) {
-						console.log("Error from generation request to UAT: " + err);
+						console.log("Error from generation and execution: " + err);
 					});
 			}
 			else {
@@ -533,7 +534,7 @@ function cloneGitRepo(url, pathToClone) {
 			console.log(gitClone.stderr.toString());
 		} 
 		else {
-			console.log("Unkwond Error");
+			console.log("Unknown Error");
 		}
 	} else {
 		console.log("Done");
