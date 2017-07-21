@@ -1,0 +1,8 @@
+# IDE related files
+.idea
+
+# Dependency directories
+node_modules/
+
+# Testing temp folder
+uat-test/
