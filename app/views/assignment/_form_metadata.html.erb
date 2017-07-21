@@ -15,15 +15,25 @@
 <script src="/wp-includes/js/addInput.js" language="Javascript" type="text/javascript"></script>
 <div class="form-group">
 	 <div id="paramField" class="form-group">
-		  <label class="col-lg-2 control-label" for="parameter pair 1">Parameter Pair 1</label>
-		  <div id="pair1" class="col-lg-10">
+	 	<div>
+		  <label class="col-lg-2 control-label" id="parameter_form_label_1" for="parameter form 1">Parameter Form 1</label>
+		  <div id="form1" class="col-lg-10">
 			  <label class="col-lg-2 control-label" for="parameter name">Parameter Name</label>
 			  <input type="text" name="param_name" id="param_name_1"><br/>
 			  <label class="col-lg-2 control-label" for="parameter type">Parameter Type</label>
-			  <input type="text" name="param_type" id="param_type_1"><br/>
+			  <select id='param_name_1'>
+			    <option value="1">int</option>
+			    <option value="2">float</option>
+			    <option value="3">double</option>
+			    <option value="4">string</option>
+			    <option value="5">boolean</option>
+			  </select><br/>
+			  <label class="col-lg-2 control-label" for="parameter constructs">Parameter Constructs</label>
+			  <input type='text' name='param_constructs' id='param_constructs_1'><br/>
 		  </div>
+		</div>
 	 </div>
-	 <input type="button" value="Add a Parameter Pair" onClick="addInput('paramField');"></br></br>
+	 <input type="button" value="Add a Parameter Form" onClick="addForm('paramField');"><input type="button" value="Delete Last Parameter Form" onClick="deleteForm();"></br></br>
 </div>
 
 <div class="form-group">

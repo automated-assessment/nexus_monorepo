@@ -33,18 +33,33 @@
     
     <script>	  
 	  var paramCounter = 1;
-	  function addInput(divName){
+	  function addForm(divName){
 	    paramCounter++;
-	    var additionHTML = `<label class='col-lg-2 control-label' for='parameter pair ` + paramCounter + `'>Parameter Pair ` + paramCounter + `</label>
-		   	    <div id="pair` + paramCounter + `" class='col-lg-10'>
+		var newParameterForm = document.createElement("div");
+		newParameterForm.innerHTML = `<label class='col-lg-2 control-label' id='parameter_form_label_` + paramCounter + `' for='parameter form ` + paramCounter + `'>Parameter Form ` + paramCounter + `</label>
+		   	    <div id="form` + paramCounter + `" class='col-lg-10'>
 			        <label class="col-lg-2 control-label" for="parameter name">Parameter Name</label>
 				    <input type='text' name='param_name' id='param_name_` + paramCounter + `'><br/>
 				    <label class="col-lg-2 control-label" for="parameter type">Parameter Type</label>
-				    <input type='text' name='param_type' id='param_type_` + paramCounter + `'><br/>
+					<select id='param_name_` + paramCounter + `'>
+					  <option value="1">int</option>
+					  <option value="2">float</option>
+					  <option value="3">double</option>
+					  <option value="4">string</option>
+					  <option value="5">boolean</option>
+					</select><br/>
+					<label class="col-lg-2 control-label" for="parameter constructs">Parameter Constructs</label>
+				    <input type='text' name='param_constructs' id='param_constructs_` + paramCounter + `'><br/>
 			    </div>`;
-	    document.getElementById(divName).innerHTML = document.getElementById(divName).innerHTML + additionHTML;
+	    document.getElementById(divName).appendChild(newParameterForm); 
 	  }
-
+	  
+	  function deleteForm() {
+	  	var currentForm = document.getElementById("form" + paramCounter);
+		currentForm.parentNode.removeChild(currentForm);
+		document.getElementById("parameter_form_label_" + paramCounter).remove();
+		paramCounter--;
+	  }
 	  
 	  function taskFunction(){
 	    sendParamsToUat();
@@ -66,18 +81,24 @@
 			var paramSendCounter = 1;
 			var mainDivChildren = document.getElementById("paramField").children;
 			for(var i = 0; i < mainDivChildren.length; i++) {
-				if(mainDivChildren[i].id.indexOf('pair') == 0) {
-					var innerDivChildren = mainDivChildren[i].children;
-					for(var j = 0; j < innerDivChildren.length; j++) {
-						if(innerDivChildren[j].id.indexOf('param_name_') == 0) {
-							parameterString = parameterString.concat(innerDivChildren[j].value + ":");
-						}
-						else if((innerDivChildren[j].id.indexOf('param_type_') == 0) && (paramSendCounter != paramCounter)) {
-							parameterString = parameterString.concat(innerDivChildren[j].value + ",");
-							paramSendCounter++;
-						}
-						else if((innerDivChildren[j].id.indexOf('param_type_') == 0) && (paramSendCounter == paramCounter)) {
-							parameterString = parameterString.concat(innerDivChildren[j].value);
+				var innerMain = mainDivChildren[i].children;
+				for (var j = 0; j < innerMain.length; j++) {
+					if(innerMain[j] !== undefined && innerMain[j].id.indexOf('form') == 0) {
+					var innerDivChildren = innerMain[j].children;
+						for(var k = 0; k < innerDivChildren.length; k++) {
+							if(innerDivChildren[k].id.indexOf('param_name_') == 0) {
+								parameterString = parameterString.concat(innerDivChildren[k].value + ":");
+							}
+							else if(innerDivChildren[k].id.indexOf('param_type_') == 0) {
+								parameterString = parameterString.concat(innerDivChildren[k].options[innerDivChildren[k].selectedIndex].text + ":");
+							}
+							else if((innerDivChildren[k].id.indexOf('param_constructs_') == 0) && (paramSendCounter != paramCounter)) {
+								parameterString = parameterString.concat(innerDivChildren[k].value + "|");
+								paramSendCounter++;
+							}
+							else if((innerDivChildren[k].id.indexOf('param_constructs_') == 0) && (paramSendCounter == paramCounter)) {
+								parameterString = parameterString.concat(innerDivChildren[k].value);
+							}
 						}
 					}
 				}
