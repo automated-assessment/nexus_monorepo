@@ -385,7 +385,8 @@ app.post('/mark', function(req, res) {
     var mkdir = spawnSync('mkdir', [userKNumber], {cwd:rawPath, timeout:2000});
 
     //Clone Repo
-	// TODO Include ınformatıon about branch and sha
+	//TODO Include informatıon about branch and sha
+	console.log(req.body.sha);
     cloneGitRepo(cloneUrl, path);
 
     //Get All Files with .extension Java
