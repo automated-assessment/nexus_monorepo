@@ -80,6 +80,7 @@ function paramUploadStartHandler (request, response) {
 		 }
 		 else {
 			 console.log("Table Generated Parameters is created for the database.");
+	  		 response.send("Tables created.");
 			 paramString = request.body.parameter_string;
 		 }
 	   });
