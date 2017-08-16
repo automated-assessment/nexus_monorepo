@@ -349,7 +349,7 @@ app.post('/check-educator-code-io-input-output', function(req,res) {
 
 app.post('/mark', function(req, res) {
     
-    var body = {
+    var bodyToSend = {
         mark: 0
     };
 
@@ -385,9 +385,7 @@ app.post('/mark', function(req, res) {
     var mkdir = spawnSync('mkdir', [userKNumber], {cwd:rawPath, timeout:2000});
 
     //Clone Repo
-	//TODO Include informatıon about branch and sha
-	console.log(req.body.sha);
-    cloneGitRepo(cloneUrl, path);
+    cloneGitRepo(cloneUrl, path, req.body.sha);
 
     //Get All Files with .extension Java
 	var childFind = execSync('find . -name "*.java" > sources.txt', { cwd: pathAssingment });
@@ -413,7 +411,6 @@ app.post('/mark', function(req, res) {
 		if (err) {
 			sendRequest(urlF, {body: "error"});
 		} else {
-			
 			if (req.body.is_unique == 1) {
 				//Request for generation of io in template syntax START
 
@@ -447,15 +444,15 @@ app.post('/mark', function(req, res) {
 						deleteFolder(pathAssingment);
 
 						//Send Mark to Nexus
-						body.mark = 100*objToReturn.numberOfTestsPassed / objToReturn.resultsArray.length;
+						bodyToSend.mark = 100*objToReturn.numberOfTestsPassed / objToReturn.resultsArray.length;
 
 						var url = NEXUS_BASE_URL + '/report_mark/'+ req.body.sid + '/' + IOTOOL_ID;
-						sendRequest(url, body);
+						sendRequest(url, bodyToSend);
 
 						//Send Feedback to Nexus
 						var bodyF = '';
 						var urlF = NEXUS_BASE_URL + '/report_feedback/' + req.body.sid + '/' + IOTOOL_ID;
-						if (body.mark == 100) {
+						if (bodyToSend.mark == 100) {
 							bodyF = '<div class="javac-feedback"><p class="text-info" style="color:green"><b><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>All tests passed correctly. Congrats!</b></p></div>';
 						} else {
 							bodyF = '<div class="javac-feedback">';
@@ -479,7 +476,6 @@ app.post('/mark', function(req, res) {
 					});
 			}
 			else {
-			
 				//Run and compare results	
 				objToReturn = executeStudentCode(docs.inputArray, docs.outputArray, docs.feedbackArray, docs.dataFilesArray[0].class_name, pathAssingment, objToReturn);
 
@@ -487,15 +483,15 @@ app.post('/mark', function(req, res) {
 				deleteFolder(pathAssingment);
 
 				//Send Mark to Nexus
-				body.mark = 100*objToReturn.numberOfTestsPassed / objToReturn.resultsArray.length;
+				bodyToSend.mark = 100*objToReturn.numberOfTestsPassed / objToReturn.resultsArray.length;
 
 				var url = NEXUS_BASE_URL + '/report_mark/'+ req.body.sid + '/' + IOTOOL_ID;
-				sendRequest(url, body);
+				sendRequest(url, bodyToSend);
 
 				//Send Feedback to Nexus
 				var bodyF = '';
 				var urlF = NEXUS_BASE_URL + '/report_feedback/' + req.body.sid + '/' + IOTOOL_ID;
-				if (body.mark == 100) {
+				if (bodyToSend.mark == 100) {
 					bodyF = '<div class="javac-feedback"><p class="text-info" style="color:green"><b><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>All tests passed correctly. Congrats!</b></p></div>';
 				} else {
 					bodyF = '<div class="javac-feedback">';
@@ -520,7 +516,7 @@ app.post('/mark', function(req, res) {
 ///////////////////////////////////////////STUDENT HTTP Requests: END////////////////////////////
 
 //////////////////////////////////////////Functions to run for Evaluation
-function cloneGitRepo(url, pathToClone) {
+function cloneGitRepo(url, pathToClone, sha) {
 	var gitClone = spawnSync('git', ['clone', url], 
 		{
 			cwd:pathToClone,
@@ -540,6 +536,24 @@ function cloneGitRepo(url, pathToClone) {
 	} else {
 		console.log("Done");
 	}
+	
+	var gitReset = spawnSync('git', ['reset', '--hard', sha], 
+		{
+			cwd:pathToClone + "/" + url.substring(url.indexOf('assignment'), url.indexOf('.git')),
+			timeout:2000
+		});
+	if (!(gitReset.status == 0)) {
+		if (!(gitReset.error == null)) {
+			console.log(gitReset.error);
+		} else if (!(gitReset.stderr.toString() == "")) {
+			console.log(gitReset.stderr.toString());
+		} 
+		else {
+			console.log("Unknown Error in SHA");
+		}
+	} else {
+		console.log("Done SHA Checkout");
+	}
 }
 
 function createFiles(dataFilesArray, extension, userId) {
@@ -553,7 +567,7 @@ function deleteFolder(path) {
 	try {
 		var childRemove = execSync('rm -r ' + path, {timeout: 60000 });	
 	} catch(err) {
-		console.log(err);
+		console.log("Delete folder err: " + err);
 	}	
 }
 
@@ -755,7 +769,7 @@ function sendRequest(url, body) {
 	    };
 
 	request(requestOptions, function(err, res, body) {
-		console.log(err);
+		console.log("Request sending err: " + err);
 		// console.log(JSON.stringify(res));
 	});	
 }
