@@ -8,4 +8,4 @@
 - Ribosome
   - Code generation library
 
-### More details will be added...
+The tool for creating unique assignments through Nexus
