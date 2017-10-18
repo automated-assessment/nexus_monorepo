@@ -1,11 +1,12 @@
 FROM node:8
 
-RUN mkdir /src
+#RUN mkdir /src
+VOLUME /src
 WORKDIR /src
 
-COPY package.json /src
+#COPY package.json /src
 
-COPY . /src
+#COPY . /src
 
 EXPOSE 3050
 
@@ -15,7 +16,6 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 # Start of instructions not common to both Dockerfile and Dockerfile.dev
 # This is to make use of caching
-RUN npm install --silent
-VOLUME /src
+#RUN npm install --silent
 
 CMD ["start-dev"]

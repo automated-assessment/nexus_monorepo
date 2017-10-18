@@ -6,6 +6,7 @@ if [ "$1" = 'start' ]; then
 fi
 
 if [ "$1" = 'start-dev' ]; then
+  npm install --silent
   exec npm run-script startdev
 fi
 
