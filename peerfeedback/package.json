@@ -1,0 +1,48 @@
+{
+  "name": "feedback",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "seed": "node server/scripts/seeds.js",
+    "dev": "node server/scripts/devBase.js",
+    "start": "node .",
+    "startdev": "nodemon ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.6.3",
+    "angular-animate": "^1.6.3",
+    "angular-mocks": "^1.6.3",
+    "angular-touch": "^1.6.3",
+    "angular-ui-bootstrap": "^2.5.0",
+    "angular-ui-router": "^0.4.2",
+    "body-parser": "^1.16.0",
+    "bootstrap": "^3.3.7",
+    "dotenv": "^4.0.0",
+    "express": "^4.14.1",
+    "formBuilder": "^1.24.3",
+    "jasmine-core": "^2.5.2",
+    "jquery": "^3.1.1",
+    "jquery-ui-dist": "^1.12.1",
+    "jsonminify": "^0.4.1",
+    "karma": "^1.5.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-coverage": "^1.1.1",
+    "karma-firefox-launcher": "^1.0.1",
+    "karma-jasmine": "^1.1.0",
+    "karma-safari-launcher": "^1.0.0",
+    "karma-spec-reporter": "0.0.30",
+    "mongoose": "^4.8.1",
+    "node-random-name": "^1.0.1",
+    "passport": "^0.3.2",
+    "passport-http": "^0.3.0",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
+  "jshintConfig": {}
+}

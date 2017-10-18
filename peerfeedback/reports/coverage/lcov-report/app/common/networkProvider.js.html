@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for app/common/network.service.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">app/common/</a> network.service.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">5.41% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>2/37</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/2</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">5% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>1/20</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">5.41% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>2/37</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
+ * Created by adamellis on 03/03/2017.
+ */
+(function(){
+    angular.module('PeerFeedback')
+        .factory('networkProvider',['$http',<span class="fstat-no" title="function not covered" >function($http){</span>
+&nbsp;
+            //needs to be extracted to env
+<span class="cstat-no" title="statement not covered" >            const authToken = "be7549b0fb2ad810c5b2a2a28376ecdac5d47f12";</span>
+&nbsp;
+&nbsp;
+            //Get all submissions
+<span class="cstat-no" title="statement not covered" >            const getAllSubmissions = <span class="fstat-no" title="function not covered" >function(){</span></span>
+<span class="cstat-no" title="statement not covered" >                return $http.get('/api/submissions');</span>
+            };
+&nbsp;
+            //Get all submissions for aid
+<span class="cstat-no" title="statement not covered" >            const getAssignmentSubmissions = <span class="fstat-no" title="function not covered" >function(aid){</span></span>
+<span class="cstat-no" title="statement not covered" >                return $http.get(`/api/assignemnts/${aid}/submissions`);</span>
+            };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            const getSubmissionCore = <span class="fstat-no" title="function not covered" >function(sid){</span></span>
+<span class="cstat-no" title="statement not covered" >                return $http.get(`api/submissions/${sid}`);</span>
+            };
+&nbsp;
+            //Get the receiver's submission and corresponding providers.
+<span class="cstat-no" title="statement not covered" >            const getSubmissionReceivers = <span class="fstat-no" title="function not covered" >function(providersid){</span></span>
+<span class="cstat-no" title="statement not covered" >                return $http.get(`/api/submissions/receivers/${providersid}`)</span>
+                    .then(<span class="fstat-no" title="function not covered" >function(response){</span>
+<span class="cstat-no" title="statement not covered" >                        return response;</span>
+                    })
+            };
+&nbsp;
+            //Get the provider's submissions and corresponding receivers.
+<span class="cstat-no" title="statement not covered" >            const getSubmissionProviders = <span class="fstat-no" title="function not covered" >function(receiversid){</span></span>
+<span class="cstat-no" title="statement not covered" >                return $http.get(`/api/submissions/providers/${receiversid}`)</span>
+                    .then(<span class="fstat-no" title="function not covered" >function(response){</span>
+<span class="cstat-no" title="statement not covered" >                        return response;</span>
+                    })
+            };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            const getSubmissionRelation = <span class="fstat-no" title="function not covered" >function(receiversid,providersid){</span></span>
+<span class="cstat-no" title="statement not covered" >                return $http.get(`/api/submissions/providers/${receiversid}/${providersid}`)</span>
+                    .then(<span class="fstat-no" title="function not covered" >function(response){</span>
+<span class="cstat-no" title="statement not covered" >                        return response;</span>
+                    })
+            };
+&nbsp;
+            //Update the provider's feedback form.
+<span class="cstat-no" title="statement not covered" >            const updateProviderForm = <span class="fstat-no" title="function not covered" >function(receiversid,providersid,data){</span></span>
+<span class="cstat-no" title="statement not covered" >                return $http.put(`/api/submissions/providers/${receiversid}/${providersid}`,data);</span>
+            };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            const getAllAssignments = <span class="fstat-no" title="function not covered" >function(){</span></span>
+<span class="cstat-no" title="statement not covered" >                return $http.get(`/api/assignments`);</span>
+            };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            const getOneAssignment = <span class="fstat-no" title="function not covered" >function(aid){</span></span>
+<span class="cstat-no" title="statement not covered" >                return $http.get(`/api/assignments/${aid}`)</span>
+            };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            const updateAssignment = <span class="fstat-no" title="function not covered" >function(aid){</span></span>
+<span class="cstat-no" title="statement not covered" >                return $http.put(`/api/assignments/${aid}`);</span>
+            };
+&nbsp;
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            const getGitFile = <span class="fstat-no" title="function not covered" >function(aid,branch,path){</span></span>
+<span class="cstat-no" title="statement not covered" >                return gitQuery(`/repos/NexusDevAdam/assignment-${aid}/contents/${path}`,{ref:branch});</span>
+&nbsp;
+&nbsp;
+            };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            const getGitTree = <span class="fstat-no" title="function not covered" >function(){</span></span>
+                //TODO
+            };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            const getGitContent = <span class="fstat-no" title="function not covered" >function(aid, branch){</span></span>
+<span class="cstat-no" title="statement not covered" >                return gitQuery(`/repos/NexusDevAdam/assignment-${aid}/contents`,{ref:branch})</span>
+&nbsp;
+            };
+            //Git API Query
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            const gitQuery = <span class="fstat-no" title="function not covered" >function(queryString,params){</span></span>
+<span class="cstat-no" title="statement not covered" >                const url = "https://github.kcl.ac.uk/api/v3";</span>
+<span class="cstat-no" title="statement not covered" >                params = params || {};</span>
+<span class="cstat-no" title="statement not covered" >                return $http({</span>
+                    method: 'GET',
+                    url: url + queryString,
+                    headers: {
+                        'Authorization': 'token ' + authToken,
+                        'Accept': 'application/vnd.github.v3.html'
+                    },
+                    params:params
+                })
+                    .then(<span class="fstat-no" title="function not covered" >function(response){</span>
+<span class="cstat-no" title="statement not covered" >                        return response;</span>
+                    })
+&nbsp;
+&nbsp;
+            };
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >            return {</span>
+                getAllSubmissions:getAllSubmissions,
+                getAssignmentSubmissions:getAssignmentSubmissions,
+                getSubmissionCore:getSubmissionCore,
+                getSubmissionProviders:getSubmissionProviders,
+                getSubmissionReceivers:getSubmissionReceivers,
+                getSubmissionRelation:getSubmissionRelation,
+                updateProviderForm:updateProviderForm,
+                getAllAssignments:getAllAssignments,
+                getOneAssignment:getOneAssignment,
+                updateAssignment:updateAssignment,
+                getGitFile:getGitFile,
+                getGitTree:getGitTree,
+                getGitContent:getGitContent
+&nbsp;
+&nbsp;
+&nbsp;
+            }
+&nbsp;
+&nbsp;
+&nbsp;
+        }]);
+}());</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Mar 14 2017 01:01:43 GMT+0000 (GMT)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

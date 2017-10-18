@@ -1,0 +1,31 @@
+<section>
+    <h3>Received feedback from the following students:</h3>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th ng-show="{{vm.academic}}">Name</th>
+            <th ng-hide="{{vm.academic}}">Alias</th>
+            <th>Allocated on</th>
+            <th>Last modified</th>
+            <th>Mark</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="provider in vm.submission.receivedFrom" ng-show="provider.display||vm.academic">
+            <td>
+                <!--<a ui-sref="frameState.receiverState({receiverSid:{{vm.submission.core.sid}},providerSid:{{provider.providerSid}},aid:{{vm.submission.core.aid}},token:'{{vm.auth.token}}',email:'{{vm.auth.email}}',academic:'{{vm.academic}}'})">-->
+                <a ui-sref="frameState.receiverState({{provider.urlParams}})">
+                    {{provider.title.alias}}
+                </a></td>
+            <td>{{provider.dateAllocated | date: 'shortDate'}}</td>
+            <td>{{provider.dateModified | date:'shortDate'}}</td>
+            <td>{{provider.providerMark | percent}}</td>
+
+        </tr>
+
+
+        </tbody>
+
+
+    </table>
+</section>

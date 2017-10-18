@@ -1,0 +1,26 @@
+<section>
+    <br/><br/>
+    <div class="jumbotron">
+
+        <!--Holding page-->
+        <div ng-hide="vm.submission.provideTo || vm.submission.receivedFrom">
+
+            <h2>This page will update when you're matched with some other students. Please check again soon.</h2>
+
+        </div>
+
+
+
+        <!--Allocation-->
+        <div ng-show="vm.submission.provideTo">
+
+            <div ng-include="'app/templates/allocation/provideTo.tpl.html'"></div>
+        </div>
+        <div>
+
+            <div ng-include="'app/templates/allocation/receivedFrom.tpl.html'"></div>
+        </div>
+    </div>
+</section>
+
+

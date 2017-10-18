@@ -1,0 +1,58 @@
+<div class="page-header"><h3>Configuration</h3></div>
+
+
+
+<div ng-show="vm.assignment.preExists">
+    Feedback for this assignment: <a ui-sref=frameState.academicState({{vm.academicUrlParams}}) class="btn btn-primary">Assignment control panel</a>
+    <hr/>
+</div>
+
+<form class="form-horizontal">
+    <!--Number of allocations form-group-->
+    <div class="form-group">
+        <label class="col-sm-2 control-label">Allocations:</label>
+        <div class="col-sm-1">
+            <select tooltip-placement="right" uib-tooltip="{{vm.tooltip.providerCount}}" uib-tooltip-class="tooltip" class="form-control"
+                    ng-options="number as number for number in vm.providerCounts"
+                    ng-model="vm.assignment.providerCount"></select>
+        </div>
+    </div>
+
+    <!-- Additional options form-group -->
+    <div class="form-group">
+        <label class="col-md-2 control-label">Additional options</label>
+        <div class="col-md-4">
+            <!--Contribute to final mark checkbox-->
+
+            <div class="checkbox">
+                <label tooltip-placement="right" uib-tooltip="{{vm.tooltip.bidirectionalFeedback}}" for="contributionCheckbox" >
+                    <input type="checkbox" name="checkboxes" id="contributionCheckbox"
+                           ng-model="vm.assignment.additionalConfiguration.awaitBiDirection">
+                    Bidirectional feedback
+                </label>
+            </div>
+
+            <!--Await bidirection checkbox -->
+            <div class="checkbox">
+
+                <label tooltip-placement="right" uib-tooltip="{{vm.tooltip.sendMarkToNexus}}" for="biDirectionCheckbox">
+                    <input type="checkbox" name="checkboxes" id="biDirectionCheckbox"
+                           ng-model="vm.assignment.additionalConfiguration.contributeFinalMark">
+                    Send mark to Nexus
+                </label>
+            </div>
+        </div>
+    </div>
+    <br/>
+<p>
+    <h4>Build provider's form</h4>
+    <hr/>
+    <build-form vm="vm"></build-form>
+    </p>
+    <br/>
+</form>
+
+
+<br/>
+<button class="btn btn-primary" ng-click="vm.updateAssignment()">Save</button>
+</section>

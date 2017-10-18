@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Peer Feedback</title>
+    <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="node_modules/jquery-ui-dist/jquery-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="node_modules/formBuilder/dist/form-builder.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+</head>
+<body ng-app = "PeerFeedback">
+
+<div class="container">
+    <div ui-view></div>
+</div>
+
+    <!-- Libraries -->
+
+    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <script src="node_modules/jquery-ui-dist/jquery-ui.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
+
+    <!-- Angular libraries -->
+    <script src="node_modules/angular/angular.js"></script>
+    <script src="node_modules/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="node_modules/angular-animate/angular-animate.js"></script>
+    <script src="node_modules/angular-touch/angular-touch.js"></script>
+    <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
+
+    <!-- Formbuilder libraries -->
+    <script src="node_modules/formBuilder/dist/form-builder.js"></script>
+    <script src="node_modules/formBuilder/dist/form-render.js"></script>
+
+    <!-- Angular client source code-->
+
+    <script src="app/app.module.js"></script>
+    <script src="app/app.route.js"></script>
+
+    <script src="app/layout/frame.controller.js"></script>
+    <script src="app/views/provider/provider.controller.js"></script>
+    <script src="app/views/academic/academic.controller.js"></script>
+    <script src="app/views/configuration/configuration.controller.js"></script>
+    <script src="app/views/receiver/receiver.controller.js"></script>
+    <script src="app/views/configuration/configuration.controller.js"></script>
+    <script src="app/views/allocation/allocation.controller.js"></script>
+
+
+    <script src="app/services/notification.service.js"></script>
+    <script src="app/services/network/allocationNetwork.factory.js"></script>
+    <script src="app/services/network/assignmentNetwork.factory.js"></script>
+    <script src="app/services/network/submissionNetwork.factory.js"></script>
+    <script src="app/services/network/gitNetwork.factory.js"></script>
+    <script src="app/services/feedbackForm.factory.js"></script>
+    <script src="app/services/allocationDisplay.factory.js"></script>
+
+    <script src="app/components/notification.directive.js"></script>
+    <script src="app/components/build-form.directive.js"></script>
+    <script src="app/components/render-form.directive.js"></script>
+    <script src="app/components/accordion.directive.js"></script>
+
+    <script src="app/views/academic/academic.route.js"></script>
+    <script src="app/views/allocation/allocation.route.js"></script>
+    <script src="app/views/configuration/configuration.route.js"></script>
+    <script src="app/views/provider/provider.route.js"></script>
+    <script src="app/views/receiver/receiver.route.js"></script>
+
+    <script src="app/values/providerCounts.values.js"></script>
+
+    <script src="app/filters/percent.filters.js"></script>
+    <script src="app/filters/firstName.filters.js"></script>
+
+
+
+</body>
+</html>
