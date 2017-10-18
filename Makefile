@@ -36,7 +36,7 @@ init-sub-repos:
 	echo "NEXUS_ACCESS_TOKEN=foo" >> .env.conf.list
 	echo "Change ACCESS_TOKEN before deploying to production in .env.conf.list!\n"
 
-init-env: .env.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list
+init-env: .env.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list .env.peerfeedback.list
 	make init-sub-repos
 
 build:
