@@ -1,0 +1,169 @@
+# Requires Docker v 1.12 or above
+version: '2'
+services:
+  syslog:
+    image: voxxit/rsyslog:latest
+    ports:
+      - "5514:514/udp"
+    volumes:
+      - ./logs:/var/log
+  nexus:
+    build:
+      context: nexus/
+      dockerfile: Dockerfile
+    volumes_from:
+      - sneakers
+    env_file: .env.list
+    environment:
+      RABBIT_MQ_HOST: rabbitmq
+      DOCKER: 1
+    ports:
+      - "3000:3000"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "nexus"
+    depends_on:
+      - db
+      - syslog
+      - rabbitmq
+      - rng-tool # Need to include in dependencies or it won't get started
+      - config-tool # Need to include in dependencies or it won't get started
+      - javac-tool # Need to include in dependencies or it won't get started
+      - io-tool # Need to include in dependencies or it won't get started
+      - peer-feedback # Need to include in dependencies or it won't get started
+  db:
+    image: postgres:9.5.3
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "postgres"
+    depends_on:
+      - syslog
+  sneakers:
+    build:
+      context: nexus/
+      dockerfile: Dockerfile
+    command: start-sneakers
+    volumes:
+      - ./nexus:/home/app/src
+    env_file: .env.list
+    environment:
+      RABBIT_MQ_HOST: rabbitmq
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "nexus-sneakers"
+    depends_on:
+      - db
+      - syslog
+      - rabbitmq
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "8081:15672" # mgt console
+    env_file: .env.list
+    volumes:
+      - ./rabbitmq_data:/var/lib/rabbitmq
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "rabbitmq"
+    depends_on:
+      - syslog
+  rng-tool:
+    build: rng-tool/
+    env_file: .env.rng.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+    ports:
+      - "3001:3000"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "rng"
+    depends_on:
+      - syslog
+  config-tool:
+    build: sample-configurable-tool/
+    env_file: .env.conf.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+    ports:
+      - "3002:3000"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "config-tool"
+    depends_on:
+      - syslog
+  javac-tool:
+    build: javac-tool/
+    env_file: .env.javac.list # NEXUS_TOOL_CANONICAL_NAME, NEXUS_ACCESS_TOKEN, and possibly NEXUS_SUB_DIR
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+    ports:
+      - "3003:5000"
+    volumes:
+      - ./javac_data:/home/app/submissions
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "javac-tool"
+    depends_on:
+      - syslog
+  io-tool:
+    build: IO-tool/
+    env_file: .env.iotool.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+      MONGO_HOST: mongodb
+    ports:
+      - "3004:3001"
+    volumes:
+      - ./iotool_data:/home/app/submissions
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "io-tool"
+    depends_on:
+      - syslog
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - ./mongodata:/data/db
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "mongodb"
+    depends_on:
+      - syslog
+  peer-feedback:
+    build: peerfeedback
+    env_file: .env.peerfeedback.list
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+      MONGO_HOST: mongodb
+      DOCKER_PORT: "3005"
+    ports:
+      - "3005:3050"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "peer-feedback"
+    depends_on:
+      - syslog
+      - mongodb
