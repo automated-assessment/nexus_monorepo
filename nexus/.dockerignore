@@ -1,0 +1,14 @@
+.bundle
+node_modules
+/lib/web-ide/node_modules
+log
+tmp
+var
+examples
+tools
+reports
+.rspec-local
+/public/assets
+/db/*.sqlite3
+/db/*.sqlite3-journal
+.git

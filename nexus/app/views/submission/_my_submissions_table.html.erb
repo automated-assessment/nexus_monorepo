@@ -1,0 +1,48 @@
+<% recent |= false %>
+<% subs = recent ? current_user.submissions[0..4] : current_user.submissions %>
+
+<% if current_user.submissions.empty? %>
+  <p>You have not made any submissions yet.</p>
+<% else %>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Submitted</th>
+        <th width="20%">Assignment</th>
+        <th>Attempt</th>
+        <th>Mark</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% subs.each do |s| %>
+        <tr>
+          <th>
+            <%= link_to s do %>
+            <%= pretty_datetime s.submitted %>
+            <% end %>
+            <% if s.late %>
+            <span class="label label-danger">Late</span>
+            <% end %>
+          </th>
+          <td>
+            <%= link_to s.assignment do %>
+              <%= s.assignment.title %>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to s do %>
+              #<%= s.attempt_number %>
+            <% end %>
+          </td>
+          <td>
+            <% if s.assignment.feedback_only %>
+              Not marked automatically
+            <% else %>
+              <%= display_final_mark s %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

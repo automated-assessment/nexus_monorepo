@@ -1,0 +1,18 @@
+<div class="well">
+  <h2>Create Access Token</h2>
+  <hr />
+  <%= form_for(@access_token, url: create_access_token_path, html: { class: 'form-horizontal' }) do |f| %>
+    <div class="form-group">
+      <%= f.label :description, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :description, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <%= f.submit 'Create', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
+</div>

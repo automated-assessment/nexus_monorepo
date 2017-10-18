@@ -1,0 +1,46 @@
+<div class="devise-form well">
+  <h1><%= icon 'github' %> <%= link_to 'Login via GitHub', user_omniauth_authorize_url(provider: :github) %></h1>
+</div>
+
+<hr>
+
+<div class="devise-form well">
+  <h2>Admin Login</h2>
+  <hr />
+
+  <%= form_for(resource, as: resource_name, url: new_session_path(resource_name), html: { class: 'form-horizontal' }) do |f| %>
+      <div class="form-group">
+        <%= f.label :email, class: 'col-lg-2 control-label' %>
+        <div class="col-lg-10">
+          <%= f.email_field :email, class: "form-control" %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password, class: 'col-lg-2 control-label' %>
+        <div class="col-lg-10">
+          <%= f.password_field :password, autocomplete: "off", class: "form-control" %>
+        </div>
+      </div>
+
+    <% if devise_mapping.rememberable? %>
+      <div class="form-group">
+        <%= f.label 'Options', class: 'col-lg-2 control-label' %>
+        <div class="col-lg-10">
+          <div class="checkbox">
+            <label>
+              <%= f.check_box :remember_me %>
+              Remember Me
+            </label>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <%= f.submit "Login", class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>

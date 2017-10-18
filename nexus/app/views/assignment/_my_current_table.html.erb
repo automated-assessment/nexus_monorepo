@@ -1,0 +1,40 @@
+<% if current_user.assignments.started.empty? %>
+  <p>You have no current assignments.</p>
+<% else %>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Course</th>
+        <th width="20%">Start</th>
+        <th width="20%">Deadline</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% current_user.assignments.started.each do |a| %>
+        <tr>
+          <th scope="row"><%= link_to a.title, a %></th>
+          <td><%= link_to a.course.title, a.course %></td>
+          <td>
+            <%= pretty_datetime a.start %>
+          </td>
+          <td class="<%= a.decorator_class %>">
+            <%= pretty_datetime a.deadline %>
+          </td>
+          <% if current_user.admin? %>
+            <td>
+              <%= link_to(delete_assignment_path(id: a.id), onclick: 'return confirmDeletion()') do %>
+                <button type="button" class="btn btn-xs btn-danger pull-right"><%= icon 'times' %> Delete</button>
+              <% end %>
+            </td>
+            <script>
+              function confirmDeletion() {
+                return confirm("This action will delete the assignment and all its submissions. Are you sure?");
+              }
+            </script>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

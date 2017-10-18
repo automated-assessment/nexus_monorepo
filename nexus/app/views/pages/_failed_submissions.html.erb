@@ -1,0 +1,10 @@
+<div class="failed_submissions">
+  <h4><%= icon 'exclamation-triangle' %> Failed Submissions</h4>
+  <p>There are <%= @failed_submissions_count %> failed submissions.</p>
+
+  <div class="center-controls">
+    <%= link_to(failed_submissions_list_path) do %>
+      <button type="button" name="button" class="btn btn-primary">Manage Failed Submissions</button>
+    <% end %>
+  </div>
+</div>

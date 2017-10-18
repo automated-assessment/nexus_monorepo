@@ -1,0 +1,74 @@
+<div class="row">
+  <div class="col-md-8">
+    <div>
+      <h5 class="course-title"><%= icon 'tasks' %> <%= link_to @submission.assignment.title, @submission.assignment %></h5>
+      <h2>Attempt #<%= @submission.attempt_number%></h2>
+      <div class="assignment-dates">
+        Submitted <%= pretty_datetime @submission.submitted %>
+        <% if @submission.late %>
+          <span class="label label-danger">Late</span>
+        <% end %>
+      </div>
+      <% if @submission.git_success %>
+        <div class="repourl">
+          Remote URL: <code><%= @submission.repourl %></code>
+        </div>
+        <div class="gitbranch">
+          Branch: <code><%= @submission.gitbranch %></code>
+        </div>
+        <div class="sha">
+          Commit SHA: <code><%= @submission.commithash %></code>
+        </div>
+        <div class="download-zip">
+          <%= link_to download_submission_path(id: @submission.id) do %>
+            <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'folder' %> Download Submission</button>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="course-controls">
+      <% if current_user.admin? %>
+        <%= link_to edit_mark_for_submission_path(id: @submission.id) do %>
+          <button type="button" name="button" class="btn btn-sm btn-danger"><%= icon 'exclamation' %> Override Mark</button>
+        <% end %>
+        <% unless @submission.studentrepo %>
+          <% if @submission.git_success %>
+            <%= link_to @submission.augmented_clone_url.dup.gsub(/.git\z/, '').concat("/commit/#{@submission.commithash}"), target: '_blank' do %>
+              <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'github-square' %> Show in GHE</button>
+            <% end %>
+          <% end %>
+        <% end %>
+        <% if !@submission.mark_override? %>
+          <% if @submission.failed_submission? %>
+            <%= link_to resend_submission_path(id: @submission.id) do %>
+              <button type="button" name="button" class="btn btn-sm btn-primary">Reprocess</button>
+            <% end %>
+          <% else %>
+            <%= link_to remark_submission_path(id: @submission.id) do %>
+              <button type="button" name="button" class="btn btn-sm btn-warning">Remark submission</button>
+            <% end %>
+          <% end %>
+        <% end %>
+        <br>
+        <h6>Clone command:</h6>
+        <input type="text" class="form-control cloneurl-field" value="git clone --branch <%= @submission.gitbranch %> --single-branch <%= @submission.augmented_clone_url %> submission<%= @submission.id%>" readonly></input>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if !@submission.assignment.feedback_only %>
+<h4>Final Mark: <%= display_final_mark @submission %></h4>
+<% end %>
+
+<br />
+
+<%= render 'marking_breakdown' %>
+
+<br />
+
+<%= render 'feedback_items' %>
+
+<%= render partial: 'audit_item/panel', locals: { items: @submission.audit_items.asc } %>

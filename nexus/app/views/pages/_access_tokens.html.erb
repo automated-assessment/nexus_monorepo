@@ -1,0 +1,36 @@
+<div class="access-tokens">
+  <h4><%= icon 'key' %> Access Tokens</h4>
+  <% if @access_tokens.empty? %>
+    <p>There are no access tokens.</p>
+  <% else %>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th width="8%">ID</th>
+          <th>Description</th>
+          <th>Token</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @access_tokens.each do |a| %>
+          <tr>
+            <td><%= a.id %></td>
+            <th scope="row"><%= a.description %></th>
+            <td><code><%= a.access_token %></code></td>
+            <td>
+              <%= link_to(revoke_access_token_path(id: a.id)) do %>
+                <button type="button" class="btn btn-xs btn-danger"><%= icon 'times' %> Revoke</button>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+  <div class="center-controls">
+    <%= link_to(new_access_token_path) do %>
+      <button type="button" class="btn btn-success">Create Token</button>
+    <% end %>
+  </div>
+</div>

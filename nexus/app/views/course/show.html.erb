@@ -1,0 +1,13 @@
+<%= render 'header' %>
+<% unless @course.description.blank? %>
+  <p>
+    <%= markdown(@course.description) %>
+  </p>
+  <hr />
+<% end %>
+
+<% if current_user.enrolled_in?(@course.id) %>
+  <%= render 'assignments' %>
+<% end %>
+<%= render 'enrolment' %>
+<%= render partial: 'audit_item/panel', locals: { items: @course.audit_items } %>

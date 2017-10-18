@@ -1,0 +1,43 @@
+<div class="well">
+  <h2>Create Deadline Extension <small>for <%= link_to @deadline_extension.assignment do %><%= @deadline_extension.assignment.title %><% end %></small></h2>
+  <hr />
+  <%= form_for(@deadline_extension, url: create_deadline_extension_path, html: { class: 'form-horizontal' }) do |f| %>
+
+    <% if @deadline_extension.errors.any? %>
+      <div class="form-errors">
+        <% @deadline_extension.errors.full_messages.each do |msg| %>
+          <div class="alert alert-danger"><%= msg %></div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= f.hidden_field :assignment_id, value: @deadline_extension.assignment.id %>
+
+    <div class="form-group">
+      <%= f.label 'Student', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.select 'user_id', @deadline_extension.assignment.course.students.collect { |s| [ s.name, s.id ] }, {}, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-lg-10 col-lg-offset-2">
+      <p>
+        The regular deadline for <%= @deadline_extension.assignment.title %> is currently <%= @deadline_extension.assignment.deadline.strftime('%d %b %Y %H:%M') %> (UTC).
+      </p>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Extend to', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.datetime_field :extendeddeadline, class: 'form-control', id: 'deadlinefield', value: (@deadline_extension.assignment.deadline + 1.day).strftime('%d %b %Y %H:%M'), 'data-date-format':'dd M yyyy hh:ii' %>
+        <p>All times are <strong>UTC</strong>.</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <%= f.submit 'Create', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
+</div>

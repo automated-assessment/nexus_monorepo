@@ -1,0 +1,41 @@
+<div class="page-header">
+  <h2>All Courses</h2>
+</div>
+<p>
+  Your courses are highlighted in green.
+</p>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th width="20%">Teacher</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @courses.each do |c| %>
+      <tr class="<%= 'success' if current_user.enrolled_in?(c.id) %>">
+        <th scope="row"><%= link_to c.title, c %></th>
+        <td><%= c.teacher.name %></td>
+        <% if current_user.admin? %>
+          <td>
+            <%= link_to(delete_course_path(id: c.id), onclick: 'return confirmDeletion()') do %>
+              <button type="button" class="btn btn-xs btn-danger pull-right"><%= icon 'times' %> Delete</button>
+            <% end %>
+          </td>
+          <script>
+            function confirmDeletion() {
+              return confirm("This action will delete the course and all its assignments / submissions. Are you sure?");
+            }
+          </script>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% if current_user.admin? %>
+  <div class="center-controls">
+    <%= link_to(new_course_path) do %>
+      <button type="button" class="btn btn-success">Create Course</button>
+    <% end %>
+  </div>
+<% end %>
