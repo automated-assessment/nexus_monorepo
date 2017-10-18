@@ -1,0 +1,351 @@
+<div class="col-lg-2 col-md-0 col-sm-0"></div>
+<div class="col-lg-8 col-md-12 col-sm-12">
+	<div class="panel panel-primary">
+		<!-- BEGIN : Panel Body -->
+		<div class="panel-body">
+			<!-- BEGIN : Form Assignment -->
+			<form>
+				<span class="col-lg-12 label label-primary"><h4>Part A - Description of the Assignment</h4></span>
+				<div class="form-group col-lg-12">
+					<label for="titleOfAssignment">Title
+					</label>
+					<input type="text" class="form-control" ng-model="assingmentTitle" id="titleOfAssignment">
+				</div>
+				<!-- TODO DEADLINE -->
+				<!-- BEGIN: Dictionary selection -->
+
+				<div class="form-group col-lg-6 grid">
+					<div class="row col-lg-12">
+						<label>
+							Use Dictionaries
+						</label>
+					</div>
+					<div class="row col-lg-12 btn-group" role=gr>
+						<div class="btn-group" role="group">
+							<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="fa fa-chevron-down"></i>&nbsp;Select From Existing Ones
+							</button>
+							<ul class="dropdown-menu col-lg-12" ng-click="">
+								<li ng-repeat="dictionary in listOfDictionaries">
+									<a class="dropdown-item" href="" ng-click="addDictionary(dictionary)">{{dictionary.name}}</a>
+								</li>
+							</ul>
+						</div>
+						<button type="button" class="btn btn-default" ng-click="openModalNewDict()">
+							New Dictionary
+						</button>
+					</div>
+					<div class="row col-lg-12">
+						<small ng-repeat="dict in listOfDictSelected">{{dict.id}} -> {{dict.dictionary.name}}
+						</small>
+					</div>
+				</div>
+
+				<!-- FORMULA -->
+				<div class="form-group col-lg-6">
+					<label>Formula
+						<span class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip" title="Formula on which indexes for #words are calculated">
+						</span>
+					</label>
+					<input type="text" class="form-control" ng-model="formula">
+				</div>
+				<!-- END: Dictionary Selection -->
+				<div class="form-group col-lg-12">
+					<label for="requirementArea"> Requirement 
+						<span class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip" title="Use # when you want a random word from dictionary selected, inserted.">
+						</span>
+					</label>
+					<textarea class="form-control" ng-model="requirement" id="requirementArea" rows="15"></textarea>
+				</div>
+				<!-- BEGIN: INPUT FORMAT -->
+				<span class="col-lg-12 label label-primary"><h4>Part B - Type of Assignment</h4></span>
+				<div class="col-lg-12" style="padding: 0px;">
+					<div class="form-group col-lg-7">
+						<input type="checkbox" id="useInput" ng-model="checkUseInput">
+						<label for="useInput"> 
+							Use Input Format&nbsp;
+							<span class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title="Type 	of input expected BY the user.">
+							</span>
+						</label>
+						<textarea ng-show="checkUseInput" class="form-control col-lg-7" ng-model="inputText" id="inputArea" rows="5"></textarea>
+					</div>
+					<div ng-show="checkUseInput" class="col-lg-5"><br>
+						<i>Example of INPUT Format</i>
+						<p> On the first line there will be an int which represents the number of lines to read next.
+						</p>
+						<p><i>n</i> <i class="pull-right">0 < n <= 100</i></p>
+						<p><i>k0, k1, k2, ... kn</i><i class="pull-right">-1000 <= k <= 1000</i></p>
+					</div>
+				</div>
+				<div class="col-lg-12" ng-show="checkUseInput">
+					<label for="inputExampleId">Input Example (visible for students)</label>
+					<textarea class="form-control" ng-model="inputExample" id="inputExampleId" rows="4"></textarea>
+				</div>
+				<!-- END: INPUT FORMAT -->
+
+				<!-- BEGIN: OUTPUT FORMAT/EXAMPLE -->
+				<div class="col-lg-12" style="padding-left: 0px; margin-top:10px;">
+					<div class="form-group col-lg-7">
+						<input type="checkbox" id="useOutput" ng-model="checkUseOutput">
+						<label for="useOutput"> Output Format <span class="fa fa-info-circle" data-toggle="tooltip" data-placement="right" title="Type of output expected FROM the user."></span></label>
+						<textarea ng-show="checkUseOutput" class="form-control" ng-model="outputText" id="outputArea" rows="5"></textarea>
+					</div>
+					<div>
+						<div ng-show="checkUseOutput" class="col-lg-5"><br>
+							<i>Example of OUPUT Format</i>
+							<p> Your program should print out only the smallest number to the right of the text
+								"The smallest number is: "
+							</p>
+
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-12 col-md-12 col-sm-12" ng-show="checkUseOutput" style=" margin-bottom:10px;">
+					<label for="outputExampleId">Output Example (visible for students)</label>
+					<textarea class="form-control" ng-model="outputExample" id="outputExampleId" rows="4"></textarea>
+				</div>
+				<!-- END: OUTPUT FORMAT/EXAMPLE -->
+
+				<!-- BEGIN: INPUT/OUTPUT Tests -->
+				<!-- BEGIN: Labels -->
+				<div class="panel panel-info"   ng-show="checkUseOutput && checkUseInput" >
+					<div class="col-lg-12">
+						<h2 class="page-header"></h2>
+					</div>
+					
+					<div id="labelsFiles" class="text-center col-lg-12 col-md-12 panel-heading">
+						<label class="col-lg-6 col-md-6 control-label" style="padding-left:0px;">Select Input Files
+						</label>
+						<label class="control-label col-lg-6 col-md-6" style="padding-left:0px;">Select Output Files
+						</label>
+					</div>
+					<!-- END: Labels -->
+					<div ng-repeat="n in listOfIOTests" class="panel-body col-lg-12 col-md-12" ng-show="checkUseOutput && checkUseInput">
+						<div class="col-lg-12 col-md-12 col-sm-12 panel panel-info" style="padding-left:0px; padding-right:0px;">
+							<div class="col-lg-12 col-md-12 col-sm-12 panel-heading">
+								<label> Test #{{n}}</label>	
+								<button type="button" class="btn btn-default btn-sm pull-right" data-toggle="collapse" data-target="#test{{$index}}"><i class="fa fa-expand" aria-hidden="false"></i>
+								</button>				
+							</div>
+							<div class="panel-body col-lg-12 col-md-12 collapse in form-group" id="test{{$index}}">
+								<div class="col-lg-6 col-md-6 col-sm-12 ">
+									<textarea placeholder="Input #{{n}}" class="form-control" rows=2 ng-model="inputArray[n]"></textarea>
+								</div>
+								<div class="col-lg-6 col-md-6 col-sm-12">
+									<textarea placeholder="Output #{{n}}" class="form-control" rows=2 ng-model="outputArray[n]"></textarea>
+								</div>
+								<div class="col-lg-12 col-md-12 col-sm-12">
+									<textarea placeholder="Description of Test #{{n}} (e.g Special Cases, Guiding Steps, etc.)" class="form-control" rows=3  ng-model="descriptionArray[n]" style="margin-top:10px;"></textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-12 col-md-12 col-sm-12 " ng-show="checkUseOutput && checkUseInput" style=" margin-bottom:10px;">
+						<label> <a href="" class="fa fa-plus-circle text-right" ng-click="addTest()">&nbsp;Add I/O test </a></label>
+					</div> 
+				</div>
+				<!-- END: INPUT/OUTPUT Tests -->
+				
+				<!-- BEGIN: CodeMirror TextArea -->
+				<span class="col-lg-12 label label-primary">
+					<h4>Part C - Skeleton Code Files</h4>
+				</span>
+				<div class="panel panel-success col-lg-12 col-md-12" ng-repeat="m in editorOptionsArray"  style="margin-top:10px;">
+					<div class="panel-heading">
+						<label class="control-label">File {{$index}}</label>
+						<button type="button" class="btn btn-default btn-sm pull-right" data-toggle="collapse" data-target="#file{{$index}}"><i class="fa fa-expand" aria-hidden="true"></i>
+						</button>		
+					</div>
+					<div class="panel-body col-lg-12 collapse in" id="file{{$index}}">
+						<input class="col-lg-6" placeholder="Class Name" ng-model="m.class_name"></input>
+
+						<input class="col-lg-6" type="file" on-read-file="displayCodeContents($index, contents)"/>
+						<!-- BEGIN : Java Text Area-->
+						<ui-codemirror class="col-lg-12" ui-codemirror-opts="m.editorOptions" ng-model="m.areaText" style="padding-left:0px; padding-right:0px;"></ui-codemirror>
+						<!-- END : Java Text Area-->
+					</div>
+				</div>
+				<div class="col-lg-12" style="margin-top:10;">
+					<label> <a href="" class="fa fa-plus-circle" ng-click="addFile()">&nbsp;Add a new Java File </a></label>
+				</div> 
+				<!-- END: CodeMirror TextArea -->
+			</form>
+		</div>
+		<div class="panel-footer clearfix ">
+			<button ng-hide="loading" class="btn btn-primary btn-block" ng-click="checkValues()" >
+				<span class="fa fa-eye"></span>&nbsp;Preview Assignment
+			</button>
+			<div ng-show="loading" class="col-lg-12 text-center">
+				<i class="text-center fa fa-spinner fa-spin fa-2x"></i>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- BEGIN: MODALS -->
+<div id="previewModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<!-- BEGIN : Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Preview of the Assignment</h4>
+			</div>
+			<!-- BEGIN : Modal Body -->
+			<div class="modal-body clearfix">
+				<div class="col-lg-6"><b>Title: </b>{{assingmentTitle}}</div> 
+				<div class="col-lg-12">
+					<p>
+						<b>Requirement:</b>
+						<small>
+							<i># have been substitued with words from dictionary based on formula with you Knumber</i>
+						</small>
+					</p>
+					<!-- <pre ng-bind-html="previewRequirement"></pre> -->
+					<pre>{{previewRequirement}}</pre>
+				</div>
+				<div class="col-lg-12">
+					<b>Formula to be used:</b>
+					<pre>{{formula}}</pre>
+				</div>
+				<div class="col-lg-12">
+					<div>
+						<p>
+							<b ng-hide="checkUseInput">NO</b>
+							<b>Input</b>
+							<b ng-show="checkUseInput">:</b>
+							<b ng-hide="checkUseInput">will be given to students</b>
+							<div ng-show="checkUseInput">
+								<pre>{{inputText}}</pre>
+								<b>Input Example</b>
+								<pre>{{inputExample}}</pre>
+							</div>
+						</p>
+					</div>
+				</div>
+				<div class="col-lg-12">
+					<div>
+						<p>
+							<b ng-hide="checkUseOutput">NO </b>
+							<b>Output:</b>
+							<b ng-show="checkUseOutput">:</b>
+							<b ng-hide="checkUseOutput">will be given to the students</b>
+							<div ng-show="checkUseOutput">
+								<pre>{{outputText}}</pre>
+								<b>Output Example</b>
+								<pre>{{outputExample}}</pre>
+							</div>
+						</p>
+					</div>
+				</div>
+				<div class="col-lg-12" style="margin-bottom:5px;">
+					<p><b>Files Uploaded:</b></p>
+					<i ng-repeat="file in filesArray">
+						{{file.class_name}}.java &nbsp;
+					</i>
+				</div>
+				<div class="col-lg-12">
+					<p><b>Type of Assignment Selected: </b><i>{{typeOfAssignment}}</i></p>
+				</div>
+				<!-- BEGIN : TYPE 1: Assignment -->
+				<div class="col-lg-12" ng-show="!checkUseOutput && !checkUseOutput">					
+					<hr>
+					<p>
+						<b>Results:</b>
+						<h6>Compiled:&nbsp;
+							<i class="fa fa-circle-plus" style="color:green" ng-show="response.compiled"> Passed</i>
+							<i class="fa fa-circle-times" style="color:red" ng-show="!response.compiled"> Error</i>
+						</h6>
+						<h6>Java Run:&nbsp;
+							<i class="fa fa-circle-plus" style="color:green" ng-show="response.results.ran"> Passed</i>
+							<i class="fa fa-circle-times" style="color:red" ng-show="!response.results.ran"> Error</i>
+						</h6>
+					</p>
+				</div>
+				<!-- END : TYPE 1 Assignment -->
+				<!-- BEGIN : TYPE 3 Assignment -->
+				<div class="col-lg-12" ng-show="checkUseOutput && checkUseOutput">					
+					<hr>
+					<p>
+						<b>Results:</b>
+						<h6>Compiled:&nbsp;
+							<i class="fa fa-circle-plus" style="color:green" ng-show="response.compiled"> Passed</i>
+							<i class="fa fa-circle-times" style="color:red" ng-show="!response.compiled"> Error</i>
+						</h6>
+						<h6>Java Run:&nbsp;
+							<i class="fa fa-circle-plus" style="color:green" ng-show="response.allPassed"> All Tests Passed</i>
+							<i class="fa fa-circle-times" style="color:red" ng-show="!response.allPassed">Not All Tests Passed Verifications.</i>
+							<hr>
+							<div ng-repeat="test in response.resultsArray"> 
+								<i class="fa fa-check-circle" style="color:green" ng-show="test.passed" aria-hidden="true"> Test #{{$index}} Passed
+								</i>
+								<i class="fa fa-times-circle" style="color:red" ng-show="!test.passed" aria-hidden="true"> Test #{{$index}} Error</i>
+								<pre><i style="colour:black">Your Output: {{test.output}}</i></pre>
+							</div>
+						</h6>
+					</p>
+				</div>
+			</div>
+			<!-- END : Modal Body -->
+
+			<div class="modal-footer">
+				<button ng-show="response.allPassed" type="button" class="btn btn-success" data-dismiss="modal" ng-click="addAssignment()"> Create Assignment</button>
+				<button ng-show="passed"type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button ng-hide="passed" type="button" class="btn btn-danger" data-dismiss="modal">Close and revise assignment</button>
+			</div>
+		</div>
+		<!-- END : Modal content-->
+	</div>
+</div>
+
+<div id="newDictModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<!-- BEGIN : Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Create new dictionary</h4>
+			</div>
+			<!-- BEGIN : Modal Body -->
+			<div class="modal-body clearfix">
+				<div class="col-lg-12">
+					<b>Name: </b>
+					<input type="text"  ng-model="newDictName">
+				</div> 				
+				<div>
+					<div class="col-lg-12">
+						<small><i>Hint:</i> Add a text with words separeted by commas. Make sure no white spaces are included.</small>
+					</div>
+					<div class="col-lg-12">
+						<textarea class="form-control" ng-model="dictWordsArea" rows="5"></textarea>
+					</div>
+					<div class="col-lg-12 text-right">
+						<button type="button" class="btn btn-primary btn-sm" ng-click="parseWords(dictWordsArea)">Parse list</button>
+					</div>
+				</div>
+				<div class="col-lg-12">
+					<p> 
+						<b ng-repeat="item in listOfWordsParsed">{<b>{{item}}</b>}
+					</b>
+				</p>
+			</div>
+		</div>
+		<!-- END : Modal Body -->
+
+		<div class="modal-footer">
+			<button type="button" class="btn btn-success" ng-disabled="!parsedOk" ng-click="addNewDictionary()">Add Dictionary</button>
+		</div>
+	</div>
+	<!-- END : Modal content-->
+</div>
+
+<!-- END : Modal with preview of the Assignment-->	
+<style>
+	textarea { 
+		resize : none;
+	}
+	.CodeMirror {
+		border: 1px solid #eee;
+		height: 250;
+	}
+</style>
