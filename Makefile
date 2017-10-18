@@ -26,12 +26,17 @@ init-sub-repos:
 	echo "NEXUS_ACCESS_TOKEN=foo" >> .env.iotool.list
 	echo "Change ACCESS_TOKEN before deploying to production in .env.iotool.list!\n"
 
+.env.peerfeedback.list:
+	echo "NEXUS_TOOL_CANONICAL_NAME=peerfeedback" >> .env.peerfeedback.list
+	echo "NEXUS_ACCESS_TOKEN=foo" >> .env.peerfeedback.list
+	echo "Change ACCESS_TOKEN before deploying to production in .env.peerfeedback.list!\n"
+
 .env.conf.list:
 	echo "NEXUS_TOOL_CANONICAL_NAME=conf" >> .env.conf.list
 	echo "NEXUS_ACCESS_TOKEN=foo" >> .env.conf.list
 	echo "Change ACCESS_TOKEN before deploying to production in .env.conf.list!\n"
 
-init-env: .env.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list
+init-env: .env.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list .env.peerfeedback.list
 	make init-sub-repos
 
 build:
