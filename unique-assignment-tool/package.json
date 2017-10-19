@@ -1,0 +1,34 @@
+{
+  "name": "unique_assignment_tool",
+  "version": "1.0.1",
+  "description": "Unique Assingment Tool",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "aydinakyol",
+  "dependencies": {
+    "babel-eslint": "^6.0.0",
+    "babel-plugin-transform-runtime": "^6.6.0",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "babel-register": "^6.7.2",
+    "babel-runtime": "^6.6.1",
+    "body-parser": "^1.15.0",
+    "errorhandler": "^1.4.3",
+    "eslint": "^2.5.3",
+    "eslint-config-airbnb": "^6.2.0",
+    "eslint-plugin-react": "^4.2.3",
+    "express": "^4.13.4",
+    "fs-extra": "^0.30.0",
+    "request": "^2.70.0",
+    "python-shell": "^0.4.0",
+    "mysql": "2.13.0",
+    "cors": "2.8.3",
+    "sleep": "5.1.1",
+    "async": "2.5.0",
+    "wait.for": "0.6.6",
+    "mocha": "3.4.2",
+    "supertest": "3.0.0"
+  }
+}
