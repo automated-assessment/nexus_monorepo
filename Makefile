@@ -1,7 +1,3 @@
-init-sub-repos:
-	git submodule init
-	git submodule update
-
 .env.list:
 	echo "NEXUS_GHE_OAUTH_ID=<O-AUTH-ID>" >> .env.list
 	echo "NEXUS_GHE_OAUTH_SECRET=<O-AUTH-SECRET>" >> .env.list
@@ -37,7 +33,7 @@ init-sub-repos:
 	echo "Change ACCESS_TOKEN before deploying to production in .env.conf.list!\n"
 
 init-env: .env.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list .env.peerfeedback.list
-	make init-sub-repos
+	echo "All .env files initialised. Please ensure you change ACCESS_TOKEN information etc. before running Nexus.\n"
 
 build:
 	docker-compose -f docker-compose.yml build
