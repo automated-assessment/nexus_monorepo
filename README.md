@@ -1,48 +1,17 @@
-# nexus-deployment
-Super-repo (using Git submodules) with a docker-compose config, ready for deployment
+# nexus_monorepo
+Monorepo for Nexus. This contains the code for all services, including the central management component and all graders etc. Each service is kept in its own folder under the main folder. The main folder only contains files needed to run the integration (`docker-compose` files etc) as well as a global `Makefile`.
 
-## Env variables
-A `.env.list` file is expected in the root directory. Here is a template (more details on how to get the values for these variables can be found in the Wiki for `nexus` under the heading "Docker"):
+***THIS MONOREPO IS STILL EXPERIMENTAL AND SHOULD NOT YET BE USED***
 
-```
-NEXUS_GHE_OAUTH_ID=
-NEXUS_GHE_OAUTH_SECRET=
-NEXUS_GITHUB_USER=
-NEXUS_GITHUB_TOKEN=
-NEXUS_GITHUB_ORG=
-```
-
-For added security it is recommended that you also include a new user name and password for the rabbitmq server. These can be set using the following environment variables, also from `.env.list`:
-
-```
-RABBIT_MQ_USER=
-RABBITMQ_DEFAULT_USER=
-RABBIT_MQ_PWD=
-RABBITMQ_DEFAULT_PASS=
-```
-
-Note that the two user variables and the two password variables need to be set to the same values. Setting `RABBIT_MQ_HOST` or `RABBIT_MQ_PORT` will break the configuration. You can set `RABBIT_MQ_QNAME` if required.
-
-An explanation of these vars can be found in the main Nexus repo
-
-Additionally, the tools that are included in the docker-compose require their own environment file each. For the RNG tool this is called `.env.rng.list`. For other tools the names are similar, they can be found from `docker-compose.yml` by looking for `env-file` entries. Each file should contain the following variables (as per the documentation in the relevant tool repository):
-
-```
-NEXUS_TOOL_CANONICAL_NAME=
-NEXUS_ACCESS_TOKEN=
-```
-
-The access token must be valid for the nexus instance to be run, so in the first run set it to a random string, then replace it once you have generated an access token in nexus. Restart the docker-compose using `docker-compose restart` once you have updated all .env files.
+Below, you will find documentation on how to get started with Nexus from this repository as well as the environment variables that need defining.
 
 ## Getting Started
 **1. Clone the repo and cd into it**
-  1. `git clone https://github.kcl.ac.uk/k1464330/nexus-deployment.git`
-  2. `cd <pathToRepo>/nexus-deployment`
+  1. `git clone https://github.kcl.ac.uk/automated-assessment/nexus_monorepo.git`
+  2. `cd <pathToRepo>/nexus_monorepo`
 
 **2. Run `make init-env`. This executes the following:**
-  1. Initialise submodules: `git submodule init`
-  2. Fetch all submodules: `git submodule update`
-  3. Creates, if they don't exist, and populates relevant `.env` files needed to run.
+  1. Creates, if they don't exist, and populates relevant `.env` files needed to run. The `.env` files will be initialised with default values, which you may need to customise (see next steps and general documentation at the end of this document).
 
 
 **3 Create an Organisation**
@@ -193,6 +162,39 @@ The rabbitmq console can be found at `http://<hostname>:8081` using the user nam
 Logs can be found in `logs/messages`. Use a command like `tail -f logs/messages` to keep on top of them.
 
 The health of all participant micro-services can be found by running `docker-compose ps`.
+
+## Env variables
+A `.env.list` file is expected in the root directory. Here is a template (more details on how to get the values for these variables can be found in the Wiki for `nexus` under the heading "Docker"):
+
+```
+NEXUS_GHE_OAUTH_ID=
+NEXUS_GHE_OAUTH_SECRET=
+NEXUS_GITHUB_USER=
+NEXUS_GITHUB_TOKEN=
+NEXUS_GITHUB_ORG=
+```
+
+For added security it is recommended that you also include a new user name and password for the rabbitmq server. These can be set using the following environment variables, also from `.env.list`:
+
+```
+RABBIT_MQ_USER=
+RABBITMQ_DEFAULT_USER=
+RABBIT_MQ_PWD=
+RABBITMQ_DEFAULT_PASS=
+```
+
+Note that the two user variables and the two password variables need to be set to the same values. Setting `RABBIT_MQ_HOST` or `RABBIT_MQ_PORT` will break the configuration. You can set `RABBIT_MQ_QNAME` if required.
+
+An explanation of these vars can be found in the main Nexus repo
+
+Additionally, the tools that are included in the docker-compose require their own environment file each. For the RNG tool this is called `.env.rng.list`. For other tools the names are similar, they can be found from `docker-compose.yml` by looking for `env-file` entries. Each file should contain the following variables (as per the documentation in the relevant tool repository):
+
+```
+NEXUS_TOOL_CANONICAL_NAME=
+NEXUS_ACCESS_TOKEN=
+```
+
+The access token must be valid for the nexus instance to be run, so in the first run set it to a random string, then replace it once you have generated an access token in nexus. Restart the docker-compose using `docker-compose restart` once you have updated all .env files.
 
 ## References
 - https://docs.docker.com/compose/overview/
