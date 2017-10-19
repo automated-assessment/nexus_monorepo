@@ -28,6 +28,11 @@
             <% end %>
             <td><code><%= m.requires_config? ? m.config_url : 'n/a' %></code></td>
             <td>
+              <%= link_to(edit_marking_tool_path(id: m.id)) do %>
+                <button type="button" class="btn btn-xs btn-primary"><%= icon 'pencil-square-o' %></button>
+              <% end %>
+            </td>
+            <td>
               <%= link_to(delete_marking_tool_path(id: m.id)) do %>
                 <button type="button" class="btn btn-xs btn-danger"><%= icon 'times' %></button>
               <% end %>

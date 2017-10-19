@@ -18,6 +18,7 @@ if [ "$1" = 'init-js' ]; then
 fi
 
 if [ "$1" = 'init-dirs' ]; then
+	rm -rf var/
 	mkdir -p tmp/pids
 	mkdir -p var/submissions/code
 	mkdir -p var/submissions/uploads
@@ -26,6 +27,11 @@ if [ "$1" = 'init-dirs' ]; then
 fi
 
 if [ "$1" = 'init-db' ]; then
+	rm -rf var/
+	mkdir -p tmp/pids
+	mkdir -p var/submissions/code
+	mkdir -p var/submissions/uploads
+	mkdir -p var/submissions/tmp
 	exec bundle exec rake db:setup
 fi
 
@@ -38,6 +44,7 @@ if [ "$1" = 'init' ]; then
 
         npm run build
 
+	rm -rf var/
         mkdir -p tmp/pids
         mkdir -p var/submissions/code
         mkdir -p var/submissions/uploads
