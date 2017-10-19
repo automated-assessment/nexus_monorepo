@@ -1,39 +1,39 @@
 .env.list:
-	echo "NEXUS_GHE_OAUTH_ID=<O-AUTH-ID>" >> .env.list
-	echo "NEXUS_GHE_OAUTH_SECRET=<O-AUTH-SECRET>" >> .env.list
-	echo "NEXUS_GITHUB_USER=<GITHUB-USERNAME>" >> .env.list
-	echo "NEXUS_GITHUB_TOKEN=<GITHUB-ACCESS-TOKEN>" >> .env.list
-	echo "NEXUS_GITHUB_ORG=<GITHUB-ORGANISATION>" >> .env.list
-	echo "Please now set the environment variables in .env.list!\n"
+	@echo "NEXUS_GHE_OAUTH_ID=<O-AUTH-ID>" >> .env.list
+	@echo "NEXUS_GHE_OAUTH_SECRET=<O-AUTH-SECRET>" >> .env.list
+	@echo "NEXUS_GITHUB_USER=<GITHUB-USERNAME>" >> .env.list
+	@echo "NEXUS_GITHUB_TOKEN=<GITHUB-ACCESS-TOKEN>" >> .env.list
+	@echo "NEXUS_GITHUB_ORG=<GITHUB-ORGANISATION>" >> .env.list
+	@echo "Please now set the environment variables in .env.list!\n"
 
 .env.javac.list:
-		echo "NEXUS_TOOL_CANONICAL_NAME=javac" >> .env.javac.list
-		echo "NEXUS_ACCESS_TOKEN=foo" >> .env.javac.list
-		echo "Change ACCESS_TOKEN before deploying to production in .env.javac.list!\n"
+	@echo "NEXUS_TOOL_CANONICAL_NAME=javac" >> .env.javac.list
+	@echo "NEXUS_ACCESS_TOKEN=foo" >> .env.javac.list
+	@echo "Change ACCESS_TOKEN before deploying to production in .env.javac.list!\n"
 
 
 .env.rng.list:
-	echo "NEXUS_TOOL_CANONICAL_NAME=rng" >> .env.rng.list
-	echo "NEXUS_ACCESS_TOKEN=foo" >> .env.rng.list
-	echo "Change ACCESS_TOKEN before deploying to production in .env.rng.list!\n"
+	@echo "NEXUS_TOOL_CANONICAL_NAME=rng" >> .env.rng.list
+	@echo "NEXUS_ACCESS_TOKEN=foo" >> .env.rng.list
+	@echo "Change ACCESS_TOKEN before deploying to production in .env.rng.list!\n"
 
 .env.iotool.list:
-	echo "NEXUS_TOOL_CANONICAL_NAME=iotool" >> .env.iotool.list
-	echo "NEXUS_ACCESS_TOKEN=foo" >> .env.iotool.list
-	echo "Change ACCESS_TOKEN before deploying to production in .env.iotool.list!\n"
+	@echo "NEXUS_TOOL_CANONICAL_NAME=iotool" >> .env.iotool.list
+	@echo "NEXUS_ACCESS_TOKEN=foo" >> .env.iotool.list
+	@echo "Change ACCESS_TOKEN before deploying to production in .env.iotool.list!\n"
 
 .env.peerfeedback.list:
-	echo "NEXUS_TOOL_CANONICAL_NAME=peerfeedback" >> .env.peerfeedback.list
-	echo "NEXUS_ACCESS_TOKEN=foo" >> .env.peerfeedback.list
-	echo "Change ACCESS_TOKEN before deploying to production in .env.peerfeedback.list!\n"
+	@echo "NEXUS_TOOL_CANONICAL_NAME=peerfeedback" >> .env.peerfeedback.list
+	@echo "NEXUS_ACCESS_TOKEN=foo" >> .env.peerfeedback.list
+	@echo "Change ACCESS_TOKEN before deploying to production in .env.peerfeedback.list!\n"
 
 .env.conf.list:
-	echo "NEXUS_TOOL_CANONICAL_NAME=conf" >> .env.conf.list
-	echo "NEXUS_ACCESS_TOKEN=foo" >> .env.conf.list
-	echo "Change ACCESS_TOKEN before deploying to production in .env.conf.list!\n"
+	@echo "NEXUS_TOOL_CANONICAL_NAME=conf" >> .env.conf.list
+	@echo "NEXUS_ACCESS_TOKEN=foo" >> .env.conf.list
+	@echo "Change ACCESS_TOKEN before deploying to production in .env.conf.list!\n"
 
 init-env: .env.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list .env.peerfeedback.list
-	echo "All .env files initialised. Please ensure you change ACCESS_TOKEN information etc. before running Nexus.\n"
+	@echo "All .env files initialised. Please ensure you change ACCESS_TOKEN information etc. before running Nexus.\n"
 
 build:
 	docker-compose -f docker-compose.yml build
