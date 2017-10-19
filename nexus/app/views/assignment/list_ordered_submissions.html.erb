@@ -1,0 +1,61 @@
+<%= render 'header' %>
+<p>
+  <%= markdown(@assignment.description) %>
+</p>
+
+<hr />
+
+<h4>Submissions for this assignment, ordered by date of submission.</h4>
+
+<% if @assignment.submissions.empty? %>
+  <p>No submissions have been made for this assignment yet.</p>
+<% else %>
+  <%= link_to(assignment_prepare_submission_repush_path(id: @assignment.id)) do %>
+    <button type="button" name="button" class="btn btn-sm btn-danger"><%= icon 'warning' %> Repush submissions</button>
+  <% end %>
+
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Submitter</th>
+        <th>Submission attempt</th>
+        <th>Mark</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% last_seen_date = nil %>
+      <% @assignment.submissions.each do |s| %>
+        <% if ((last_seen_date.nil?) || (!(last_seen_date === s.submitted.to_date))) %>
+          <tr class="bg-info">
+            <th colspan="4">
+              <%= s.submitted.strftime('%m/%d/%Y') %>
+            </th>
+          </tr>
+        <% end %>
+        <% last_seen_date = s.submitted.to_date %>
+        <tr>
+          <th>
+            <%= link_to s do %>
+              <%= pretty_datetime s.submitted %>
+            <% end %>
+            <% if s.late %>
+              <span class="label label-danger">Late</span>
+            <% end %>
+          </th>
+          <td>
+            <%= s.user.name %>
+          </td>
+          <td>
+            <%= link_to s do %>
+              #<%= s.attempt_number %>
+            <% end %>
+          </td>
+          <td><%= display_final_mark s %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<%= render partial: 'audit_item/panel', locals: { items: @assignment.audit_items } %>

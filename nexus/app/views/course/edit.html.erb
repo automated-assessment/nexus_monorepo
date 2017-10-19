@@ -1,0 +1,33 @@
+<div class="well">
+  <h2>Edit Course</h2>
+  <hr />
+  <%= form_for(@course, url: update_course_path, html: { class: 'form-horizontal' }) do |f| %>
+    <div class="form-group">
+      <%= f.label :title, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :title, class: 'form-control', required: true %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :description, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_area :description, class: 'form-control', rows: '4' %>
+        <p>Markdown is supported.</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :teacher, class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <input class="form-control" placeholder="<%= current_user.name %>" type="text" readonly>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <%= f.submit 'Save Changes', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,11 @@
+<% if current_user.admin? %>
+  <hr>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><a data-toggle="collapse" href="#logtable"><%= icon 'ellipsis-v' %> Audit log</a></h3>
+    </div>
+    <div id="logtable" class="panel-body collapse">
+      <%= render partial: 'audit_item/table', locals: { items: items } %>
+    </div>
+  </div>
+<% end %>

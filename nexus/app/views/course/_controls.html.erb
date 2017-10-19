@@ -1,0 +1,21 @@
+<% if current_user.enrolled_in?(@course.id) %>
+  <div class="course-controls">
+    <% if user_can_administrate @course %>
+      <%= link_to(new_assignment_path(cid: @course.id)) do %>
+        <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'plus-circle' %> Create Assignment</button>
+      <% end %>
+      <%= link_to(enrolment_list_path, id: @course.id) do %>
+        <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'list' %> Enrolment List <span class="badge"><%= @course.students.size %></span></button>
+      <% end %>
+      <%= link_to(edit_course_path(id: @course.id)) do %>
+        <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'edit' %> Edit Course</button>
+      <% end %>
+    <% end %>
+
+    <% if !current_user.eql? @course.teacher %>
+      <%= link_to(unenrol_path, id: @course.id) do %>
+        <button type="button" class="btn btn-primary"><%= icon 'sign-out' %> Unenrol</button>
+      <% end %>
+  <% end %>
+  </div>
+<% end %>

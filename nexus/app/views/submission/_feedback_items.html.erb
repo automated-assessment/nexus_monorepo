@@ -1,0 +1,19 @@
+<% unless @submission.extraction_error? %>
+  <h4>Feedback</h4>
+  <div class="feedback_items">
+    <% if @submission.feedback_items.empty? %>
+      <p>No feedback available yet. Please come back to this page later to view feedback.
+    <% else %>
+      <% @submission.feedback_items.each do |feedback_item| %>
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h3 class="panel-title"><%= feedback_item.marking_tool.name %></h3>
+          </div>
+          <div class="panel-body">
+            <%= raw feedback_item.body %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,22 @@
+<div>
+  <% if user_signed_in? %>
+    <div class="page-header">
+      <h2><%= current_user.name %>'s Dashboard</h2>
+    </div>
+  <% else %>
+    <div class="jumbotron">
+      <h3>Welcome!</h3>
+      <p>
+        Please
+        <%= link_to(user_omniauth_authorize_url(provider: :github)) do %><%= icon 'github' %> Login<% end %>
+        to begin.
+      </p>
+    </div>
+  <% end %>
+</div>
+<% if user_signed_in? %>
+  <h4>Recent Submissions</h4>
+  <%= render partial: 'submission/my_submissions_table', locals: { recent: true } %>
+  <h4>Current Assignments</h4>
+  <%= render 'assignment/my_current_table' %>
+<% end %>

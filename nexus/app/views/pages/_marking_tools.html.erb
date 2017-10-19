@@ -1,0 +1,50 @@
+<div class="marking-tools">
+  <h4><%= icon 'cubes' %> Marking Tools</h4>
+  <% if @marking_tools.empty? %>
+    <p>There are no marking tools.</p>
+  <% else %>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>UID</th>
+          <th>Description</th>
+          <th>URL</th>
+          <th>Input/Ouput</th>
+          <th>Config URL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @marking_tools.each do |m| %>
+          <tr>
+            <th scope="row"><%= m.name %></th>
+            <th><%= m.uid %></th>
+            <td><%= m.description %></td>
+            <td><code><%= m.url %></code></td>
+            <% if m.input || m.output %>
+            <td><code><%= m.input || 'n/a' %> -> <%= m.output || 'n/a' %></code></td>
+            <% else %>
+            <td><code>n/a</code></td>
+            <% end %>
+            <td><code><%= m.requires_config? ? m.config_url : 'n/a' %></code></td>
+            <td>
+              <%= link_to(edit_marking_tool_path(id: m.id)) do %>
+                <button type="button" class="btn btn-xs btn-primary"><%= icon 'pencil-square-o' %></button>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to(delete_marking_tool_path(id: m.id)) do %>
+                <button type="button" class="btn btn-xs btn-danger"><%= icon 'times' %></button>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+  <div class="center-controls">
+    <%= link_to(new_marking_tool_path) do %>
+      <button type="button" class="btn btn-success">Add Marking Tool</button>
+    <% end %>
+  </div>
+</div>

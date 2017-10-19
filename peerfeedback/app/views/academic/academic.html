@@ -1,0 +1,43 @@
+<section>
+
+    <h3>Control Panel</h3>
+
+
+    <br/>
+    <form class="form-horizontal">
+        <fieldset>
+            <!-- Form Name -->
+            <legend>Search</legend>
+            You can search for submissions by submission ID, name or date:
+            <!-- Text input-->
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="sidInput">Submission ID</label>
+                <div class="col-md-4">
+                    <input id="sidInput" name="textinput" type="text" placeholder="submission ID" class="form-control input-md" ng-model="searchText.sid">
+                </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="nameInput">Student Name</label>
+                <div class="col-md-4">
+                    <input id="nameInput" name="textinput" type="text" placeholder="Student name" class="form-control input-md" ng-model="searchText.student" >
+
+                </div>
+            </div>
+
+        </fieldset>
+    </form>
+
+
+
+
+    <uib-accordion>
+        <div ng-repeat="submission in vm.submissions|filter:searchText">
+            <accordion core="submission" email="vm.email">
+            </accordion>
+        </div>
+
+    </uib-accordion>
+
+</section>

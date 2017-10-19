@@ -1,0 +1,18 @@
+[submodule "nexus"]
+	path = nexus
+	url = https://github.kcl.ac.uk/automated-assessment/nexus
+[submodule "javac-tool"]
+	path = javac-tool
+	url = https://github.kcl.ac.uk/automated-assessment/javac-tool
+[submodule "rng-tool"]
+	path = rng-tool
+	url = https://github.kcl.ac.uk/automated-assessment/rng-tool.git
+[submodule "sample-configurable-tool"]
+	path = sample-configurable-tool
+	url = https://github.kcl.ac.uk/automated-assessment/sample-configurable-tool.git
+[submodule "IO-tool"]
+	path = IO-tool
+	url = https://github.kcl.ac.uk/automated-assessment/IO-tool.git
+[submodule "peerfeedback"]
+	path = peerfeedback
+	url = https://github.kcl.ac.uk/automated-assessment/peerfeedback.git

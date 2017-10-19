@@ -1,0 +1,10 @@
+<div class="users">
+  <h4><%= icon 'users' %> Users</h4>
+  <p>There are <%= @user_count %> users registered.</p>
+
+  <div class="center-controls">
+    <%= link_to(user_list_path) do %>
+      <button type="button" name="button" class="btn btn-primary">Manage Users</button>
+    <% end %>
+  </div>
+</div>

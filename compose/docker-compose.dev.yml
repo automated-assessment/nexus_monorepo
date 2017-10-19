@@ -1,0 +1,18 @@
+version: '2'
+services:
+  nexus:
+    build:
+      context: nexus/
+      dockerfile: Dockerfile.dev
+    tty: true
+    stdin_open: true
+  sneakers:
+    build:
+      context: nexus/
+      dockerfile: Dockerfile.dev
+  peer-feedback:
+    build:
+      context: peerfeedback/
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./peerfeedback:/src

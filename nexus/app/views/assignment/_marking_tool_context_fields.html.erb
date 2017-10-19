@@ -1,0 +1,49 @@
+<div class="nested-fields">
+  <div class="form-group">
+    <%= f.label :marking_tool, "Tool", class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= collection_select("assignment[marking_tool_contexts_attributes][#{f.options[:child_index]}]", :marking_tool_id, all_marking_tools, :id, :name, { prompt: true }, { class: 'form-control' }) %>
+      </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :weight, 'Weight (%)', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.number_field :weight, in: 0..100, step: 1, value: '0', class: 'form-control' %>
+      </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :condition, 'Condition (%)', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.number_field :condition, in: 0..100, step: 1, value: '0', class: 'form-control' %>
+      </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :context, 'Context', class: 'col-lg-2 control-label' %>
+      <div class="col-lg-10">
+        <%= f.text_field :context, class: 'form-control' %>
+        <p>Describe how this tool is used for this assignment (optional)</p>
+      </div>
+  </div>
+
+  <div class="panel panel-default col-lg-10 col-lg-offset-2">
+    <div class="panel-heading">
+      <h3 class="panel-title"><%= icon 'ellipsis-v' %> Depends on</a></h3>
+    </div>
+    <div class="panel-body">
+      <% all_marking_tools.each do |mt| %>
+        <%= check_box_tag "assignment[active_services][#{f.options[:child_index]}][]", mt.uid, false, { multiple: true } %>
+        <%= mt.name %>
+      <% end %>
+    </div>
+  </div>
+
+  <%= link_to_remove_association f do |link| %>
+    <div class="col-md-10 col-md-offset-2">
+      <%= icon 'minus-circle' %> Remove
+      <hr />
+    </div>
+  <% end %>
+</div>

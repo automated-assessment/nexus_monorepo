@@ -1,0 +1,21 @@
+<section>
+
+    <div class="page-header"><h3>Received feedback from {{vm.receiver.title.alias}}</h3></div>
+
+    <h3>{{vm.receiver.title.alias}}'s Feedback:</h3> <br/>
+
+    <form render-form current-form="vm.receiver.currentForm" disable="vm.readOnly"></form>
+
+    <span ng-hide="{{vm.academic}}">
+    <a ui-sref="frameState.allocationState({sid:{{vm.core.receiverSid}},token:'{{vm.auth.token}}'})">
+        <button class="btn btn-primary">Back</button>
+    </a>
+    </span>
+
+    <span ng-show="{{vm.academic}}">
+    <a ui-sref="frameState.academicState({aid:'{{vm.core.aid}}',token:'{{vm.auth.token}}',email:'{{vm.auth.email}}'})">
+    <button class="btn btn-primary">Back</button>
+    </a>
+    </span>
+
+</section>

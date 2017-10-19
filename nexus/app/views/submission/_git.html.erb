@@ -1,0 +1,55 @@
+<%= form_for(@submission, url: create_git_submission_path,  html: { class: 'form-horizontal' }) do |f| %>
+
+  <%= f.hidden_field :assignment_id, value: @submission.assignment.id %>
+
+  <p>When submitting through Git, you agree to the following:</p>
+  <ol>
+    <li>The specific commit you have indicated will constitute your submission
+      for marking purposes. It is your responsibility to ensure that the data
+      you submit (including the Git URL, the branch name, and the commit SHA)
+      are correct and do not contain any typos.</li>
+    <li>It is your responsibility to ensure that your submission remains accessible
+      to the marking system and to teaching staff at any time. The easiest way
+      to do so is to (a) provide submissions from a King's Github Enterprise
+      repository only, and (b) not remove the repository until the marks have
+      been ratified by the College Exam Board. If the repository becomes
+      inaccessible to the marking system at any point (except through a technical
+      failure of Github Enterprise), you are likely to receive a mark of zero
+      for your submission.</li>
+    <li>Attempts to alter the Git history for your submission or indeed the
+      submission itself constitute misconduct according to the B3 Misconduct
+      Regulations. Any suspected cases of this will be dealt with according to
+      the university's misconduct procedure. Upheld charges can result in a range
+      of penalties from an award of zero marks for the work, to expulsion from the
+      college.</li>
+  </ol>
+
+  <br />
+
+  <div class="form-group">
+    <%= f.label 'Repo', class: 'col-lg-2 control-label' %>
+    <div class="col-lg-10">
+      <%= f.select :repourl, @repo_list, {}, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label 'Branch name', class: 'col-lg-2 control-label' %>
+    <div class="col-lg-10">
+      <%= f.text_field :gitbranch, class: 'form-control', required: true %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label 'Commit hash (SHA)', class: 'col-lg-2 control-label' %>
+    <div class="col-lg-10">
+      <%= f.text_field :commithash, class: 'form-control', required: true %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-lg-10 col-lg-offset-2">
+      <%= f.submit 'Submit', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,72 @@
+<%= render 'header' %>
+<p>
+  <%= markdown(@assignment.description) %>
+</p>
+
+<hr />
+
+<h4>Submissions for this assignment</h4>
+
+<% if @assignment.submissions.empty? %>
+  <p>No submissions have been made for this assignment yet.</p>
+<% else %>
+  <p> Received <%= @assignment.submissions.count %> submissions from <%= @users.count %> users.</p>
+  <%= link_to(assignment_list_ordered_submissions_path(id: @assignment.id)) do %>
+    <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'sort-amount-desc' %> View Submissions by Date</button>
+  <% end %>
+
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Submitter</th>
+        <th>Submissions</th>
+        <th>Highest Mark</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |u| %>
+        <tr>
+          <th>
+            <%= u.name %>
+          </th>
+          <td>
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Submitted</th>
+                  <th>Attempt</th>
+                  <th>Mark</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% u.submissions_for(@assignment.id).each do |s| %>
+                  <tr>
+                    <th>
+                      <%= link_to s do %>
+                      <%= pretty_datetime s.submitted %>
+                      <% end %>
+                      <% if s.late %>
+                      <span class="label label-danger">Late</span>
+                      <% end %>
+                    </th>
+                    <td>
+                      <%= link_to s do %>
+                        #<%= s.attempt_number %>
+                      <% end %>
+                    </td>
+                    <td><%= display_final_mark s %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </td>
+          <td>
+            <%= @assignment.highest_mark_for(u) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<%= render partial: 'audit_item/panel', locals: { items: @assignment.audit_items } %>

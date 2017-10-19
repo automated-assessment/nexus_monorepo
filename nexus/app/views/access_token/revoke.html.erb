@@ -1,0 +1,9 @@
+<h2>Revoke Access Token</h2>
+<div class="center-controls">
+  <p><em><%= @access_token.description %></em></p>
+  <p><strong>Are you sure you would like to revoke this access token?</strong></p>
+  <p>It will stop working immediately.</p>
+  <%= link_to(destroy_access_token_path, id: @access_token.id) do %>
+    <button type="button" class="btn btn-danger"><%= icon 'times' %> Revoke</button>
+  <% end %>
+</div>
