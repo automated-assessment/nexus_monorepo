@@ -6,31 +6,10 @@
 	@echo "NEXUS_GITHUB_ORG=<GITHUB-ORGANISATION>" >> .env.list
 	@echo "Please now set the environment variables in .env.list!\n"
 
-.env.javac.list:
-	@echo "NEXUS_TOOL_CANONICAL_NAME=javac" >> .env.javac.list
-	@echo "NEXUS_ACCESS_TOKEN=foo" >> .env.javac.list
-	@echo "Change ACCESS_TOKEN before deploying to production in .env.javac.list!\n"
-
-
-.env.rng.list:
-	@echo "NEXUS_TOOL_CANONICAL_NAME=rng" >> .env.rng.list
-	@echo "NEXUS_ACCESS_TOKEN=foo" >> .env.rng.list
-	@echo "Change ACCESS_TOKEN before deploying to production in .env.rng.list!\n"
-
-.env.iotool.list:
-	@echo "NEXUS_TOOL_CANONICAL_NAME=iotool" >> .env.iotool.list
-	@echo "NEXUS_ACCESS_TOKEN=foo" >> .env.iotool.list
-	@echo "Change ACCESS_TOKEN before deploying to production in .env.iotool.list!\n"
-
-.env.peerfeedback.list:
-	@echo "NEXUS_TOOL_CANONICAL_NAME=peerfeedback" >> .env.peerfeedback.list
-	@echo "NEXUS_ACCESS_TOKEN=foo" >> .env.peerfeedback.list
-	@echo "Change ACCESS_TOKEN before deploying to production in .env.peerfeedback.list!\n"
-
-.env.conf.list:
-	@echo "NEXUS_TOOL_CANONICAL_NAME=conf" >> .env.conf.list
-	@echo "NEXUS_ACCESS_TOKEN=foo" >> .env.conf.list
-	@echo "Change ACCESS_TOKEN before deploying to production in .env.conf.list!\n"
+.env.%.list:
+	@echo "NEXUS_TOOL_CANONICAL_NAME=$*" >> $@
+	@echo "NEXUS_ACCESS_TOKEN=foo" >> $@
+	@echo "Change ACCESS_TOKEN before deploying to production in $@!\n"
 
 .PHONY: init-env build build-dev init-nexus init-nexus-js init-nexus-db run run-dev restart-nexus restart-javac restart-rng restart-io restart-config restart-db restart-mongodb restart-sneakers restart-rabbitmq restart-syslog bash migrate-db stop restart restart-dev debug
 
