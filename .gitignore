@@ -7,3 +7,4 @@ mongodata/
 logs/
 npm-debug.log
 dbdumps/*.gz
+uat_data/
