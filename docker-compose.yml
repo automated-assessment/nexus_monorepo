@@ -27,6 +27,7 @@ services:
     depends_on:
       - db
       - syslog
+      - unique-assignment-tool
       - rabbitmq
       - rng-tool # Need to include in dependencies or it won't get started
       - config-tool # Need to include in dependencies or it won't get started
@@ -77,6 +78,33 @@ services:
         tag: "rabbitmq"
     depends_on:
       - syslog
+  unique-assignment-tool:
+    build: unique-assignment-tool/
+    env_file: .env.uat.list
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+      MYSQL_HOST: mysql-uat
+    ports:
+      - "3009:3009"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "uat"
+    depends_on:
+      - mysql-uat
+  mysql-uat:
+    image: mysql
+    ports:
+      - 3306:3306
+    env_file: .env.uat.list
+    volumes:
+      - ./uat_data:/var/lib/mysql
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "uat-db"
   rng-tool:
     build: rng-tool/
     env_file: .env.rng.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
