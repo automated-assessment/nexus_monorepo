@@ -52,6 +52,8 @@ class SendSubmissionJob < ActiveJob::Base
       studentemail: @submission.user.email, # This will only have a value for a user registered via GHE
       sid: @submission.id,
       aid: @submission.assignment.id,
+      is_unique: @submission.assignment.is_unique,
+      description_string: @submission.assignment.description_string,
       cloneurl: @submission.augmented_clone_url,
       branch: @submission.gitbranch,
       sha: @submission.commithash,
