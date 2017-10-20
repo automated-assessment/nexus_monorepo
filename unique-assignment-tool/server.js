@@ -24,9 +24,9 @@ if (!process.env.NEXUS_ACCESS_TOKEN) {
 var dbcon = mysql.createConnection({
   host: process.env.MYSQL_HOST || "mysql",
   port: 3306,
-  user: "uat-tool",
-  password: "uat-pass",
-  database: "uat"
+  user: process.env.MYSQL_USER || "uat-tool",
+  password: process.env.MYSQL_PASSWORD || "uat-pass",
+  database: process.env.MYSQL_DATABASE || "uat"
 });
 
 sleeper.sleep(30);

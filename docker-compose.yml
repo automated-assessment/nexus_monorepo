@@ -97,12 +97,7 @@ services:
     image: mysql
     ports:
       - 3306:3306
-    environment:
-      MYSQL_DATABASE: "uat"
-      MYSQL_USER: "uat-tool"
-      MYSQL_PASSWORD: "uat-pass"
-      MYSQL_ROOT_PASSWORD: "root"
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    env_file: .env.uat.list
     volumes:
       - ./uat_data:/var/lib/mysql
     logging:
