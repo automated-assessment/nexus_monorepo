@@ -208,7 +208,7 @@ class AssignmentController < ApplicationController
                                        :allow_git,
                                        :allow_ide,
                                        :active_services,
-                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :condition])
+                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :condition, :_destroy])
   end
 
   def return_assignment!
@@ -217,9 +217,9 @@ class AssignmentController < ApplicationController
       assignment.description = assignment.description_string
     elsif (assignment.is_unique == true)
       Rails.logger.info 'Assignment is unique, requesting generation for description'
-      
+
       uri = URI.parse('http://unique-assignment-tool:3009/desc_gen')
-      
+
       Net::HTTP.start(uri.host, uri.port) do |http|
         req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
 
@@ -235,13 +235,13 @@ class AssignmentController < ApplicationController
         if res.code =~ /2../
           Rails.logger.info 'Success on generating description for unique assignment'
           assignment.description = res.body
-        else         
+        else
           Rails.logger.info 'Error on generating description for unique assignment'
           assignment.description = 'ERROR: Error on generation of description. Get in contact with your lecturer for further details.'
         end
       end
     end
-    Rails.logger.info 'Done if-else check on unique assignment check'  
+    Rails.logger.info 'Done if-else check on unique assignment check'
     Rails.logger.info assignment
     unless assignment
       flash.now[:error] = "Assignment #{params[:id]} does not exist"
