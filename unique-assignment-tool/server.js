@@ -135,8 +135,8 @@ app.post('/param_upload_finish', jsonParser, function (request, response) {
 });
 
 app.post('/desc_gen', jsonParser, function (request, response) {
-    console.log('Unique assignment description generation request received.');
-	console.log(`Request for generating description for assignment with id: ${request.body.aid}, for student with id: ${request.body.studentid}`);
+  console.log('Unique assignment description generation request received.');
+  console.log(`Request for generating description for assignment with id: ${request.body.aid}, for student with id: ${request.body.studentid}`);
 
 	var studentID = request.body.studentid;
 	var assignmentID = request.body.aid;
@@ -145,108 +145,107 @@ app.post('/desc_gen', jsonParser, function (request, response) {
 	//Fetching varialbes for particular assignment
 	var sql = `SELECT param_name,param_type,param_construct FROM parameters WHERE assign_id = ${assignmentID};`;
 	dbcon.query(sql, function (err, rows, result) {
-	  if (err) {
-	     console.log(err);
-  	  }
-	  else {
-	  	var parameterNameArr = new Array();
-		var parameterTypeArr = new Array();
-		var parameterConstructArr = new Array();
+    if (err) {
+      console.log(err);
+    }
+    else {
+      var parameterNameArr = new Array();
+      var parameterTypeArr = new Array();
+      var parameterConstructArr = new Array();
 
-		for (var i in rows) {
-			parameterNameArr.push(rows[i].param_name);
-			parameterTypeArr.push(rows[i].param_type);
-			parameterConstructArr.push(rows[i].param_construct);
-		}
+      for (var i in rows) {
+        parameterNameArr.push(rows[i].param_name);
+        parameterTypeArr.push(rows[i].param_type);
+        parameterConstructArr.push(rows[i].param_construct);
+      }
 
-		//Appending variable-args assigning for generation commandline execution
-		var appendingString = "";
-		for(var i = 0; i < parameterNameArr.length; i++) {
-			var index = i + 1;
-			appendingString += parameterNameArr[i] + " = sys.argv[" + index.toString() + "];\n"
-		}
-		descriptionString = appendingString + descriptionString;
+      //Appending variable-args assigning for generation commandline execution
+      var appendingString = "";
+      for(var i = 0; i < parameterNameArr.length; i++) {
+        var index = i + 1;
+        appendingString += parameterNameArr[i] + " = sys.argv[" + index.toString() + "];\n"
+      }
+      descriptionString = appendingString + descriptionString;
 
-		var valueArray = new Array();
-		for (var i = 0; i < parameterNameArr.length; i++) {
-			var sql = `SELECT param_value FROM generated_parameters WHERE assign_id = ${assignmentID} and std_id = ${studentID} and param_name = "${parameterNameArr[i]}"`;
-			dbcon.query(sql, function (err, rows, result) {
-			  if (err) {
-				 console.log(err);
-			  }
-			  else {
-				  if (rows.length == 0) {
-						  var value;
-						  var parameterBufferArray = parameterConstructArr[this.i].split(',');
-						  if(parameterTypeArr[this.i] == 'int' || parameterTypeArr[this.i] == 'float' || parameterTypeArr[this.i] == 'double') {
-							  var min = parameterBufferArray[0];
-							  var max = parameterBufferArray[1];
-							  if(parameterTypeArr[this.i] == 'int') {
-								  value = parseInt(Math.random() * (max - min) + min);
-							  }
-							  else {
-							  	value = Math.random() * (max - min) + min;
-							  }
-						  }
-						  else if(parameterTypeArr[this.i] == 'string') {
-							  var max = parameterBufferArray.length - 1;
-							  value = parameterBufferArray[parseInt(Math.random() * (max - 0) + 0)];
-						  }
-						  else if(parameterTypeArr[this.i] == 'boolean') {
-							  var ref = Math.random() % 2;
-							  if (ref == 0) {
-								  value = true;
-							  }
-							  else {
-								  value = false;
-							  }
-						  }
-						  valueArray.push(value);
-						  sql = "INSERT INTO generated_parameters (assign_id, std_id, param_name, param_value) VALUES (?)";
-						  var values = [assignmentID,studentID,parameterNameArr[this.i],value];
-						  dbcon.query(sql, [values], function (err, result) {
-							if (err) {
-							   console.log(err);
-							}
-						  });
-				  }
-				  else {
-					  valueArray.push(rows[0].param_value);
-				  }
-			  }
-			  if(this.i == parameterNameArr.length - 1) {
-			  	//Writing the template to file to do generation
-				fs.writeFileSync(process.cwd()+'/description.py.dna',descriptionString, 'utf8');
+      var valueArray = new Array();
+      for (var i = 0; i < parameterNameArr.length; i++) {
+        var sql = `SELECT param_value FROM generated_parameters WHERE assign_id = ${assignmentID} and std_id = ${studentID} and param_name = "${parameterNameArr[i]}"`;
+        dbcon.query(sql, function (err, rows, result) {
+          if (err) {
+            console.log(err);
+          }
+          else {
+            if (rows.length == 0) {
+              var value;
+              var parameterBufferArray = parameterConstructArr[this.i].split(',');
+              if(parameterTypeArr[this.i] == 'int' || parameterTypeArr[this.i] == 'float' || parameterTypeArr[this.i] == 'double') {
+                var min = parameterBufferArray[0];
+                var max = parameterBufferArray[1];
+                if(parameterTypeArr[this.i] == 'int') {
+                  value = parseInt(Math.random() * (max - min) + min);
+                }
+                else {
+                  value = Math.random() * (max - min) + min;
+                }
+              }
+              else if(parameterTypeArr[this.i] == 'string') {
+                var max = parameterBufferArray.length - 1;
+                value = parameterBufferArray[parseInt(Math.random() * (max - 0) + 0)];
+              }
+              else if(parameterTypeArr[this.i] == 'boolean') {
+                var ref = Math.random() % 2;
+                if (ref == 0) {
+                  value = true;
+                }
+                else {
+                  value = false;
+                }
+              }
+              valueArray.push(value);
+              sql = "INSERT INTO generated_parameters (assign_id, std_id, param_name, param_value) VALUES (?)";
+              var values = [assignmentID,studentID,parameterNameArr[this.i],value];
+              dbcon.query(sql, [values], function (err, result) {
+                if (err) {
+                  console.log(err);
+                }
+              });
+            }
+            else {
+              valueArray.push(rows[0].param_value);
+            }
+          }
+          if(this.i == parameterNameArr.length - 1) {
+            //Writing the template to file to do generation
+            fs.writeFileSync(process.cwd()+'/description.py.dna',descriptionString, 'utf8');
 
-				//Executing generation with inputs
-				console.log('Starting on generation')
-				var pythonExec = require('python-shell');
-				var argsList = ['description.py.dna'];
-				for(var j = 0; j < valueArray.length; j++) {
-				  argsList.push(valueArray[j]);
-				}
-				var options = {
-				  args: argsList
-				}
-				console.log("Generation args: " + JSON.stringify(options));
-				console.log('Generation args taken.');
-				pythonExec.run('/ribosome.py', options, function (err, results) {
-					if (err) {
-						console.log(err);
-						response.send('Something went wrong inside the system. Contact your lecturer for further queries. ERROR STEP 2');
-					}
-					else {
-					  console.log('results: %j', results);
-					  console.log(`Sent description for assignment with id: ${request.body.aid}, for student with id: ${request.body.studentid}`);
-					  response.send(results[0]);
-				   }
-				});
-			  }
-			}.bind( {i: i} ));
-		}
-
-	  }
-    });
+            //Executing generation with inputs
+            console.log('Starting on generation')
+            var pythonExec = require('python-shell');
+            var argsList = ['description.py.dna'];
+            for(var j = 0; j < valueArray.length; j++) {
+              argsList.push(valueArray[j]);
+            }
+            var options = {
+              args: argsList
+            }
+            console.log("Generation args: " + JSON.stringify(options));
+            console.log('Generation args taken.');
+            pythonExec.run('/ribosome.py', options, function (err, results) {
+              if (err) {
+                console.log(err);
+                response.send('Something went wrong inside the system. Contact your lecturer for further queries. ERROR STEP 2');
+              }
+              else {
+                console.log('results: %j', results);
+                console.log(`Sent description for assignment with id: ${request.body.aid}, for student with id: ${request.body.studentid}`);
+                response.send(results[0]);
+              }
+            });
+          }
+        }.bind( {i: i} ));
+      }
+    }
+  });
 });
 
 app.post('/io_gen', jsonParser, function (request, response) {
