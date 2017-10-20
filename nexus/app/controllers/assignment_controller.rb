@@ -27,7 +27,9 @@ class AssignmentController < ApplicationController
     if @assignment
       # augment template URLs with parameters
       params = {
-        aid: @assignment.id
+        aid: @assignment.id,
+        sid: current_user.id,
+        isUnique: @assignment.is_unique
       }
       @tools_with_augmented_urls = []
       @assignment.marking_tools.configurable.each do |t|
@@ -52,6 +54,7 @@ class AssignmentController < ApplicationController
       @assignment.max_attempts = 0
 
       @assignment.allow_late = true
+      @assignment.is_unique = false
       @assignment.late_cap = 40
 
       @assignment.allow_zip = true
@@ -65,7 +68,7 @@ class AssignmentController < ApplicationController
 
   def create
     @assignment = Assignment.new(assignment_params)
-
+    @assignment.description_string = @assignment.description
     unless @assignment.save
       error_flash_and_cleanup!(@assignment.errors.full_messages[0])
       return
@@ -91,6 +94,20 @@ class AssignmentController < ApplicationController
     else
       redirect_to action: 'show', id: @assignment.id
     end
+    if @assignment.is_unique == true
+      uri = URI.parse('http://unique-assignment-tool:3009/param_upload_finish')
+
+        Net::HTTP.start(uri.host, uri.port) do |http|
+          req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
+
+          req.body = {
+            aid: @assignment.id
+          }.to_json
+
+          Rails.logger.info "DEBUG!!: Body to send to UAT: " + req.body.to_s
+          res = http.request(req)
+        end
+    end
   end
 
   def edit
@@ -101,6 +118,7 @@ class AssignmentController < ApplicationController
     @assignment = return_assignment!
     if @assignment
       if @assignment.update_attributes(assignment_params)
+        @assignment.description_string = @assignment.description
         flash[:success] = 'Assignment updated'
         redirect_to @assignment
       else
@@ -179,6 +197,8 @@ class AssignmentController < ApplicationController
                                        :start,
                                        :deadline,
                                        :allow_late,
+                                       :is_unique,
+                                       :description_string,
                                        :feedback_only,
                                        :late_cap,
                                        :latedeadline,
@@ -193,6 +213,36 @@ class AssignmentController < ApplicationController
 
   def return_assignment!
     assignment = Assignment.find_by(id: params[:id])
+    if (caller[0].index("edit") != nil)
+      assignment.description = assignment.description_string
+    elsif (assignment.is_unique == true)
+      Rails.logger.info 'Assignment is unique, requesting generation for description'
+      
+      uri = URI.parse('http://unique-assignment-tool:3009/desc_gen')
+      
+      Net::HTTP.start(uri.host, uri.port) do |http|
+        req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
+
+        req.body = {
+          aid: assignment.id,
+          studentid: current_user.id,
+          is_unique: assignment.is_unique,
+          description_string: assignment.description_string
+        }.to_json
+
+        res = http.request(req)
+        Rails.logger.info res.body
+        if res.code =~ /2../
+          Rails.logger.info 'Success on generating description for unique assignment'
+          assignment.description = res.body
+        else         
+          Rails.logger.info 'Error on generating description for unique assignment'
+          assignment.description = 'ERROR: Error on generation of description. Get in contact with your lecturer for further details.'
+        end
+      end
+    end
+    Rails.logger.info 'Done if-else check on unique assignment check'  
+    Rails.logger.info assignment
     unless assignment
       flash.now[:error] = "Assignment #{params[:id]} does not exist"
       render 'mine', status: 404
