@@ -1,10 +1,11 @@
 import { mysql, dbcon } from './db_mgr';
+import async from 'async';
+import forEachOf from 'async/eachOf';
 
 var childProcess = require('child_process');
 var fs = require('fs');
 var cors = require('cors');
 var wait = require('wait.for');
-var async = require('async');
 
 export function desc_gen_handler (request, response) {
   var studentID = request.body.studentid;
@@ -19,7 +20,7 @@ export function desc_gen_handler (request, response) {
 	dbcon.query(sql, (err, rows, result) => {
     if (err) {
       console.log(`Couldn't read variables from database for assignment ${assignmentID}: ${err}.`);
-      response.status(500).send(`Error from unique-assignment service: ${err}`);
+      response.status(500).send(`Error from unique-assignment service: ${err}.`);
     }
     else {
       process_variables(response, rows, studentID, assignmentID, descriptionString);
@@ -27,71 +28,70 @@ export function desc_gen_handler (request, response) {
   });
 }
 
-// FIXME: The below isn't quite correct as the various db lookups are actually happening asynchronously and, therefore, there's a bit of confusion about generating actual values.
 function process_variables (response, rows, studentID, assignmentID, descriptionString) {
-  var parameterNameArr = new Array();
-  var parameterTypeArr = new Array();
-  var parameterConstructArr = new Array();
+  // Start by figuring out values for each variable for this student
+  console.log("Getting variables and their values.");
+  var valueArray = {};
+  async.forEachOf(rows,
+    (row, index, cb) => {
+      getParameterValueForStudent(valueArray, studentID, assignmentID, row.param_name, row.param_type, row.param_construct, cb);
+    },
+    (err) => {
+      if (err) {
+        response.status(500).send(`Error from unique-assignment service: ${err}.`);
+      }
+      else {
+        // valueArray now is a hash from param names to their values
+        var varInits = "";
+        for(var varName in valueArray){
+          // FIXME: Need to consider whether the variable is a string, in which case it may need quote marks. Probably actually best done when we put the value into the hash.
+          varInits += `${varName} = ${valueArray[varName]};\n`;
+        }
+        descriptionString = varInits + descriptionString;
+        console.log(`Prepared runnable template: "${descriptionString}".`);
 
-  for (var i in rows) {
-    parameterNameArr.push(rows[i].param_name);
-    parameterTypeArr.push(rows[i].param_type);
-    parameterConstructArr.push(rows[i].param_construct);
-  }
+        //Writing the template to file to do generation
+        console.log("Generating template invocation");
+        fs.writeFileSync(process.cwd()+'/description.py.dna',descriptionString, 'utf8');
 
-  //Appending variable-args assigning for generation commandline execution
-  var appendingString = "";
-  for(var i = 0; i < parameterNameArr.length; i++) {
-    var index = i + 1;
-    appendingString += parameterNameArr[i] + " = sys.argv[" + index.toString() + "];\n"
-  }
-  descriptionString = appendingString + descriptionString;
-  console.log(`Prepared runnable template: "${descriptionString}".`);
-
-  console.log("Now setting variable values.");
-  var valueArray = new Array();
-  for (var i = 0; i < parameterNameArr.length; i++) {
-    valueArray.push(getParameterValueForStudent(studentID, assignmentID, parameterNameArr[i], parameterTypeArr[i], parameterConstructArr[i]));
-  }
-
-  //Writing the template to file to do generation
-  console.log("Generating template invocation");
-  fs.writeFileSync(process.cwd()+'/description.py.dna',descriptionString, 'utf8');
-
-  //Executing generation with inputs
-  console.log('Starting on generation')
-  var pythonExec = require('python-shell');
-  var argsList = ['description.py.dna'];
-  for(var j = 0; j < valueArray.length; j++) {
-    argsList.push(valueArray[j]);
-  }
-  var options = {
-    args: argsList
-  }
-  console.log("Generation args: " + JSON.stringify(options));
-  console.log('Generation args taken.');
-  pythonExec.run('/ribosome.py', options, function (err, results) {
-    if (err) {
-      console.log(err);
-      response.send('Something went wrong inside the system. Contact your lecturer for further queries. ERROR STEP 2');
+        //Executing generation with inputs
+        console.log('Starting on generation')
+        var pythonExec = require('python-shell');
+        var argsList = ['description.py.dna'];
+        /*for(var j = 0; j < valueArray.length; j++) {
+          argsList.push(valueArray[j]);
+        }*/
+        var options = {
+          args: argsList
+        }
+        console.log("Generation args: " + JSON.stringify(options));
+        console.log('Generation args taken.');
+        pythonExec.run('/ribosome.py', options, function (err, results) {
+          if (err) {
+            console.log(err);
+            response.status(500).send(`Error from unique-assignment service: ${err}.`);
+          }
+          else {
+            console.log('results: %j', results);
+            console.log(`Sent description for assignment with id: ${assignmentID}, for student with id: ${studentID}`);
+            response.send(results.join("\n"));
+          }
+        });
+      }
     }
-    else {
-      console.log('results: %j', results);
-      console.log(`Sent description for assignment with id: ${assignmentID}, for student with id: ${studentID}`);
-      response.send(results[0]);
-    }
-  });
+  );
 }
 
-function getParameterValueForStudent(studentID, assignmentID, paramName, paramType, paramConstruct) {
+function getParameterValueForStudent(valueArray, studentID, assignmentID, paramName, paramType, paramConstruct, callback) {
   console.log (`Finding value for parameter ${paramName} : ${paramType}[${paramConstruct}].`);
 
   console.log(`Starting with db lookup.`);
   var sql = `SELECT param_value FROM generated_parameters WHERE assign_id = ${assignmentID} and std_id = ${studentID} and param_name = "${paramName}"`;
-  var value = null;
   dbcon.query(sql, function (err, rows, result) {
     if (err) {
       console.log(err);
+      callback(err);
+      return;
     }
     else {
       if (rows.length == 0) {
@@ -103,43 +103,45 @@ function getParameterValueForStudent(studentID, assignmentID, paramName, paramTy
           var min = parameterBufferArray[0];
           var max = parameterBufferArray[1];
           if(paramType == 'int') {
-            value = parseInt(Math.random() * (max - min) + min);
+            valueArray[paramName] = parseInt(Math.random() * (max - min) + min);
           }
           else {
-            value = Math.random() * (max - min) + min;
+            valueArray[paramName] = Math.random() * (max - min) + min;
           }
         }
         else if(paramType == 'string') {
           console.log("Found string type");
           var max = parameterBufferArray.length - 1;
-          value = parameterBufferArray[parseInt(Math.random() * (max - 0) + 0)];
+          valueArray[paramName] = parameterBufferArray[parseInt(Math.random() * (max - 0) + 0)];
         }
         else if(paramType == 'boolean') {
           console.log ("Found boolean type.");
           var ref = Math.random() % 2;
           if (ref == 0) {
-            value = true;
+            valueArray[paramName] = true;
           }
           else {
-            value = false;
+            valueArray[paramName] = false;
           }
         }
 
-        console.log (`Pushing new value ${value} into database.`);
+        console.log (`Pushing new value ${valueArray[paramName]} into database.`);
         sql = "INSERT INTO generated_parameters (assign_id, std_id, param_name, param_value) VALUES (?)";
-        var values = [assignmentID,studentID,paramName,value];
+        var values = [assignmentID,studentID,paramName,valueArray[paramName]];
         dbcon.query(sql, [values], function (err, result) {
           if (err) {
             console.log(err);
-            value = null;
+            callback(err);
+            valueArray[paramName] = null;
+          } else {
+            callback();
           }
         });
       }
       else {
-        value = rows[0].param_value;
+        valueArray[paramName] = rows[0].param_value;
+        callback();
       }
     }
   });
-
-  return value;
 }
