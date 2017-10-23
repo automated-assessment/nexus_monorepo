@@ -2,10 +2,7 @@ import { mysql, dbcon } from './db_mgr';
 import async from 'async';
 import forEachOf from 'async/eachOf';
 
-var childProcess = require('child_process');
 var fs = require('fs');
-var cors = require('cors');
-var wait = require('wait.for');
 
 export function desc_gen_handler (request, response) {
   var studentID = request.body.studentid;
