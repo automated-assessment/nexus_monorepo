@@ -51,7 +51,7 @@ app.post('/check-educator-code', function(req, res) {
 	var dataFilesArray = req.body.filesArray;
 	var aid = req.body.assignmentId;
 	var sid = req.body.studentId;
-	
+
 	var objToReturn = {
 		compiled: {
 			bool: true,
@@ -71,10 +71,10 @@ app.post('/check-educator-code', function(req, res) {
 
 	//Get All Files with .extension Java
 	var childFind = execSync('find . -name "*.java" > sources.txt', { cwd: path });
-	
+
 	//Compile source (path) using SpawnSync
 	objToReturn = compileAllSources(path,objToReturn);
-	
+
 	//Request generation of inputs and outputs from UAT
 	if (req.body.isUnique == "true") {
 
@@ -96,13 +96,17 @@ app.post('/check-educator-code', function(req, res) {
 			  body
 		};
 		console.log("Sending request to get generated inputs and outputs for assignment with id: " + aid);
-		
+
 		requestPromise(requestOptions)
 			.then(function(body) {
 				//Evaluate main source with generated input/output
-			
-				objToReturn = executeEducatorCode(body.generatedInputs, body.generatedOutputs, dataFilesArray[0], path, objToReturn);
-				
+
+        // Extract different generated bits
+        var generatedInputs = body.generated.slice(0, input.length);
+        var generatedOutputs = body.generated.slice (input.length, 2 * input.length);
+
+				objToReturn = executeEducatorCode(generatedInputs, generatedOutputs, dataFilesArray[0], path, objToReturn);
+
 				//Save in DB if ok
 				if (objToReturn.allPassed == true) {
 					//Insert in DB
@@ -119,7 +123,7 @@ app.post('/check-educator-code', function(req, res) {
 				} else {
 					//Do nothing
 				}
-				//Delete Files (java + class) 
+				//Delete Files (java + class)
 				deleteFolder(path);
 				res.json(objToReturn);
 			})
@@ -128,10 +132,10 @@ app.post('/check-educator-code', function(req, res) {
 			});
 	}
 	else { //Normal execution if the assignment is not unique
-		
+
 		//Evaluate main source
 		objToReturn = executeEducatorCode(input, output, dataFilesArray[0], path, objToReturn);
-		
+
 		//Save in DB if ok
 		if (objToReturn.allPassed == true) {
 			//Insert in DB
@@ -148,7 +152,7 @@ app.post('/check-educator-code', function(req, res) {
 		} else {
 			//Do nothing
 		}
-		//Delete Files (java + class) 
+		//Delete Files (java + class)
 		deleteFolder(path);
 		res.json(objToReturn);
 	}
@@ -196,7 +200,7 @@ app.post('/check-educator-code-no-input-no-output', function(req,res) {
 	var rawPath = RAW_PATH + '/';
 	var dataFilesArray = req.body.dataFilesArray;
 	var id = req.body.id;
-	
+
 	var objToReturn = {
 		compiled: {
 			bool: false,
@@ -217,7 +221,7 @@ app.post('/check-educator-code-no-input-no-output', function(req,res) {
 
 	//Get All Files with .extension Java
 	var childFind = execSync('find . -name "*.java" > sources.txt', { cwd: path });
-	
+
 	//Compile source (path) using SpawnSync
 	objToReturn = compileAllSources(path,objToReturn);
 
@@ -227,8 +231,8 @@ app.post('/check-educator-code-no-input-no-output', function(req,res) {
 		res.json(objToReturn);
 	} else {
 		res.json(objToReturn);
-	} 
-	//Delete Files (java + class) 
+	}
+	//Delete Files (java + class)
 	deleteFolder(path);
 });
 
@@ -296,7 +300,7 @@ app.post('/check-educator-code-io-input-output', function(req,res) {
 	var descriptionArray = req.body.descriptionArray;
 	var dictionariesArray = req.body.dictionariesArray;
 	var dataFilesArray = req.body.dataFilesArray;
-	
+
 	//Obtain the proper output to compare
 	for (var j = 0; j < correctOutputArray.length; ++j) {
 		for (var i = 0; i < dictionariesArray.length; ++i) {
@@ -325,7 +329,7 @@ app.post('/check-educator-code-io-input-output', function(req,res) {
 
 	//Get All Files with .extension Java
 	var childFind = execSync('find . -name "*.java" > sources.txt', { cwd: path });
-	
+
 	//Compile source (path) using SpawnSync
 	objToReturn = compileAllSources(path,objToReturn);
 
@@ -337,10 +341,10 @@ app.post('/check-educator-code-io-input-output', function(req,res) {
 	} else {
 		res.json(objToReturn);
 	}
-	//Delete Files (java + class) 
+	//Delete Files (java + class)
 	deleteFolder(path);
 
-	
+
 
 });
 ///////////////////////////////////////////EDUCATOR HTTP Requests: END////////////////////////////
@@ -348,7 +352,7 @@ app.post('/check-educator-code-io-input-output', function(req,res) {
 ///////////////////////////////////////////STUDENT HTTP Requests: BEGIN////////////////////////////
 
 app.post('/mark', function(req, res) {
-    
+
     var bodyToSend = {
         mark: 0
     };
@@ -376,7 +380,7 @@ app.post('/mark', function(req, res) {
 	var rawPath = RAW_PATH + "/";
     var path = rawPath + userKNumber;
     var pathAssingment = path + "/" + assignmentName;
-	
+
 	var studentDataFilesArray = [];
 
     //Create the Testing environment Folder
@@ -389,7 +393,7 @@ app.post('/mark', function(req, res) {
 
     //Get All Files with .extension Java
 	var childFind = execSync('find . -name "*.java" > sources.txt', { cwd: pathAssingment });
-	
+
 	//Trying to fetch student submission as fileArray
 	studentFileNames = fs.readFileSync(pathAssingment + '/sources.txt', "utf8").toString().split("\n");
 	var fileString = "";
@@ -402,10 +406,10 @@ app.post('/mark', function(req, res) {
 			class_name: classNameString
 		});
 	}
-    
+
     //Comopile All Sources from repo
 	objToReturn = compileAllSources(pathAssingment,objToReturn);
-	
+
 	//Search for assignment in db
 	dbAssignments.assignments.findOne({aid : objDb.aid.toString()}, function(err, docs) {
 		if (err) {
@@ -436,10 +440,15 @@ app.post('/mark', function(req, res) {
 				requestPromise(requestOptions)
 					.then(function(body) {
 						//Evaluate main source with generated input/output
-					
-						//Run and compare results	
-						objToReturn = executeStudentCode(body.generatedInputs, body.generatedOutputs, body.generatedFeedback, studentDataFilesArray[0].class_name, pathAssingment, objToReturn);
-					
+
+            // Extract different generated bits
+            var generatedInputs = body.generated.slice(0, input.length);
+            var generatedOutputs = body.generated.slice (input.length, 2 * input.length);
+            var generatedFeedback = body.generated.slice (2 * input.length, 3 * input.length);
+
+						//Run and compare results
+						objToReturn = executeStudentCode(generatedInputs, generatedOutputs, generatedFeedback, studentDataFilesArray[0].class_name, pathAssingment, objToReturn);
+
 						//Delete repo from Testing environment
 						deleteFolder(pathAssingment);
 
@@ -456,10 +465,10 @@ app.post('/mark', function(req, res) {
 							bodyF = '<div class="javac-feedback"><p class="text-info" style="color:green"><b><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>All tests passed correctly. Congrats!</b></p></div>';
 						} else {
 							bodyF = '<div class="javac-feedback">';
-							for (var i = 0; i < body.generatedFeedback.length; ++i) {
+							for (var i = 0; i < generatedFeedback.length; ++i) {
 								if (objToReturn.resultsArray[i].passed == false && objToReturn.resultsArray[i].error == false) {
 									bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Failed</label></p>';
-									bodyF += '<p class="text-info"><i>' + body.generatedFeedback[i] + '</i></p>'; 
+									bodyF += '<p class="text-info"><i>' + generatedFeedback[i] + '</i></p>';
 								} else if (objToReturn.resultsArray[i].passed == true && objToReturn.resultsArray[i].error == false){
 									bodyF += '<p class="text-info" style="color:green"><label><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Passed</label></p>';
 								} else {
@@ -467,7 +476,7 @@ app.post('/mark', function(req, res) {
 								}
 							}
 							bodyF += '</div>';
-						}	
+						}
 						res.status(200).send('OK!');
 						sendRequest(urlF, {body: bodyF});
 					})
@@ -476,7 +485,7 @@ app.post('/mark', function(req, res) {
 					});
 			}
 			else {
-				//Run and compare results	
+				//Run and compare results
 				objToReturn = executeStudentCode(docs.inputArray, docs.outputArray, docs.feedbackArray, docs.dataFilesArray[0].class_name, pathAssingment, objToReturn);
 
 				//Delete repo from Testing environment
@@ -498,7 +507,7 @@ app.post('/mark', function(req, res) {
 					for (var i = 0; i < docs.feedbackArray.length; ++i) {
 						if (objToReturn.resultsArray[i].passed == false && objToReturn.resultsArray[i].error == false) {
 							bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Failed</label></p>';
-							bodyF += '<p class="text-info"><i>' + docs.feedbackArray[i] + '</i></p>'; 
+							bodyF += '<p class="text-info"><i>' + docs.feedbackArray[i] + '</i></p>';
 						} else if (objToReturn.resultsArray[i].passed == true && objToReturn.resultsArray[i].error == false){
 							bodyF += '<p class="text-info" style="color:green"><label><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Passed</label></p>';
 						} else {
@@ -506,7 +515,7 @@ app.post('/mark', function(req, res) {
 						}
 					}
 					bodyF += '</div>';
-				}	
+				}
 				res.status(200).send('OK!');
 				sendRequest(urlF, {body: bodyF});
 			}
@@ -517,27 +526,27 @@ app.post('/mark', function(req, res) {
 
 //////////////////////////////////////////Functions to run for Evaluation
 function cloneGitRepo(url, pathToClone, sha) {
-	var gitClone = spawnSync('git', ['clone', url], 
+	var gitClone = spawnSync('git', ['clone', url],
 		{
 			cwd:pathToClone,
 			timeout:2000
 		});
-	
+
 	if (!(gitClone.status == 0)) {
 		//get errors to the user
 		if (!(gitClone.error == null)) {
 			console.log(gitClone.error);
 		} else if (!(gitClone.stderr.toString() == "")) {
 			console.log(gitClone.stderr.toString());
-		} 
+		}
 		else {
 			console.log("Unknown Error");
 		}
 	} else {
 		console.log("Done");
 	}
-	
-	var gitReset = spawnSync('git', ['reset', '--hard', sha], 
+
+	var gitReset = spawnSync('git', ['reset', '--hard', sha],
 		{
 			cwd:pathToClone + "/" + url.substring(url.indexOf('assignment'), url.indexOf('.git')),
 			timeout:2000
@@ -547,7 +556,7 @@ function cloneGitRepo(url, pathToClone, sha) {
 			console.log(gitReset.error);
 		} else if (!(gitReset.stderr.toString() == "")) {
 			console.log(gitReset.stderr.toString());
-		} 
+		}
 		else {
 			console.log("Unknown Error in SHA");
 		}
@@ -565,15 +574,15 @@ function createFiles(dataFilesArray, extension, userId) {
 
 function deleteFolder(path) {
 	try {
-		var childRemove = execSync('rm -r ' + path, {timeout: 60000 });	
+		var childRemove = execSync('rm -r ' + path, {timeout: 60000 });
 	} catch(err) {
 		console.log("Delete folder err: " + err);
-	}	
+	}
 }
 
 function compileAllSources(path, objToReturn) {
 	try {
-		var childJavac = execSync('javac -Xlint:all @sources.txt 2>&1', { cwd: path, timeout: 60000 });	
+		var childJavac = execSync('javac -Xlint:all @sources.txt 2>&1', { cwd: path, timeout: 60000 });
 		objToReturn.compiled = true;
 		objToReturn.error = "";
 	} catch (error) {
@@ -587,9 +596,9 @@ function executeNiNoEducatorCode(dataFileArray, path, objToReturn){
 	var className = dataFileArray.class_name;
 	//To execute for every single test provided by the educator
 	var javaExecute = spawnSync('java', [className], {
-		cwd: path, 
+		cwd: path,
 		timeout:2000
-	}); 
+	});
 
 	if (!(javaExecute.status == 0)) {
 		//get errors to the user
@@ -632,9 +641,9 @@ function executeEducatorCode(arrayOfInput, arrayOfOutput, dataFileArray, path, o
 
 		var javaExecute = spawnSync('java', [className], {
 			input: inputTest,
-			cwd: path, 
+			cwd: path,
 			timeout:2000
-		}); 
+		});
 
 		if (!(javaExecute.status == 0)) {
 		//get errors to the user
@@ -697,13 +706,13 @@ function executeStudentCode(arrayOfInput, arrayOfOutput, arrayOfFeedback, mainCl
 
 		var javaExecute = spawnSync('java', [className], {
 			input: inputTest,
-			cwd: path, 
+			cwd: path,
 			timeout:2000
-		}); 
-		
+		});
+
 		if (!(javaExecute.status == 0)) {
 		//get errors to the user
-			
+
 			if (!(javaExecute.error == null)) {
 				objToReturn.resultsArray[i] = {
 					error: true,
@@ -726,7 +735,7 @@ function executeStudentCode(arrayOfInput, arrayOfOutput, arrayOfFeedback, mainCl
 		} else {
 			// No Errors Branch
 			// Compare user's input with educator's input and provide feedback
-			
+
 			if (arrayOfOutput[i].localeCompare(javaExecute.stdout.toString()) == 0) {
 				objToReturn.resultsArray[i] = {
 					error: false,
@@ -771,5 +780,5 @@ function sendRequest(url, body) {
 	request(requestOptions, function(err, res, body) {
 		console.log("Request sending err: " + err);
 		// console.log(JSON.stringify(res));
-	});	
+	});
 }
