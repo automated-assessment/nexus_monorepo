@@ -48,5 +48,7 @@ module Fyp
     config.ghe_user = ENV['NEXUS_GITHUB_USER']
     config.ghe_password = ENV['NEXUS_GITHUB_TOKEN']
     config.ghe_org = ENV['NEXUS_GITHUB_ORG'] || 'ppa-dev'
+    config.uat_host = ENV['NEXUS_UAT_HOST'] || 'http://unique-assignment-tool'
+    config.uat_port = ENV['NEXUS_UAT_PORT'] || 3009
   end
 end
