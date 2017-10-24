@@ -1,9 +1,134 @@
 import { mysql, dbcon } from './db_mgr';
 import async from 'async';
 import forEachOf from 'async/eachOf';
+import series from 'async/series';
 
 var fs = require('fs');
 
+/**
+ * Handle generation of a description for an assignment.
+ */
+export function desc_gen_handler (request, response) {
+  var studentID = request.body.studentid;
+	var assignmentID = request.body.aid;
+	var descriptionString = request.body.description_string;
+
+  console.log(`Request for generating description for assignment with id: ${assignmentID}, for student with id: ${studentID}`);
+  do_generate(response, studentID, assignmentID, [descriptionString]);
+}
+
+/**
+ * Generate code from each of the templates, using the variable values for the
+ * given student and assignment.
+ */
+function do_generate (response, studentID, assignmentID, templates) {
+  // Hash storing the variables and their values
+  var variableValues = {};
+  // Array storing the results, one per template
+  var results = new Array();
+  async.series([
+    (cb) => {
+      // Get variable values
+      getVariableValuesFor (variableValues, studentID, assignmentID, cb);
+    },
+    (cb) => {
+      // Generate from each template
+      async.forEachOf (templates,
+        (template, index, cb2) => {
+          do_generate_one (results, template, index, variableValues, cb2);
+        },
+        (err) => {
+          cb(err);
+        }
+      );
+    }
+  ],
+  (err, res) => {
+    if (err) {
+      response.status(500).send(`Error from unique-assignment service: ${err}.`);
+    } else {
+      console.log("About to send generation results back to Nexus: %j.", results);
+      response.status(200).send(JSON.stringify({generated: results}));
+    }
+  });
+}
+
+/**
+ * Get the values for all variables for the given assignment and student,
+ * either from the database or by generating them for the first time and store
+ * them in variableValues.
+ */
+function getVariableValuesFor (variableValues, studentID, assignmentID, cb) {
+  //Fetch  variable definitions for particular assignment
+  console.log(`Fetching variable definitions for ${assignmentID} from database.`);
+
+  // FIXME: SQL Injection
+	var sql = `SELECT param_name,param_type,param_construct FROM parameters WHERE assign_id = ${assignmentID};`;
+	dbcon.query(sql, (err, rows, result) => {
+    if (err) {
+      cb(err);
+    } else {
+      console.log(`Getting variable values for student ${studentID}.`);
+      async.forEachOf(rows,
+        (row, index, cb) => {
+          getParameterValueForStudent(variableValues, studentID, assignmentID, row.param_name, row.param_type, row.param_construct, cb);
+        },
+        (err) => { cb(err); });
+    }
+  });
+}
+
+/**
+ * Generate from the given template and store the result in gen_results at index
+ * index.
+ */
+function do_generate_one (gen_results, template, index, valueArray, cb) {
+  var varInits = "";
+  for(var varName in valueArray){
+    // FIXME: Need to consider whether the variable is a string, in which case it may need quote marks. Probably actually best done when we put the value into the hash.
+    varInits += `${varName} = ${valueArray[varName]};\n`;
+  }
+  template = varInits + template;
+  console.log(`Prepared runnable template: "${template}".`);
+
+  //Writing the template to file to do generation
+  console.log("Generating template invocation");
+  // FIXME: Generate to separate directories / files to avoid overwriting when handling multiple requests in parallel
+  fs.writeFileSync(process.cwd()+'/template.py.dna', template, 'utf8');
+
+  //Executing generation with inputs
+  console.log('Starting on generation')
+  // TODO: Move this to imports on the top
+  var pythonExec = require('python-shell');
+  var argsList = ['template.py.dna'];
+  /*for(var j = 0; j < valueArray.length; j++) {
+    argsList.push(valueArray[j]);
+  }*/
+  var options = {
+    args: argsList
+  }
+  console.log("Generation args: " + JSON.stringify(options));
+  console.log('Generation args taken.');
+  pythonExec.run('/ribosome.py', options, function (err, results) {
+    if (err) {
+      cb(err);
+    }
+    else {
+      console.log('results: %j', results);
+      console.log(`Storing at index ${index}.`);
+      gen_results[index] = results.join("\n");
+      console.log(`Stored as: ${gen_results[index]}.`);
+      /*
+      console.log(`Sent description for assignment with id: ${assignmentID}, for student with id: ${studentID}`);
+      response.send(results.join("\n"));
+      */
+      cb();
+    }
+  });
+}
+
+/*
+// Handle generation of a description for an assignment.
 export function desc_gen_handler (request, response) {
   var studentID = request.body.studentid;
 	var assignmentID = request.body.aid;
@@ -24,6 +149,7 @@ export function desc_gen_handler (request, response) {
     }
   });
 }
+*/
 
 function process_variables (response, rows, studentID, assignmentID, descriptionString) {
   // Start by figuring out values for each variable for this student
