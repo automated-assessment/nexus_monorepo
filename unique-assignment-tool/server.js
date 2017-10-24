@@ -1,4 +1,4 @@
-import { desc_gen_handler } from './request_handlers';
+import { desc_gen_handler, grader_gen_handler } from './request_handlers';
 
 var express = require('express');
 var sleeper = require('sleep');
@@ -126,7 +126,7 @@ app.post('/param_upload_finish', jsonParser, function (request, response) {
 
 app.post('/desc_gen', jsonParser, desc_gen_handler);
 
-app.post('/grader_gen', jsonParser, io_gen_handler);
+app.post('/grader_gen', jsonParser, grader_gen_handler);
 
 app.listen(port, function () {
     console.log('UAT listening on port: ' + port);
