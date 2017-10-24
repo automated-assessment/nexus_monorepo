@@ -90,6 +90,8 @@ app.controller('ConfigCtrl', function($scope, $http, $location, toastr){
 			//TODO HTTP Request
 			var obj = {
 				assignmentId: $location.search().aid.toString(),
+				studentId: $location.search().sid.toString(),
+				isUnique: $location.search().isUnique.toString(),
 				input : th.inputArray,
 				output : th.outputArray,
 				description : th.descriptionArray,
