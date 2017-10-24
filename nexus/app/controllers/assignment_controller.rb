@@ -117,7 +117,6 @@ class AssignmentController < ApplicationController
     @assignment = return_assignment!
     if @assignment
       if @assignment.update_attributes(assignment_params)
-        @assignment.description_string = @assignment.description
         flash[:success] = 'Assignment updated'
         redirect_to @assignment
       else

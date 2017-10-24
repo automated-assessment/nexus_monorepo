@@ -61,10 +61,10 @@ class Assignment < ActiveRecord::Base
     "#{submissions.where(user: u).where.not(mark: nil).reorder(mark: :desc).first.mark}%"
   end
 
-  def displayable_description
+  def displayable_description(for_user)
     return description unless is_unique
 
-    return generated_description if generated_description
+    return @generated_description if @generated_description
 
     Rails.logger.info 'Assignment is unique, requesting generation for description'
 
@@ -76,7 +76,7 @@ class Assignment < ActiveRecord::Base
 
       req.body = {
         aid: id,
-        studentid: current_user.id,
+        studentid: for_user.id,
         is_unique: true,
         description_string: description
       }.to_json
@@ -85,14 +85,14 @@ class Assignment < ActiveRecord::Base
       Rails.logger.info res.body
       if res.code =~ /2../
         Rails.logger.info 'Success generating description for unique assignment'
-        generated_description = (JSON.parse res.body)['generated'][0]
+        @generated_description = (JSON.parse res.body)['generated'][0]
       else
         Rails.logger.info 'Error generating description for unique assignment'
-        generated_description = 'ERROR: Error on generation of description. Get in contact with your lecturer for further details.'
+        @generated_description = 'ERROR: Error on generation of description. Get in contact with your lecturer for further details.'
       end
     end
 
-    generated_description
+    @generated_description
   end
 
   def log(body, level = 'info')

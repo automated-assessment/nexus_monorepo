@@ -53,7 +53,7 @@ class SendSubmissionJob < ActiveJob::Base
       sid: @submission.id,
       aid: @submission.assignment.id,
       is_unique: @submission.assignment.is_unique,
-      description_string: @submission.assignment.description_string,
+      description_string: (@submission.assignment.displayable_description @submission.user.id),
       cloneurl: @submission.augmented_clone_url,
       branch: @submission.gitbranch,
       sha: @submission.commithash,
