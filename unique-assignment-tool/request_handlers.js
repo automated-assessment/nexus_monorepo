@@ -45,6 +45,7 @@ function do_generate (response, studentID, assignmentID, templates) {
   ],
   (err, res) => {
     if (err) {
+      console.log(`Error generating: ${err}.`);
       response.status(500).send(`Error from unique-assignment service: ${err}.`);
     } else {
       console.log("About to send generation results back to Nexus: %j.", results);
@@ -115,96 +116,18 @@ function do_generate_one (gen_results, template, index, valueArray, cb) {
     }
     else {
       console.log('results: %j', results);
-      console.log(`Storing at index ${index}.`);
       gen_results[index] = results.join("\n");
-      console.log(`Stored as: ${gen_results[index]}.`);
-      /*
-      console.log(`Sent description for assignment with id: ${assignmentID}, for student with id: ${studentID}`);
-      response.send(results.join("\n"));
-      */
       cb();
     }
   });
 }
 
-/*
-// Handle generation of a description for an assignment.
-export function desc_gen_handler (request, response) {
-  var studentID = request.body.studentid;
-	var assignmentID = request.body.aid;
-	var descriptionString = request.body.description_string;
-
-  console.log(`Request for generating description for assignment with id: ${assignmentID}, for student with id: ${studentID}`);
-
-  //Fetching variables for particular assignment
-  console.log("Fetching variables from database");
-	var sql = `SELECT param_name,param_type,param_construct FROM parameters WHERE assign_id = ${assignmentID};`;
-	dbcon.query(sql, (err, rows, result) => {
-    if (err) {
-      console.log(`Couldn't read variables from database for assignment ${assignmentID}: ${err}.`);
-      response.status(500).send(`Error from unique-assignment service: ${err}.`);
-    }
-    else {
-      process_variables(response, rows, studentID, assignmentID, descriptionString);
-    }
-  });
-}
-*/
-
-function process_variables (response, rows, studentID, assignmentID, descriptionString) {
-  // Start by figuring out values for each variable for this student
-  console.log("Getting variables and their values.");
-  var valueArray = {};
-  async.forEachOf(rows,
-    (row, index, cb) => {
-      getParameterValueForStudent(valueArray, studentID, assignmentID, row.param_name, row.param_type, row.param_construct, cb);
-    },
-    (err) => {
-      if (err) {
-        response.status(500).send(`Error from unique-assignment service: ${err}.`);
-      }
-      else {
-        // valueArray now is a hash from param names to their values
-        var varInits = "";
-        for(var varName in valueArray){
-          // FIXME: Need to consider whether the variable is a string, in which case it may need quote marks. Probably actually best done when we put the value into the hash.
-          varInits += `${varName} = ${valueArray[varName]};\n`;
-        }
-        descriptionString = varInits + descriptionString;
-        console.log(`Prepared runnable template: "${descriptionString}".`);
-
-        //Writing the template to file to do generation
-        console.log("Generating template invocation");
-        fs.writeFileSync(process.cwd()+'/description.py.dna',descriptionString, 'utf8');
-
-        //Executing generation with inputs
-        console.log('Starting on generation')
-        var pythonExec = require('python-shell');
-        var argsList = ['description.py.dna'];
-        /*for(var j = 0; j < valueArray.length; j++) {
-          argsList.push(valueArray[j]);
-        }*/
-        var options = {
-          args: argsList
-        }
-        console.log("Generation args: " + JSON.stringify(options));
-        console.log('Generation args taken.');
-        pythonExec.run('/ribosome.py', options, function (err, results) {
-          if (err) {
-            console.log(err);
-            response.status(500).send(`Error from unique-assignment service: ${err}.`);
-          }
-          else {
-            console.log('results: %j', results);
-            console.log(`Sent description for assignment with id: ${assignmentID}, for student with id: ${studentID}`);
-            response.send(results.join("\n"));
-          }
-        });
-      }
-    }
-  );
-}
-
+/**
+ * Get the value of parameter paramName of type paramType (with initialisation
+ * paramConstruct) for the given student and assignment. Store it in hash
+ * valueArray under the key paramName. Call callback when done or when an error
+ * has occurred.
+ */
 function getParameterValueForStudent(valueArray, studentID, assignmentID, paramName, paramType, paramConstruct, callback) {
   console.log (`Finding value for parameter ${paramName} : ${paramType}[${paramConstruct}].`);
 
