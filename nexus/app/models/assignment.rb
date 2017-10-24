@@ -61,6 +61,40 @@ class Assignment < ActiveRecord::Base
     "#{submissions.where(user: u).where.not(mark: nil).reorder(mark: :desc).first.mark}%"
   end
 
+  def displayable_description
+    return description unless is_unique
+
+    return generated_description if generated_description
+
+    Rails.logger.info 'Assignment is unique, requesting generation for description'
+
+    # FIXME: Make this configurable
+    uri = URI.parse('http://unique-assignment-tool:3009/desc_gen')
+
+    Net::HTTP.start(uri.host, uri.port) do |http|
+      req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
+
+      req.body = {
+        aid: id,
+        studentid: current_user.id,
+        is_unique: true,
+        description_string: description
+      }.to_json
+
+      res = http.request(req)
+      Rails.logger.info res.body
+      if res.code =~ /2../
+        Rails.logger.info 'Success generating description for unique assignment'
+        generated_description = (JSON.parse res.body)['generated'][0]
+      else
+        Rails.logger.info 'Error generating description for unique assignment'
+        generated_description = 'ERROR: Error on generation of description. Get in contact with your lecturer for further details.'
+      end
+    end
+
+    generated_description
+  end
+
   def log(body, level = 'info')
     AuditItem.create!(assignment: self,
                       body: body,

@@ -68,7 +68,6 @@ class AssignmentController < ApplicationController
 
   def create
     @assignment = Assignment.new(assignment_params)
-    @assignment.description_string = @assignment.description
     unless @assignment.save
       error_flash_and_cleanup!(@assignment.errors.full_messages[0])
       return
@@ -198,7 +197,6 @@ class AssignmentController < ApplicationController
                                        :deadline,
                                        :allow_late,
                                        :is_unique,
-                                       :description_string,
                                        :feedback_only,
                                        :late_cap,
                                        :latedeadline,
@@ -211,38 +209,8 @@ class AssignmentController < ApplicationController
                                        marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :condition, :_destroy])
   end
 
-  # FIXME: Remove unique-assignment-tool call here and move it into Assignment model. Also don't store description_string in db.
   def return_assignment!
     assignment = Assignment.find_by(id: params[:id])
-    if (caller[0].index("edit") != nil)
-      assignment.description = assignment.description_string
-    elsif (assignment.is_unique == true)
-      Rails.logger.info 'Assignment is unique, requesting generation for description'
-
-      uri = URI.parse('http://unique-assignment-tool:3009/desc_gen')
-
-      Net::HTTP.start(uri.host, uri.port) do |http|
-        req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
-
-        req.body = {
-          aid: assignment.id,
-          studentid: current_user.id,
-          is_unique: assignment.is_unique,
-          description_string: assignment.description_string
-        }.to_json
-
-        res = http.request(req)
-        Rails.logger.info res.body
-        if res.code =~ /2../
-          Rails.logger.info 'Success on generating description for unique assignment'
-          assignment.description = (JSON.parse res.body)['generated'][0]
-        else
-          Rails.logger.info 'Error on generating description for unique assignment'
-          assignment.description = 'ERROR: Error on generation of description. Get in contact with your lecturer for further details.'
-        end
-      end
-    end
-    Rails.logger.info 'Done if-else check on unique assignment check'
     Rails.logger.info assignment
     unless assignment
       flash.now[:error] = "Assignment #{params[:id]} does not exist"
