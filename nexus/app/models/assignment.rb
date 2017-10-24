@@ -68,7 +68,7 @@ class Assignment < ActiveRecord::Base
 
     Rails.logger.info 'Assignment is unique, requesting generation for description'
 
-    uri = URI.parse("#{Rails.configuration.uat_host}:#{Rails.configuration.uat_port}/desc_gen")
+    uri = URI.parse("http://#{Rails.configuration.uat_host}:#{Rails.configuration.uat_port}/desc_gen")
 
     Net::HTTP.start(uri.host, uri.port) do |http|
       req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
