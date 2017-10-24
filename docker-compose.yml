@@ -17,6 +17,8 @@ services:
     environment:
       RABBIT_MQ_HOST: rabbitmq
       DOCKER: 1
+      NEXUS_UAT_HOST: unique-assignment-tool
+      NEXUS_UAT_PORT: 3009
     ports:
       - "3000:3000"
     logging:
@@ -55,6 +57,9 @@ services:
     env_file: .env.list
     environment:
       RABBIT_MQ_HOST: rabbitmq
+      DOCKER: 1
+      NEXUS_UAT_HOST: unique-assignment-tool
+      NEXUS_UAT_PORT: 3009
     logging:
       driver: syslog
       options:
