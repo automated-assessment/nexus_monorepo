@@ -5,6 +5,32 @@ import series from 'async/series';
 
 var fs = require('fs');
 
+const accessToken = process.env.NEXUS_ACCESS_TOKEN;
+if (!process.env.NEXUS_ACCESS_TOKEN) {
+  console.log('Error: Specify NEXUS_ACCESS_TOKEN in environment');
+  process.exit(1);
+}
+
+// FIXME: This should become a general tool handler
+export function io_gen_handler (request, response) {
+  console.log('Unique assignment i/o generation request received.')
+  if(request.headers["nexus-access-token"] == accessToken) {
+    var studentID = request.body.sid;
+    var assignmentID = request.body.aid;
+    var inputs = request.body.inputs;
+    var outputs = request.body.outputs;
+    var feedback = request.body.feedback;
+
+    console.log(`Request for generation to mark assignment ${assignmentID}, for student with id: ${studentID}.`);
+    // FIXME: This requires changes to io-tool's processing of the data returned
+    do_generate(response, studentID, assignmentID, inputs.concat(outputs).concat(feedback));
+  }
+  else {
+    console.log(`Token error. The token: ${request.headers["nexus-access-token"]}.`);
+    response.status(500).send('Invalid token!');
+  }
+}
+
 /**
  * Handle generation of a description for an assignment.
  */
