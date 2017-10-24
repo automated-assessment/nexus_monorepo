@@ -211,6 +211,7 @@ class AssignmentController < ApplicationController
                                        marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :condition, :_destroy])
   end
 
+  # FIXME: Remove unique-assignment-tool call here and move it into Assignment model. Also don't store description_string in db.
   def return_assignment!
     assignment = Assignment.find_by(id: params[:id])
     if (caller[0].index("edit") != nil)
@@ -234,7 +235,7 @@ class AssignmentController < ApplicationController
         Rails.logger.info res.body
         if res.code =~ /2../
           Rails.logger.info 'Success on generating description for unique assignment'
-          assignment.description = res.body
+          assignment.description = (JSON.parse res.body)['generated'][0]
         else
           Rails.logger.info 'Error on generating description for unique assignment'
           assignment.description = 'ERROR: Error on generation of description. Get in contact with your lecturer for further details.'
