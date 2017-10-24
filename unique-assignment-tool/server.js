@@ -126,7 +126,7 @@ app.post('/param_upload_finish', jsonParser, function (request, response) {
 
 app.post('/desc_gen', jsonParser, desc_gen_handler);
 
-app.post('/io_gen', jsonParser, io_gen_handler);
+app.post('/grader_gen', jsonParser, io_gen_handler);
 
 app.listen(port, function () {
     console.log('UAT listening on port: ' + port);

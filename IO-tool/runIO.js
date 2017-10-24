@@ -78,13 +78,11 @@ app.post('/check-educator-code', function(req, res) {
 	//Request generation of inputs and outputs from UAT
 	if (req.body.isUnique == "true") {
 
-		const reqUrl = `${UAT_URL}/io_gen`;
+		const reqUrl = `${UAT_URL}/grader_gen`;
 		const body = {
 			sid: sid,
 			aid: aid,
-			inputs: input,
-			outputs: output,
-			feedback: feedback,
+			templates: input.concat(output).concat(feedback),
 		};
 		var requestOptions = {
 			  uri: reqUrl,
@@ -418,13 +416,11 @@ app.post('/mark', function(req, res) {
 			if (req.body.is_unique == 1) {
 				//Request for generation of io in template syntax START
 
-				const reqUrl = `${UAT_URL}/io_gen`;
+				const reqUrl = `${UAT_URL}/grader_gen`;
 				const body = {
 					sid: req.body.studentuid,
 					aid: req.body.aid,
-					inputs: docs.inputArray,
-					outputs: docs.outputArray,
-					feedback: docs.feedbackArray
+          templates: docs.inputArray.concat(docs.outputArray).concat(docs.feedbackArray),
 				};
 				var requestOptions = {
 					  uri: reqUrl,
@@ -442,9 +438,9 @@ app.post('/mark', function(req, res) {
 						//Evaluate main source with generated input/output
 
             // Extract different generated bits
-            var generatedInputs = body.generated.slice(0, input.length);
-            var generatedOutputs = body.generated.slice (input.length, 2 * input.length);
-            var generatedFeedback = body.generated.slice (2 * input.length, 3 * input.length);
+            var generatedInputs = body.generated.slice(0, docs.feedbackArray.length);
+            var generatedOutputs = body.generated.slice (docs.feedbackArray.length, 2 * docs.feedbackArray.length);
+            var generatedFeedback = body.generated.slice (2 * docs.feedbackArray.length, 3 * docs.feedbackArray.length);
 
 						//Run and compare results
 						objToReturn = executeStudentCode(generatedInputs, generatedOutputs, generatedFeedback, studentDataFilesArray[0].class_name, pathAssingment, objToReturn);

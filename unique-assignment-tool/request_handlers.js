@@ -11,19 +11,19 @@ if (!process.env.NEXUS_ACCESS_TOKEN) {
   process.exit(1);
 }
 
-// FIXME: This should become a general tool handler
-export function io_gen_handler (request, response) {
+/**
+ * Handle tool generation request. Expects access token to be included in request.
+ */
+export function grader_gen_handler (request, response) {
   console.log('Unique assignment i/o generation request received.')
   if(request.headers["nexus-access-token"] == accessToken) {
     var studentID = request.body.sid;
     var assignmentID = request.body.aid;
-    var inputs = request.body.inputs;
-    var outputs = request.body.outputs;
-    var feedback = request.body.feedback;
+    var templates = request.body.templates;
 
     console.log(`Request for generation to mark assignment ${assignmentID}, for student with id: ${studentID}.`);
     // FIXME: This requires changes to io-tool's processing of the data returned
-    do_generate(response, studentID, assignmentID, inputs.concat(outputs).concat(feedback));
+    do_generate(response, studentID, assignmentID, templates);
   }
   else {
     console.log(`Token error. The token: ${request.headers["nexus-access-token"]}.`);
