@@ -30,42 +30,8 @@
 
     <hr>
     <br />
-    
-    <script>	  
-	  var paramCounter = 1;
-	  function addForm(divName){
-	    paramCounter++;
-		var newParameterForm = document.createElement("div");
-		newParameterForm.innerHTML = `<label class='col-lg-2 control-label' id='parameter_form_label_` + paramCounter + `' for='parameter form ` + paramCounter + `'>Parameter Form ` + paramCounter + `</label>
-		   	    <div id="form` + paramCounter + `" class='col-lg-10'>
-			        <label class="col-lg-2 control-label" for="parameter name">Parameter Name</label>
-				    <input type='text' name='param_name' id='param_name_` + paramCounter + `'><br/>
-				    <label class="col-lg-2 control-label" for="parameter type">Parameter Type</label>
-					<select id='param_name_` + paramCounter + `'>
-					  <option value="1">int</option>
-					  <option value="2">float</option>
-					  <option value="3">double</option>
-					  <option value="4">string</option>
-					  <option value="5">boolean</option>
-					</select><br/>
-					<label class="col-lg-2 control-label" for="parameter constructs">Parameter Constructs</label>
-				    <input type='text' name='param_constructs' id='param_constructs_` + paramCounter + `'><br/>
-			    </div>`;
-	    document.getElementById(divName).appendChild(newParameterForm); 
-	  }
-	  
-	  function deleteForm() {
-	  	var currentForm = document.getElementById("form" + paramCounter);
-		currentForm.parentNode.removeChild(currentForm);
-		document.getElementById("parameter_form_label_" + paramCounter).remove();
-		paramCounter--;
-	  }
-	  
-	  function taskFunction(){
-	    sendParamsToUat();
-	  	checkMarkingTools();
-	  }
-   
+
+    <script>
       function checkMarkingTools() {
         if (document.getElementById("assignment_marking_tool_contexts_attributes_0_marking_tool_id").selectedIndex != 0) {
           return true;
@@ -73,7 +39,7 @@
           return confirm("Are you sure you want to create an assignment without marking tools?");
         }
       }
-	  
+
 	  function sendParamsToUat() {
 	    var isUniqueFlag = document.getElementById('isuniqueflag').checked;
         if(isUniqueFlag == true) {
@@ -102,7 +68,7 @@
 						}
 					}
 				}
-			}  
+			}
 			try {
 				var request = new XMLHttpRequest();
 				var params = `parameter_string=${parameterString}`;
@@ -121,7 +87,7 @@
 
     <div class="form-group">
       <div class="col-lg-10 col-lg-offset-2">
-        <%= f.submit 'Create', class: 'btn btn-primary', onclick: "taskFunction()" %>
+        <%= f.submit 'Create', class: 'btn btn-primary', onclick: "checkMarkingTools()" %>
       </div>
     </div>
   <% end %>
