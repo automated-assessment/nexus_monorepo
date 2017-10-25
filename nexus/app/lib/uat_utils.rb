@@ -28,13 +28,15 @@ class UATUtils
     end
 
     def send_params_to_uat (assignment)
-      # FIXME: Clean up and combine into a single call to UAT
-      uri = URI.parse("http://#{Rails.configuration.uat_host}:#{Rails.configuration.uat_port}/param_upload_start")
+      uri = URI.parse("http://#{Rails.configuration.uat_host}:#{Rails.configuration.uat_port}/param_update")
       Net::HTTP.start(uri.host, uri.port) do |http|
-        req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/x-www-form-urlencoded')
+        req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
 
-        param_string = assignment.uat_parameters.map { | p | "#{p.name}:#{p.type}:#{p.construct}"}.join('|')
-        req.body = "parameter_string=#{param_string}"
+        req.body = {
+          assignment: assignment.id,
+          parameters: assignment.uat_parameters.map { | p | {type: p.type, name: p.name, construct: p.construct} }
+        }.to_json
+        Rails.logger.debug("Request body is #{req.body}");
 
         res = http.request(req)
         Rails.logger.info res.body
@@ -43,17 +45,6 @@ class UATUtils
         else
           Rails.logger.info 'Error sending parameters to unique assignment tool'
         end
-      end
-
-      uri = URI.parse("http://#{Rails.configuration.uat_host}:#{Rails.configuration.uat_port}/param_upload_finish")
-      Net::HTTP.start(uri.host, uri.port) do |http|
-        req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
-
-        req.body = {
-          aid: assignment.id
-        }.to_json
-
-        res = http.request(req)
       end
     end
 

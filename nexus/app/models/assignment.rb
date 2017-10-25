@@ -124,9 +124,12 @@ class Assignment < ActiveRecord::Base
     return [] unless (is_unique || new_record?)
 
     if (new_record?)
+      Rails.logger.debug('Returning initial parameter set for assignment.')
       [UATParameter.new('name', 1, '', false)]
     else
+      Rails.logger.debug('Returning parameters for non-new assignment.')
       return [] unless @uat_attributes
+      Rails.logger.debug("Returning parameters set from form: #{@uat_attributes}")
       @uat_attributes
     end
   end
@@ -136,8 +139,8 @@ class Assignment < ActiveRecord::Base
     Rails.logger.debug("Asked to set uat parameters for this assignment: #{attributes}.")
     @uat_attributes_changed = true
     @uat_attributes = attributes
-        .reject { | attr | attr['_destroy'] != "" }
-        .map { | attr | UATParameter.new(attr['name'], attr['type'], attr['construct'], true) }
+        .map { | attr |  UATParameter.new(attr[1]['name'], attr[1]['type'].to_i, attr[1]['construct'], true) }
+    Rails.logger.debug("Attributes kept are now: #{@uat_attributes}")
   end
 
   def uat_save_hook

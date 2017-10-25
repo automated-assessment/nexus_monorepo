@@ -12,6 +12,102 @@ if (!process.env.NEXUS_ACCESS_TOKEN) {
 }
 
 /**
+ * Receives parameter set for a given assignment and stores them in the database.
+ *
+ * Expects the following JSON body:
+ *
+ * {assignment: num,
+ *  parameters: [{type: int, name: string, construct: string}]}
+ */
+export function update_assignment_parameters_handler (request, response) {
+  var assignment = request.body.assignment;
+  var parameters = request.body.parameters;
+  console.log (`Provided with parameters for assignment ${assignment}: ${parameters}.`);
+
+  async.series([
+      ensure_tables_initialised,
+      (cb) => {
+        do_update_assignment_parameters (assignment, parameters, cb);
+      }
+    ],
+    (err, res) => {
+      if (err) {
+        console.log(`Error updating parameters: ${err}.`);
+        response.status(500).send(`Error from unique-assignment service: ${err}.`);
+      } else {
+        console.log("Successfully updated parameters.");
+        response.status(200).send("Success");
+      }
+    });
+}
+
+function ensure_tables_initialised (cb) {
+  var sql =
+    "CREATE TABLE parameters (param_id INT AUTO_INCREMENT, param_name VARCHAR(50), " +
+    "param_type ENUM ('int','float','double','string','boolean'), param_construct TEXT, assign_id INT, "+
+    "PRIMARY KEY (param_id)) ENGINE=INNODB;";
+
+  dbcon.query(sql, (err, result) => {
+    if (err && err.code !== "ER_TABLE_EXISTS_ERROR") {
+      cb(err);
+      return;
+    } else {
+      console.log("Ensured presence of parameters table.");
+
+      var sql =
+        "CREATE TABLE generated_parameters (assign_id INT, std_id INT, param_name VARCHAR(50), param_value TEXT) ENGINE=INNODB;";
+        dbcon.query(sql, (err, result) => {
+          if (err && err.code !== "ER_TABLE_EXISTS_ERROR") {
+            cb(err);
+            return;
+          } else {
+            console.log("Ensured presence of generated_parameters table.");
+            cb();
+          }
+        });
+    }
+  });
+}
+
+function do_update_assignment_parameters (assignment, parameters, cb) {
+  var sql = "DELETE FROM parameters WHERE assign_id = ?";
+  dbcon.query(sql, [assignment], (err, result) => {
+    if (err) {
+      console.log(`Failed to delete original parameters for assingment ${assignment}: ${err}`);
+      cb(err);
+      return;
+    } else {
+      var sql = "DELETE FROM generated_parameters WHERE assign_id = ?";
+      dbcon.query(sql, [assignment], (err, result) => {
+        if (err) {
+          console.log(`Failed to delete original generated parameters for assingment ${assignment}: ${err}`);
+          cb(err);
+          return;
+        } else {
+          var sql = "INSERT INTO parameters (param_name,param_type,param_construct,assign_id) VALUES (?)";
+          async.forEach (parameters,
+            (p, cb2) => {
+              var values = [p.name, p.type, p.construct, assignment];
+          		dbcon.query(sql, [values], (err, result) => {
+                if (err) {
+                  console.log(`Failed to add parameter ${p.name} to database for assignment ${assignment}: ${err}.`);
+                  cb2(err);
+                } else {
+                  cb2();
+                }
+              });
+            },
+            (err) => {
+              cb(err);
+            }
+          );
+        }
+      });
+    }
+  });
+}
+
+/**
  * Handle tool generation request. Expects access token to be included in request.
  */
 export function grader_gen_handler (request, response) {
