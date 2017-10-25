@@ -205,7 +205,8 @@ class AssignmentController < ApplicationController
                                        :allow_git,
                                        :allow_ide,
                                        :active_services,
-                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :condition, :_destroy])
+                                       marking_tool_contexts_attributes: [:weight, :context, :marking_tool_id, :condition, :_destroy],
+                                       uat_parameters_attributes: [:name, :type, :construct, :_destroy])
   end
 
   def return_assignment!

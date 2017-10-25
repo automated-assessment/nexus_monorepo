@@ -144,13 +144,20 @@ class Assignment < ActiveRecord::Base
     if (new_record?)
       [UATParameter.new('name', 1, '', false)]
     else
-      # TODO: Get current parameters from UAT
-      []
+      return [] unless @uat_attributes
+      @uat_attributes
     end
   end
 
+  # This just stores the values in this object. When save is invoked, these values will be sent to the UAT
   def uat_parameters_attributes=(attributes)
-    # TODO: Process the attributes hash
+    Rails.logger.debug("Asked to set uat parameters for this assignment: #{attributes}.")
+
+    @uat_attributes = attributes
+        .reject { | attr | attr['_destroy'] != "" }
+        .map { | attr | UATParameter.new(attr['name'], attr['type'], attr['construct'], true) }
+
+    # TODO: Send values to UAT on save
   end
 
 # End code for fake uat_parameters 'association'
