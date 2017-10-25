@@ -34,58 +34,6 @@ class Assignment < ActiveRecord::Base
     log("Assignment id #{id} updated.")
   end
 
-  # Simulate the existence of uat_parameters as part of the assignment. These will, in fact, be picked up from the UAT instead
-  class UATParameter
-    def initialize(name, type, construct)
-      @name = name
-      @type = type
-      @construct = construct
-    end
-
-    def name
-      @name
-    end
-
-    def type
-      @type
-    end
-
-    def construct
-      @construct
-    end
-
-    def persisted?
-      false
-    end
-
-    # Needed to fake this as an association for cocoon
-    def new_record?
-      false
-    end
-
-    def marked_for_destruction?
-      false
-    end
-
-    def _destroy
-    end
-  end
-
-  def uat_parameters
-    return [] unless (is_unique || new_record?)
-
-    if (new_record?)
-      [UATParameter.new('name', 1, '')]
-    else
-      # TODO: Get current parameters from UAT
-      []
-    end
-  end
-
-  def uat_parameters_attributes=(attributes)
-    # TODO: Process the attributes hash
-  end
-
   def started?
     start.past?
   end
@@ -145,6 +93,68 @@ class Assignment < ActiveRecord::Base
 
     @generated_description
   end
+
+  # Start code for fake uat_parameters 'association'
+
+  # Simulate the existence of uat_parameters as part of the assignment. These will, in fact, be picked up from the UAT instead
+  class UATParameter
+    def initialize(name, type, construct, is_new)
+      @name = name
+      @type = type
+      @construct = construct
+      @is_new = is_new
+    end
+
+    def name
+      @name
+    end
+
+    def type
+      @type
+    end
+
+    def construct
+      @construct
+    end
+
+    def persisted?
+      false
+    end
+
+    # Needed to fake this as an association for cocoon
+    def new_record?
+      @is_new
+    end
+
+    def marked_for_destruction?
+      false
+    end
+
+    def _destroy
+    end
+  end
+
+  def build_uat_parameter
+    UATParameter.new('', 0, '', true)
+  end
+
+  def uat_parameters
+    return [] unless (is_unique || new_record?)
+
+    if (new_record?)
+      [UATParameter.new('name', 1, '', false)]
+    else
+      # TODO: Get current parameters from UAT
+      []
+    end
+  end
+
+  def uat_parameters_attributes=(attributes)
+    # TODO: Process the attributes hash
+  end
+
+# End code for fake uat_parameters 'association'
+
 
   def log(body, level = 'info')
     AuditItem.create!(assignment: self,

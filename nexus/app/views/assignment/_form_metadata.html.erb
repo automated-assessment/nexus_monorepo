@@ -31,6 +31,12 @@
 <div class="uat-parameters-form">
   <%= f.fields_for :uat_parameters do |ff| %>
     <%= render 'uat_parameters', f:ff  %>
+
+    <div class="add-uat-param-link">
+      <%= link_to_add_association f, :uat_parameters, partial: 'uat_parameters' do |link| %>
+        <%= icon 'plus-circle' %> Add Parameter
+      <% end %>
+    </div>
   <% end %>
 </div>
 
