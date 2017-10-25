@@ -57,6 +57,18 @@ class Assignment < ActiveRecord::Base
     def persisted?
       false
     end
+
+    # Needed to fake this as an association for cocoon
+    def new_record?
+      false
+    end
+
+    def marked_for_destruction?
+      false
+    end
+
+    def _destroy
+    end
   end
 
   def uat_parameters
