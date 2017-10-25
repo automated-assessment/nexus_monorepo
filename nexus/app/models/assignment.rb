@@ -34,6 +34,46 @@ class Assignment < ActiveRecord::Base
     log("Assignment id #{id} updated.")
   end
 
+  # Simulate the existence of uat_parameters as part of the assignment. These will, in fact, be picked up from the UAT instead
+  class UATParameter
+    def initialize(name, type, construct)
+      @name = name
+      @type = type
+      @construct = construct
+    end
+
+    def name
+      @name
+    end
+
+    def type
+      @type
+    end
+
+    def construct
+      @construct
+    end
+
+    def persisted?
+      false
+    end
+  end
+
+  def uat_parameters
+    return [] unless (is_unique || new_record?)
+
+    if (new_record?)
+      [UATParameter.new('name', 1, '')]
+    else
+      # TODO: Get current parameters from UAT
+      []
+    end
+  end
+
+  def uat_parameters_attributes=(attributes)
+    # TODO: Process the attributes hash
+  end
+
   def started?
     start.past?
   end
