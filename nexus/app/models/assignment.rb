@@ -34,6 +34,9 @@ class Assignment < ActiveRecord::Base
     log("Assignment id #{id} updated.")
   end
 
+  after_save :uat_save_hook
+  before_destroy :uat_destroy_hook
+
   def started?
     start.past?
   end
@@ -68,28 +71,7 @@ class Assignment < ActiveRecord::Base
 
     Rails.logger.info 'Assignment is unique, requesting generation for description'
 
-    uri = URI.parse("http://#{Rails.configuration.uat_host}:#{Rails.configuration.uat_port}/desc_gen")
-
-    Net::HTTP.start(uri.host, uri.port) do |http|
-      req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
-
-      req.body = {
-        aid: id,
-        studentid: for_user.id,
-        is_unique: true,
-        description_string: description
-      }.to_json
-
-      res = http.request(req)
-      Rails.logger.info res.body
-      if res.code =~ /2../
-        Rails.logger.info 'Success generating description for unique assignment'
-        @generated_description = (JSON.parse res.body)['generated'][0]
-      else
-        Rails.logger.info 'Error generating description for unique assignment'
-        @generated_description = 'ERROR: Error on generation of description. Get in contact with your lecturer for further details.'
-      end
-    end
+    @generated_description = UATUtils.generate_description(self, for_user)
 
     @generated_description
   end
@@ -152,12 +134,27 @@ class Assignment < ActiveRecord::Base
   # This just stores the values in this object. When save is invoked, these values will be sent to the UAT
   def uat_parameters_attributes=(attributes)
     Rails.logger.debug("Asked to set uat parameters for this assignment: #{attributes}.")
-
+    @uat_attributes_changed = true
     @uat_attributes = attributes
         .reject { | attr | attr['_destroy'] != "" }
         .map { | attr | UATParameter.new(attr['name'], attr['type'], attr['construct'], true) }
+  end
 
-    # TODO: Send values to UAT on save
+  def uat_save_hook
+    return unless @uat_attributes_changed
+    if is_unique
+      UATUtils.send_params_to_uat (self)
+    else
+      # TODO: Should probably check if it was registered with the UAT before
+      UATUtils.remove_from_uat (self)
+    end
+    @uat_attributes_changed = false
+  end
+
+  def uat_destroy_hook
+    if is_unique
+      UATUtils.remove_from_uat (self)
+    end
   end
 
 # End code for fake uat_parameters 'association'

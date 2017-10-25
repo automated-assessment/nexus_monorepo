@@ -86,19 +86,26 @@ function paramUploadFinishHandler (request, response) {
   var parameterNameArr = new Array();
   var parameterTypeArr = new Array();
   var parameterConstructArr = new Array();
+  console.log(`Parameter string was ${paramString}`);
   paramString = "";
 
   for(var i = 0; i < parameterPairs.length; i++) {
-	parameterNameArr.push(parameterPairs[i].split(':')[0]);
-	parameterTypeArr.push(parameterPairs[i].split(':')[1]);
-	parameterConstructArr.push(parameterPairs[i].split(':')[2]);
+    parameterNameArr.push(parameterPairs[i].split(':')[0]);
+    parameterTypeArr.push(parameterPairs[i].split(':')[1]);
+    parameterConstructArr.push(parameterPairs[i].split(':')[2]);
+    
+    console.log (`Found new parameter: ${parameterNameArr[i]}:${parameterTypeArr[i]}(${parameterConstructArr[i]})`);
   }
 
   var sql = "INSERT INTO assignments VALUES (?)";
   var values = [assignmentID];
   dbcon.query(sql, [values], function (err, result) {
 	if (err) {
-	   console.log(err);
+    if (err.code !== "ER_DUP_KEY") {
+      console.log(err);
+    } else {
+      console.log(`Updating parameter values for assignment ${assignmentID}.`);
+    }
 	}
 	else {
 	  for(var i = 0; i < parameterPairs.length; i++) {

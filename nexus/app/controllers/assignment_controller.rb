@@ -93,20 +93,6 @@ class AssignmentController < ApplicationController
     else
       redirect_to action: 'show', id: @assignment.id
     end
-    if @assignment.is_unique == true
-      uri = URI.parse('http://unique-assignment-tool:3009/param_upload_finish')
-
-        Net::HTTP.start(uri.host, uri.port) do |http|
-          req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
-
-          req.body = {
-            aid: @assignment.id
-          }.to_json
-
-          Rails.logger.info "DEBUG!!: Body to send to UAT: " + req.body.to_s
-          res = http.request(req)
-        end
-    end
   end
 
   def edit
