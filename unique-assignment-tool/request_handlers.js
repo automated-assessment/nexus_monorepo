@@ -138,6 +138,38 @@ export function remove_assignment_handler (request, response) {
   );
 }
 
+/**
+ * Handle tool generation request. Expects access token to be included in request.
+ */
+export function grader_gen_handler (request, response) {
+  console.log('Unique assignment i/o generation request received.')
+  if(request.headers["nexus-access-token"] == accessToken) {
+    var studentID = request.body.sid;
+    var assignmentID = request.body.aid;
+    var templates = request.body.templates;
+
+    console.log(`Request for generation to mark assignment ${assignmentID}, for student with id: ${studentID}.`);
+    // FIXME: This requires changes to io-tool's processing of the data returned
+    do_generate(response, studentID, assignmentID, templates);
+  }
+  else {
+    console.log(`Token error. The token: ${request.headers["nexus-access-token"]}.`);
+    response.status(500).send('Invalid token!');
+  }
+}
+
+/**
+ * Handle generation of a description for an assignment.
+ */
+export function desc_gen_handler (request, response) {
+  var studentID = request.body.studentid;
+	var assignmentID = request.body.aid;
+	var descriptionString = request.body.description_string;
+
+  console.log(`Request for generating description for assignment with id: ${assignmentID}, for student with id: ${studentID}`);
+  do_generate(response, studentID, assignmentID, [descriptionString]);
+}
+
 function ensure_tables_initialised (cb) {
   var sql =
     "CREATE TABLE parameters (param_id INT AUTO_INCREMENT, param_name VARCHAR(50), " +
@@ -204,38 +236,6 @@ function do_update_assignment_parameters (assignment, parameters, cb) {
       cb(err);
     }
   );
-}
-
-/**
- * Handle tool generation request. Expects access token to be included in request.
- */
-export function grader_gen_handler (request, response) {
-  console.log('Unique assignment i/o generation request received.')
-  if(request.headers["nexus-access-token"] == accessToken) {
-    var studentID = request.body.sid;
-    var assignmentID = request.body.aid;
-    var templates = request.body.templates;
-
-    console.log(`Request for generation to mark assignment ${assignmentID}, for student with id: ${studentID}.`);
-    // FIXME: This requires changes to io-tool's processing of the data returned
-    do_generate(response, studentID, assignmentID, templates);
-  }
-  else {
-    console.log(`Token error. The token: ${request.headers["nexus-access-token"]}.`);
-    response.status(500).send('Invalid token!');
-  }
-}
-
-/**
- * Handle generation of a description for an assignment.
- */
-export function desc_gen_handler (request, response) {
-  var studentID = request.body.studentid;
-	var assignmentID = request.body.aid;
-	var descriptionString = request.body.description_string;
-
-  console.log(`Request for generating description for assignment with id: ${assignmentID}, for student with id: ${studentID}`);
-  do_generate(response, studentID, assignmentID, [descriptionString]);
 }
 
 /**
