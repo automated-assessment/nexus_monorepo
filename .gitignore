@@ -8,3 +8,4 @@ logs/
 npm-debug.log
 dbdumps/*.gz
 uat_data/
+.build-mode/
