@@ -355,6 +355,8 @@ app.post('/check-educator-code-io-input-output', function(req,res) {
 
 app.post('/mark', function(req, res) {
 
+  console.log("Starting mark request.");
+
     var bodyToSend = {
         mark: 0
     };
@@ -409,15 +411,19 @@ app.post('/mark', function(req, res) {
 		});
 	}
 
+  console.log("About to compile student sources.");
     //Comopile All Sources from repo
 	objToReturn = compileAllSources(pathAssingment,objToReturn);
 
+  console.log("Loading assignment info from db.");
 	//Search for assignment in db
 	dbAssignments.assignments.findOne({aid : objDb.aid.toString()}, function(err, docs) {
 		if (err) {
+      console.log(`Error loading assignment info from db: ${err}.`);
 			sendRequest(urlF, {body: "error"});
 		} else {
 			if (req.body.is_unique == 1) {
+        console.log("Processing as unique assignment.");
 				//Request for generation of io in template syntax START
 
 				const reqUrl = `${UAT_URL}/grader_gen`;
