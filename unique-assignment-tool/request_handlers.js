@@ -1,4 +1,3 @@
-import { mysql, dbcon } from './db_mgr';
 import async from 'async';
 import forEachOf from 'async/eachOf';
 import series from 'async/series';
@@ -10,6 +9,27 @@ if (!process.env.NEXUS_ACCESS_TOKEN) {
   console.log('Error: Specify NEXUS_ACCESS_TOKEN in environment');
   process.exit(1);
 }
+
+var mysql = require('mysql');
+
+var dbcon = null;
+
+dbcon = mysql.createConnection({
+  host: process.env.MYSQL_HOST || "mysql",
+  port: 3306,
+  user: process.env.MYSQL_USER || "uat-tool",
+  password: process.env.MYSQL_PASSWORD || "uat-pass",
+  database: process.env.MYSQL_DATABASE || "uat"
+});
+
+dbcon.connect((err) => {
+    if (err) {
+  	  console.log(err);
+    }
+    else {
+  	  console.log("DB connection successful.")
+    }
+  });
 
 /**
  * Receives parameter set for a given assignment and stores them in the database.
