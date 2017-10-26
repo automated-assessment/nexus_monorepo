@@ -9,10 +9,11 @@
 .env.%.list:
 	@echo "NEXUS_TOOL_CANONICAL_NAME=$*" >> $@
 	@echo "NEXUS_ACCESS_TOKEN=foo" >> $@
-	@echo "Change ACCESS_TOKEN before deploying to production in $@!\n"
+	@echo "UAT_ACCESS_TOKEN=foo" >> $@
+	@echo "Change ACCESS_TOKENs before deploying to production in $@!\n"
 
 .env.uat.list:
-	@echo "NEXUS_ACCESS_TOKEN=foo" >> .env.uat.list
+	@echo "UAT_ACCESS_TOKEN=foo" >> .env.uat.list
 	@echo "MYSQL_DATABASE=uat" >> .env.uat.list
 	@echo "MYSQL_USER=uat-tool" >> .env.uat.list
 	@echo "MYSQL_PASSWORD=uat-pass" >> .env.uat.list

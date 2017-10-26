@@ -16,8 +16,12 @@ var RAW_PATH = process.env.RAW_PATH || 'TestingEnvironment';
 var NEXUS_BASE_URL = process.env.NEXUS_BASE_URL || 'http://localhost:3000';
 var IOTOOL_ID = process.env.IOTOOL_ID || 'iotool';
 var NEXUS_ACCESS_TOKEN = process.env.NEXUS_ACCESS_TOKEN;
+var UAT_ACCESS_TOKEN = process.env.UAT_ACCESS_TOKEN;
 var MONGO_HOST = process.env.MONGO_HOST || 'localhost';
-var UAT_URL = process.env.UAT_URL || 'http://unique-assignment-tool:3009';
+
+var UAT_HOST = process.env.UAT_HOST || 'unique-assignment-tool';
+var UAT_PORT = process.env.UAT_PORT || 3009;
+var UAT_URL = `http://${UAT_HOST}:${UAT_PORT}`;
 
 //MongoDB
 var mongojs = require('mongojs');
@@ -88,7 +92,7 @@ app.post('/check-educator-code', function(req, res) {
 			  uri: reqUrl,
 			  method: 'POST',
 			  headers: {
-				'Nexus-Access-Token': NEXUS_ACCESS_TOKEN
+				'Nexus-Access-Token': UAT_ACCESS_TOKEN
 			  },
 			  json: true,
 			  body
@@ -351,6 +355,8 @@ app.post('/check-educator-code-io-input-output', function(req,res) {
 
 app.post('/mark', function(req, res) {
 
+  console.log("Starting mark request.");
+
     var bodyToSend = {
         mark: 0
     };
@@ -405,15 +411,19 @@ app.post('/mark', function(req, res) {
 		});
 	}
 
+  console.log("About to compile student sources.");
     //Comopile All Sources from repo
 	objToReturn = compileAllSources(pathAssingment,objToReturn);
 
+  console.log("Loading assignment info from db.");
 	//Search for assignment in db
 	dbAssignments.assignments.findOne({aid : objDb.aid.toString()}, function(err, docs) {
 		if (err) {
+      console.log(`Error loading assignment info from db: ${err}.`);
 			sendRequest(urlF, {body: "error"});
 		} else {
 			if (req.body.is_unique == 1) {
+        console.log("Processing as unique assignment.");
 				//Request for generation of io in template syntax START
 
 				const reqUrl = `${UAT_URL}/grader_gen`;
@@ -426,7 +436,7 @@ app.post('/mark', function(req, res) {
 					  uri: reqUrl,
 					  method: 'POST',
 					  headers: {
-						'Nexus-Access-Token': NEXUS_ACCESS_TOKEN
+						'Nexus-Access-Token': UAT_ACCESS_TOKEN
 					  },
 					  json: true,
 					  body
@@ -665,7 +675,10 @@ function executeEducatorCode(arrayOfInput, arrayOfOutput, dataFileArray, path, o
 		} else {
 			// No Errors Branch
 			// Compare user's input with educator's input and provide feedback
-			if (arrayOfOutput[i].localeCompare(javaExecute.stdout.toString()) == 0) {
+      var javaOutput = javaExecute.stdout.toString();
+      //console.log(`Java output is:      ${javaOutput}.`);
+      //console.log(`Expected output was: ${arrayOfOutput[i]}.`);
+			if (arrayOfOutput[i].localeCompare(javaOutput) == 0) {
 				objToReturn.resultsArray[i] = {
 					error: false,
 					passed: true,
