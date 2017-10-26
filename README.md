@@ -13,7 +13,6 @@ Below, you will find documentation on how to get started with Nexus from this re
 **2. Run `make init-env`. This executes the following:**
   1. Creates, if they don't exist, and populates relevant `.env` files needed to run. The `.env` files will be initialised with default values, which you may need to customise (see next steps and general documentation at the end of this document).
 
-
 **3 Create an Organisation**
   This keeps any repos created in development seperate from those created in production during actual use.
   1. ![New Organisation](https://i.imgur.com/vUv2Gx1.png)
@@ -50,35 +49,22 @@ Below, you will find documentation on how to get started with Nexus from this re
   10. In your `.env.list` file. Set `NEXUS_GITHUB_TOKEN` to be your `Personal Access Token` github generated for you.
   11. Make sure you save the `.env.list` file.
 
-####For *development* usage...####
-
-**6.1. Run `make build-dev`**
+**6. Run `make build`**
   - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml build`
-  - First time build will take a while
+  - First time build will take a while, go get a coffee
 
-**6.2. Initialise Nexus with `make init-nexus`**
+**6. Initialise Nexus with `make init-nexus`**
   - Only needed the first time to set up everything.
   - See `Useful Commands` for partial set up commands which handle updates
   - Always takes time
 
-**6.3. Run `make run-dev`**
+**6. Run `make run`**
   - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
+  - This brings up the nexus server fully ready to run and detaches it from the current console. You should be able to get to nexus by opening `localhost:3000` in your browser.
 
-####For *production* usage...####
+## For *production* usage...
 
-**7.1. Run `make build`**
-  - Which runs: `docker-compose -f docker-compose.yml build`
-  - First time build will take a while
-
-**7.2. Initialise Nexus with `make init-nexus`**
-  - Only needed the first time to set up everything.
-  - See `Useful Commands` for partial set up commands which handle updates
-  - Always takes time
-
-**7.3. Run `make run`**
-  - Which runs: `docker-compose up -d`
-
-This brings up the nexus server fully ready to run and detaches it from the current console. You should be able to get to nexus by opening `localhost:3000` in your browser.
+Nexus can be run in development or production mode. By default, you will run in development mode. This gives you more detailed logs and some other nice features, but is not good for production. If you want to get a feel for what production would be like, run `make production` and then go back to step 6 above. The main difference is that `docker-compose` will now be run only with the main config file. To switch back to development mode, run `make development` (or `make dev` for short).
 
 ## Useful Commands
 - To attach into container to see terminal output, useful with Pry debugging
@@ -107,12 +93,7 @@ This brings up the nexus server fully ready to run and detaches it from the curr
 ### Tools
 #### Restart Tools
 - Run `make restart`
-  - This stops the docker containers and re runs them in production mode
-
-
-- Run `make restart-dev`
-  - This stops the docker containers and re runs them in dev mode
-
+  - This stops the docker containers and re runs them in your current build mode
 
 #### Individual Tools
 - Run `make restart-nexus`
@@ -198,4 +179,3 @@ The access token must be valid for the nexus instance to be run, so in the first
 
 ## References
 - https://docs.docker.com/compose/overview/
-- https://git-scm.com/book/en/v2/Git-Tools-Submodules
