@@ -1,4 +1,4 @@
-import { desc_gen_handler, grader_gen_handler, update_assignment_parameters_handler } from './request_handlers';
+import { desc_gen_handler, grader_gen_handler, update_assignment_parameters_handler, remove_assignment_handler } from './request_handlers';
 
 var express = require('express');
 var sleeper = require('sleep');
@@ -44,6 +44,7 @@ var corsOptions = {
 };
 
 app.post('/param_update', jsonParser, update_assignment_parameters_handler);
+app.post('/remove_assignment', jsonParser, remove_assignment_handler);
 
 app.post('/desc_gen', jsonParser, desc_gen_handler);
 

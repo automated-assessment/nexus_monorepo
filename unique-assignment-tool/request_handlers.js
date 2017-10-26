@@ -27,6 +27,9 @@ export function update_assignment_parameters_handler (request, response) {
   async.series([
       ensure_tables_initialised,
       (cb) => {
+        do_delete_assignment_data (assignment, cb);
+      },
+      (cb) => {
         do_update_assignment_parameters (assignment, parameters, cb);
       }
     ],
@@ -39,6 +42,34 @@ export function update_assignment_parameters_handler (request, response) {
         response.status(200).send("Success");
       }
     });
+}
+
+/**
+ * Removes the given assignment from the database.
+ *
+ * Expects the following JSON body:
+ *
+ * {assignment: num}
+ */
+export function remove_assignment_handler (request, response) {
+  var assignment = request.body.assignment;
+  console.log(`Removing assignment ${assignment}.`);
+
+  async.series([
+      (cb) => {
+        do_delete_assignment_data (assignment, cb);
+      }
+    ],
+    (err, result) => {
+      if (err) {
+        console.log(`Error deleting assignment: ${err}.`);
+        response.status(500).send(`Error from unique-assignment service: ${err}.`);
+      } else {
+        console.log(`Successfully deleted assignment ${assignment}.`);
+        response.status(200).send("Success");
+      }
+    }
+  );
 }
 
 function ensure_tables_initialised (cb) {
@@ -69,42 +100,44 @@ function ensure_tables_initialised (cb) {
   });
 }
 
-function do_update_assignment_parameters (assignment, parameters, cb) {
+function do_delete_assignment_data (assignment, cb) {
   var sql = "DELETE FROM parameters WHERE assign_id = ?";
   dbcon.query(sql, [assignment], (err, result) => {
     if (err) {
       console.log(`Failed to delete original parameters for assingment ${assignment}: ${err}`);
       cb(err);
-      return;
     } else {
       var sql = "DELETE FROM generated_parameters WHERE assign_id = ?";
       dbcon.query(sql, [assignment], (err, result) => {
         if (err) {
           console.log(`Failed to delete original generated parameters for assingment ${assignment}: ${err}`);
           cb(err);
-          return;
         } else {
-          var sql = "INSERT INTO parameters (param_name,param_type,param_construct,assign_id) VALUES (?)";
-          async.forEach (parameters,
-            (p, cb2) => {
-              var values = [p.name, p.type, p.construct, assignment];
-          		dbcon.query(sql, [values], (err, result) => {
-                if (err) {
-                  console.log(`Failed to add parameter ${p.name} to database for assignment ${assignment}: ${err}.`);
-                  cb2(err);
-                } else {
-                  cb2();
-                }
-              });
-            },
-            (err) => {
-              cb(err);
-            }
-          );
+          cb();
         }
       });
     }
   });
+}
+
+function do_update_assignment_parameters (assignment, parameters, cb) {
+  var sql = "INSERT INTO parameters (param_name,param_type,param_construct,assign_id) VALUES (?)";
+  async.forEach (parameters,
+    (p, cb2) => {
+      var values = [p.name, p.type, p.construct, assignment];
+  		dbcon.query(sql, [values], (err, result) => {
+        if (err) {
+          console.log(`Failed to add parameter ${p.name} to database for assignment ${assignment}: ${err}.`);
+          cb2(err);
+        } else {
+          cb2();
+        }
+      });
+    },
+    (err) => {
+      cb(err);
+    }
+  );
 }
 
 /**

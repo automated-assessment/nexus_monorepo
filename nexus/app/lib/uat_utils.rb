@@ -3,7 +3,7 @@ class UATUtils
 
     # Invoke UAT to generate the description for the given assignment
     def generate_description(assignment, for_user)
-      uri = URI.parse("http://#{Rails.configuration.uat_host}:#{Rails.configuration.uat_port}/desc_gen")
+      uri = uat_url('desc_gen')
 
       Net::HTTP.start(uri.host, uri.port) do |http|
         req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
@@ -28,7 +28,7 @@ class UATUtils
     end
 
     def send_params_to_uat (assignment)
-      uri = URI.parse("http://#{Rails.configuration.uat_host}:#{Rails.configuration.uat_port}/param_update")
+      uri = uat_url('param_update')
       Net::HTTP.start(uri.host, uri.port) do |http|
         req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
 
@@ -49,7 +49,30 @@ class UATUtils
     end
 
     def remove_from_uat (assignment)
-      # TODO: Implement
+      Rails.logger.debug("Requesting removal of assignment #{assignment} from UAT.")
+
+      uri = uat_url('remove_assignment')
+      Net::HTTP.start(uri.host, uri.port) do |http|
+        req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
+
+        req.body = {
+          assignment: assignment.id
+        }.to_json
+
+        res = http.request(req)
+        Rails.logger.info res.body
+        if res.code =~ /2../
+          Rails.logger.info 'Successfully removed assignment from UAT.'
+        else
+          Rails.logger.info 'Error removing assignment from UAT.'
+        end
+      end
+    end
+
+    private
+
+    def uat_url (endpoint)
+      URI.parse("http://#{Rails.configuration.uat_host}:#{Rails.configuration.uat_port}/#{endpoint}")
     end
   end
 end
