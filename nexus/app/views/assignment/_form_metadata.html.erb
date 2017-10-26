@@ -12,34 +12,53 @@
   </div>
 </div>
 
+<script>
+  $(document).ready(function() {
+    $('#isuniqueflag').click(function() {
+      $('#assignment_uat_parameters').toggle();
+      $('#unique_description_legend').toggle();
+    });
+  });
+</script>
+
 <div class="form-group">
   <%= f.label :description, class: 'col-lg-2 control-label' %>
   <div class="col-lg-10">
-	<%= f.text_area :description, class: 'form-control', size: '60x6' %>
-	<p>Markdown is supported.</p>
-	<p>If the assignment is unique, the description must be in template syntax, with matching template variables.</p>
+  	<%= f.text_area :description, class: 'form-control', size: '60x6' %>
+  	<p>Markdown is supported.</p>
+    <div id="unique_description_legend" class="alert alert-info" <% unless f.object.is_unique %>style="display:none;"<% end %>>
+      <p>For this unique assignment, use template syntax as explained below.</p>
+      <ul>
+        <li>Each line that begins with a dot (.) as the first character will become part of the description as is.</li>
+        <li>Other lines will be interpreted as Python code and can be used to control what students see.</li>
+        <li>Below, you can define assignment parameters. Each of these will be assigned a random value for each student. Assignment parameters are available to your template code as normal Python variables. In lines beginning with a dot, you can interpolate the contents of an assignment parameter using @{name-of-parameter}.</li>
+        <li>Your description template will be evaluated with the assignment-parameter values for the current student. The resulting markdown will then be rendered to the student on their assignment page.</li>
+        <li>The same templating mechanism, with the same assignment parameters and student--value assignments is available to any grading tools.</li>
+      </ul>
+    </div>
   </div>
 </div>
 
-<hr />
-<h4>Assignment Parameters</h4>
-<p>
-  Below, define parameters to enable generation of a unique assignment for each student.
-</p>
-<br />
+<div id="assignment_uat_parameters" <% unless f.object.is_unique %>style="display:none;"<% end %>>
+  <hr />
+  <h4>Assignment Parameters</h4>
+  <p>
+    Below, define parameters to enable generation of a unique assignment for each student.
+  </p>
+  <br />
 
-<div class="uat-parameters-form">
-  <%= f.fields_for :uat_parameters do |ff| %>
-    <%= render 'uat_parameters', f:ff  %>
+  <div class="uat-parameters-form">
+    <%= f.fields_for :uat_parameters do |ff| %>
+      <%= render 'uat_parameters', f:ff  %>
 
-    <div class="add-uat-param-link">
-      <%= link_to_add_association f, :uat_parameters, partial: 'uat_parameters' do |link| %>
-        <%= icon 'plus-circle' %> Add Parameter
-      <% end %>
-    </div>
-  <% end %>
+      <div class="add-uat-param-link">
+        <%= link_to_add_association f, :uat_parameters, partial: 'uat_parameters' do |link| %>
+          <%= icon 'plus-circle' %> Add Parameter
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 </div>
-
 
 <hr />
 <h4>Assignment Options</h4>
