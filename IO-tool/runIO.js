@@ -2,6 +2,7 @@ var	fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
+var requestPromise = require('request-promise');
 var envVar = require('dotenv').config({silent: true});
 //Library for linux commands. e.g javac
 var spawn = require('child_process').spawn;
@@ -15,7 +16,12 @@ var RAW_PATH = process.env.RAW_PATH || 'TestingEnvironment';
 var NEXUS_BASE_URL = process.env.NEXUS_BASE_URL || 'http://localhost:3000';
 var IOTOOL_ID = process.env.IOTOOL_ID || 'iotool';
 var NEXUS_ACCESS_TOKEN = process.env.NEXUS_ACCESS_TOKEN;
+var UAT_ACCESS_TOKEN = process.env.UAT_ACCESS_TOKEN;
 var MONGO_HOST = process.env.MONGO_HOST || 'localhost';
+
+var UAT_HOST = process.env.UAT_HOST || 'unique-assignment-tool';
+var UAT_PORT = process.env.UAT_PORT || 3009;
+var UAT_URL = `http://${UAT_HOST}:${UAT_PORT}`;
 
 //MongoDB
 var mongojs = require('mongojs');
@@ -47,8 +53,9 @@ app.post('/check-educator-code', function(req, res) {
 	var output = req.body.output;
 	var feedback = req.body.description;
 	var dataFilesArray = req.body.filesArray;
-	var id = req.body.assignmentId;
-	
+	var aid = req.body.assignmentId;
+	var sid = req.body.studentId;
+
 	var objToReturn = {
 		compiled: {
 			bool: true,
@@ -60,41 +67,97 @@ app.post('/check-educator-code', function(req, res) {
 	//Create the Testing environment Folder
 	var mkdir = spawnSync('mkdir', [RAW_PATH], {timeout:2000});
 	//Create Educator Directory
-	var mkdir = spawnSync('mkdir', [id], {cwd:rawPath, timeout:2000});
+	var mkdir = spawnSync('mkdir', [aid], {cwd:rawPath, timeout:2000});
 
-	var path = rawPath + id + '/';
+	var path = rawPath + aid + '/';
 	//Create Files with specified extension
-	createFiles(dataFilesArray, '.java', id);
+	createFiles(dataFilesArray, '.java', aid);
 
 	//Get All Files with .extension Java
 	var childFind = execSync('find . -name "*.java" > sources.txt', { cwd: path });
-	
+
 	//Compile source (path) using SpawnSync
 	objToReturn = compileAllSources(path,objToReturn);
 
-	//Evaluate main source
-	objToReturn = executeEducatorCode(input, output, dataFilesArray[0], path, objToReturn);
+	//Request generation of inputs and outputs from UAT
+	if (req.body.isUnique == "true") {
 
-	//Save in DB if ok
-	if (objToReturn.allPassed == true) {
-		//Insert in DB
-		var assignment = {
-			aid: req.body.assignmentId,
-			inputArray: input,
-			outputArray: output,
-			feedbackArray: feedback,
-			dataFilesArray: dataFilesArray
-		}
-		dbAssignments.assignments.insert(assignment, function(err,docs) {
+		const reqUrl = `${UAT_URL}/grader_gen`;
+		const body = {
+			sid: sid,
+			aid: aid,
+			templates: input.concat(output).concat(feedback),
+		};
+		var requestOptions = {
+			  uri: reqUrl,
+			  method: 'POST',
+			  headers: {
+				'Nexus-Access-Token': UAT_ACCESS_TOKEN
+			  },
+			  json: true,
+			  body
+		};
+		console.log("Sending request to get generated inputs and outputs for assignment with id: " + aid);
 
-		});
-	} else {
-		//Do nothing
+		requestPromise(requestOptions)
+			.then(function(body) {
+				//Evaluate main source with generated input/output
+
+        // Extract different generated bits
+        var generatedInputs = body.generated.slice(0, input.length);
+        var generatedOutputs = body.generated.slice (input.length, 2 * input.length);
+
+				objToReturn = executeEducatorCode(generatedInputs, generatedOutputs, dataFilesArray[0], path, objToReturn);
+
+				//Save in DB if ok
+				if (objToReturn.allPassed == true) {
+					//Insert in DB
+					var assignment = {
+						aid: req.body.assignmentId,
+						inputArray: input,
+						outputArray: output,
+						feedbackArray: feedback,
+						dataFilesArray: dataFilesArray
+					}
+					dbAssignments.assignments.insert(assignment, function(err,docs) {
+
+					});
+				} else {
+					//Do nothing
+				}
+				//Delete Files (java + class)
+				deleteFolder(path);
+				res.json(objToReturn);
+			})
+			.catch(function (err) {
+				console.log("Error from generation request to UAT: " + err);
+			});
 	}
-	//Delete Files (java + class) 
-	deleteFolder(path);
+	else { //Normal execution if the assignment is not unique
 
-	res.json(objToReturn);
+		//Evaluate main source
+		objToReturn = executeEducatorCode(input, output, dataFilesArray[0], path, objToReturn);
+
+		//Save in DB if ok
+		if (objToReturn.allPassed == true) {
+			//Insert in DB
+			var assignment = {
+				aid: req.body.assignmentId,
+				inputArray: input,
+				outputArray: output,
+				feedbackArray: feedback,
+				dataFilesArray: dataFilesArray
+			}
+			dbAssignments.assignments.insert(assignment, function(err,docs) {
+
+			});
+		} else {
+			//Do nothing
+		}
+		//Delete Files (java + class)
+		deleteFolder(path);
+		res.json(objToReturn);
+	}
 });
 
 app.get('/get-dictionaries', function(req,res) {
@@ -139,7 +202,7 @@ app.post('/check-educator-code-no-input-no-output', function(req,res) {
 	var rawPath = RAW_PATH + '/';
 	var dataFilesArray = req.body.dataFilesArray;
 	var id = req.body.id;
-	
+
 	var objToReturn = {
 		compiled: {
 			bool: false,
@@ -160,7 +223,7 @@ app.post('/check-educator-code-no-input-no-output', function(req,res) {
 
 	//Get All Files with .extension Java
 	var childFind = execSync('find . -name "*.java" > sources.txt', { cwd: path });
-	
+
 	//Compile source (path) using SpawnSync
 	objToReturn = compileAllSources(path,objToReturn);
 
@@ -170,8 +233,8 @@ app.post('/check-educator-code-no-input-no-output', function(req,res) {
 		res.json(objToReturn);
 	} else {
 		res.json(objToReturn);
-	} 
-	//Delete Files (java + class) 
+	}
+	//Delete Files (java + class)
 	deleteFolder(path);
 });
 
@@ -268,7 +331,7 @@ app.post('/check-educator-code-io-input-output', function(req,res) {
 
 	//Get All Files with .extension Java
 	var childFind = execSync('find . -name "*.java" > sources.txt', { cwd: path });
-	
+
 	//Compile source (path) using SpawnSync
 	objToReturn = compileAllSources(path,objToReturn);
 
@@ -280,10 +343,10 @@ app.post('/check-educator-code-io-input-output', function(req,res) {
 	} else {
 		res.json(objToReturn);
 	}
-	//Delete Files (java + class) 
+	//Delete Files (java + class)
 	deleteFolder(path);
 
-	
+
 
 });
 ///////////////////////////////////////////EDUCATOR HTTP Requests: END////////////////////////////
@@ -291,8 +354,10 @@ app.post('/check-educator-code-io-input-output', function(req,res) {
 ///////////////////////////////////////////STUDENT HTTP Requests: BEGIN////////////////////////////
 
 app.post('/mark', function(req, res) {
-    
-    var body = {
+
+  console.log("Starting mark request.");
+
+    var bodyToSend = {
         mark: 0
     };
 
@@ -320,6 +385,7 @@ app.post('/mark', function(req, res) {
     var path = rawPath + userKNumber;
     var pathAssingment = path + "/" + assignmentName;
 
+	var studentDataFilesArray = [];
 
     //Create the Testing environment Folder
 	var mkdir = spawnSync('mkdir', [RAW_PATH], {timeout:2000});
@@ -327,79 +393,181 @@ app.post('/mark', function(req, res) {
     var mkdir = spawnSync('mkdir', [userKNumber], {cwd:rawPath, timeout:2000});
 
     //Clone Repo
-    cloneGitRepo(cloneUrl, path);
+    cloneGitRepo(cloneUrl, path, req.body.sha);
 
     //Get All Files with .extension Java
 	var childFind = execSync('find . -name "*.java" > sources.txt', { cwd: pathAssingment });
-    
+
+	//Trying to fetch student submission as fileArray
+	studentFileNames = fs.readFileSync(pathAssingment + '/sources.txt', "utf8").toString().split("\n");
+	var fileString = "";
+	var classNameString = "";
+	for (var i = 0; i < studentFileNames.length-1; i++) {
+		fileString = fs.readFileSync(pathAssingment + '/' + studentFileNames[i], "utf8").toString();
+		classNameString = studentFileNames[i].substring(2, studentFileNames[i].length - 5);
+		studentDataFilesArray.push({
+			code: fileString,
+			class_name: classNameString
+		});
+	}
+
+  console.log("About to compile student sources.");
     //Comopile All Sources from repo
 	objToReturn = compileAllSources(pathAssingment,objToReturn);
 
+  console.log("Loading assignment info from db.");
 	//Search for assignment in db
 	dbAssignments.assignments.findOne({aid : objDb.aid.toString()}, function(err, docs) {
 		if (err) {
+      console.log(`Error loading assignment info from db: ${err}.`);
 			sendRequest(urlF, {body: "error"});
 		} else {
-			//Run and compare results	
-			objToReturn = executeStudentCode(docs.inputArray, docs.outputArray, docs.feedbackArray, docs.dataFilesArray[0].class_name, pathAssingment, objToReturn);
-			
-			//Delete repo from Testing environment
-		    deleteFolder(pathAssingment);
+			if (req.body.is_unique == 1) {
+        console.log("Processing as unique assignment.");
+				//Request for generation of io in template syntax START
 
-		    //Send Mark to Nexus
-		    body.mark = 100*objToReturn.numberOfTestsPassed / objToReturn.resultsArray.length;
+				const reqUrl = `${UAT_URL}/grader_gen`;
+				const body = {
+					sid: req.body.studentuid,
+					aid: req.body.aid,
+          templates: docs.inputArray.concat(docs.outputArray).concat(docs.feedbackArray),
+				};
+				var requestOptions = {
+					  uri: reqUrl,
+					  method: 'POST',
+					  headers: {
+						'Nexus-Access-Token': UAT_ACCESS_TOKEN
+					  },
+					  json: true,
+					  body
+				};
+				console.log("Sending request to get generated inputs and outputs for assignment with id: " + req.body.aid);
 
-			var url = NEXUS_BASE_URL + '/report_mark/'+ req.body.sid + '/' + IOTOOL_ID;
-		    sendRequest(url, body);
+				requestPromise(requestOptions)
+					.then(function(body) {
+						//Evaluate main source with generated input/output
 
-		    //Send Feedback to Nexus
-		    var bodyF = '';
-		    var urlF = NEXUS_BASE_URL + '/report_feedback/' + req.body.sid + '/' + IOTOOL_ID;
-		    if (body.mark == 100) {
-			    bodyF = '<div class="javac-feedback"><p class="text-info" style="color:green"><b><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>All tests passed correctly. Congrats!</b></p></div>';
-			} else {
-				bodyF = '<div class="javac-feedback">';
-				for (var i = 0; i < docs.feedbackArray.length; ++i) {
-					if (objToReturn.resultsArray[i].passed == false && objToReturn.resultsArray[i].error == false) {
-						bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Failed</label></p>';
-						bodyF += '<p class="text-info"><i>' + docs.feedbackArray[i] + '</i></p>'; 
-					} else if (objToReturn.resultsArray[i].passed == true && objToReturn.resultsArray[i].error == false){
-						bodyF += '<p class="text-info" style="color:green"><label><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Passed</label></p>';
-					} else {
-						bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Source did NOT RUN</label></p>';
+            // Extract different generated bits
+            var generatedInputs = body.generated.slice(0, docs.feedbackArray.length);
+            var generatedOutputs = body.generated.slice (docs.feedbackArray.length, 2 * docs.feedbackArray.length);
+            var generatedFeedback = body.generated.slice (2 * docs.feedbackArray.length, 3 * docs.feedbackArray.length);
+
+						//Run and compare results
+						objToReturn = executeStudentCode(generatedInputs, generatedOutputs, generatedFeedback, studentDataFilesArray[0].class_name, pathAssingment, objToReturn);
+
+						//Delete repo from Testing environment
+						deleteFolder(pathAssingment);
+
+						//Send Mark to Nexus
+						bodyToSend.mark = 100*objToReturn.numberOfTestsPassed / objToReturn.resultsArray.length;
+
+						var url = NEXUS_BASE_URL + '/report_mark/'+ req.body.sid + '/' + IOTOOL_ID;
+						sendRequest(url, bodyToSend);
+
+						//Send Feedback to Nexus
+						var bodyF = '';
+						var urlF = NEXUS_BASE_URL + '/report_feedback/' + req.body.sid + '/' + IOTOOL_ID;
+						if (bodyToSend.mark == 100) {
+							bodyF = '<div class="javac-feedback"><p class="text-info" style="color:green"><b><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>All tests passed correctly. Congrats!</b></p></div>';
+						} else {
+							bodyF = '<div class="javac-feedback">';
+							for (var i = 0; i < generatedFeedback.length; ++i) {
+								if (objToReturn.resultsArray[i].passed == false && objToReturn.resultsArray[i].error == false) {
+									bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Failed</label></p>';
+									bodyF += '<p class="text-info"><i>' + generatedFeedback[i] + '</i></p>';
+								} else if (objToReturn.resultsArray[i].passed == true && objToReturn.resultsArray[i].error == false){
+									bodyF += '<p class="text-info" style="color:green"><label><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Passed</label></p>';
+								} else {
+									bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Source did NOT RUN</label></p>';
+								}
+							}
+							bodyF += '</div>';
+						}
+						res.status(200).send('OK!');
+						sendRequest(urlF, {body: bodyF});
+					})
+					.catch(function (err) {
+						console.log("Error from generation and execution: " + err);
+					});
+			}
+			else {
+				//Run and compare results
+				objToReturn = executeStudentCode(docs.inputArray, docs.outputArray, docs.feedbackArray, docs.dataFilesArray[0].class_name, pathAssingment, objToReturn);
+
+				//Delete repo from Testing environment
+				deleteFolder(pathAssingment);
+
+				//Send Mark to Nexus
+				bodyToSend.mark = 100*objToReturn.numberOfTestsPassed / objToReturn.resultsArray.length;
+
+				var url = NEXUS_BASE_URL + '/report_mark/'+ req.body.sid + '/' + IOTOOL_ID;
+				sendRequest(url, bodyToSend);
+
+				//Send Feedback to Nexus
+				var bodyF = '';
+				var urlF = NEXUS_BASE_URL + '/report_feedback/' + req.body.sid + '/' + IOTOOL_ID;
+				if (bodyToSend.mark == 100) {
+					bodyF = '<div class="javac-feedback"><p class="text-info" style="color:green"><b><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>All tests passed correctly. Congrats!</b></p></div>';
+				} else {
+					bodyF = '<div class="javac-feedback">';
+					for (var i = 0; i < docs.feedbackArray.length; ++i) {
+						if (objToReturn.resultsArray[i].passed == false && objToReturn.resultsArray[i].error == false) {
+							bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Failed</label></p>';
+							bodyF += '<p class="text-info"><i>' + docs.feedbackArray[i] + '</i></p>';
+						} else if (objToReturn.resultsArray[i].passed == true && objToReturn.resultsArray[i].error == false){
+							bodyF += '<p class="text-info" style="color:green"><label><i class="fa fa-check-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Passed</label></p>';
+						} else {
+							bodyF += '<p class="text-info" style="color:red"><label><i class="fa fa-times-circle" aria-hidden="true">&nbsp;</i>Test #' + i +' Source did NOT RUN</label></p>';
+						}
 					}
+					bodyF += '</div>';
 				}
-				bodyF += '</div>';
-			}	
-			res.status(200).send('OK!');
-			sendRequest(urlF, {body: bodyF});
+				res.status(200).send('OK!');
+				sendRequest(urlF, {body: bodyF});
+			}
 		}
 	});
 });
 ///////////////////////////////////////////STUDENT HTTP Requests: END////////////////////////////
 
 //////////////////////////////////////////Functions to run for Evaluation
-function cloneGitRepo(url, pathToClone) {
-
-	var gitClone = spawnSync('git', ['clone', url], 
+function cloneGitRepo(url, pathToClone, sha) {
+	var gitClone = spawnSync('git', ['clone', url],
 		{
 			cwd:pathToClone,
 			timeout:2000
 		});
-	
+
 	if (!(gitClone.status == 0)) {
 		//get errors to the user
 		if (!(gitClone.error == null)) {
 			console.log(gitClone.error);
-		} else
-		if (!(gitClone.stderr.toString() == "")) {
+		} else if (!(gitClone.stderr.toString() == "")) {
 			console.log(gitClone.stderr.toString());
-		} 
+		}
 		else {
-			console.log("Unkwond Error");
+			console.log("Unknown Error");
 		}
 	} else {
 		console.log("Done");
+	}
+
+	var gitReset = spawnSync('git', ['reset', '--hard', sha],
+		{
+			cwd:pathToClone + "/" + url.substring(url.indexOf('assignment'), url.indexOf('.git')),
+			timeout:2000
+		});
+	if (!(gitReset.status == 0)) {
+		if (!(gitReset.error == null)) {
+			console.log(gitReset.error);
+		} else if (!(gitReset.stderr.toString() == "")) {
+			console.log(gitReset.stderr.toString());
+		}
+		else {
+			console.log("Unknown Error in SHA");
+		}
+	} else {
+		console.log("Done SHA Checkout");
 	}
 }
 
@@ -412,15 +580,15 @@ function createFiles(dataFilesArray, extension, userId) {
 
 function deleteFolder(path) {
 	try {
-		var childRemove = execSync('rm -r ' + path, {timeout: 60000 });	
+		var childRemove = execSync('rm -r ' + path, {timeout: 60000 });
 	} catch(err) {
-		console.log(err);
-	}	
+		console.log("Delete folder err: " + err);
+	}
 }
 
 function compileAllSources(path, objToReturn) {
 	try {
-		var childJavac = execSync('javac -Xlint:all @sources.txt 2>&1', { cwd: path, timeout: 60000 });	
+		var childJavac = execSync('javac -Xlint:all @sources.txt 2>&1', { cwd: path, timeout: 60000 });
 		objToReturn.compiled = true;
 		objToReturn.error = "";
 	} catch (error) {
@@ -434,9 +602,9 @@ function executeNiNoEducatorCode(dataFileArray, path, objToReturn){
 	var className = dataFileArray.class_name;
 	//To execute for every single test provided by the educator
 	var javaExecute = spawnSync('java', [className], {
-		cwd: path, 
+		cwd: path,
 		timeout:2000
-	}); 
+	});
 
 	if (!(javaExecute.status == 0)) {
 		//get errors to the user
@@ -479,9 +647,9 @@ function executeEducatorCode(arrayOfInput, arrayOfOutput, dataFileArray, path, o
 
 		var javaExecute = spawnSync('java', [className], {
 			input: inputTest,
-			cwd: path, 
+			cwd: path,
 			timeout:2000
-		}); 
+		});
 
 		if (!(javaExecute.status == 0)) {
 		//get errors to the user
@@ -507,7 +675,10 @@ function executeEducatorCode(arrayOfInput, arrayOfOutput, dataFileArray, path, o
 		} else {
 			// No Errors Branch
 			// Compare user's input with educator's input and provide feedback
-			if (arrayOfOutput[i].localeCompare(javaExecute.stdout.toString()) == 0) {
+      var javaOutput = javaExecute.stdout.toString();
+      //console.log(`Java output is:      ${javaOutput}.`);
+      //console.log(`Expected output was: ${arrayOfOutput[i]}.`);
+			if (arrayOfOutput[i].localeCompare(javaOutput) == 0) {
 				objToReturn.resultsArray[i] = {
 					error: false,
 					passed: true,
@@ -544,12 +715,13 @@ function executeStudentCode(arrayOfInput, arrayOfOutput, arrayOfFeedback, mainCl
 
 		var javaExecute = spawnSync('java', [className], {
 			input: inputTest,
-			cwd: path, 
+			cwd: path,
 			timeout:2000
-		}); 
+		});
 
 		if (!(javaExecute.status == 0)) {
 		//get errors to the user
+
 			if (!(javaExecute.error == null)) {
 				objToReturn.resultsArray[i] = {
 					error: true,
@@ -572,6 +744,7 @@ function executeStudentCode(arrayOfInput, arrayOfOutput, arrayOfFeedback, mainCl
 		} else {
 			// No Errors Branch
 			// Compare user's input with educator's input and provide feedback
+
 			if (arrayOfOutput[i].localeCompare(javaExecute.stdout.toString()) == 0) {
 				objToReturn.resultsArray[i] = {
 					error: false,
@@ -614,7 +787,7 @@ function sendRequest(url, body) {
 	    };
 
 	request(requestOptions, function(err, res, body) {
-		console.log(err);
+		console.log("Request sending err: " + err);
 		// console.log(JSON.stringify(res));
-	});	
+	});
 }

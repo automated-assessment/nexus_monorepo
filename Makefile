@@ -9,10 +9,11 @@
 .env.%.list:
 	@echo "NEXUS_TOOL_CANONICAL_NAME=$*" >> $@
 	@echo "NEXUS_ACCESS_TOKEN=foo" >> $@
-	@echo "Change ACCESS_TOKEN before deploying to production in $@!\n"
+	@echo "UAT_ACCESS_TOKEN=foo" >> $@
+	@echo "Change ACCESS_TOKENs before deploying to production in $@!\n"
 
 .env.uat.list:
-	@echo "NEXUS_ACCESS_TOKEN=foo" >> .env.uat.list
+	@echo "UAT_ACCESS_TOKEN=foo" >> .env.uat.list
 	@echo "MYSQL_DATABASE=uat" >> .env.uat.list
 	@echo "MYSQL_USER=uat-tool" >> .env.uat.list
 	@echo "MYSQL_PASSWORD=uat-pass" >> .env.uat.list
@@ -20,7 +21,7 @@
 	@echo "MYSQL_ALLOW_EMPTY_PASSWORD=yes" >> .env.uat.list
 	@echo "Change ACCESS_TOKEN and DB passwords before deploying to production in .env.uat.list!\n"
 
-.PHONY: init-env build build-dev init-nexus init-nexus-js init-nexus-db run run-dev restart-nexus restart-javac restart-rng restart-io restart-config restart-db restart-mongodb restart-sneakers restart-rabbitmq restart-syslog bash migrate-db stop restart restart-dev debug
+.PHONY: init-env build build-dev init-nexus init-nexus-js init-nexus-db run run-dev restart-nexus restart-javac restart-rng restart-io restart-config restart-db restart-mongodb restart-uat restart-sneakers restart-rabbitmq restart-syslog bash migrate-db stop restart restart-dev debug
 
 init-env: .env.list .env.uat.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list .env.peerfeedback.list
 	@echo "All .env files initialised. Please ensure you change ACCESS_TOKEN information etc. before running Nexus.\n"
@@ -66,6 +67,9 @@ restart-db:
 
 restart-mongodb:
 	docker-compose restart mongodb
+
+restart-uat:
+	docker-compose restart unique-assignment-tool
 
 restart-sneakers:
 	docker-compose restart sneakers

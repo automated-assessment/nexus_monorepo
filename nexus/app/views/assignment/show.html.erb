@@ -1,6 +1,6 @@
 <%= render 'header' %>
 <p>
-  <%= markdown(@assignment.description) %>
+  <%= markdown(@assignment.displayable_description current_user) %>
   <hr />
   <% unless @assignment.feedback_only %>
     <h4>Marking Scheme</h4>

@@ -36,7 +36,7 @@ class SendSubmissionJob < ActiveJob::Base
       @submission.log("Error notifying #{marking_tool.name}: #{e.class} #{e.message}", 'Error')
     end
     record_fail!
-    Rails.logger.error "Error backtrace was: #{e.backtrace}"
+    Rails.logger.error "Error backtrace was: #{e.backtrace.join('\n')}"
   end
 
   private
@@ -53,7 +53,7 @@ class SendSubmissionJob < ActiveJob::Base
       sid: @submission.id,
       aid: @submission.assignment.id,
       is_unique: @submission.assignment.is_unique,
-      description_string: @submission.assignment.description_string,
+      description_string: (@submission.assignment.displayable_description @submission.user),
       cloneurl: @submission.augmented_clone_url,
       branch: @submission.gitbranch,
       sha: @submission.commithash,

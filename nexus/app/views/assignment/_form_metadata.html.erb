@@ -12,38 +12,58 @@
   </div>
 </div>
 
-<!---<script src="/wp-includes/js/addInput.js" language="Javascript" type="text/javascript"></script>-->
-<div class="form-group">
-	 <div id="paramField" class="form-group">
-	 	<div>
-		  <label class="col-lg-2 control-label" id="parameter_form_label_1" for="parameter form 1">Parameter Form 1</label>
-		  <div id="form1" class="col-lg-10">
-			  <label class="col-lg-2 control-label" for="parameter name">Parameter Name</label>
-			  <input type="text" name="param_name" id="param_name_1"><br/>
-			  <label class="col-lg-2 control-label" for="parameter type">Parameter Type</label>
-			  <select id='param_name_1'>
-			    <option value="1">int</option>
-			    <option value="2">float</option>
-			    <option value="3">double</option>
-			    <option value="4">string</option>
-			    <option value="5">boolean</option>
-			  </select><br/>
-			  <label class="col-lg-2 control-label" for="parameter constructs">Parameter Constructs</label>
-			  <input type='text' name='param_constructs' id='param_constructs_1'><br/>
-		  </div>
-		</div>
-	 </div>
-	 <input type="button" value="Add a Parameter Form" onClick="addForm('paramField');"><input type="button" value="Delete Last Parameter Form" onClick="deleteForm();"></br></br>
-</div>
+<script>
+  $(document).ready(function() {
+    $('#isuniqueflag').click(function() {
+      $('#assignment_uat_parameters').toggle();
+      $('#unique_description_legend').toggle();
+    });
+  });
+</script>
 
 <div class="form-group">
   <%= f.label :description, class: 'col-lg-2 control-label' %>
   <div class="col-lg-10">
-	<%= f.text_area :description, class: 'form-control', size: '60x6' %>
-	<p>Markdown is supported.</p>
-	<p>If the assignment is unique, the description must be in template syntax, with matching template variables.</p>
+  	<%= f.text_area :description, class: 'form-control', size: '60x6' %>
+  	<p>Markdown is supported.</p>
+    <div id="unique_description_legend" class="alert alert-info" <% unless f.object.is_unique %>style="display:none;"<% end %>>
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      <p>For this unique assignment, use template syntax as explained below.</p>
+      <ul>
+        <li>Each line that begins with a dot (.) as the first character will become part of the description as is.</li>
+        <li>Other lines will be interpreted as Python code and can be used to control what students see.</li>
+        <li>Below, you can define assignment parameters. Each of these will be assigned a random value for each student. Assignment parameters are available to your template code as normal Python variables. In lines beginning with a dot, you can interpolate the contents of an assignment parameter using @{name-of-parameter}.</li>
+        <li>Your description template will be evaluated with the assignment-parameter values for the current student. The resulting markdown will then be rendered to the student on their assignment page.</li>
+        <li>The same templating mechanism, with the same assignment parameters and student--value assignments is available to any grading tools.</li>
+      </ul>
+    </div>
   </div>
 </div>
+
+<div id="assignment_uat_parameters" <% unless f.object.is_unique %>style="display:none;"<% end %>>
+  <hr />
+  <h4>Assignment Parameters</h4>
+  <p>
+    Below, define parameters to enable generation of a unique assignment for each student.
+  </p>
+  <br />
+
+  <div class="uat-parameters-form">
+    <%= f.fields_for :uat_parameters do |ff| %>
+      <%= render 'uat_parameters', f:ff  %>
+
+      <div class="add-uat-param-link">
+        <%= link_to_add_association f, :uat_parameters, partial: 'uat_parameters' do |link| %>
+          <%= icon 'plus-circle' %> Add Parameter
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<hr />
+<h4>Assignment Options</h4>
+<br />
 
 <div class="form-group">
   <%= f.label :start, class: 'col-lg-2 control-label' %>
