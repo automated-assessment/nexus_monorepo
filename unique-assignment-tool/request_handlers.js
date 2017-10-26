@@ -375,7 +375,7 @@ function do_generate_one (gen_results, template, assignment, student, index, val
           }
 
           console.log('results: %j', results);
-          gen_results[index] = results.join("\n");
+          gen_results[index] = results.join('\n');
           cb();
         });
       });

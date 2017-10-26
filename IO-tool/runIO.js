@@ -669,7 +669,10 @@ function executeEducatorCode(arrayOfInput, arrayOfOutput, dataFileArray, path, o
 		} else {
 			// No Errors Branch
 			// Compare user's input with educator's input and provide feedback
-			if (arrayOfOutput[i].localeCompare(javaExecute.stdout.toString()) == 0) {
+      var javaOutput = javaExecute.stdout.toString();
+      //console.log(`Java output is:      ${javaOutput}.`);
+      //console.log(`Expected output was: ${arrayOfOutput[i]}.`);
+			if (arrayOfOutput[i].localeCompare(javaOutput) == 0) {
 				objToReturn.resultsArray[i] = {
 					error: false,
 					passed: true,
