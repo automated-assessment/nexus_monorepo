@@ -32,6 +32,52 @@ dbcon.connect((err) => {
   });
 
 /**
+ * Retrieve the parameters defined for the given assignment.
+ *
+ * Expects the following JSON body:
+ *
+ * {assignment: num}
+ *
+ * Returns a JSON of this form:
+ *
+ * {parameters: [{name: string, type: int, construct: string}]}
+ *
+ */
+export function get_params_handler (request, response) {
+  var assignment = request.body.assignment;
+  console.log (`Provided with parameters for assignment ${assignment}: ${parameters}.`);
+
+  var parameters = [];
+
+  async.series([
+      (cb) => {
+        getParametersFor (parameters, assignment, cb);
+      }
+    ],
+    (err, res) => {
+      if (err) {
+        console.log(`Error fetching parameters: ${err}.`);
+        response.status(500).send(`Error from unique-assignment service: ${err}.`);
+      } else {
+        console.log("Successfully fetched parameters.");
+        response.status(200).send(
+          JSON.stringify({
+            parameters: parameters.map(
+              (p) => {
+                return {
+                  name: p.param_name,
+                  type: p.param_type,
+                  construct: p.param_construct};
+                }
+              )
+            }
+          )
+        );
+      }
+    });
+}
+
+/**
  * Receives parameter set for a given assignment and stores them in the database.
  *
  * Expects the following JSON body:
@@ -197,14 +243,19 @@ export function desc_gen_handler (request, response) {
  * given student and assignment.
  */
 function do_generate (response, studentID, assignmentID, templates) {
+  // Array storing the parameter data from the database
+  var parameters = [];
   // Hash storing the variables and their values
   var variableValues = {};
   // Array storing the results, one per template
   var results = new Array();
   async.series([
     (cb) => {
+      getParametersFor (parameters, assignmentID, cb);
+    },
+    (cb) => {
       // Get variable values
-      getVariableValuesFor (variableValues, studentID, assignmentID, cb);
+      getVariableValuesFor (variableValues, parameters, studentID, assignmentID, cb);
     },
     (cb) => {
       // Generate from each template
@@ -234,7 +285,16 @@ function do_generate (response, studentID, assignmentID, templates) {
  * either from the database or by generating them for the first time and store
  * them in variableValues.
  */
-function getVariableValuesFor (variableValues, studentID, assignmentID, cb) {
+function getVariableValuesFor (variableValues, parameters, studentID, assignmentID, cb) {
+  console.log(`Getting variable values for student ${studentID}.`);
+  async.forEachOf(parameters,
+    (row, index, cb) => {
+      getParameterValueForStudent(variableValues, studentID, assignmentID, row.param_name, row.param_type, row.param_construct, cb);
+    },
+    (err) => { cb(err); });
+}
+
+function getParametersFor (parameters, assignmentID, cb) {
   //Fetch  variable definitions for particular assignment
   console.log(`Fetching variable definitions for ${assignmentID} from database.`);
 
@@ -244,12 +304,8 @@ function getVariableValuesFor (variableValues, studentID, assignmentID, cb) {
     if (err) {
       cb(err);
     } else {
-      console.log(`Getting variable values for student ${studentID}.`);
-      async.forEachOf(rows,
-        (row, index, cb) => {
-          getParameterValueForStudent(variableValues, studentID, assignmentID, row.param_name, row.param_type, row.param_construct, cb);
-        },
-        (err) => { cb(err); });
+      Array.prototype.push.apply(parameters, rows);
+      cb();
     }
   });
 }

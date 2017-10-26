@@ -42,13 +42,7 @@ module ApplicationHelper
   end
 
   def all_uat_param_types
-    [
-      {id: 1, name:'int'},
-      {id: 2, name: 'float'},
-      {id: 3, name: 'double'},
-      {id: 4, name: 'string'},
-      {id: 5, name: 'boolean'}
-    ]
+    UATUtils.all_uat_param_types
   end
 
   def render_unauthorized_json

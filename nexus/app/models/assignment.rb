@@ -127,9 +127,11 @@ class Assignment < ActiveRecord::Base
       Rails.logger.debug('Returning initial parameter set for assignment.')
       [UATParameter.new('name', 1, '', false)]
     else
-      Rails.logger.debug('Returning parameters for non-new assignment.')
-      return [] unless @uat_attributes
-      Rails.logger.debug("Returning parameters set from form: #{@uat_attributes}")
+      unless (@uat_attributes)
+        # Get current parameters from UAT
+        @uat_attributes = UATUtils.get_params_for(self)
+          .map { | param | UATParameter.new(param[:name], param[:type], param[:construct], false) }
+      end
       @uat_attributes
     end
   end
