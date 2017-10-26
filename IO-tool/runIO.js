@@ -16,8 +16,12 @@ var RAW_PATH = process.env.RAW_PATH || 'TestingEnvironment';
 var NEXUS_BASE_URL = process.env.NEXUS_BASE_URL || 'http://localhost:3000';
 var IOTOOL_ID = process.env.IOTOOL_ID || 'iotool';
 var NEXUS_ACCESS_TOKEN = process.env.NEXUS_ACCESS_TOKEN;
+var UAT_ACCESS_TOKEN = process.env.UAT_ACCESS_TOKEN;
 var MONGO_HOST = process.env.MONGO_HOST || 'localhost';
-var UAT_URL = process.env.UAT_URL || 'http://unique-assignment-tool:3009';
+
+var UAT_HOST = process.env.UAT_HOST || 'unique-assignment-tool';
+var UAT_PORT = process.env.UAT_PORT || 3009;
+var UAT_URL = `http://${UAT_HOST}:${UAT_PORT}`;
 
 //MongoDB
 var mongojs = require('mongojs');
@@ -88,7 +92,7 @@ app.post('/check-educator-code', function(req, res) {
 			  uri: reqUrl,
 			  method: 'POST',
 			  headers: {
-				'Nexus-Access-Token': NEXUS_ACCESS_TOKEN
+				'Nexus-Access-Token': UAT_ACCESS_TOKEN
 			  },
 			  json: true,
 			  body
@@ -426,7 +430,7 @@ app.post('/mark', function(req, res) {
 					  uri: reqUrl,
 					  method: 'POST',
 					  headers: {
-						'Nexus-Access-Token': NEXUS_ACCESS_TOKEN
+						'Nexus-Access-Token': UAT_ACCESS_TOKEN
 					  },
 					  json: true,
 					  body

@@ -161,6 +161,8 @@ services:
     environment:
       NEXUS_BASE_URL: http://nexus:3000
       MONGO_HOST: mongodb
+      UAT_HOST: unique-assignment-tool
+      UAT_PORT: 3009
     ports:
       - "3004:3001"
     volumes:

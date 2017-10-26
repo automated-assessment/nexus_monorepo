@@ -2,11 +2,11 @@ import async from 'async';
 import forEachOf from 'async/eachOf';
 import series from 'async/series';
 
-var fs = require('fs');
+const fs = require('fs-extra')
 
-const accessToken = process.env.NEXUS_ACCESS_TOKEN;
-if (!process.env.NEXUS_ACCESS_TOKEN) {
-  console.log('Error: Specify NEXUS_ACCESS_TOKEN in environment');
+const accessToken = process.env.UAT_ACCESS_TOKEN;
+if (!process.env.UAT_ACCESS_TOKEN) {
+  console.log('Error: Specify UAT_ACCESS_TOKEN in environment');
   process.exit(1);
 }
 
@@ -261,7 +261,7 @@ function do_generate (response, studentID, assignmentID, templates) {
       // Generate from each template
       async.forEachOf (templates,
         (template, index, cb2) => {
-          do_generate_one (results, template, index, variableValues, cb2);
+          do_generate_one (results, template, assignmentID, studentID, index, variableValues, cb2);
         },
         (err) => {
           cb(err);
@@ -310,11 +310,20 @@ function getParametersFor (parameters, assignmentID, cb) {
   });
 }
 
+function removeDirectoryIfExists (dir) {
+  if (dir !== '') {
+    if (fs.existsSync(dir)) {
+      fs.removeSync(dir);
+      console.log(`Cleaned up directory ${dir}.`);
+    }
+  }
+}
+
 /**
  * Generate from the given template and store the result in gen_results at index
  * index.
  */
-function do_generate_one (gen_results, template, index, valueArray, cb) {
+function do_generate_one (gen_results, template, assignment, student, index, valueArray, cb) {
   var varInits = "";
   for(var varName in valueArray){
     // FIXME: Need to consider whether the variable is a string, in which case it may need quote marks. Probably actually best done when we put the value into the hash.
@@ -325,31 +334,52 @@ function do_generate_one (gen_results, template, index, valueArray, cb) {
 
   //Writing the template to file to do generation
   console.log("Generating template invocation");
-  // FIXME: Generate to separate directories / files to avoid overwriting when handling multiple requests in parallel
-  fs.writeFileSync(process.cwd()+'/template.py.dna', template, 'utf8');
-
-  //Executing generation with inputs
-  console.log('Starting on generation')
-  // TODO: Move this to imports on the top
-  var pythonExec = require('python-shell');
-  var argsList = ['template.py.dna'];
-  /*for(var j = 0; j < valueArray.length; j++) {
-    argsList.push(valueArray[j]);
-  }*/
-  var options = {
-    args: argsList
-  }
-  console.log("Generation args: " + JSON.stringify(options));
-  console.log('Generation args taken.');
-  pythonExec.run('/ribosome.py', options, function (err, results) {
+  var templatePath = process.cwd() + `templates/${assignment}/${student}/${index}/`;
+  removeDirectoryIfExists(templatePath);
+  fs.ensureDir(templatePath, (err) => {
     if (err) {
       cb(err);
+      return;
     }
-    else {
-      console.log('results: %j', results);
-      gen_results[index] = results.join("\n");
-      cb();
-    }
+
+    var dnaFileName = `${templatePath}template.py.dna`;
+    fs.writeFile(dnaFileName, template, 'utf8', (err) => {
+      if (err) {
+        cb(err);
+        return;
+      }
+
+      //Executing generation with inputs
+      console.log('Starting on generation')
+      // TODO: Move this to imports on the top
+      var pythonExec = require('python-shell');
+      var argsList = [dnaFileName];
+      /*for(var j = 0; j < valueArray.length; j++) {
+        argsList.push(valueArray[j]);
+      }*/
+      var options = {
+        args: argsList
+      }
+      console.log("Generation args: " + JSON.stringify(options));
+      console.log('Generation args taken.');
+      pythonExec.run('/ribosome.py', options, (err, results) => {
+        fs.remove(templatePath, (err2) => {
+          if (err) {
+            cb(err);
+            return;
+          }
+
+          if (err2) {
+            cb(err2);
+            return;
+          }
+
+          console.log('results: %j', results);
+          gen_results[index] = results.join("\n");
+          cb();
+        });
+      });
+    });
   });
 }
 
