@@ -27,6 +27,7 @@
   	<%= f.text_area :description, class: 'form-control', size: '60x6' %>
   	<p>Markdown is supported.</p>
     <div id="unique_description_legend" class="alert alert-info" <% unless f.object.is_unique %>style="display:none;"<% end %>>
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
       <p>For this unique assignment, use template syntax as explained below.</p>
       <ul>
         <li>Each line that begins with a dot (.) as the first character will become part of the description as is.</li>
