@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 var errorhandler = require('errorhandler');
 
 const app = express();
-const port = 3009;
+const port = process.env.PORT || 3009;
 const NEXUS_BASE_URL = process.env.NEXUS_BASE_URL || 'http://localhost:3000';
 
 var jsonParser = bodyParser.json();

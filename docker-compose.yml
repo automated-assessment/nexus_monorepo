@@ -89,6 +89,7 @@ services:
     environment:
       NEXUS_BASE_URL: http://nexus:3000
       MYSQL_HOST: mysql-uat
+      PORT: 3009
     ports:
       - "3009:3009"
     logging:
