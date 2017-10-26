@@ -1,0 +1,36 @@
+<div class="nested-fields">
+  <div class="form-group">
+    <%= f.label :name, 'Parameter name', class: 'col-lg-2 control-label' %>
+    <div class="col-lg-10">
+      <%= f.text_field :name, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :type, 'Parameter type', class: 'col-lg-2 control-label' %>
+    <div class="col-lg-10">
+    <%= collection_select("assignment[uat_parameters_attributes][#{f.options[:child_index]}]",
+      :type,
+      all_uat_param_types,
+      Proc.new { | type | type[:id] },
+      Proc.new { | type | type[:name] },
+      { prompt: true,
+        selected: f.object.type},
+      { class: 'form-control' }) %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :construct, 'Construction constraints', class: 'col-lg-2 control-label' %>
+    <div class="col-lg-10">
+      <%= f.text_field :construct, class: 'form-control' %>
+    </div>
+  </div>
+
+  <%= link_to_remove_association f do |link| %>
+    <div class="col-md-10 col-md-offset-2">
+      <%= icon 'minus-circle' %> Remove
+      <hr />
+    </div>
+  <% end %>
+</div>

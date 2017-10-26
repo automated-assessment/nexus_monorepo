@@ -41,6 +41,10 @@ module ApplicationHelper
     MarkingTool.where.not(uid: 'nexus')
   end
 
+  def all_uat_param_types
+    UATUtils.all_uat_param_types
+  end
+
   def render_unauthorized_json
     render json: { response: 'Unauthorized' }.to_json,
            status: 401

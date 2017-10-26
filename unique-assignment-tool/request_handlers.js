@@ -1,4 +1,3 @@
-import { mysql, dbcon } from './db_mgr';
 import async from 'async';
 import forEachOf from 'async/eachOf';
 import series from 'async/series';
@@ -9,6 +8,134 @@ const accessToken = process.env.NEXUS_ACCESS_TOKEN;
 if (!process.env.NEXUS_ACCESS_TOKEN) {
   console.log('Error: Specify NEXUS_ACCESS_TOKEN in environment');
   process.exit(1);
+}
+
+var mysql = require('mysql');
+
+var dbcon = null;
+
+dbcon = mysql.createConnection({
+  host: process.env.MYSQL_HOST || "mysql",
+  port: 3306,
+  user: process.env.MYSQL_USER || "uat-tool",
+  password: process.env.MYSQL_PASSWORD || "uat-pass",
+  database: process.env.MYSQL_DATABASE || "uat"
+});
+
+dbcon.connect((err) => {
+    if (err) {
+  	  console.log(err);
+    }
+    else {
+  	  console.log("DB connection successful.")
+    }
+  });
+
+/**
+ * Retrieve the parameters defined for the given assignment.
+ *
+ * Expects the following JSON body:
+ *
+ * {assignment: num}
+ *
+ * Returns a JSON of this form:
+ *
+ * {parameters: [{name: string, type: int, construct: string}]}
+ *
+ */
+export function get_params_handler (request, response) {
+  var assignment = request.body.assignment;
+  console.log (`Provided with parameters for assignment ${assignment}: ${parameters}.`);
+
+  var parameters = [];
+
+  async.series([
+      (cb) => {
+        getParametersFor (parameters, assignment, cb);
+      }
+    ],
+    (err, res) => {
+      if (err) {
+        console.log(`Error fetching parameters: ${err}.`);
+        response.status(500).send(`Error from unique-assignment service: ${err}.`);
+      } else {
+        console.log("Successfully fetched parameters.");
+        response.status(200).send(
+          JSON.stringify({
+            parameters: parameters.map(
+              (p) => {
+                return {
+                  name: p.param_name,
+                  type: p.param_type,
+                  construct: p.param_construct};
+                }
+              )
+            }
+          )
+        );
+      }
+    });
+}
+
+/**
+ * Receives parameter set for a given assignment and stores them in the database.
+ *
+ * Expects the following JSON body:
+ *
+ * {assignment: num,
+ *  parameters: [{type: int, name: string, construct: string}]}
+ */
+export function update_assignment_parameters_handler (request, response) {
+  var assignment = request.body.assignment;
+  var parameters = request.body.parameters;
+  console.log (`Provided with parameters for assignment ${assignment}: ${parameters}.`);
+
+  async.series([
+      ensure_tables_initialised,
+      (cb) => {
+        do_delete_assignment_data (assignment, cb);
+      },
+      (cb) => {
+        do_update_assignment_parameters (assignment, parameters, cb);
+      }
+    ],
+    (err, res) => {
+      if (err) {
+        console.log(`Error updating parameters: ${err}.`);
+        response.status(500).send(`Error from unique-assignment service: ${err}.`);
+      } else {
+        console.log("Successfully updated parameters.");
+        response.status(200).send("Success");
+      }
+    });
+}
+
+/**
+ * Removes the given assignment from the database.
+ *
+ * Expects the following JSON body:
+ *
+ * {assignment: num}
+ */
+export function remove_assignment_handler (request, response) {
+  var assignment = request.body.assignment;
+  console.log(`Removing assignment ${assignment}.`);
+
+  async.series([
+      (cb) => {
+        do_delete_assignment_data (assignment, cb);
+      }
+    ],
+    (err, result) => {
+      if (err) {
+        console.log(`Error deleting assignment: ${err}.`);
+        response.status(500).send(`Error from unique-assignment service: ${err}.`);
+      } else {
+        console.log(`Successfully deleted assignment ${assignment}.`);
+        response.status(200).send("Success");
+      }
+    }
+  );
 }
 
 /**
@@ -43,19 +170,92 @@ export function desc_gen_handler (request, response) {
   do_generate(response, studentID, assignmentID, [descriptionString]);
 }
 
+function ensure_tables_initialised (cb) {
+  var sql =
+    "CREATE TABLE parameters (param_id INT AUTO_INCREMENT, param_name VARCHAR(50), " +
+    "param_type ENUM ('int','float','double','string','boolean'), param_construct TEXT, assign_id INT, "+
+    "PRIMARY KEY (param_id)) ENGINE=INNODB;";
+
+  dbcon.query(sql, (err, result) => {
+    if (err && err.code !== "ER_TABLE_EXISTS_ERROR") {
+      cb(err);
+      return;
+    } else {
+      console.log("Ensured presence of parameters table.");
+
+      var sql =
+        "CREATE TABLE generated_parameters (assign_id INT, std_id INT, param_name VARCHAR(50), param_value TEXT) ENGINE=INNODB;";
+        dbcon.query(sql, (err, result) => {
+          if (err && err.code !== "ER_TABLE_EXISTS_ERROR") {
+            cb(err);
+            return;
+          } else {
+            console.log("Ensured presence of generated_parameters table.");
+            cb();
+          }
+        });
+    }
+  });
+}
+
+function do_delete_assignment_data (assignment, cb) {
+  var sql = "DELETE FROM parameters WHERE assign_id = ?";
+  dbcon.query(sql, [assignment], (err, result) => {
+    if (err) {
+      console.log(`Failed to delete original parameters for assingment ${assignment}: ${err}`);
+      cb(err);
+    } else {
+      var sql = "DELETE FROM generated_parameters WHERE assign_id = ?";
+      dbcon.query(sql, [assignment], (err, result) => {
+        if (err) {
+          console.log(`Failed to delete original generated parameters for assingment ${assignment}: ${err}`);
+          cb(err);
+        } else {
+          cb();
+        }
+      });
+    }
+  });
+}
+
+function do_update_assignment_parameters (assignment, parameters, cb) {
+  var sql = "INSERT INTO parameters (param_name,param_type,param_construct,assign_id) VALUES (?)";
+  async.forEach (parameters,
+    (p, cb2) => {
+      var values = [p.name, p.type, p.construct, assignment];
+  		dbcon.query(sql, [values], (err, result) => {
+        if (err) {
+          console.log(`Failed to add parameter ${p.name} to database for assignment ${assignment}: ${err}.`);
+          cb2(err);
+        } else {
+          cb2();
+        }
+      });
+    },
+    (err) => {
+      cb(err);
+    }
+  );
+}
+
 /**
  * Generate code from each of the templates, using the variable values for the
  * given student and assignment.
  */
 function do_generate (response, studentID, assignmentID, templates) {
+  // Array storing the parameter data from the database
+  var parameters = [];
   // Hash storing the variables and their values
   var variableValues = {};
   // Array storing the results, one per template
   var results = new Array();
   async.series([
     (cb) => {
+      getParametersFor (parameters, assignmentID, cb);
+    },
+    (cb) => {
       // Get variable values
-      getVariableValuesFor (variableValues, studentID, assignmentID, cb);
+      getVariableValuesFor (variableValues, parameters, studentID, assignmentID, cb);
     },
     (cb) => {
       // Generate from each template
@@ -85,7 +285,16 @@ function do_generate (response, studentID, assignmentID, templates) {
  * either from the database or by generating them for the first time and store
  * them in variableValues.
  */
-function getVariableValuesFor (variableValues, studentID, assignmentID, cb) {
+function getVariableValuesFor (variableValues, parameters, studentID, assignmentID, cb) {
+  console.log(`Getting variable values for student ${studentID}.`);
+  async.forEachOf(parameters,
+    (row, index, cb) => {
+      getParameterValueForStudent(variableValues, studentID, assignmentID, row.param_name, row.param_type, row.param_construct, cb);
+    },
+    (err) => { cb(err); });
+}
+
+function getParametersFor (parameters, assignmentID, cb) {
   //Fetch  variable definitions for particular assignment
   console.log(`Fetching variable definitions for ${assignmentID} from database.`);
 
@@ -95,12 +304,8 @@ function getVariableValuesFor (variableValues, studentID, assignmentID, cb) {
     if (err) {
       cb(err);
     } else {
-      console.log(`Getting variable values for student ${studentID}.`);
-      async.forEachOf(rows,
-        (row, index, cb) => {
-          getParameterValueForStudent(variableValues, studentID, assignmentID, row.param_name, row.param_type, row.param_construct, cb);
-        },
-        (err) => { cb(err); });
+      Array.prototype.push.apply(parameters, rows);
+      cb();
     }
   });
 }

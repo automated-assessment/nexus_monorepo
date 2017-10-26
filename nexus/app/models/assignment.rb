@@ -34,6 +34,9 @@ class Assignment < ActiveRecord::Base
     log("Assignment id #{id} updated.")
   end
 
+  after_save :uat_save_hook
+  before_destroy :uat_destroy_hook
+
   def started?
     start.past?
   end
@@ -68,31 +71,99 @@ class Assignment < ActiveRecord::Base
 
     Rails.logger.info 'Assignment is unique, requesting generation for description'
 
-    uri = URI.parse("http://#{Rails.configuration.uat_host}:#{Rails.configuration.uat_port}/desc_gen")
-
-    Net::HTTP.start(uri.host, uri.port) do |http|
-      req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
-
-      req.body = {
-        aid: id,
-        studentid: for_user.id,
-        is_unique: true,
-        description_string: description
-      }.to_json
-
-      res = http.request(req)
-      Rails.logger.info res.body
-      if res.code =~ /2../
-        Rails.logger.info 'Success generating description for unique assignment'
-        @generated_description = (JSON.parse res.body)['generated'][0]
-      else
-        Rails.logger.info 'Error generating description for unique assignment'
-        @generated_description = 'ERROR: Error on generation of description. Get in contact with your lecturer for further details.'
-      end
-    end
+    @generated_description = UATUtils.generate_description(self, for_user)
 
     @generated_description
   end
+
+  # Start code for fake uat_parameters 'association'
+
+  # Simulate the existence of uat_parameters as part of the assignment. These will, in fact, be picked up from the UAT instead
+  class UATParameter
+    def initialize(name, type, construct, is_new)
+      @name = name
+      @type = type
+      @construct = construct
+      @is_new = is_new
+    end
+
+    def name
+      @name
+    end
+
+    def type
+      @type
+    end
+
+    def construct
+      @construct
+    end
+
+    def persisted?
+      false
+    end
+
+    # Needed to fake this as an association for cocoon
+    def new_record?
+      @is_new
+    end
+
+    def marked_for_destruction?
+      false
+    end
+
+    def _destroy
+    end
+  end
+
+  def build_uat_parameter
+    UATParameter.new('', 0, '', true)
+  end
+
+  def uat_parameters
+    return [] unless (is_unique || new_record?)
+
+    if (new_record?)
+      Rails.logger.debug('Returning initial parameter set for assignment.')
+      [UATParameter.new('name', 1, '', false)]
+    else
+      unless (@uat_attributes)
+        # Get current parameters from UAT
+        @uat_attributes = UATUtils.get_params_for(self)
+          .map { | param | UATParameter.new(param[:name], param[:type], param[:construct], false) }
+      end
+      @uat_attributes
+    end
+  end
+
+  # This just stores the values in this object. When save is invoked, these values will be sent to the UAT
+  def uat_parameters_attributes=(attributes)
+    Rails.logger.debug("Asked to set uat parameters for this assignment: #{attributes}.")
+    @uat_attributes_changed = true
+    @uat_attributes = attributes
+        .map { | attr |  UATParameter.new(attr[1]['name'], attr[1]['type'].to_i, attr[1]['construct'], true) }
+    Rails.logger.debug("Attributes kept are now: #{@uat_attributes}")
+  end
+
+  def uat_save_hook
+    return unless @uat_attributes_changed
+    if is_unique
+      UATUtils.send_params_to_uat (self)
+    else
+      # TODO: Should probably check if it was registered with the UAT before
+      UATUtils.remove_from_uat (self)
+    end
+    @uat_attributes_changed = false
+  end
+
+  def uat_destroy_hook
+    if is_unique
+      UATUtils.remove_from_uat (self)
+    end
+  end
+
+# End code for fake uat_parameters 'association'
+
 
   def log(body, level = 'info')
     AuditItem.create!(assignment: self,
