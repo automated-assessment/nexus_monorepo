@@ -2,7 +2,8 @@ import async from 'async';
 import forEachOf from 'async/eachOf';
 import series from 'async/series';
 
-const fs = require('fs-extra')
+const fs = require('fs-extra');
+const pythonExec = require('python-shell');
 
 const accessToken = process.env.UAT_ACCESS_TOKEN;
 if (!process.env.UAT_ACCESS_TOKEN) {
@@ -351,8 +352,6 @@ function do_generate_one (gen_results, template, assignment, student, index, val
 
       //Executing generation with inputs
       console.log('Starting on generation')
-      // TODO: Move this to imports on the top
-      var pythonExec = require('python-shell');
       var argsList = [dnaFileName];
       /*for(var j = 0; j < valueArray.length; j++) {
         argsList.push(valueArray[j]);
