@@ -1,9 +1,9 @@
-# nexus_monorepo
+# Nexus -- Automated Assessment of Student Submissions
 Monorepo for Nexus. This contains the code for all services, including the central management component and all graders etc. Each service is kept in its own folder under the main folder. The main folder only contains files needed to run the integration (`docker-compose` files etc) as well as a global `Makefile`.
 
-***THIS MONOREPO IS STILL EXPERIMENTAL AND SHOULD NOT YET BE USED***
-
 Below, you will find documentation on how to get started with Nexus from this repository as well as the environment variables that need defining.
+
+You will also find information about how to develop your own contributions to Nexus.
 
 ## Getting Started
 **1. Clone the repo and cd into it**
@@ -176,6 +176,12 @@ NEXUS_ACCESS_TOKEN=
 ```
 
 The access token must be valid for the nexus instance to be run, so in the first run set it to a random string, then replace it once you have generated an access token in nexus. Restart the docker-compose using `docker-compose restart` once you have updated all .env files.
+
+## Contributing
+
+To contribute your own code to Nexus, create a branch or make a fork of the repository. When your contribution is ready, submit a pull request against the `contributions` branch. This will be reviewed and you may get feedback that you will be asked to integrate into your contribution. Once it is ready, Steffen will merge into `contribution`. Anything that is merged into `master` will end up in production. Only Steffen can merge into master.
+
+You should consider opening a pull request into `contribution` as soon as you have made the first commit into your own branch. This way, we will have an easy way of checking your contribution as it develops over time and you can receive feedback on your code as you create it. You are free to use your own branching protocol below your branch or fork (and are indeed encouraged to use branches extensively there.).
 
 ## References
 - https://docs.docker.com/compose/overview/
