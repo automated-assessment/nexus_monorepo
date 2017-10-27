@@ -299,9 +299,8 @@ function getParametersFor (parameters, assignmentID, cb) {
   //Fetch  variable definitions for particular assignment
   console.log(`Fetching variable definitions for ${assignmentID} from database.`);
 
-  // FIXME: SQL Injection
-	var sql = `SELECT param_name,param_type,param_construct FROM parameters WHERE assign_id = ${assignmentID};`;
-	dbcon.query(sql, (err, rows, result) => {
+	var sql = "SELECT param_name,param_type,param_construct FROM parameters WHERE assign_id = ?";
+	dbcon.query(sql, [assignmentID], (err, rows, result) => {
     if (err) {
       cb(err);
     } else {
@@ -391,8 +390,9 @@ function do_generate_one (gen_results, template, assignment, student, index, val
 function getParameterValueForStudent(valueArray, studentID, assignmentID, paramName, paramType, paramConstruct, callback) {
   console.log (`Finding value for parameter ${paramName} : ${paramType}[${paramConstruct}].`);
 
-  console.log(`Starting with db lookup.`);
-  var sql = `SELECT param_value FROM generated_parameters WHERE assign_id = ${assignmentID} and std_id = ${studentID} and param_name = "${paramName}"`;
+  console.log("Starting with db lookup.");
+  var sql = "SELECT param_value FROM generated_parameters WHERE assign_id = ? and std_id = ? and param_name = ?";
+  values = [assignmentID, studentID, paramName];
   dbcon.query(sql, function (err, rows, result) {
     if (err) {
       console.log(err);
