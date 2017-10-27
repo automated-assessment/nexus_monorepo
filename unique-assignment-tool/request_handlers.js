@@ -200,13 +200,13 @@ function ensure_tables_initialised (cb) {
 }
 
 function do_delete_assignment_data (assignment, cb) {
-  var sql = "DELETE FROM parameters WHERE assign_id = ?";
+  var sql = "DELETE FROM parameters WHERE assign_id=?";
   dbcon.query(sql, [assignment], (err, result) => {
     if (err) {
       console.log(`Failed to delete original parameters for assingment ${assignment}: ${err}`);
       cb(err);
     } else {
-      var sql = "DELETE FROM generated_parameters WHERE assign_id = ?";
+      var sql = "DELETE FROM generated_parameters WHERE assign_id=?";
       dbcon.query(sql, [assignment], (err, result) => {
         if (err) {
           console.log(`Failed to delete original generated parameters for assingment ${assignment}: ${err}`);
@@ -299,7 +299,7 @@ function getParametersFor (parameters, assignmentID, cb) {
   //Fetch  variable definitions for particular assignment
   console.log(`Fetching variable definitions for ${assignmentID} from database.`);
 
-	var sql = "SELECT param_name,param_type,param_construct FROM parameters WHERE assign_id = ?";
+	var sql = "SELECT param_name,param_type,param_construct FROM parameters WHERE assign_id=?";
 	dbcon.query(sql, [assignmentID], (err, rows, result) => {
     if (err) {
       cb(err);
@@ -391,9 +391,9 @@ function getParameterValueForStudent(valueArray, studentID, assignmentID, paramN
   console.log (`Finding value for parameter ${paramName} : ${paramType}[${paramConstruct}].`);
 
   console.log("Starting with db lookup.");
-  var sql = "SELECT param_value FROM generated_parameters WHERE assign_id = ? and std_id = ? and param_name = ?";
-  values = [assignmentID, studentID, paramName];
-  dbcon.query(sql, function (err, rows, result) {
+  var sql = "SELECT param_value FROM generated_parameters WHERE assign_id=? and std_id=? and param_name=?";
+  var values = [assignmentID, studentID, paramName];
+  dbcon.query(sql, values, function (err, rows, result) {
     if (err) {
       console.log(err);
       callback(err);
