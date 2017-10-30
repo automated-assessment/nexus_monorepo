@@ -20,4 +20,7 @@ export function handle_receive_feedback (request, response) {
 
 export function start_tests() {
   console.log ("Starting to run test.");
+
+  console.log ("All tests have run.");
+  process.exit(0);
 }
