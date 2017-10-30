@@ -1,0 +1,8 @@
+version: '2'
+services:
+  peer-feedback:
+    build:
+      context: peerfeedback/
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./peerfeedback:/src

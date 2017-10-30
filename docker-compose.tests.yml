@@ -1,0 +1,18 @@
+# Requires Docker v 1.12 or above
+# The compose file for running grader tests. To be supplemented with appropriate grader definitons from the grader docker-compose file
+version: '2'
+services:
+  syslog:
+    image: voxxit/rsyslog:latest
+    ports:
+      - "5514:514/udp"
+    volumes:
+      - ./logs:/var/log
+  grader_tester:
+    build:
+      context: grader_tester/
+      dockerfile: Dockerfile
+    volumes:
+      - ./tests/scripts:/test-specs
+    environment:
+      NEXUS_ACCESS_TOKEN: text_access
