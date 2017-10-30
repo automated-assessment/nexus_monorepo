@@ -27,9 +27,23 @@ export function start_tests() {
       console.log(`Error reading test specification: ${err}.`);
     } else {
       console.log("Read test specification, getting ready to run tests...");
+
+      if (data.graders && data.tests) {
+        run_tests(data.graders, data.tests);
+      } else {
+        console.log ("Incomplete specification: provide graders and tests.");
+      }
     }
 
     console.log ("All tests have run.");
     process.exit(0);
+  });
+}
+
+function run_tests(graders, tests) {
+  Object.keys(tests).forEach((test) => {
+    console.log (`Running test ${test}.`);
+    
+    console.log (`Finished running test ${test}.`);
   });
 }

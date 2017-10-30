@@ -1,1 +1,11 @@
 # Test specifications for grader grader tester
+graders:
+  javac-tool:
+    port: 3003
+    mark: /mark
+tests:
+  basic:
+    submission: basic_compiles/
+    graders:
+      javac-tool:
+        mark: 100
