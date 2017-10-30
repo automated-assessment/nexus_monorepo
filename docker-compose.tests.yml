@@ -14,5 +14,6 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./tests/scripts:/test-specs
+      - ./tests/repositories:/repositories
     environment:
       NEXUS_ACCESS_TOKEN: test_access
