@@ -1,12 +1,12 @@
 {
-  "name": "unique_assignment_tool",
-  "version": "1.0.1",
-  "description": "Unique Assingment Tool",
+  "name": "grader_tester",
+  "version": "1.0.0",
+  "description": "Grader Tester Tool",
   "main": "index.js",
   "scripts": {
     "start": "node ."
   },
-  "author": "aydinakyol",
+  "author": "Steffen Zschaler",
   "dependencies": {
     "babel-eslint": "^6.0.0",
     "babel-plugin-transform-runtime": "^6.6.0",
@@ -22,6 +22,7 @@
     "express": "^4.13.4",
     "fs-extra": "^0.30.0",
     "request": "^2.70.0",
-    "async": "2.5.0"
+    "async": "2.5.0",
+    "node-yaml": "3.1.1"
   }
 }

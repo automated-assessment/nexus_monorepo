@@ -15,4 +15,4 @@ services:
     volumes:
       - ./tests/scripts:/test-specs
     environment:
-      NEXUS_ACCESS_TOKEN: text_access
+      NEXUS_ACCESS_TOKEN: test_access
