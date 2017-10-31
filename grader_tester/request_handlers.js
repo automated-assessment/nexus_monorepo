@@ -1,5 +1,5 @@
 import async from 'async';
-import forEachOf from 'async/eachOf';
+import forEachSeries from 'async/eachSeries';
 import series from 'async/series';
 import yaml from 'node-yaml';
 import { execSync } from 'child_process';
@@ -37,46 +37,54 @@ export function start_tests() {
         run_tests(data.graders, data.tests);
       } else {
         console.log ("Incomplete specification: provide graders and tests.");
+        process.exit(0);
       }
     }
-
-    console.log ("All tests have run.");
-    process.exit(0);
   });
 }
 
 function run_tests(graders, tests) {
-  // TODO Really should use async forEach or similar
-  Object.keys(tests).forEach((test) => {
-    console.log (`Running test ${test}.`);
+  async.forEachSeries(Object.keys(tests),
+    (test, cb) => {
+      console.log (`Running test ${test}.`);
 
-    var sha;
-    async.series([
-        (cb) => { get_submission_sha(sha, tests[test].submission, cb); },
-        (cb) => { run_graders(tests[test].graders, sha, cb); }
-      ],
-      (err, results) => {
-        if (err) {
-          console.log(`Error running tests: ${err}.`);
-        } else {
-          // TODO: Summarise results
+      var sha = [];
+      async.series([
+          (cb) => { get_submission_sha(sha, tests[test].submission, cb); },
+          (cb) => { run_graders(tests[test].graders, sha, cb); }
+        ],
+        (err, results) => {
+          if (err) {
+            cb(err);
+          } else {
+            console.log (`Finished running test ${test}.`);
+            cb();
+          }
         }
+      );
+    },
+    (err) => {
+      if (err) {
+        console.log(`Error running tests: ${err}.`);
       }
-    );
 
-    console.log (`Finished running test ${test}.`);
-  });
+      // TODO: Summarise results
+
+      console.log ("All tests have run.");
+      process.exit(0);
+    }
+  );
 }
 
 function get_submission_sha(sha, submission_folder, cb) {
-  fs.readFile(`/repositories/${submission_folder}/packed-refs`, (err, data) => {
+  fs.readFile(`/repositories/${submission_folder}.git/packed-refs`, (err, data) => {
     if (err) {
       cb(err);
       return;
     }
 
     try {
-      sha = /^([A-Za-z0-9]+)\s+refs\/heads\/master$/m.match(data)[1];
+      sha[0] = /^([A-Za-z0-9]+)\s+refs\/heads\/master$/m.exec(data)[1];
       cb();
     }
     catch (err) {
@@ -86,7 +94,8 @@ function get_submission_sha(sha, submission_folder, cb) {
 }
 
 function run_graders(graders, sha, cb) {
+  console.log(`Ready to run graders on SHA ${sha[0]}.`);
   // TODO Run all graders on the submission
-  console.log("Ready to run graders.");
+
   cb();
 }
