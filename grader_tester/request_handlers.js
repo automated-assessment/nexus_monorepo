@@ -51,7 +51,7 @@ function run_tests(graders, tests) {
       var sha = [];
       async.series([
           (cb) => { get_submission_sha(sha, tests[test].submission, cb); },
-          (cb) => { run_graders(tests[test].graders, sha, cb); }
+          (cb) => { run_graders(tests[test].graders, tests[test].submission, sha, graders, cb); }
         ],
         (err, results) => {
           if (err) {
@@ -93,9 +93,36 @@ function get_submission_sha(sha, submission_folder, cb) {
   });
 }
 
-function run_graders(graders, sha, cb) {
+function run_graders(grader_test_specs, submission_folder, sha, graders, cb) {
   console.log(`Ready to run graders on SHA ${sha[0]}.`);
-  // TODO Run all graders on the submission
 
+  // Fake submission data
+  var submission_request_body = {
+    student: "Ms Tamara Test-Student",
+    studentuid: 77,
+    studentemail: "tamara.test_student@kcl.ac.uk",
+    sid: 15,
+    aid: 1,
+    is_unique: false,
+    description_string: "",
+    cloneurl: `${GIT_BASE_URL}${submission_folder}.git`,
+    branch: "master",
+    sha: sha,
+    nextservices: []
+  };
+
+  async.forEachSeries(Object.keys(grader_test_specs),
+    (grader_test_spec, cb) => {
+      console.log(`About to run test for ${grader_test_spec}.`);
+      run_grader(grader_test_specs[grader_test_spec], submission_request_body, graders[grader_test_spec], cb);
+    },
+    (err) => {
+      cb (err, []);
+    }
+  );
+}
+
+function run_grader(grader_test_spec, submission_request_body, grader_spec, cb) {
+  // TODO Run grader on the submission
   cb();
 }
