@@ -1,9 +1,11 @@
 import async from 'async';
 import forEachSeries from 'async/eachSeries';
+import forEach from 'async/each';
 import series from 'async/series';
 import yaml from 'node-yaml';
 import { execSync } from 'child_process';
 import request from 'request';
+import waitOn from 'wait-on';
 
 const fs = require('fs-extra');
 
@@ -27,7 +29,20 @@ export function start_tests() {
       console.log("Read test specification, getting ready to run tests...");
 
       if (data.graders && data.tests) {
-        run_tests(data.graders, data.tests);
+        async.series([
+            (cb) => { wait_for_graders(data.graders, cb); },
+            (cb) => { run_tests(data.graders, data.tests, cb); }
+          ],
+          (err, result) => {
+            if (err) {
+              console.log(`Error running tests: ${err}.`);
+            }
+            else {
+              console.log ("All tests have run.");
+            }
+            process.exit(0);
+          }
+        );
       } else {
         console.log ("Incomplete specification: provide graders and tests.");
         process.exit(0);
@@ -36,7 +51,34 @@ export function start_tests() {
   });
 }
 
-function run_tests(graders, tests) {
+function wait_for_graders(graders, cb) {
+  var opts = {
+    resources: Object.keys(graders).map((grader_name) => {
+        return `http://${grader_name}:${graders[grader_name].port}${graders[grader_name].mark}`;
+      }),
+    delay: 1000, // initial delay in ms, default 0
+    interval: 100, // poll interval in ms, default 250ms
+    timeout: 30000, // timeout in ms, default Infinity
+    window: 1000, // stabilization time in ms, default 750ms
+    strictSSL: false,
+    followAllRedirects: true,
+    followRedirect: true
+  };
+
+  console.log("Waiting for graders to spin up...");
+  waitOn(opts, (err) => {
+    if (err) {
+      cb(err, []);
+      return;
+    }
+
+    // once here, all resources are available
+    console.log("All graders are up.");
+    cb(null, []);
+  });
+}
+
+function run_tests(graders, tests, cb) {
   async.forEachSeries(Object.keys(tests),
     (test, cb) => {
       console.log (`Running test ${test}.`);
@@ -57,14 +99,9 @@ function run_tests(graders, tests) {
       );
     },
     (err) => {
-      if (err) {
-        console.log(`Error running tests: ${err}.`);
-      }
-
       // TODO: Summarise results
 
-      console.log ("All tests have run.");
-      process.exit(0);
+      cb(err, []);
     }
   );
 }
@@ -133,7 +170,7 @@ function sendRequest(body, url_end, callback) {
 
 function run_grader(grader_name, grader_test_spec, submission_request_body, grader_spec, cb) {
   // TODO Set up to expect feedback and mark
-  
+
   const requestOptions = {
     url: `http://${grader_name}:${grader_spec.port}${grader_spec.mark}`,
     method: 'POST',
