@@ -22,6 +22,11 @@ services:
     depends_on:
       - git-server
       - syslog
+      - rng-tool # Need to include in dependencies or it won't get started
+      - config-tool # Need to include in dependencies or it won't get started
+      - javac-tool # Need to include in dependencies or it won't get started
+      - io-tool # Need to include in dependencies or it won't get started
+      - peer-feedback # Need to include in dependencies or it won't get started      
     logging:
       driver: syslog
       options:

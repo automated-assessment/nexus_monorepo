@@ -3,6 +3,7 @@ import forEachSeries from 'async/eachSeries';
 import series from 'async/series';
 import yaml from 'node-yaml';
 import { execSync } from 'child_process';
+import request from 'request';
 
 const fs = require('fs-extra');
 
@@ -15,14 +16,6 @@ if (!process.env.NEXUS_ACCESS_TOKEN) {
 const GIT_HOST = process.env.GIT_HOST || 'git-server';
 const GIT_PORT = process.env.GIT_PORT || 80;
 const GIT_BASE_URL = `http://${GIT_HOST}:${GIT_PORT}/`;
-
-export function handle_receive_mark (request, response) {
-
-}
-
-export function handle_receive_feedback (request, response) {
-
-}
 
 export function start_tests() {
   console.log ("Starting to run test.");
@@ -114,7 +107,7 @@ function run_graders(grader_test_specs, submission_folder, sha, graders, cb) {
   async.forEachSeries(Object.keys(grader_test_specs),
     (grader_test_spec, cb) => {
       console.log(`About to run test for ${grader_test_spec}.`);
-      run_grader(grader_test_specs[grader_test_spec], submission_request_body, graders[grader_test_spec], cb);
+      run_grader(grader_test_spec, grader_test_specs[grader_test_spec], submission_request_body, graders[grader_test_spec], cb);
     },
     (err) => {
       cb (err, []);
@@ -122,7 +115,54 @@ function run_graders(grader_test_specs, submission_folder, sha, graders, cb) {
   );
 }
 
-function run_grader(grader_test_spec, submission_request_body, grader_spec, cb) {
-  // TODO Run grader on the submission
-  cb();
+function sendRequest(body, url_end, callback) {
+  const url = `${NEXUS_BASE_URL}${NEXUS_SUB_DIR}${url_end}`;
+  const requestOptions = {
+    url,
+    method: 'POST',
+    headers: {
+      'Nexus-Access-Token': process.env.NEXUS_ACCESS_TOKEN
+    },
+    json: true,
+    body
+  };
+
+  request(requestOptions, callback);
+}
+
+
+function run_grader(grader_name, grader_test_spec, submission_request_body, grader_spec, cb) {
+  // TODO Set up to expect feedback and mark
+  
+  const requestOptions = {
+    url: `http://${grader_name}:${grader_spec.port}${grader_spec.mark}`,
+    method: 'POST',
+    headers: {
+      'Nexus-Access-Token': accessToken
+    },
+    json: true,
+    body: submission_request_body
+  };
+
+  request(requestOptions, (err, res, body) => {
+    if (err) {
+      console.log(`Retrieved error from call to ${grader_name}: ${err}.`);
+    } else {
+      if (res == 200) {
+        console.log(`${grader_name} reports successfully receiving the submission.`);
+      } else {
+        console.log(`Received non-200 return from ${grader_name}: ${body}.`);
+      }
+    }
+
+    cb();
+  });
+}
+
+export function handle_receive_mark (request, response) {
+
+}
+
+export function handle_receive_feedback (request, response) {
+
 }
