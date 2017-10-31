@@ -5,7 +5,7 @@ graders:
     mark: /mark
 tests:
   basic:
-    submission: basic_compiles/
+    submission: basic_compiles
     graders:
       javac-tool:
         mark: 100

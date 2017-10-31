@@ -149,6 +149,7 @@ build-tests:
 
 test-graders:
 	@echo "Working in $(build-mode) mode."
+	rm -rf ./tests/repositories
 	docker-compose $(docker-compose-files-test) run grader_tester
 
 stop-tests:

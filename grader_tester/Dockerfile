@@ -3,7 +3,7 @@ FROM node:4
 # Volume with test specifications
 VOLUME /test-specs
 
-# Volume where repos will be created. To be shared with Git Server
+# Volume with repositories, shared with git-server, RO here only
 VOLUME /repositories
 
 # Create app directory

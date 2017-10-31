@@ -12,6 +12,10 @@ if (!process.env.NEXUS_ACCESS_TOKEN) {
   process.exit(1);
 }
 
+const GIT_HOST = process.env.GIT_HOST || 'git-server';
+const GIT_PORT = process.env.GIT_PORT || 80;
+const GIT_BASE_URL = `http://${GIT_HOST}:${GIT_PORT}/`;
+
 export function handle_receive_mark (request, response) {
 
 }
@@ -42,16 +46,16 @@ export function start_tests() {
 }
 
 function run_tests(graders, tests) {
+  // TODO Really should use async forEach or similar
   Object.keys(tests).forEach((test) => {
     console.log (`Running test ${test}.`);
 
     var sha;
     async.series([
-        (cb) => { setup_submission_repo(sha, tests[test].submission, cb); },
+        (cb) => { get_submission_sha(sha, tests[test].submission, cb); },
         (cb) => { run_graders(tests[test].graders, sha, cb); }
       ],
       (err, results) => {
-        remove_submission_repo();
         if (err) {
           console.log(`Error running tests: ${err}.`);
         } else {
@@ -64,52 +68,25 @@ function run_tests(graders, tests) {
   });
 }
 
-function removeDirectoryIfExists (dir) {
-  if (dir !== '') {
-    if (fs.existsSync(dir)) {
-      fs.removeSync(dir);
-      console.log(`Cleaned up directory ${dir}.`);
+function get_submission_sha(sha, submission_folder, cb) {
+  fs.readFile(`/repositories/${submission_folder}/packed-refs`, (err, data) => {
+    if (err) {
+      cb(err);
+      return;
     }
-  }
-}
 
-const repo_folder = "/repositories/repos/test_submission";
-
-function setup_submission_repo(sha, submission_folder, cb) {
-  removeDirectoryIfExists(repo_folder);
-
-  try {
-    console.log ("Initialising repository.");
-    const childGitInit = execSync(`git init --bare ${repo_folder}.git`);
-
-    fs.copy(`/test-specs/submissions/${submission_folder}`, repo_folder, (err) => {
-      if (err) {
-        cb(err);
-        return;
-      }
-
-      try {
-        console.log("Adding files to repository.");
-        const childGitAdd = execSync(`git add ${repo_folder}.git`);
-        const childGitInit = execSync(`git commit -m 'Submission' ${repo_folder}.git`);
-
-        cb();
-      }
-      catch (err) {
-        cb(err);
-      }
-    });
-  }
-  catch (err) {
-    cb(err);
-  }
+    try {
+      sha = /^([A-Za-z0-9]+)\s+refs\/heads\/master$/m.match(data)[1];
+      cb();
+    }
+    catch (err) {
+      cb(err);
+    }
+  });
 }
 
 function run_graders(graders, sha, cb) {
   // TODO Run all graders on the submission
+  console.log("Ready to run graders.");
   cb();
-}
-
-function remove_submission_repo() {
-  removeDirectoryIfExists(repo_folder);
 }
