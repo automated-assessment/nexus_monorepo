@@ -68,6 +68,7 @@ function wait_for_graders(graders, cb) {
   console.log("Waiting for graders to spin up...");
   waitOn(opts, (err) => {
     if (err) {
+      console.log("Issue waiting for graders. Are they all responding to HEAD requests on their mark endpoints?");
       cb(err, []);
       return;
     }
