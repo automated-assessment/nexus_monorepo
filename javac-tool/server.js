@@ -87,7 +87,7 @@ app.post('/mark', (req, res, next) => {
         _sendMark(0, submissionID, (err) => {
           if (err) {
             console.log(`Error from request: ${err}`);
-            response.status(500).send(`Error from Nexus mark request: ${err}`);
+            res.status(500).send(`Error from Nexus mark request: ${err}`);
           } else {
             output += '<p>You should not include whitespace in any Jar file names (or their paths) in your submission. Below are the files with problematic file names:</p>';
             output += `<pre><code>${WHITESPACE_LINES.join('\n')}</code></pre>`;
@@ -125,7 +125,7 @@ app.post('/mark', (req, res, next) => {
       _sendMark(0, submissionID, (err) => {
         if (err) {
           console.log(`Error from request: ${err}`);
-          response.status(500).send(`Error from Nexus mark request: ${err}`);
+          res.status(500).send(`Error from Nexus mark request: ${err}`);
         }
         else {
           output += '<p>You should not include whitespace in any java file names (or their paths) in your submission. Below are the files with problematic file names:</p>';
@@ -146,7 +146,7 @@ app.post('/mark', (req, res, next) => {
         _sendMark(100, submissionID, (err) => {
           if (err) {
             console.log(`Error from request: ${err}`);
-            response.status(500).send(`Error from Nexus mark request: ${err}`);
+            res.status(500).send(`Error from Nexus mark request: ${err}`);
           }
           else {
             res.sendStatus(200);
@@ -158,7 +158,7 @@ app.post('/mark', (req, res, next) => {
         _sendMark(0, submissionID, (err) => {
           if (err) {
             console.log(`Error from request: ${err}`);
-            response.status(500).send(`Error from Nexus mark request: ${err}`);
+            res.status(500).send(`Error from Nexus mark request: ${err}`);
           }
           else {
             res.sendStatus(200);
