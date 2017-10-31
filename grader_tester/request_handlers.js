@@ -198,9 +198,9 @@ function run_grader(grader_name, grader_test_spec, submission_request_body, grad
 }
 
 export function handle_receive_mark (request, response) {
-
+  response.sendStatus(200);
 }
 
 export function handle_receive_feedback (request, response) {
-
+  response.sendStatus(200);
 }

@@ -1,0 +1,19 @@
+# Requires Docker v 1.12 or above
+# Override Nexus base url for all graders
+version: '2'
+services:
+  rng-tool:
+    environment:
+      NEXUS_BASE_URL: http://grader-tester:3000
+  config-tool:
+    environment:
+      NEXUS_BASE_URL: http://grader-tester:3000
+  javac-tool:
+    environment:
+      NEXUS_BASE_URL: http://grader-tester:3000
+  io-tool:
+    environment:
+      NEXUS_BASE_URL: http://grader-tester:3000
+  peer-feedback:
+    environment:
+      NEXUS_BASE_URL: http://grader-tester:3000

@@ -3,6 +3,9 @@ graders:
   javac-tool:
     port: 5000
     mark: /mark
+  rng-tool:
+    port: 3000
+    mark: /mark
 tests:
   basic:
     submission: basic_compiles

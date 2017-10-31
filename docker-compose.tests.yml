@@ -8,7 +8,7 @@ services:
       - "5514:514/udp"
     volumes:
       - ./test-logs:/var/log
-  grader_tester:
+  grader-tester:
     build:
       context: grader_tester/
       dockerfile: Dockerfile
@@ -19,6 +19,8 @@ services:
       NEXUS_ACCESS_TOKEN: test_access
       GIT_PORT: 80
       GIT_HOST: git-server
+    ports:
+      - "3000:3000"
     depends_on:
       - git-server
       - syslog
@@ -26,7 +28,7 @@ services:
       - config-tool # Need to include in dependencies or it won't get started
       - javac-tool # Need to include in dependencies or it won't get started
       - io-tool # Need to include in dependencies or it won't get started
-      - peer-feedback # Need to include in dependencies or it won't get started      
+      - peer-feedback # Need to include in dependencies or it won't get started
     logging:
       driver: syslog
       options:

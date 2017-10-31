@@ -3,11 +3,11 @@
 # By default, we're in development mode
 ifeq ($(shell if [ ! -f .build-mode/.production ]; then echo "development"; else echo "production"; fi ),development)
 	docker-compose-files := -f docker-compose.yml -f docker-compose.graders.yml -f docker-compose.dev.yml -f docker-compose.graders.dev.yml
-	docker-compose-files-test := -f docker-compose.tests.yml -f docker-compose.graders.yml -f docker-compose.graders.dev.yml
+	docker-compose-files-test := -f docker-compose.tests.yml -f docker-compose.graders.yml -f docker-compose.graders.dev.yml -f docker-compose.graders.tests.yml
 	build-mode := development
 else
 	docker-compose-files := -f docker-compose.yml -f docker-compose.graders.yml
-	docker-compose-files-test := -f docker-compose.tests.yml -f docker-compose.graders.yml
+	docker-compose-files-test := -f docker-compose.tests.yml -f docker-compose.graders.yml -f docker-compose.graders.tests.yml
 	build-mode := production
 endif
 
@@ -145,14 +145,15 @@ debug:
 
 build-tests:
 	@echo "Working in $(build-mode) mode."
-	docker-compose $(docker-compose-files-test) build grader_tester
+	docker-compose $(docker-compose-files-test) build grader-tester
 
 test-graders:
 	@echo "Working in $(build-mode) mode."
-	rm -rf ./tests/repositories
-	docker-compose $(docker-compose-files-test) run grader_tester
+	sudo rm -rf ./tests/repositories
+	docker-compose $(docker-compose-files-test) up -d
+	docker-compose $(docker-compose-files-test) exec -T grader-tester npm start
+	docker-compose $(docker-compose-files-test) down
 
 stop-tests:
 	@echo "Working in $(build-mode) mode."
-	docker-compose $(docker-compose-files-test) stop grader_tester
 	docker-compose $(docker-compose-files-test) down

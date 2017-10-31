@@ -17,4 +17,6 @@ RUN npm install
 # Bundle app source
 COPY . /usr/src/app
 
-CMD [ "npm", "start" ]
+EXPOSE 3000
+
+CMD sleep infinity
