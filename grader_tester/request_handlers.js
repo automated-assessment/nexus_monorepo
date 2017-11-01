@@ -54,6 +54,7 @@ export function handle_receive_feedback (request, response) {
   }
 }
 
+// TODO: Check this correctly handles multiple configs.
 export function handle_configure_test (request, response) {
   console.log(`Received request to configure test for grader ${request.params.tool_uid} (submission ${request.params.sid}).`);
 
@@ -67,6 +68,7 @@ export function handle_configure_test (request, response) {
   response.sendStatus(200);
 }
 
+// TODO: Need to cleanup as part of the callback so that subsequent invocations actually get the correct results. 
 export function handle_test_results_request  (request, response) {
   var tool_uid = request.params.tool_uid;
   var submission_id = request.params.sid;

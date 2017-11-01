@@ -2,6 +2,7 @@ import async from 'async';
 import forEachSeries from 'async/eachSeries';
 import forEach from 'async/each';
 import series from 'async/series';
+import mapSeries from 'async/mapSeries';
 import yaml from 'node-yaml';
 import { execSync } from 'child_process';
 import request from 'request';
@@ -37,22 +38,71 @@ function start_tests() {
       console.log("Read test specification, getting ready to run tests...".log);
 
       if (data.graders && data.tests) {
-        async.series([
-            (cb) => { wait_for_graders(data.graders, cb); },
-            (cb) => { run_tests(data.graders, data.tests, cb); }
-          ],
+        async.series({
+            wait: (cb) => { wait_for_graders(data.graders, cb); },
+            tests: (cb) => { run_tests(data.graders, data.tests, cb); }
+          },
           (err, result) => {
             if (err) {
               console.log(`Error running tests: ${err}.`.error);
             }
             else {
               console.log ("All tests have run.".log);
+              var total_results = result.tests.reduce (
+                (acc, test_result) => {
+                  return test_result.reduce (
+                    (acc, grader_result) => {
+                      acc.total_tests++;
+                      if (grader_result.mark_correct) {
+                        acc.total_good_marks++;
+                      } else {
+                        acc.total_bad_marks++;
+                      }
+
+                      if (grader_result.feedback_correct) {
+                        acc.total_good_feedback++;
+                      } else {
+                        acc.total_bad_feedback++;
+                      }
+
+                      return acc;
+                    },
+                    acc);
+                },
+                {
+                  total_tests: 0,
+                  total_good_marks: 0,
+                  total_good_feedback: 0,
+                  total_bad_marks: 0,
+                  total_bad_feedback: 0
+                }
+              );
+
+              console.log (`Ran ${total_results.total_tests} tests.`);
+              if ((total_results.total_bad_marks == 0) && (total_results.total_bad_feedback == 0)) {
+                console.log ('All tests passed.'.good);
+              } else {
+                if (total_results.total_bad_marks == 0) {
+                  console.log ('All marks computed correctly.'.good);
+                } else {
+                  console.log (`${total_results.total_bad_marks} marks computed incorrectly (see above for details).`.error)
+                }
+
+                if (total_results.total_bad_feedback == 0) {
+                  console.log ('All feedback computed correctly or ignored.'.good);
+                } else {
+                  console.log (`${total_results.total_bad_feedback} feedback items computed incorrectly (see above for details).`.error)
+                }
+              }
             }
+
+            // TODO: Provide useable exit code.
             process.exit(0);
           }
         );
       } else {
         console.log ("Incomplete specification: provide graders and tests.".error);
+        // TODO: Provide useable exit code.
         process.exit(0);
       }
     }
@@ -100,30 +150,26 @@ function wait_for_graders(graders, cb) {
 }
 
 function run_tests(graders, tests, cb) {
-  async.forEachSeries(Object.keys(tests),
+  async.mapSeries(Object.keys(tests),
     (test, cb) => {
       console.log ('Running test '.log + test.yellow + '.'.log);
 
       var sha = [];
-      async.series([
-          (cb) => { get_submission_sha(sha, tests[test].submission, cb); },
-          (cb) => { run_graders(tests[test].graders, tests[test].submission, sha, graders, cb); }
-        ],
+      async.series({
+          sha: (cb) => { get_submission_sha(sha, tests[test].submission, cb); },
+          tests: (cb) => { run_graders(tests[test].graders, tests[test].submission, sha, graders, cb); }
+        },
         (err, results) => {
           if (err) {
-            cb(err);
+            cb(err, results.tests);
           } else {
             console.log ('Finished running test '.log + test.yellow + '.'.log);
-            cb();
+            cb(null, results.tests);
           }
         }
       );
     },
-    (err) => {
-      // TODO: Summarise results
-
-      cb(err, []);
-    }
+    cb
   );
 }
 
@@ -162,14 +208,12 @@ function run_graders(grader_test_specs, submission_folder, sha, graders, cb) {
     nextservices: []
   };
 
-  async.forEachSeries(Object.keys(grader_test_specs),
+  async.mapSeries(Object.keys(grader_test_specs),
     (grader_test_spec, cb) => {
       console.log(`  About to run test for ${grader_test_spec}.`.log);
       run_grader(grader_test_spec, grader_test_specs[grader_test_spec], submission_request_body, graders[grader_test_spec], cb);
     },
-    (err) => {
-      cb (err, []);
-    }
+    cb
   );
 }
 
@@ -180,24 +224,27 @@ function run_grader(grader_name, grader_test_spec, submission_request_body, grad
       results: (cb) => { wait_for_test_results (grader_spec.canonical_name, grader_test_spec, submission_request_body.sid, cb); }
     },
     (err, data) => {
+      var result = {};
       if (err) {
         cb(err);
       } else {
         var test_result = data.results;
         if (test_result.is_complete) {
+          result['mark_correct'] = test_result.mark.is_correct;
           if (test_result.mark.is_correct) {
             console.log("    " + test_result.mark.message.good);
           } else {
             console.log("    " + test_result.mark.message.error);
           }
 
+          result['feedback_correct'] = test_result.feedback.is_correct;
           if (test_result.feedback.is_correct) {
             console.log("    " + test_result.feedback.message.good);
           } else {
             console.log("    " + test_result.feedback.message.error);
           }
 
-          cb();
+          cb(null, result);
         } else {
           // Really strange: Why did we receive this in the first place, then?
           cb("    Received incomplete test result.");
