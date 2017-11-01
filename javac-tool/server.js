@@ -26,10 +26,6 @@ process.on('SIGINT', () => {
 const app = express();
 
 app.use(bodyParser.json());
-app.use(errorhandler({
-  dumpExceptions: true,
-  showStack: true
-}));
 
 const WHITESPACE_REGEX = /^(.+[ \t]+.+)$/mg;
 
@@ -182,7 +178,6 @@ app.post('/mark', (req, res, next) => {
     } catch (e) {
       console.log(`Error in javac-tool: ${e.toString()},\n${e.output.toString()}`);
     }
-    return next();
   }
 });
 
