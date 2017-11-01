@@ -149,10 +149,16 @@ build-tests:
 
 test-graders:
 	@echo "Working in $(build-mode) mode."
+	@echo "Removing temporary files. Provide your sudo password when asked..."
 	sudo rm -rf ./grader_tester/tests/repositories
-	docker-compose $(docker-compose-files-test) up -d > /dev/null 2>&1
-	docker-compose $(docker-compose-files-test) exec grader-tester node test_runner.js
-	docker-compose $(docker-compose-files-test) down > /dev/null 2>&1
+	@echo "Spinning up test infrastructure. This may take a little while..."
+	@docker-compose $(docker-compose-files-test) up -d > /dev/null 2>&1
+	@echo "Running tests"
+	@docker-compose $(docker-compose-files-test) exec grader-tester node test_runner.js ; \
+	test_exit=$$?; \
+	echo "Shutting down test infrastructure. This may take a little while..."; \
+	docker-compose $(docker-compose-files-test) down > /dev/null 2>&1 ; \
+	exit $$test_exit
 
 stop-tests:
 	@echo "Working in $(build-mode) mode."

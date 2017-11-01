@@ -94,16 +94,14 @@ function start_tests() {
                   console.log (`${total_results.total_bad_feedback} feedback items computed incorrectly (see above for details).`.error)
                 }
               }
-            }
 
-            // TODO: Provide useable exit code.
-            process.exit(0);
+              process.exit (total_results.total_bad_marks + total_results.total_bad_feedback);
+            }
           }
         );
       } else {
         console.log ("Incomplete specification: provide graders and tests.".error);
-        // TODO: Provide useable exit code.
-        process.exit(0);
+        process.exit (-1);
       }
     }
   });
