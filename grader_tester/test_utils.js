@@ -7,11 +7,13 @@ import { execSync } from 'child_process';
 import request from 'request';
 import waitOn from 'wait-on';
 
+var colors = require('colors');
+
 const fs = require('fs-extra');
 
 const accessToken = process.env.NEXUS_ACCESS_TOKEN;
 if (!process.env.NEXUS_ACCESS_TOKEN) {
-  console.log('Error: Specify NEXUS_ACCESS_TOKEN in environment');
+  console.log('Error: Specify NEXUS_ACCESS_TOKEN in environment'.red);
   process.exit(1);
 }
 
@@ -26,7 +28,7 @@ function start_tests() {
 
   yaml.read ("/test-specs/tests.yml", {schema: yaml.schema.defaultSafe}, (err, data) => {
     if (err) {
-      console.log(`Error reading test specification: ${err}.`);
+      console.log(`Error reading test specification: ${err}.`.red);
     } else {
       console.log("Read test specification, getting ready to run tests...");
 
@@ -37,7 +39,7 @@ function start_tests() {
           ],
           (err, result) => {
             if (err) {
-              console.log(`Error running tests: ${err}.`);
+              console.log(`Error running tests: ${err}.`.red);
             }
             else {
               console.log ("All tests have run.");
@@ -46,7 +48,7 @@ function start_tests() {
           }
         );
       } else {
-        console.log ("Incomplete specification: provide graders and tests.");
+        console.log ("Incomplete specification: provide graders and tests.".red);
         process.exit(0);
       }
     }
@@ -70,7 +72,7 @@ function wait_for_graders(graders, cb) {
   console.log("Waiting for graders and grader-tester server to spin up...");
   waitOn(opts, (err) => {
     if (err) {
-      console.log("Issue waiting for graders. Are they all responding to HEAD requests on their mark endpoints?");
+      console.log("Issue waiting for graders. Are they all responding to HEAD requests on their mark endpoints?".red);
       cb(err, []);
       return;
     }
@@ -186,12 +188,12 @@ function run_grader(grader_name, grader_test_spec, submission_request_body, grad
 
   request(requestOptions, (err, res, body) => {
     if (err) {
-      console.log(`Retrieved error from call to ${grader_name}: ${err}.`);
+      console.log(`Retrieved error from call to ${grader_name}: ${err}.`.red);
     } else {
       if (res.statusCode == 200) {
-        console.log(`${grader_name} reports successfully receiving the submission.`);
+        console.log(`${grader_name} reports successfully receiving the submission.`.green);
       } else {
-        console.log(`Received non-200 return from ${grader_name}: ${body}.`);
+        console.log(`Received non-200 return from ${grader_name}: ${body}.`.red);
       }
     }
 
