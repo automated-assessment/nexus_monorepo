@@ -9,3 +9,5 @@ npm-debug.log
 dbdumps/*.gz
 uat_data/
 .build-mode/
+grader_tester/tests/repositories/
+test-logs/

@@ -1,0 +1,19 @@
+# Test specifications for grader grader tester
+graders:
+  javac-tool:
+    canonical_name: javac
+    port: 5000
+    mark: /mark
+tests:
+  compile:
+    submission: basic_compiles
+    graders:
+      javac-tool:
+        mark: 100
+        feedback: dontcare
+  no_compile:
+    submission: basic_no_compile
+    graders:
+      javac-tool:
+        mark: 0
+        feedback: dontcare

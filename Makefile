@@ -2,10 +2,12 @@
 # Targets are defined below to make it easier to switch between modes
 # By default, we're in development mode
 ifeq ($(shell if [ ! -f .build-mode/.production ]; then echo "development"; else echo "production"; fi ),development)
-	docker-compose-files := -f docker-compose.yml -f docker-compose.dev.yml
+	docker-compose-files := -f docker-compose.yml -f docker-compose.graders.yml -f docker-compose.dev.yml -f docker-compose.graders.dev.yml
+	docker-compose-files-test := -f docker-compose.tests.yml -f docker-compose.graders.yml -f docker-compose.graders.dev.yml -f docker-compose.graders.tests.yml
 	build-mode := development
 else
-	docker-compose-files := -f docker-compose.yml
+	docker-compose-files := -f docker-compose.yml -f docker-compose.graders.yml
+	docker-compose-files-test := -f docker-compose.tests.yml -f docker-compose.graders.yml -f docker-compose.graders.tests.yml
 	build-mode := production
 endif
 
@@ -52,7 +54,7 @@ production: .build-mode/.production
 	@echo "MYSQL_ALLOW_EMPTY_PASSWORD=yes" >> .env.uat.list
 	@echo "Change ACCESS_TOKEN and DB passwords before deploying to production in .env.uat.list!\n"
 
-.PHONY: dev development production init-env build build-dev init-nexus init-nexus-js init-nexus-db run run-dev restart-nexus restart-javac restart-rng restart-io restart-config restart-db restart-mongodb restart-uat restart-sneakers restart-rabbitmq restart-syslog bash migrate-db stop restart restart-dev debug
+.PHONY: dev development production init-env build build-dev init-nexus init-nexus-js init-nexus-db run run-dev restart-nexus restart-javac restart-rng restart-io restart-config restart-db restart-mongodb restart-uat restart-sneakers restart-rabbitmq restart-syslog bash migrate-db stop restart restart-dev debug build-tests test-graders stop-tests
 
 init-env: .env.list .env.uat.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list .env.peerfeedback.list
 	@echo "All .env files initialised. Please ensure you change ACCESS_TOKEN information etc. before running Nexus.\n"
@@ -140,3 +142,24 @@ restart:
 debug:
 	@echo "Working in $(build-mode) mode."
 	docker attach nexusdeployment_nexus_1
+
+build-tests:
+	@echo "Working in $(build-mode) mode."
+	docker-compose $(docker-compose-files-test) build grader-tester
+
+test-graders:
+	@echo "Working in $(build-mode) mode."
+	@echo "Removing temporary files. Provide your sudo password when asked..."
+	sudo rm -rf ./grader_tester/tests/repositories
+	@echo "Spinning up test infrastructure. This may take a little while..."
+	@docker-compose $(docker-compose-files-test) up -d > /dev/null 2>&1
+	@echo "Running tests"
+	@docker-compose $(docker-compose-files-test) exec grader-tester node test_runner.js ; \
+	test_exit=$$?; \
+	echo "Shutting down test infrastructure. This may take a little while..."; \
+	docker-compose $(docker-compose-files-test) down > /dev/null 2>&1 ; \
+	exit $$test_exit
+
+stop-tests:
+	@echo "Working in $(build-mode) mode."
+	docker-compose $(docker-compose-files-test) down

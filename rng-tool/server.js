@@ -20,6 +20,9 @@ process.on('SIGINT', function() {
     process.exit();
 });
 
+app.head('/mark', (req, res, next) => {
+  res.sendStatus(200);
+});
 app.post('/mark', (req, res, next) => {
   if (!req.body.sid || isNaN(req.body.sid)) {
     res.status(400).send('Invalid sid (submission ID)');

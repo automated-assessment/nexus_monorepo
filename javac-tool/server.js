@@ -26,19 +26,12 @@ process.on('SIGINT', () => {
 const app = express();
 
 app.use(bodyParser.json());
-app.use(errorhandler({
-  dumpExceptions: true,
-  showStack: true
-}));
 
 const WHITESPACE_REGEX = /^(.+[ \t]+.+)$/mg;
 
-const _sendMark = (mark, submissionID) => {
+function _sendMark (mark, submissionID, cb) {
   sendMark(mark, submissionID, (err, res, body) => {
-    if (err) {
-      console.log(`Error from request: ${err}`);
-      res.status(500).send(`Error from Nexus mark request: ${err}`);
-    }
+    cb(err);
   });
 };
 
@@ -50,6 +43,11 @@ const _removeDirectoryIfExists = (dir) => {
     }
   }
 };
+
+// Health check
+app.head('/mark', (req, res, next) => {
+    res.sendStatus(200);
+});
 
 app.post('/mark', (req, res, next) => {
   let sourceDir = '';
@@ -82,17 +80,25 @@ app.post('/mark', (req, res, next) => {
       const WHITESPACE_LINES = jarCatOutput.match(WHITESPACE_REGEX);
       if (WHITESPACE_LINES !== null) {
         // send mark of 0 and feedback listing only those file names that have white space in them
-        _sendMark(0, submissionID);
-        output += '<p>You should not include whitespace in any Jar file names (or their paths) in your submission. Below are the files with problematic file names:</p>';
-        output += `<pre><code>${WHITESPACE_LINES.join('\n')}</code></pre>`;
-        output += '<p>No Java files were checked because there were problematic Jar libraries</p>';
-        res.sendStatus(200);
-
-        sendFeedback(`<div class="javac-feedback">${output}</div>`, submissionID, (err, res, body) => {
+        _sendMark(0, submissionID, (err) => {
           if (err) {
-            console.log(`Error from Nexus feedback request: ${err}`);
+            console.log(`Error from request: ${err}`);
+            res.status(500).send(`Error from Nexus mark request: ${err}`);
+          } else {
+            output += '<p>You should not include whitespace in any Jar file names (or their paths) in your submission. Below are the files with problematic file names:</p>';
+            output += `<pre><code>${WHITESPACE_LINES.join('\n')}</code></pre>`;
+            output += '<p>No Java files were checked because there were problematic Jar libraries</p>';
+            res.sendStatus(200);
+
+            sendFeedback(`<div class="javac-feedback">${output}</div>`, submissionID, (err, res, body) => {
+              if (err) {
+                console.log(`Error from Nexus feedback request: ${err}`);
+              }
+            });
           }
         });
+
+        return;
       }
 
       // Construct options file
@@ -112,10 +118,17 @@ app.post('/mark', (req, res, next) => {
     const WHITESPACE_LINES = childCat.toString().match(WHITESPACE_REGEX);
     if (WHITESPACE_LINES !== null) {
       // send mark of 0 and feedback listing only those file names that have white space in them
-      _sendMark(0, submissionID);
-      output += '<p>You should not include whitespace in any java file names (or their paths) in your submission. Below are the files with problematic file names:</p>';
-      output += `<pre><code>${WHITESPACE_LINES.join('\n')}</code></pre>`;
-      res.sendStatus(200);
+      _sendMark(0, submissionID, (err) => {
+        if (err) {
+          console.log(`Error from request: ${err}`);
+          res.status(500).send(`Error from Nexus mark request: ${err}`);
+        }
+        else {
+          output += '<p>You should not include whitespace in any java file names (or their paths) in your submission. Below are the files with problematic file names:</p>';
+          output += `<pre><code>${WHITESPACE_LINES.join('\n')}</code></pre>`;
+          res.sendStatus(200);
+        }
+      });
     } else {
       // execute javac
       output += '<p class="text-info">Compiler Output:</p>';
@@ -126,13 +139,27 @@ app.post('/mark', (req, res, next) => {
         output += `<pre><code>${childJavac.toString()}</code></pre>`;
 
         // Success. Report 100 score
-        _sendMark(100, submissionID);
-        res.sendStatus(200);
+        _sendMark(100, submissionID, (err) => {
+          if (err) {
+            console.log(`Error from request: ${err}`);
+            res.status(500).send(`Error from Nexus mark request: ${err}`);
+          }
+          else {
+            res.sendStatus(200);
+          }
+        });
       } catch (e) {
         output += `<pre><code>${e.toString()}\n${e.stdout.toString()}</code></pre>`;
         // Error. Report 0 score
-        _sendMark(0, submissionID);
-        res.sendStatus(200);
+        _sendMark(0, submissionID, (err) => {
+          if (err) {
+            console.log(`Error from request: ${err}`);
+            res.status(500).send(`Error from Nexus mark request: ${err}`);
+          }
+          else {
+            res.sendStatus(200);
+          }
+        });
       }
     }
     // Send output as feedback
@@ -151,7 +178,6 @@ app.post('/mark', (req, res, next) => {
     } catch (e) {
       console.log(`Error in javac-tool: ${e.toString()},\n${e.output.toString()}`);
     }
-    return next();
   }
 });
 

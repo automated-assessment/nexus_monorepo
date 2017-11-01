@@ -51,9 +51,13 @@ WORKDIR $APP_DIR
 COPY package.json $APP_DIR/
 RUN npm install --production --silent
 
+# CHOWN installed modules
+RUN chown -R app:app $HOME
+
 COPY . $APP_DIR/
 
-RUN chown -R app:app $HOME
+# CHOWN only app files -- had to export to separate shell script as it needs extended globbing
+RUN $APP_DIR/do_chown.sh
 
 EXPOSE 5000
 

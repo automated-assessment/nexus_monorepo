@@ -10,9 +10,3 @@ services:
     build:
       context: nexus/
       dockerfile: Dockerfile.dev
-  peer-feedback:
-    build:
-      context: peerfeedback/
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./peerfeedback:/src
