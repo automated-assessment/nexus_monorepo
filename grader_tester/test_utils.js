@@ -158,17 +158,34 @@ function run_graders(grader_test_specs, submission_folder, sha, graders, cb) {
 }
 
 function run_grader(grader_name, grader_test_spec, submission_request_body, grader_spec, cb) {
-  async.series([
-      (cb) => { configure_test_for (grader_spec.canonical_name, grader_test_spec, submission_request_body.sid, cb); },
-      (cb) => { do_invoke_grader (grader_name, grader_test_spec, submission_request_body, grader_spec, cb); },
-      (cb) => { wait_for_test_results (grader_spec.canonical_name, grader_test_spec, submission_request_body.sid, cb); }
-    ],
-    (err, results) => {
+  async.series({
+      configure: (cb) => { configure_test_for (grader_spec.canonical_name, grader_test_spec, submission_request_body.sid, cb); },
+      invoke: (cb) => { do_invoke_grader (grader_name, grader_test_spec, submission_request_body, grader_spec, cb); },
+      results: (cb) => { wait_for_test_results (grader_spec.canonical_name, grader_test_spec, submission_request_body.sid, cb); }
+    },
+    (err, data) => {
       if (err) {
         cb(err);
       } else {
-        console.log(`Ran test for ${grader_name}.`.green);
-        cb();
+        var test_result = data.results;
+        if (test_result.is_complete) {
+          if (test_result.mark.is_correct) {
+            console.log(test_result.mark.message.green);
+          } else {
+            console.log(test_result.mark.message.red);
+          }
+
+          if (test_result.feedback.is_correct) {
+            console.log(test_result.feedback.message.green);
+          } else {
+            console.log(test_result.feedback.message.red);
+          }
+
+          cb();
+        } else {
+          // Really strange: Why did we receive this in the first place, then?
+          cb("Received incomplete test result.");
+        }
       }
     }
   );
@@ -238,7 +255,7 @@ function wait_for_test_results (grader_canonical_name, grader_test_spec, submiss
     } else {
       if (res.statusCode == 200) {
         console.log(`Obtained test results: ${body}.`);
-        cb(null, body);
+        cb(null, JSON.parse(body));
       } else {
         console.log(`Received non-200 return from test server: ${body}.`.red);
         cb(`Received non-200 return from test server: ${body}.`);
