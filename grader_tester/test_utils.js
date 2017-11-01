@@ -174,8 +174,47 @@ function sendRequest(body, url_end, callback) {
 
 
 function run_grader(grader_name, grader_test_spec, submission_request_body, grader_spec, cb) {
-  // TODO Set up to expect feedback and mark
+  async.series([
+      (cb) => { configure_test_for (grader_spec.canonical_name, grader_test_spec, submission_request_body.sid, cb); },
+      (cb) => { do_invoke_grader (grader_name, grader_test_spec, submission_request_body, grader_spec, cb); },
+      (cb) => { wait_for_test_results (grader_spec.canonical_name, grader_test_spec, submission_request_body.sid, cb); }
+    ],
+    (err, results) => {
+      if (err) {
+        cb(err);
+      } else {
+        console.log(`Ran test for ${grader_name}.`.green);
+        cb();
+      }
+    }
+  );
+}
 
+function configure_test_for (grader_canonical_name, grader_test_spec, submission_id, cb) {
+  const requestOptions = {
+    url: `http://grader-tester:3000/tests/configure/${submission_id}/${grader_canonical_name}`,
+    method: 'POST',
+    json: true,
+    body: grader_test_spec
+  };
+
+  request(requestOptions, (err, res, body) => {
+    if (err) {
+      console.log(`Could not configure test server: ${err}.`.red);
+      cb(err);
+    } else {
+      if (res.statusCode == 200) {
+        console.log('Test server configured.');
+        cb();
+      } else {
+        console.log(`Received non-200 return from test server: ${body}.`.red);
+        cb(`Received non-200 return from test server: ${body}.`);
+      }
+    }
+  });
+}
+
+function do_invoke_grader (grader_name, grader_test_spec, submission_request_body, grader_spec, cb) {
   const requestOptions = {
     url: `http://${grader_name}:${grader_spec.port}${grader_spec.mark}`,
     method: 'POST',
@@ -189,14 +228,37 @@ function run_grader(grader_name, grader_test_spec, submission_request_body, grad
   request(requestOptions, (err, res, body) => {
     if (err) {
       console.log(`Retrieved error from call to ${grader_name}: ${err}.`.red);
+      cb(err);
     } else {
       if (res.statusCode == 200) {
         console.log(`${grader_name} reports successfully receiving the submission.`.green);
+        cb();
       } else {
         console.log(`Received non-200 return from ${grader_name}: ${body}.`.red);
+        cb(`Received non-200 return from ${grader_name}: ${body}.`);
       }
     }
+  });
+}
 
-    cb();
+function wait_for_test_results (grader_canonical_name, grader_test_spec, submission_id, cb) {
+  const requestOptions = {
+    url: `http://grader-tester:3000/tests/results/${submission_id}/${grader_canonical_name}`,
+    method: 'GET',
+  };
+
+  request(requestOptions, (err, res, body) => {
+    if (err) {
+      console.log(`Error retrieving test results: ${err}.`.red);
+      cb(err);
+    } else {
+      if (res.statusCode == 200) {
+        console.log(`Obtained test results: ${body}.`);
+        cb(null, body);
+      } else {
+        console.log(`Received non-200 return from test server: ${body}.`.red);
+        cb(`Received non-200 return from test server: ${body}.`);
+      }
+    }
   });
 }

@@ -1,9 +1,11 @@
 # Test specifications for grader grader tester
 graders:
   javac-tool:
+    canonical_name: javac
     port: 5000
     mark: /mark
   rng-tool:
+    canonical_name: rng
     port: 3000
     mark: /mark
 tests:
