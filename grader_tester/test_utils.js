@@ -55,10 +55,9 @@ function start_tests() {
 
 function wait_for_graders(graders, cb) {
   var opts = {
-    // TODO Also need to wait for the grader_tester server to spin up
     resources: Object.keys(graders).map((grader_name) => {
         return `http://${grader_name}:${graders[grader_name].port}${graders[grader_name].mark}`;
-      }),
+      }).concat(['http://grader-tester:3000/healthy']),
     delay: 1000, // initial delay in ms, default 0
     interval: 100, // poll interval in ms, default 250ms
     timeout: 30000, // timeout in ms, default Infinity
@@ -68,7 +67,7 @@ function wait_for_graders(graders, cb) {
     followRedirect: true
   };
 
-  console.log("Waiting for graders to spin up...");
+  console.log("Waiting for graders and grader-tester server to spin up...");
   waitOn(opts, (err) => {
     if (err) {
       console.log("Issue waiting for graders. Are they all responding to HEAD requests on their mark endpoints?");

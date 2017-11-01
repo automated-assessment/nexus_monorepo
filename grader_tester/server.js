@@ -17,6 +17,9 @@ app.use(errorhandler({
     showStack: true
 }));
 
+app.head('/healthy', (request, response) => {
+  response.sendStatus(200);
+});
 app.post('/report_mark/:sid/:tool_uid', jsonParser, handle_receive_mark);
 app.post('/report_feedback/:sid/:tool_uid', jsonParser, handle_receive_feedback);
 
