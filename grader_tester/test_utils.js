@@ -57,6 +57,18 @@ function start_tests() {
 
 function wait_for_graders(graders, cb) {
   var opts = {
+    /*
+     * TODO: Was experimenting with waiting for git-server, too, but that
+     * didn't work for two reasons:
+     *
+     * 1. git-server actually returns 404 when asked for an arbitrary url
+     * 2. the original problem was that tests would sometimes not run through
+     *    because they couldn't access the relevant commit SHAs on the file
+     *    system. Interestingly, in these cases, git-server seemed to believe
+     *    it had done everything needed, but the files just hadn't showed up on
+     *    the shared volume yet.
+     *
+     */
     resources: Object.keys(graders).map((grader_name) => {
         return `http://${grader_name}:${graders[grader_name].port}${graders[grader_name].mark}`;
       }).concat(['http://grader-tester:3000/healthy']),
