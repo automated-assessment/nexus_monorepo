@@ -188,7 +188,7 @@ function run_grader(grader_name, grader_test_spec, submission_request_body, grad
     if (err) {
       console.log(`Retrieved error from call to ${grader_name}: ${err}.`);
     } else {
-      if (res == 200) {
+      if (res.statusCode == 200) {
         console.log(`${grader_name} reports successfully receiving the submission.`);
       } else {
         console.log(`Received non-200 return from ${grader_name}: ${body}.`);
