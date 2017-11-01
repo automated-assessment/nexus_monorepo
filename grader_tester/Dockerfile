@@ -19,4 +19,4 @@ COPY . /usr/src/app
 
 EXPOSE 3000
 
-CMD sleep infinity
+CMD [ "npm", "start" ]

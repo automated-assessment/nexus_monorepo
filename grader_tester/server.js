@@ -1,7 +1,6 @@
 import {
   handle_receive_mark,
-  handle_receive_feedback,
-  start_tests } from './request_handlers';
+  handle_receive_feedback } from './request_handlers';
 
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -23,6 +22,4 @@ app.post('/report_feedback/:sid/:tool_uid', jsonParser, handle_receive_feedback)
 
 app.listen(port, function () {
     console.log('Grader testing tool listening on port: ' + port);
-
-    start_tests();
 });
