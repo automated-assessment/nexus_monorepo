@@ -11,9 +11,15 @@ var colors = require('colors');
 
 const fs = require('fs-extra');
 
+colors.setTheme({
+  log: 'grey',
+  error: 'red',
+  good: 'green'
+});
+
 const accessToken = process.env.NEXUS_ACCESS_TOKEN;
 if (!process.env.NEXUS_ACCESS_TOKEN) {
-  console.log('Error: Specify NEXUS_ACCESS_TOKEN in environment'.red);
+  console.log('Error: Specify NEXUS_ACCESS_TOKEN in environment'.error);
   process.exit(1);
 }
 
@@ -24,13 +30,11 @@ const GIT_BASE_URL = `http://${GIT_HOST}:${GIT_PORT}/`;
 start_tests();
 
 function start_tests() {
-  console.log ("Starting to run test.");
-
   yaml.read ("/test-specs/tests.yml", {schema: yaml.schema.defaultSafe}, (err, data) => {
     if (err) {
-      console.log(`Error reading test specification: ${err}.`.red);
+      console.log(`Error reading test specification: ${err}.`.error);
     } else {
-      console.log("Read test specification, getting ready to run tests...");
+      console.log("Read test specification, getting ready to run tests...".log);
 
       if (data.graders && data.tests) {
         async.series([
@@ -39,16 +43,16 @@ function start_tests() {
           ],
           (err, result) => {
             if (err) {
-              console.log(`Error running tests: ${err}.`.red);
+              console.log(`Error running tests: ${err}.`.error);
             }
             else {
-              console.log ("All tests have run.");
+              console.log ("All tests have run.".log);
             }
             process.exit(0);
           }
         );
       } else {
-        console.log ("Incomplete specification: provide graders and tests.".red);
+        console.log ("Incomplete specification: provide graders and tests.".error);
         process.exit(0);
       }
     }
@@ -81,16 +85,16 @@ function wait_for_graders(graders, cb) {
     followRedirect: true
   };
 
-  console.log("Waiting for graders and grader-tester server to spin up...");
+  console.log("Waiting for graders and grader-tester server to spin up...".log);
   waitOn(opts, (err) => {
     if (err) {
-      console.log("Issue waiting for graders. Are they all responding to HEAD requests on their mark endpoints?".red);
+      console.log("Issue waiting for graders. Are they all responding to HEAD requests on their mark endpoints?".error);
       cb(err, []);
       return;
     }
 
     // once here, all resources are available
-    console.log("All graders are up.");
+    console.log("All graders are up.".log);
     cb(null, []);
   });
 }
@@ -98,7 +102,7 @@ function wait_for_graders(graders, cb) {
 function run_tests(graders, tests, cb) {
   async.forEachSeries(Object.keys(tests),
     (test, cb) => {
-      console.log (`Running test ${test}.`);
+      console.log (`Running test ${test}.`.log);
 
       var sha = [];
       async.series([
@@ -109,7 +113,7 @@ function run_tests(graders, tests, cb) {
           if (err) {
             cb(err);
           } else {
-            console.log (`Finished running test ${test}.`);
+            console.log (`Finished running test ${test}.`.log);
             cb();
           }
         }
@@ -141,7 +145,7 @@ function get_submission_sha(sha, submission_folder, cb) {
 }
 
 function run_graders(grader_test_specs, submission_folder, sha, graders, cb) {
-  console.log(`Ready to run graders on SHA ${sha[0]}.`);
+  console.log(`Ready to run graders on SHA ${sha[0]}.`.log);
 
   // Fake submission data
   var submission_request_body = {
@@ -160,7 +164,7 @@ function run_graders(grader_test_specs, submission_folder, sha, graders, cb) {
 
   async.forEachSeries(Object.keys(grader_test_specs),
     (grader_test_spec, cb) => {
-      console.log(`About to run test for ${grader_test_spec}.`);
+      console.log(`About to run test for ${grader_test_spec}.`.log);
       run_grader(grader_test_spec, grader_test_specs[grader_test_spec], submission_request_body, graders[grader_test_spec], cb);
     },
     (err) => {
@@ -182,15 +186,15 @@ function run_grader(grader_name, grader_test_spec, submission_request_body, grad
         var test_result = data.results;
         if (test_result.is_complete) {
           if (test_result.mark.is_correct) {
-            console.log(test_result.mark.message.green);
+            console.log(test_result.mark.message.good);
           } else {
-            console.log(test_result.mark.message.red);
+            console.log(test_result.mark.message.error);
           }
 
           if (test_result.feedback.is_correct) {
-            console.log(test_result.feedback.message.green);
+            console.log(test_result.feedback.message.good);
           } else {
-            console.log(test_result.feedback.message.red);
+            console.log(test_result.feedback.message.error);
           }
 
           cb();
@@ -213,14 +217,14 @@ function configure_test_for (grader_canonical_name, grader_test_spec, submission
 
   request(requestOptions, (err, res, body) => {
     if (err) {
-      console.log(`Could not configure test server: ${err}.`.red);
+      console.log(`Could not configure test server: ${err}.`.error);
       cb(err);
     } else {
       if (res.statusCode == 200) {
-        console.log('Test server configured.');
+        //console.log('Test server configured.'.log);
         cb();
       } else {
-        console.log(`Received non-200 return from test server: ${body}.`.red);
+        console.log(`Received non-200 return from test server: ${body}.`.error);
         cb(`Received non-200 return from test server: ${body}.`);
       }
     }
@@ -240,14 +244,14 @@ function do_invoke_grader (grader_name, grader_test_spec, submission_request_bod
 
   request(requestOptions, (err, res, body) => {
     if (err) {
-      console.log(`Retrieved error from call to ${grader_name}: ${err}.`.red);
+      console.log(`Retrieved error from call to ${grader_name}: ${err}.`.error);
       cb(err);
     } else {
       if (res.statusCode == 200) {
-        console.log(`${grader_name} reports successfully receiving the submission.`.green);
+        console.log(`${grader_name} reports successfully receiving the submission.`.good);
         cb();
       } else {
-        console.log(`Received non-200 return from ${grader_name}: ${body}.`.red);
+        console.log(`Received non-200 return from ${grader_name}: ${body}.`.error);
         cb(`Received non-200 return from ${grader_name}: ${body}.`);
       }
     }
@@ -262,13 +266,13 @@ function wait_for_test_results (grader_canonical_name, grader_test_spec, submiss
 
   request(requestOptions, (err, res, body) => {
     if (err) {
-      console.log(`Error retrieving test results: ${err}.`.red);
+      console.log(`Error retrieving test results: ${err}.`.error);
       cb(err);
     } else {
       if (res.statusCode == 200) {
         cb(null, JSON.parse(body));
       } else {
-        console.log(`Received non-200 return from test server: ${body}.`.red);
+        console.log(`Received non-200 return from test server: ${body}.`.error);
         cb(`Received non-200 return from test server: ${body}.`);
       }
     }
