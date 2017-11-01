@@ -157,22 +157,6 @@ function run_graders(grader_test_specs, submission_folder, sha, graders, cb) {
   );
 }
 
-function sendRequest(body, url_end, callback) {
-  const url = `${NEXUS_BASE_URL}${NEXUS_SUB_DIR}${url_end}`;
-  const requestOptions = {
-    url,
-    method: 'POST',
-    headers: {
-      'Nexus-Access-Token': process.env.NEXUS_ACCESS_TOKEN
-    },
-    json: true,
-    body
-  };
-
-  request(requestOptions, callback);
-}
-
-
 function run_grader(grader_name, grader_test_spec, submission_request_body, grader_spec, cb) {
   async.series([
       (cb) => { configure_test_for (grader_spec.canonical_name, grader_test_spec, submission_request_body.sid, cb); },
