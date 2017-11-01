@@ -141,7 +141,7 @@ Run `make test-graders` to run grader tests. More information can be found in th
 
 ### Adding tools
 
-To add a grading tool, you need to provide a Dockerfile for it and mention it in a number of places: the various `docker-compose.graders.*.yml` files need to be updated. The tool also needs to be mentioned in the dependencies for `nexus` in [`docker-compose.yml`](docker-compose.yml) as well as the dependencies of `grader-tester` in [`docker-compose.tests.yml`](docker-compose.test.yml) (at least if you want to be able to run black-box tests against it).
+To add a grading tool, you need to provide a Dockerfile for it and mention it in a number of places: the various `docker-compose.graders.*.yml` files need to be updated. The tool also needs to be mentioned in the dependencies for `nexus` in [`docker-compose.yml`](docker-compose.yml) as well as the dependencies of `grader-tester` in [`docker-compose.tests.yml`](docker-compose.test.yml) (at least if you want to be able to run black-box tests against it). See also [DOCKER-COMPOSE-FILES](DOCKER-COMPOSE-FILES.md).
 
 ## Health checks
 

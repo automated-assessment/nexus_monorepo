@@ -44,4 +44,10 @@ tests:
 
 This defines a test called `compile`, which uses the files in directory [`tests/scripts/submissions/basic_compiles`](tests/scripts/submissions/basic_compiles). This submission will be sent to the `javac-tool` grader, which is expected to return a mark of 100. It is expected to return some feedback, but we do not care about what it is.
 
-**Note that the test tool doesn't yet properly support feedback checking (mainly, because I need to develop a sensible way of encoding the expected feedback text without messing up the yml file).**
+### Open items
+
+- The test tool doesn't yet properly support feedback checking (mainly, because I need to develop a sensible way of encoding the expected feedback text without messing up the yml file).
+
+- The test tool doesn't yet support configurable tools. This would require an API endpoint to send configuration data to a grader (rather than the current interactive endpoint).
+
+- The test tool doesn't yet support tools that have an interactive component. I'm thinking of supporting these by supporting additional post-submit mocks to be run before the test results are expected.
