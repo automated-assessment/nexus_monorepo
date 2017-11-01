@@ -54,7 +54,6 @@ export function handle_receive_feedback (request, response) {
   }
 }
 
-// TODO: Check this correctly handles multiple configs.
 export function handle_configure_test (request, response) {
   console.log(`Received request to configure test for grader ${request.params.tool_uid} (submission ${request.params.sid}).`);
 
@@ -68,18 +67,31 @@ export function handle_configure_test (request, response) {
   response.sendStatus(200);
 }
 
-// TODO: Need to cleanup as part of the callback so that subsequent invocations actually get the correct results. 
 export function handle_test_results_request  (request, response) {
   var tool_uid = request.params.tool_uid;
   var submission_id = request.params.sid;
   console.log(`Received request for test results for ${tool_uid} / ${submission_id}.`);
 
   register_for_results (submission_id, tool_uid, (test_outcome) => {
+    clear_test_data (submission_id, tool_uid);
     response.status(200).send(JSON.stringify(test_outcome));
   });
 }
 
 const test_outcomes = {};
+
+function clear_test_data (submission_id, tool_uid) {
+  if (test_outcomes[submission_id]) {
+    if (test_outcomes[submission_id][tool_uid]) {
+      delete test_outcomes[submission_id][tool_uid];
+    }
+  }
+
+  if (test_configurations[submission_id][tool_uid]) {
+    delete test_configurations[submission_id][tool_uid];
+  }
+}
+
 
 function get_outcome_record(submission_id, tool_uid) {
   if (!test_outcomes[submission_id]) {
