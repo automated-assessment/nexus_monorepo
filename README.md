@@ -95,7 +95,7 @@ Nexus can be run in development or production mode. By default, you will run in 
 - Run `make restart`
   - This stops the docker containers and re runs them in your current build mode
 
-#### Individual Tools
+##### Individual Tools
 - Run `make restart-nexus`
   - This restarts Nexus in the current environment
 
@@ -135,6 +135,9 @@ Nexus can be run in development or production mode. By default, you will run in 
 - Run `make restart-syslog`
   - This restarts Syslog in the current environment
 
+### Test tools
+
+Run `make test-graders` to run grader tests. More information can be found in the [grader-testing documentation](grader_tester/README.md).
 
 ## Health checks
 
