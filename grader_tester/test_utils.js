@@ -266,7 +266,6 @@ function wait_for_test_results (grader_canonical_name, grader_test_spec, submiss
       cb(err);
     } else {
       if (res.statusCode == 200) {
-        console.log(`Obtained test results: ${body}.`);
         cb(null, JSON.parse(body));
       } else {
         console.log(`Received non-200 return from test server: ${body}.`.red);

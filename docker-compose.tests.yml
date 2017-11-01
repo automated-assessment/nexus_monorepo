@@ -13,8 +13,8 @@ services:
       context: grader_tester/
       dockerfile: Dockerfile
     volumes:
-      - ./tests/scripts:/test-specs
-      - ./tests/repositories:/repositories:ro
+      - ./grader_tester/tests/scripts:/test-specs
+      - ./grader_tester/tests/repositories:/repositories:ro
     environment:
       NEXUS_ACCESS_TOKEN: test_access
       GIT_PORT: 80
@@ -37,8 +37,8 @@ services:
   git-server:
     image: cirocosta/gitserver-http
     volumes:
-      - ./tests/repositories:/var/lib/git
-      - ./tests/scripts/submissions:/var/lib/initial:ro
+      - ./grader_tester/tests/repositories:/var/lib/git
+      - ./grader_tester/tests/scripts/submissions:/var/lib/initial:ro
     depends_on:
       - syslog
     logging:
