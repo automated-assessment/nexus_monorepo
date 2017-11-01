@@ -150,9 +150,9 @@ build-tests:
 test-graders:
 	@echo "Working in $(build-mode) mode."
 	sudo rm -rf ./grader_tester/tests/repositories
-	docker-compose $(docker-compose-files-test) up -d
+	docker-compose $(docker-compose-files-test) up -d > /dev/null 2>&1
 	docker-compose $(docker-compose-files-test) exec grader-tester node test_runner.js
-	docker-compose $(docker-compose-files-test) down
+	docker-compose $(docker-compose-files-test) down > /dev/null 2>&1
 
 stop-tests:
 	@echo "Working in $(build-mode) mode."
