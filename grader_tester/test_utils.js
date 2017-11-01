@@ -102,7 +102,7 @@ function wait_for_graders(graders, cb) {
 function run_tests(graders, tests, cb) {
   async.forEachSeries(Object.keys(tests),
     (test, cb) => {
-      console.log (`Running test ${test}.`.log);
+      console.log ('Running test '.log + test.yellow + '.'.log);
 
       var sha = [];
       async.series([
@@ -113,7 +113,7 @@ function run_tests(graders, tests, cb) {
           if (err) {
             cb(err);
           } else {
-            console.log (`Finished running test ${test}.`.log);
+            console.log ('Finished running test '.log + test.yellow + '.'.log);
             cb();
           }
         }
@@ -145,7 +145,7 @@ function get_submission_sha(sha, submission_folder, cb) {
 }
 
 function run_graders(grader_test_specs, submission_folder, sha, graders, cb) {
-  console.log(`Ready to run graders on SHA ${sha[0]}.`.log);
+  console.log(`  Ready to run graders on SHA ${sha[0]}.`.log);
 
   // Fake submission data
   var submission_request_body = {
@@ -164,7 +164,7 @@ function run_graders(grader_test_specs, submission_folder, sha, graders, cb) {
 
   async.forEachSeries(Object.keys(grader_test_specs),
     (grader_test_spec, cb) => {
-      console.log(`About to run test for ${grader_test_spec}.`.log);
+      console.log(`  About to run test for ${grader_test_spec}.`.log);
       run_grader(grader_test_spec, grader_test_specs[grader_test_spec], submission_request_body, graders[grader_test_spec], cb);
     },
     (err) => {
@@ -186,21 +186,21 @@ function run_grader(grader_name, grader_test_spec, submission_request_body, grad
         var test_result = data.results;
         if (test_result.is_complete) {
           if (test_result.mark.is_correct) {
-            console.log(test_result.mark.message.good);
+            console.log("    " + test_result.mark.message.good);
           } else {
-            console.log(test_result.mark.message.error);
+            console.log("    " + test_result.mark.message.error);
           }
 
           if (test_result.feedback.is_correct) {
-            console.log(test_result.feedback.message.good);
+            console.log("    " + test_result.feedback.message.good);
           } else {
-            console.log(test_result.feedback.message.error);
+            console.log("    " + test_result.feedback.message.error);
           }
 
           cb();
         } else {
           // Really strange: Why did we receive this in the first place, then?
-          cb("Received incomplete test result.");
+          cb("    Received incomplete test result.");
         }
       }
     }
@@ -217,14 +217,14 @@ function configure_test_for (grader_canonical_name, grader_test_spec, submission
 
   request(requestOptions, (err, res, body) => {
     if (err) {
-      console.log(`Could not configure test server: ${err}.`.error);
+      console.log(`    Could not configure test server: ${err}.`.error);
       cb(err);
     } else {
       if (res.statusCode == 200) {
         //console.log('Test server configured.'.log);
         cb();
       } else {
-        console.log(`Received non-200 return from test server: ${body}.`.error);
+        console.log(`    Received non-200 return from test server: ${body}.`.error);
         cb(`Received non-200 return from test server: ${body}.`);
       }
     }
@@ -244,14 +244,14 @@ function do_invoke_grader (grader_name, grader_test_spec, submission_request_bod
 
   request(requestOptions, (err, res, body) => {
     if (err) {
-      console.log(`Retrieved error from call to ${grader_name}: ${err}.`.error);
+      console.log(`    Retrieved error from call to ${grader_name}: ${err}.`.error);
       cb(err);
     } else {
       if (res.statusCode == 200) {
-        console.log(`${grader_name} reports successfully receiving the submission.`.good);
+        console.log(`    ${grader_name} reports successfully receiving the submission.`.good);
         cb();
       } else {
-        console.log(`Received non-200 return from ${grader_name}: ${body}.`.error);
+        console.log(`    Received non-200 return from ${grader_name}: ${body}.`.error);
         cb(`Received non-200 return from ${grader_name}: ${body}.`);
       }
     }
@@ -266,13 +266,13 @@ function wait_for_test_results (grader_canonical_name, grader_test_spec, submiss
 
   request(requestOptions, (err, res, body) => {
     if (err) {
-      console.log(`Error retrieving test results: ${err}.`.error);
+      console.log(`    Error retrieving test results: ${err}.`.error);
       cb(err);
     } else {
       if (res.statusCode == 200) {
         cb(null, JSON.parse(body));
       } else {
-        console.log(`Received non-200 return from test server: ${body}.`.error);
+        console.log(`    Received non-200 return from test server: ${body}.`.error);
         cb(`Received non-200 return from test server: ${body}.`);
       }
     }
