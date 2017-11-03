@@ -215,16 +215,18 @@ class SubmissionController < ApplicationController
   def override
     return unless authenticate_admin!
     @submission = Submission.find(params[:id])
+    old_mark = @submission.mark
     if @submission.update_attributes(submission_override_params)
+      @submission.mark_override = true
+      @submission.save!
+
+      @submission.log("Mark overridden from #{old_mark}% to #{@submission.mark}% by #{current_user.name}")
+
       flash[:success] = 'Mark overridden successfully'
       redirect_to @submission
     else
       render 'edit_mark'
     end
-    @submission.mark_override = true
-    @submission.save!
-
-    @submission.log("Mark overridden to #{@submission.mark}% by #{current_user.name}")
   end
 
   def list_failed
