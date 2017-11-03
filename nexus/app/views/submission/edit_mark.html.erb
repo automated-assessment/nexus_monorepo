@@ -2,6 +2,10 @@
   <h2>Override Mark</h2>
   <h5>For submission #<%= @submission.id %> (submitted by <%= @submission.user.name %> for <%= @submission.assignment.title %>)</h5>
   <hr />
+
+  <h4>Current final mark: <%= display_final_mark @submission %></h4>
+  <br />
+
   <%= form_for(@submission, url: override_submission_path, html: { class: 'form-horizontal' }) do |f| %>
 
     <div class="form-group">
