@@ -12,7 +12,7 @@
       <% end %>
     <% end %>
 
-    <% if !current_user.eql? @course.teacher %>
+    <% if !@course.teachers.exists?(current_user.id) %>
       <%= link_to(unenrol_path, id: @course.id) do %>
         <button type="button" class="btn btn-primary"><%= icon 'sign-out' %> Unenrol</button>
       <% end %>

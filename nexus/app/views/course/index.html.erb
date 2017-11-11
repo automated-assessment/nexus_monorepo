@@ -8,14 +8,14 @@
   <thead>
     <tr>
       <th>Title</th>
-      <th width="20%">Teacher</th>
+      <th width="20%">Lead Teacher</th>
     </tr>
   </thead>
   <tbody>
     <% @courses.each do |c| %>
       <tr class="<%= 'success' if current_user.enrolled_in?(c.id) %>">
         <th scope="row"><%= link_to c.title, c %></th>
-        <td><%= c.teacher.name %></td>
+        <td><%= c.teachers.first.name %></td>
         <% if current_user.admin? %>
           <td>
             <%= link_to(delete_course_path(id: c.id), onclick: 'return confirmDeletion()') do %>

@@ -12,7 +12,7 @@
       <% current_user.courses.each do |c| %>
         <tr>
           <th scope="row"><%= link_to c.title, c %></th>
-          <td><%= c.teacher.name %></td>
+          <td><%= c.teachers.first.name %></td>
           <% if current_user.admin? %>
             <td>
               <%= link_to(delete_course_path(id: c.id), onclick: 'return confirmDeletion()') do %>
