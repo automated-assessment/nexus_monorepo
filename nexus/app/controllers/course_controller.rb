@@ -26,7 +26,7 @@ class CourseController < ApplicationController
 
   def create
     @course = Course.new(course_params)
-    @course.teacher = current_user
+    @course.teachers << current_user
 
     @course.save!
 
