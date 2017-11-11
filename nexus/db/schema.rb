@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171024161925) do
+ActiveRecord::Schema.define(version: 20171111171050) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -62,6 +62,14 @@ ActiveRecord::Schema.define(version: 20171024161925) do
   add_index "audit_items", ["marking_tool_id"], name: "index_audit_items_on_marking_tool_id"
   add_index "audit_items", ["submission_id"], name: "index_audit_items_on_submission_id"
   add_index "audit_items", ["user_id"], name: "index_audit_items_on_user_id"
+
+  create_table "course_teaching_teams", id: false, force: :cascade do |t|
+    t.integer "user_id",   null: false
+    t.integer "course_id", null: false
+  end
+
+  add_index "course_teaching_teams", ["course_id", "user_id"], name: "index_course_teaching_teams_on_course_id_and_user_id"
+  add_index "course_teaching_teams", ["user_id", "course_id"], name: "index_course_teaching_teams_on_user_id_and_course_id"
 
   create_table "courses", force: :cascade do |t|
     t.string   "title",       null: false
