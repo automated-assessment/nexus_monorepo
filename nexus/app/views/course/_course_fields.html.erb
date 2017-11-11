@@ -1,0 +1,21 @@
+<div class="form-group">
+  <%= f.label :title, class: 'col-lg-2 control-label' %>
+  <div class="col-lg-10">
+    <%= f.text_field :title, class: 'form-control', required: true %>
+  </div>
+</div>
+
+<div class="form-group">
+  <%= f.label :description, class: 'col-lg-2 control-label' %>
+  <div class="col-lg-10">
+    <%= f.text_area :description, class: 'form-control', rows: '4' %>
+    <p>Markdown is supported.</p>
+  </div>
+</div>
+
+<div class="form-group">
+  <%= f.label :teachers, class: 'col-lg-2 control-label' %>
+  <div class="col-lg-10">
+    <input class="form-control" placeholder="<%= current_user.name %>" type="text" readonly>
+  </div>
+</div>
