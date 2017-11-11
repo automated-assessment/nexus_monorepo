@@ -1,12 +1,11 @@
 class Course < ActiveRecord::Base
-  belongs_to :teacher, class_name: 'User'
+  has_and_belongs_to_many :teachers, class_name: 'User', join_table: 'course_teaching_teams'
   has_and_belongs_to_many :students, class_name: 'User'
   has_many :assignments, dependent: :destroy
   has_many :audit_items
 
   validates :title, presence: true
-  validates :teacher, presence: true
-  validate :teacher_cannot_be_student
+  validates :teachers, :length => { :minimum => 1 }
 
   default_scope { order(:title) }
 
@@ -16,12 +15,6 @@ class Course < ActiveRecord::Base
 
   after_update do
     log("Course id #{id} updated.")
-  end
-
-  def teacher_cannot_be_student
-    if teacher
-      errors.add(:error, 'teacher cannot be a student') unless teacher.admin?
-    end
   end
 
   def log(body, level = 'info')
