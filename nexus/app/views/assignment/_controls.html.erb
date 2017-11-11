@@ -1,4 +1,4 @@
-<% if current_user.admin? %>
+<% if current_user.can_administrate?(@assignment.course) %>
   <div class="course-controls">
     <% if @assignment.configurable_tools? %>
       <%= link_to assignment_configure_tools_path(id: @assignment.id) do %>

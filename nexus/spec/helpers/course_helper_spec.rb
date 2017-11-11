@@ -1,5 +1,6 @@
 require 'rails_helper'
 
+# Todo: move to test on user model
 RSpec.describe CourseHelper, type: :helper do
   describe '#user_can_administrate' do
     let(:s) { create(:student) }

@@ -41,6 +41,10 @@ class User < ActiveRecord::Base
     courses.find_by(id: id)
   end
 
+  def can_administrate?(course)
+    admin? || course.taught_by?(self)
+  end
+
   def submissions_for(aid)
     submissions.where(assignment_id: aid).all || {}
   end

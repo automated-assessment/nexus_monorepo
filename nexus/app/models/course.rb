@@ -17,6 +17,10 @@ class Course < ActiveRecord::Base
     log("Course id #{id} updated.")
   end
 
+  def taught_by?(user)
+    teachers.exists?(user.id)
+  end
+
   def log(body, level = 'info')
     AuditItem.create!(course: self,
                       body: body,

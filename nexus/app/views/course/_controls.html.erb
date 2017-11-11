@@ -1,6 +1,6 @@
 <% if current_user.enrolled_in?(@course.id) %>
   <div class="course-controls">
-    <% if user_can_administrate @course %>
+    <% if current_user.can_administrate? @course %>
       <%= link_to(new_assignment_path(cid: @course.id)) do %>
         <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'plus-circle' %> Create Assignment</button>
       <% end %>
@@ -12,7 +12,7 @@
       <% end %>
     <% end %>
 
-    <% if !@course.teachers.exists?(current_user.id) %>
+    <% if !@course.taught_by?(current_user) %>
       <%= link_to(unenrol_path, id: @course.id) do %>
         <button type="button" class="btn btn-primary"><%= icon 'sign-out' %> Unenrol</button>
       <% end %>
