@@ -7,6 +7,8 @@ class Course < ActiveRecord::Base
   validates :title, presence: true
   validates :teachers, :length => { :minimum => 1 }
 
+  accepts_nested_attributes_for :teachers, reject_if: proc { |attributes| attributes[:teacher_id].blank? }
+
   default_scope { order(:title) }
 
   after_create do

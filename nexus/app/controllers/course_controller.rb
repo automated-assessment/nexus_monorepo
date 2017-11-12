@@ -22,6 +22,7 @@ class CourseController < ApplicationController
 
   def new
     @course = Course.new
+    @course.teachers << current_user
   end
 
   def create

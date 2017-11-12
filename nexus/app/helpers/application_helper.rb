@@ -45,6 +45,10 @@ module ApplicationHelper
     UATUtils.all_uat_param_types
   end
 
+  def all_users
+    User.all
+  end
+
   def render_unauthorized_json
     render json: { response: 'Unauthorized' }.to_json,
            status: 401
