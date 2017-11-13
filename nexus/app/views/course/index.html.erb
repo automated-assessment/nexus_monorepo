@@ -14,7 +14,7 @@
   </thead>
   <tbody>
     <% @courses.each do |c| %>
-      <tr class="<%= 'success' if current_user.enrolled_in?(c.id) %>">
+      <tr class="<%= if current_user.enrolled_in?(c.id) then 'success' else if current_user.can_administrate?(c) then 'warning' end end %>">
         <th scope="row"><%= link_to c.title, c %></th>
         <td><%= c.teachers.first.name %></td>
         <td>
