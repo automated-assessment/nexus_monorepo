@@ -4,12 +4,12 @@ class SubmissionController < ApplicationController
   require_relative '../lib/submission_utils'
   require_relative '../lib/git_utils'
 
-  before_action :authenticate_user!, except: [:report_mark]
+  before_action :authenticate_user!
 
   def show
     @submission = Submission.find(params[:id])
     # Only allow original submitter or admin users to see a submission
-    unless admin? || user?(@submission.user)
+    unless user?(@submission.user) || current_user.can_administrate?(@submission.assignment.course)
       @submission.log("Illegal attempt to access submission by user #{current_user.name} when submitting user was #{@submission.user.name}. Refusing access.", 'Warning')
       redirect_to(error_url('401'))
       return
@@ -208,14 +208,14 @@ class SubmissionController < ApplicationController
   end
 
   def edit_mark
-    return unless authenticate_admin!
     @submission = Submission.find(params[:id])
+    authenticate_can_administrate!(@submission.assignment.course) if @submission
   end
 
   def override
-    return unless authenticate_admin!
     @submission = Submission.find(params[:id])
-    
+    authenticate_can_administrate!(@submission.assignment.course) if @submission
+
     if params[:reason].to_s.strip.empty?
       flash[:error] = 'Please provide a rationale for the proposed mark override'
       render 'edit_mark'
@@ -241,8 +241,8 @@ class SubmissionController < ApplicationController
   end
 
   def resend
-    return unless authenticate_admin!
     @submission = Submission.find(params[:id])
+    authenticate_can_administrate!(@submission.assignment.course) if @submission
 
     if SubmissionUtils.resubmit!(@submission, current_user, flash)
       redirect_to action: 'show', id: @submission.id
@@ -263,8 +263,9 @@ class SubmissionController < ApplicationController
   end
 
   def remark
-    return unless authenticate_admin!
     @submission = Submission.find(params[:id])
+    authenticate_can_administrate!(@submission.assignment.course) if @submission
+
     @submission.active_services = @submission.assignment.active_services
     @submission.save!
     if SubmissionUtils.remark!(@submission, current_user, flash)
