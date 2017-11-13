@@ -1,5 +1,5 @@
 class Course < ActiveRecord::Base
-  has_many :teaching_team_members
+  has_many :teaching_team_members, dependent: :destroy
   has_many :teachers, through: :teaching_team_members, class_name: 'User', source: :user
   accepts_nested_attributes_for :teaching_team_members, reject_if: proc { |attributes| attributes[:user_id].blank? }
 
