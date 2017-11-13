@@ -71,4 +71,4 @@
 
 <%= render 'feedback_items' %>
 
-<%= render partial: 'audit_item/panel', locals: { items: @submission.audit_items.asc } %>
+<%= render partial: 'audit_item/panel', locals: { items: @submission.audit_items.asc, course: @submission.assignment.course } %>

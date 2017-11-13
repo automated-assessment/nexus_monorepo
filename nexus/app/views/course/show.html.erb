@@ -10,4 +10,4 @@
   <%= render 'assignments' %>
 <% end %>
 <%= render 'enrolment' %>
-<%= render partial: 'audit_item/panel', locals: { items: @course.audit_items } %>
+<%= render partial: 'audit_item/panel', locals: { items: @course.audit_items, course: @course } %>
