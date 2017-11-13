@@ -16,7 +16,7 @@
     <% @courses.each do |c| %>
       <tr class="<%= if current_user.enrolled_in?(c.id) then 'success' else if current_user.can_administrate?(c) then 'warning' end end %>">
         <th scope="row"><%= link_to c.title, c %></th>
-        <td><%= c.teachers.first.name %></td>
+        <td><%= render 'teachers_panel', {course: c} %></td>
         <td>
           <% if current_user.can_administrate?(c) %>
             <%= link_to(delete_course_path(id: c.id), onclick: 'return confirmDeletion()') do %>
