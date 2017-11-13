@@ -9,7 +9,7 @@
           <strong>My Courses</strong>
         <% end %>
       </li>
-      <% current_user.courses.each do |c| %>
+      <% current_user.my_courses.each do |c| %>
         <li><%= link_to c.title, c %></li>
       <% end %>
       <li role="separator" class="divider"></li>

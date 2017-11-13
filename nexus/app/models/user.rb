@@ -27,10 +27,11 @@ class User < ActiveRecord::Base
 
   # The courses we (co-)teach
   has_many :teaching_team_members
-  has_many :taught_courses, through: :teaching_team_members, class_name: 'Course'
+  has_many :taught_courses, through: :teaching_team_members, source: :course
 
   # The courses we are a student in
   has_and_belongs_to_many :courses
+
   has_many :assignments, through: :courses
   has_many :submissions
   has_many :audit_items
@@ -49,6 +50,11 @@ class User < ActiveRecord::Base
 
   def submissions_for(aid)
     submissions.where(assignment_id: aid).all || {}
+  end
+
+  def my_courses
+    # Have to remove scopes here because ordering messes with SQLite queries
+    courses.unscoped.union(taught_courses.unscoped).order(:title)
   end
 
   def log(body, level = 'info')
