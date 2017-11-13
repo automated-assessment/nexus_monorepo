@@ -4,7 +4,7 @@ class AssignmentController < ApplicationController
   require_relative '../lib/workflow_utils'
 
   before_action :authenticate_user!
-  before_action :authenticate_admin!, except: [:mine, :show]
+  before_action :authenticate_admin!, except: [:mine, :show, :show_deadline_extensions, :quick_config_confirm, :configure_tools, :new, :create, :edit, :update, :export_submissions_data, :list_submissions, :list_ordered_submissions, :prepare_submission_repush, :submission_repush]
 
   def mine
   end
@@ -15,14 +15,17 @@ class AssignmentController < ApplicationController
 
   def show_deadline_extensions
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
   end
 
   def quick_config_confirm
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
   end
 
   def configure_tools
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
 
     if @assignment
       # augment template URLs with parameters
@@ -41,6 +44,8 @@ class AssignmentController < ApplicationController
   def new
     @assignment = Assignment.new
     course = Course.find_by(id: params[:cid])
+    authenticate_can_administrate!(course) if course
+
     if course
       @assignment.course = course
       @assignment.marking_tool_contexts.build
@@ -68,6 +73,8 @@ class AssignmentController < ApplicationController
 
   def create
     @assignment = Assignment.new(assignment_params)
+    authenticate_can_administrate!(@assignment.course) if @assignment
+
     unless @assignment.save
       error_flash_and_cleanup!(@assignment.errors.full_messages[0])
       return
@@ -101,6 +108,8 @@ class AssignmentController < ApplicationController
 
   def update
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
+
     if @assignment
       if @assignment.update_attributes(assignment_params)
         flash[:success] = 'Assignment updated'
@@ -114,6 +123,8 @@ class AssignmentController < ApplicationController
 
   def destroy
     assignment = return_assignment!
+    authenticate_can_administrate!(assignment.course) if assignment
+
     repo_was_deleted = GitUtils.delete_remote_assignment_repo!(assignment)
     if repo_was_deleted
       course = assignment.course
@@ -128,6 +139,8 @@ class AssignmentController < ApplicationController
 
   def export_submissions_data
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
+
     if @assignment
       headers['Content-Disposition'] = 'attachment; filename="submissions-data-export.csv"'
       headers['Content-Type'] ||= 'text/csv'
@@ -136,6 +149,7 @@ class AssignmentController < ApplicationController
 
   def list_submissions
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
 
     if @assignment
       # Get all users who have made submissions to this assignment
@@ -145,14 +159,18 @@ class AssignmentController < ApplicationController
 
   def list_ordered_submissions
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
   end
 
   def prepare_submission_repush
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
   end
 
   def submission_repush
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
+
     if @assignment
       min_id = params[:submissions][:min_id].to_i
       max_id = params[:submissions][:max_id].to_i
