@@ -3,6 +3,12 @@ module ApplicationHelper
     "#{ENV['RAILS_RELATIVE_URL_ROOT']}/#{code}"
   end
 
+  def authenticate_can_administrate!(course)
+    return true if current_user && current_user.can_administrate?(course)
+    redirect_to error_url('403'), status: 403
+    false
+  end
+
   def authenticate_admin!
     return true if admin?
     redirect_to error_url('403'), status: 403
