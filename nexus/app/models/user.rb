@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
   end
 
   # The courses we (co-)teach
-  has_many :teaching_team_members
+  has_many :teaching_team_members, dependent: :destroy
   has_many :taught_courses, through: :teaching_team_members, source: :course
 
   # The courses we are a student in
