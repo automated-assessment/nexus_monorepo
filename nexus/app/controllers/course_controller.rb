@@ -74,7 +74,7 @@ class CourseController < ApplicationController
   def course_params
     params.require(:course).permit(:title,
                                    :description,
-                                   teachers_attributes: [:user_id, :_destroy])
+                                   teaching_team_members_attributes: [:id, :user_id, :_destroy])
   end
 
   def return_course!
