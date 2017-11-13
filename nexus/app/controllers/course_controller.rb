@@ -27,8 +27,6 @@ class CourseController < ApplicationController
 
   def create
     @course = Course.new(course_params)
-    @course.teachers << current_user
-
     @course.save!
 
     current_user.courses << @course
@@ -74,7 +72,9 @@ class CourseController < ApplicationController
   private
 
   def course_params
-    params.require(:course).permit(:title, :description)
+    params.require(:course).permit(:title,
+                                   :description,
+                                   teachers_attributes: [:user_id, :_destroy])
   end
 
   def return_course!

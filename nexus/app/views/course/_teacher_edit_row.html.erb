@@ -1,7 +1,7 @@
 <tr class="nested-fields">
   <td>
     <%= collection_select("course[teachers_attributes][#{f.options[:child_index]}]",
-          :teacher_id,
+          :user_id,
           all_users,
           :id,
           :name,

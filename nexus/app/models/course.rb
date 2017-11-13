@@ -7,8 +7,6 @@ class Course < ActiveRecord::Base
   validates :title, presence: true
   validates :teachers, :length => { :minimum => 1 }
 
-  accepts_nested_attributes_for :teachers, reject_if: proc { |attributes| attributes[:teacher_id].blank? }
-
   default_scope { order(:title) }
 
   after_create do
@@ -28,4 +26,34 @@ class Course < ActiveRecord::Base
                       body: body,
                       level: level)
   end
+
+  # We cannot use accepts_nested_attributes_for as this would try to create new
+  # User records on initialisation and requires id rather than teacher_id,
+  # clashing with cocoon as far as I can tell, so we roll our own
+  #
+  # See also http://www.krisdigital.com/blog/2016/02/03/rails-adding-existing-records-with-nested-form-and-has_many-through/
+  # for a related war story
+  #
+  # TODO FIXME Actually, the better solution will be to change the association into an explicit has_man through: association via a new TeachingTeamMember model
+  # This should make cocoon work out of the box, with accepts_nested_attributes_for for the new model. It also opens up future possibilities for associating
+  # different access rights with different TeachingTeamMembers (e.g., only allowing some of them to override marks or configure tools, etc.)
+  #
+  #def teachers_attributes=(attributes)
+  #  attributes.each do |a|
+      # Each a will be a key--value pair. We only care about the value partial
+  #    value = a[1]
+
+  #    if (value['_destroy'] && value['_destroy'] != 'false')
+        # We're meant to remove this record from our association, using it's id field where available
+  #      if (value['id'])
+  #        teachers.delete(User.find(value['id']))
+  #      end
+  #    else
+#
+#      end
+#    end
+
+#        .map { | attr |  UATParameter.new(attr[1]['name'], attr[1]['type'].to_i, attr[1]['construct'], true) }
+
+#  end
 end
