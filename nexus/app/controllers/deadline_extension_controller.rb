@@ -1,10 +1,9 @@
 class DeadlineExtensionController < ApplicationController
   include ApplicationHelper
 
-  before_action :authenticate_admin!
-
   def create
     @deadline_extension = DeadlineExtension.new(deadline_extension_params)
+    return unless authenticate_can_administrate!(@deadline_extension.assignment.course) if @deadline_extension
 
     if @deadline_extension.save
       flash[:success] = 'Deadline extension created!'
@@ -17,10 +16,13 @@ class DeadlineExtensionController < ApplicationController
 
   def edit
     @deadline_extension = DeadlineExtension.find(params[:id])
+    authenticate_can_administrate!(@deadline_extension.assignment.course) if @deadline_extension
   end
 
   def update
     @deadline_extension = DeadlineExtension.find(params[:id])
+    return unless authenticate_can_administrate!(@deadline_extension.assignment.course) if @deadline_extension
+
     if @deadline_extension.update_attributes(deadline_extension_params)
       flash[:success] = 'Deadline extension updated'
       redirect_to assignment_deadline_extensions_path(id: @deadline_extension.assignment.id)
@@ -32,6 +34,7 @@ class DeadlineExtensionController < ApplicationController
 
   def destroy
     @deadline_extension = DeadlineExtension.find(params[:id])
+    return unless authenticate_can_administrate!(@deadline_extension.assignment.course) if @deadline_extension
 
     @assignment = @deadline_extension.assignment
 
@@ -46,6 +49,7 @@ class DeadlineExtensionController < ApplicationController
 
   def new
     @deadline_extension = DeadlineExtension.new(assignment_id: params[:aid])
+    authenticate_can_administrate!(@deadline_extension.assignment.course) if @deadline_extension
   end
 
   private
