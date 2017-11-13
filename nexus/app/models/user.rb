@@ -26,7 +26,9 @@ class User < ActiveRecord::Base
   end
 
   # The courses we (co-)teach
-  has_and_belongs_to_many :taught_courses, class_name: 'Course', join_table: 'course_teaching_teams'
+  has_many :teaching_team_members
+  has_many :taught_courses, through: :teaching_team_members, class_name: 'Course'
+
   # The courses we are a student in
   has_and_belongs_to_many :courses
   has_many :assignments, through: :courses

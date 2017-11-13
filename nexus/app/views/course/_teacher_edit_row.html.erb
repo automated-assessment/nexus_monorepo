@@ -1,12 +1,12 @@
 <tr class="nested-fields">
   <td>
-    <%= collection_select("course[teachers_attributes][#{f.options[:child_index]}]",
+    <%= collection_select("course[teaching_team_members_attributes][#{f.options[:child_index]}]",
           :user_id,
           all_users,
           :id,
           :name,
           { prompt: true,
-            selected: f.object.id },
+            selected: f.object.user_id },
           { class: 'form-control' }) %>
   </td>
   <td>

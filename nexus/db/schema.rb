@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171024161925) do
+ActiveRecord::Schema.define(version: 20171113122415) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -66,7 +66,6 @@ ActiveRecord::Schema.define(version: 20171024161925) do
   create_table "courses", force: :cascade do |t|
     t.string   "title",       null: false
     t.text     "description"
-    t.integer  "teacher_id"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
@@ -174,6 +173,13 @@ ActiveRecord::Schema.define(version: 20171024161925) do
 
   add_index "submissions", ["assignment_id"], name: "index_submissions_on_assignment_id"
   add_index "submissions", ["user_id"], name: "index_submissions_on_user_id"
+
+  create_table "teaching_team_members", force: :cascade do |t|
+    t.integer  "course_id",  null: false
+    t.integer  "user_id",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "",    null: false

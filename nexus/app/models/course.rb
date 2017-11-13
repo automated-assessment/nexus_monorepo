@@ -1,6 +1,10 @@
 class Course < ActiveRecord::Base
-  has_and_belongs_to_many :teachers, class_name: 'User', join_table: 'course_teaching_teams'
+  has_many :teaching_team_members
+  has_many :teachers, through: :teaching_team_members, class_name: 'User', source: :user
+  accepts_nested_attributes_for :teaching_team_members
+
   has_and_belongs_to_many :students, class_name: 'User'
+
   has_many :assignments, dependent: :destroy
   has_many :audit_items
 

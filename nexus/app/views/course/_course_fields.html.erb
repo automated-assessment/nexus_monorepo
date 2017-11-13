@@ -25,14 +25,14 @@
         </tr>
       </thead>
       <tbody id="teachers_table">
-        <%= f.fields_for :teachers do |ff| %>
+        <%= f.fields_for :teaching_team_members do |ff| %>
           <%= render 'teacher_edit_row', f: ff %>
         <% end %>
       </tbody>
     </table>
 
     <div class="add-teacher">
-        <%= link_to_add_association f, :teachers, partial: 'teacher_edit_row', class: 'add-teacher-link', :'data-association-insertion-method' => 'append', :'data-association-insertion-node' => '#teachers_table' do |link| %>
+        <%= link_to_add_association f, :teaching_team_members, partial: 'teacher_edit_row', class: 'add-teacher-link', :'data-association-insertion-method' => 'append', :'data-association-insertion-node' => '#teachers_table' do |link| %>
           <%= icon 'plus-circle' %> Add Teacher
         <% end %>
     </div>
