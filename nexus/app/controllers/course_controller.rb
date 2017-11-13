@@ -6,7 +6,7 @@ class CourseController < ApplicationController
   before_action :authenticate_admin!, except: [:index, :mine, :show, :enrolment_list, :edit, :update, :destroy]
 
   def index
-    @courses = Course.all
+    @courses = Course.all.order(:title)
   end
 
   def mine

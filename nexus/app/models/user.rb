@@ -53,8 +53,7 @@ class User < ActiveRecord::Base
   end
 
   def my_courses
-    # Have to remove scopes here because ordering messes with SQLite queries
-    courses.unscoped.union(taught_courses.unscoped).order(:title)
+    courses.union(taught_courses).order(:title)
   end
 
   def log(body, level = 'info')
