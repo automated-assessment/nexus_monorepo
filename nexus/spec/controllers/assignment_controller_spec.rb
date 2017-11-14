@@ -48,7 +48,7 @@ RSpec.describe AssignmentController, type: :controller do
   end
 
   describe 'POST #create' do
-    describe 'without admin permissions' do
+    describe 'without admin permissions and not being a teacher on the course' do
       it 'redirects and return a 403 status code' do
         sign_in s
         post :create, assignment: {
