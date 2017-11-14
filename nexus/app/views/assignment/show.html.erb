@@ -48,4 +48,4 @@
   <h4>Your submissions</h4>
   <%= render 'submissions_table' %>
 <% end %>
-<%= render partial: 'audit_item/panel', locals: { items: @assignment.audit_items } %>
+<%= render partial: 'audit_item/panel', locals: { items: @assignment.audit_items, course: @assignment.course } %>

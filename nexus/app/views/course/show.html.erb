@@ -6,8 +6,8 @@
   <hr />
 <% end %>
 
-<% if current_user.enrolled_in?(@course.id) %>
+<% if current_user.enrolled_in?(@course.id) || current_user.can_administrate?(@course) %>
   <%= render 'assignments' %>
 <% end %>
 <%= render 'enrolment' %>
-<%= render partial: 'audit_item/panel', locals: { items: @course.audit_items } %>
+<%= render partial: 'audit_item/panel', locals: { items: @course.audit_items, course: @course } %>

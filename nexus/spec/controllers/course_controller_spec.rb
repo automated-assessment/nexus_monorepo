@@ -122,10 +122,31 @@ RSpec.describe CourseController, type: :controller do
 
   describe 'POST #create' do
     describe 'with admin permissions' do
-      describe 'with valid parameters' do
+      describe 'with creator as only teacher' do
         it 'returns HTTP found' do
           sign_in t
-          post :create, course: attributes_for(:course)
+          # Cannot use attributes_for as it doesn't create associations
+          post :create, course: attributes_for(:course).merge({'teaching_team_members_attributes' => {
+              '0' => {'user_id' => t.id}}})
+          expect(response).to have_http_status :found
+        end
+      end
+      describe 'with creator and one other teacher' do
+        it 'returns HTTP found' do
+          sign_in t
+          # Cannot use attributes_for as it doesn't create associations
+          post :create, course: attributes_for(:course).merge({'teaching_team_members_attributes' => {
+              '0' => {'user_id' => t.id},
+              '1' => {'user_id' => s.id}}})
+          expect(response).to have_http_status :found
+        end
+      end
+      describe 'without creator but one other teacher' do
+        it 'returns HTTP found' do
+          sign_in t
+          # Cannot use attributes_for as it doesn't create associations
+          post :create, course: attributes_for(:course).merge({'teaching_team_members_attributes' => {
+              '0' => {'user_id' => s.id}}})
           expect(response).to have_http_status :found
         end
       end

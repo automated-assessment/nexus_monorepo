@@ -1,14 +1,15 @@
 class Course < ActiveRecord::Base
-  belongs_to :teacher, class_name: 'User'
+  has_many :teaching_team_members, dependent: :destroy
+  has_many :teachers, through: :teaching_team_members, class_name: 'User', source: :user
+  accepts_nested_attributes_for :teaching_team_members, reject_if: proc { |attributes| attributes[:user_id].blank? }
+
   has_and_belongs_to_many :students, class_name: 'User'
+
   has_many :assignments, dependent: :destroy
   has_many :audit_items
 
   validates :title, presence: true
-  validates :teacher, presence: true
-  validate :teacher_cannot_be_student
-
-  default_scope { order(:title) }
+  validates :teaching_team_members, :length => { :minimum => 1 }
 
   after_create do
     log("Course id #{id} (#{title}) created.")
@@ -18,10 +19,8 @@ class Course < ActiveRecord::Base
     log("Course id #{id} updated.")
   end
 
-  def teacher_cannot_be_student
-    if teacher
-      errors.add(:error, 'teacher cannot be a student') unless teacher.admin?
-    end
+  def taught_by?(user)
+    teachers.exists?(user.id)
   end
 
   def log(body, level = 'info')

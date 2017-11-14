@@ -74,3 +74,5 @@ end
 # gem 'bunny'
 # gem 'sneakers', '2.3.5'
 gem 'sneakers'
+
+gem 'active_record_union'

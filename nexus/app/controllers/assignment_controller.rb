@@ -4,7 +4,7 @@ class AssignmentController < ApplicationController
   require_relative '../lib/workflow_utils'
 
   before_action :authenticate_user!
-  before_action :authenticate_admin!, except: [:mine, :show]
+  before_action :authenticate_admin!, except: [:mine, :show, :show_deadline_extensions, :quick_config_confirm, :configure_tools, :new, :create, :edit, :update, :export_submissions_data, :list_submissions, :list_ordered_submissions, :prepare_submission_repush, :submission_repush]
 
   def mine
   end
@@ -15,16 +15,19 @@ class AssignmentController < ApplicationController
 
   def show_deadline_extensions
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
   end
 
   def quick_config_confirm
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
   end
 
   def configure_tools
     @assignment = return_assignment!
-
     if @assignment
+      return unless authenticate_can_administrate!(@assignment.course)
+
       # augment template URLs with parameters
       params = {
         aid: @assignment.id,
@@ -41,7 +44,10 @@ class AssignmentController < ApplicationController
   def new
     @assignment = Assignment.new
     course = Course.find_by(id: params[:cid])
+
     if course
+      return unless authenticate_can_administrate!(course)
+
       @assignment.course = course
       @assignment.marking_tool_contexts.build
       @assignment.active_services = {}
@@ -68,40 +74,48 @@ class AssignmentController < ApplicationController
 
   def create
     @assignment = Assignment.new(assignment_params)
-    unless @assignment.save
-      error_flash_and_cleanup!(@assignment.errors.full_messages[0])
-      return
-    end
+    if @assignment
+      return unless authenticate_can_administrate!(@assignment.course)
 
-    unless GitUtils.setup_remote_assignment_repo!(@assignment)
-      error_flash_and_cleanup!('Error creating repository for assignment!')
-      return
-    end
-    begin
-      marking_tool_contexts = params[:assignment][:marking_tool_contexts_attributes]
-      active_services = params[:assignment][:active_services]
-      @assignment.active_services = WorkflowUtils.construct_workflow(marking_tool_contexts, active_services)
-      @assignment.dataflow = WorkflowUtils.construct_dataflow(@assignment.active_services)
-      @assignment.save!
-    rescue StandardError => e
-      error_flash_and_cleanup!(e.message)
-      return
-    end
+      unless @assignment.save
+        error_flash_and_cleanup!(@assignment.errors.full_messages[0])
+        return
+      end
 
-    if @assignment.marking_tools.configurable.any?
-      redirect_to action: 'quick_config_confirm', id: @assignment.id
-    else
-      redirect_to action: 'show', id: @assignment.id
+      unless GitUtils.setup_remote_assignment_repo!(@assignment)
+        error_flash_and_cleanup!('Error creating repository for assignment!')
+        return
+      end
+      begin
+        marking_tool_contexts = params[:assignment][:marking_tool_contexts_attributes]
+        active_services = params[:assignment][:active_services]
+        @assignment.active_services = WorkflowUtils.construct_workflow(marking_tool_contexts, active_services)
+        @assignment.dataflow = WorkflowUtils.construct_dataflow(@assignment.active_services)
+        @assignment.save!
+      rescue StandardError => e
+        error_flash_and_cleanup!(e.message)
+        return
+      end
+
+      if @assignment.marking_tools.configurable.any?
+        redirect_to action: 'quick_config_confirm', id: @assignment.id
+      else
+        redirect_to action: 'show', id: @assignment.id
+      end
     end
   end
 
   def edit
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
   end
 
   def update
     @assignment = return_assignment!
+
     if @assignment
+      return unless authenticate_can_administrate!(@assignment.course)
+
       if @assignment.update_attributes(assignment_params)
         flash[:success] = 'Assignment updated'
         redirect_to @assignment
@@ -114,21 +128,27 @@ class AssignmentController < ApplicationController
 
   def destroy
     assignment = return_assignment!
-    repo_was_deleted = GitUtils.delete_remote_assignment_repo!(assignment)
-    if repo_was_deleted
-      course = assignment.course
-      course.log("Assignment #{assignment.id} deleted by #{current_user.name}")
-      Assignment.destroy(assignment.id)
-      flash[:success] = 'Assignment deleted successfully'
-    else
-      flash[:error] = 'Assignment was not deleted. Please try again'
+    if assignment
+      return unless authenticate_can_administrate!(assignment.course)
+
+      repo_was_deleted = GitUtils.delete_remote_assignment_repo!(assignment)
+      if repo_was_deleted
+        course = assignment.course
+        course.log("Assignment #{assignment.id} deleted by #{current_user.name}")
+        Assignment.destroy(assignment.id)
+        flash[:success] = 'Assignment deleted successfully'
+      else
+        flash[:error] = 'Assignment was not deleted. Please try again'
+      end
+      redirect_to course
     end
-    redirect_to course
   end
 
   def export_submissions_data
     @assignment = return_assignment!
     if @assignment
+      return unless authenticate_can_administrate!(@assignment.course)
+
       headers['Content-Disposition'] = 'attachment; filename="submissions-data-export.csv"'
       headers['Content-Type'] ||= 'text/csv'
     end
@@ -136,8 +156,9 @@ class AssignmentController < ApplicationController
 
   def list_submissions
     @assignment = return_assignment!
-
     if @assignment
+      return unless authenticate_can_administrate!(@assignment.course)
+
       # Get all users who have made submissions to this assignment
       @users = User.joins(:submissions).where(submissions: { assignment_id: params[:id] }).distinct.order(:name) || {}
     end
@@ -145,15 +166,19 @@ class AssignmentController < ApplicationController
 
   def list_ordered_submissions
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
   end
 
   def prepare_submission_repush
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
   end
 
   def submission_repush
     @assignment = return_assignment!
     if @assignment
+      return unless authenticate_can_administrate!(@assignment.course)
+
       min_id = params[:submissions][:min_id].to_i
       max_id = params[:submissions][:max_id].to_i
 

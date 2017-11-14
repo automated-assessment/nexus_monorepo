@@ -13,9 +13,10 @@ u = User.create(email: 'teacher@teacher.com',
                 name: 'Professor Tesla (k0000000)',
                 admin: true)
 
-Course.create(title: 'Course',
-              description: 'A Course',
-              teacher_id: u.id)
+c = Course.new(title: 'Course',
+               description: 'A Course')
+c.teachers << u
+c.save!
 
 # Assumes foo set in access token env field for each marking service
 a = AccessToken.create(access_token: '', description: 'Sample access token')

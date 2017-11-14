@@ -25,7 +25,13 @@ class User < ActiveRecord::Base
     user
   end
 
+  # The courses we (co-)teach
+  has_many :teaching_team_members, dependent: :destroy
+  has_many :taught_courses, through: :teaching_team_members, source: :course
+
+  # The courses we are a student in
   has_and_belongs_to_many :courses
+
   has_many :assignments, through: :courses
   has_many :submissions
   has_many :audit_items
@@ -38,8 +44,16 @@ class User < ActiveRecord::Base
     courses.find_by(id: id)
   end
 
+  def can_administrate?(course)
+    admin? || course.taught_by?(self)
+  end
+
   def submissions_for(aid)
     submissions.where(assignment_id: aid).all || {}
+  end
+
+  def my_courses
+    courses.union(taught_courses).order(:title)
   end
 
   def log(body, level = 'info')

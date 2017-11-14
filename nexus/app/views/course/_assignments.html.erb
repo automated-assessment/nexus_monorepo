@@ -1,4 +1,4 @@
-<% a = current_user.admin? ? @course.assignments : @course.assignments.started %>
+<% a = current_user.can_administrate?(@course) ? @course.assignments : @course.assignments.started %>
 
 <h3>Assignments</h3>
 <br />
@@ -23,7 +23,7 @@
           <td class="<%= a.decorator_class %>">
             <%= pretty_datetime a.deadline %>
           </td>
-          <% if current_user.admin? %>
+          <% if current_user.can_administrate?(a.course) %>
             <td>
               <%= link_to(delete_assignment_path(id: a.id), onclick: 'return confirmDeletion()') do %>
                 <button type="button" class="btn btn-xs btn-danger pull-right"><%= icon 'times' %> Delete</button>

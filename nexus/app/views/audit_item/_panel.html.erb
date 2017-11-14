@@ -1,4 +1,4 @@
-<% if current_user.admin? %>
+<% if current_user.can_administrate?(course) %>
   <hr>
   <div class="panel panel-default">
     <div class="panel-heading">

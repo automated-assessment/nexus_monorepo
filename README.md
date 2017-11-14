@@ -137,7 +137,9 @@ Nexus can be run in development or production mode. By default, you will run in 
 
 ### Test tools
 
-Run `make test-graders` to run grader tests. More information can be found in the [grader-testing documentation](grader_tester/README.md).
+Run `make test-graders` to run grader tests. More information can be found in the [grader-testing documentation](grader_tester/README.md). Nexus needs to be down for this to run correctly. You should also only run this in a separate workspace from your dev workspace, as grading tools may be modifying their databases as part of the test runs.
+
+Run `make test-nexus` to run rspec tests on the core management component. These tests aren't yet complete, so contributions are always welcome. At the end of this, nexus will be down!
 
 ### Adding tools
 

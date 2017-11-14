@@ -4,12 +4,12 @@ class SubmissionController < ApplicationController
   require_relative '../lib/submission_utils'
   require_relative '../lib/git_utils'
 
-  before_action :authenticate_user!, except: [:report_mark]
+  before_action :authenticate_user!
 
   def show
     @submission = Submission.find(params[:id])
     # Only allow original submitter or admin users to see a submission
-    unless admin? || user?(@submission.user)
+    unless user?(@submission.user) || current_user.can_administrate?(@submission.assignment.course)
       @submission.log("Illegal attempt to access submission by user #{current_user.name} when submitting user was #{@submission.user.name}. Refusing access.", 'Warning')
       redirect_to(error_url('401'))
       return
@@ -208,30 +208,32 @@ class SubmissionController < ApplicationController
   end
 
   def edit_mark
-    return unless authenticate_admin!
     @submission = Submission.find(params[:id])
+    authenticate_can_administrate!(@submission.assignment.course) if @submission
   end
 
   def override
-    return unless authenticate_admin!
     @submission = Submission.find(params[:id])
-    
-    if params[:reason].to_s.strip.empty?
-      flash[:error] = 'Please provide a rationale for the proposed mark override'
-      render 'edit_mark'
-      return
-    end
-    old_mark = @submission.mark
-    if @submission.update_attributes(submission_override_params)
-      @submission.mark_override = true
-      @submission.save!
+    if @submission
+      return unless authenticate_can_administrate!(@submission.assignment.course)
 
-      @submission.log("Mark overridden from #{old_mark}% to #{@submission.mark}% by #{current_user.name}. Rationale: #{params[:reason]}.")
+      if params[:reason].to_s.strip.empty?
+        flash[:error] = 'Please provide a rationale for the proposed mark override'
+        render 'edit_mark'
+        return
+      end
+      old_mark = @submission.mark
+      if @submission.update_attributes(submission_override_params)
+        @submission.mark_override = true
+        @submission.save!
 
-      flash[:success] = 'Mark overridden successfully'
-      redirect_to @submission
-    else
-      render 'edit_mark'
+        @submission.log("Mark overridden from #{old_mark}% to #{@submission.mark}% by #{current_user.name}. Rationale: #{params[:reason]}.")
+
+        flash[:success] = 'Mark overridden successfully'
+        redirect_to @submission
+      else
+        render 'edit_mark'
+      end
     end
   end
 
@@ -241,13 +243,15 @@ class SubmissionController < ApplicationController
   end
 
   def resend
-    return unless authenticate_admin!
     @submission = Submission.find(params[:id])
+    if @submission
+      return unless authenticate_can_administrate!(@submission.assignment.course)
 
-    if SubmissionUtils.resubmit!(@submission, current_user, flash)
-      redirect_to action: 'show', id: @submission.id
-    else
-      redirect_to action: 'list_failed'
+      if SubmissionUtils.resubmit!(@submission, current_user, flash)
+        redirect_to action: 'show', id: @submission.id
+      else
+        redirect_to action: 'list_failed'
+      end
     end
   end
 
@@ -263,15 +267,18 @@ class SubmissionController < ApplicationController
   end
 
   def remark
-    return unless authenticate_admin!
     @submission = Submission.find(params[:id])
-    @submission.active_services = @submission.assignment.active_services
-    @submission.save!
-    if SubmissionUtils.remark!(@submission, current_user, flash)
-      flash[:success] = 'Successfully sent submission for remarking.'
-    end
+    if @submission
+      return unless authenticate_can_administrate!(@submission.assignment.course)
 
-    redirect_to action: 'show', id: @submission.id
+      @submission.active_services = @submission.assignment.active_services
+      @submission.save!
+      if SubmissionUtils.remark!(@submission, current_user, flash)
+        flash[:success] = 'Successfully sent submission for remarking.'
+      end
+
+      redirect_to action: 'show', id: @submission.id
+    end
   end
 
   private

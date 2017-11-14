@@ -2,7 +2,7 @@
   <div class="col-md-8">
     <div class="page-header">
       <h2 class="course-title"><%= link_to @course.title, @course %></h2>
-      <h5><%= icon 'user' %> <%= @course.teacher.name %></h5>
+      <%= render 'teachers_panel', {course: @course} %>
     </div>
   </div>
   <div class="col-md-4">

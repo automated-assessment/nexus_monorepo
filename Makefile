@@ -54,7 +54,7 @@ production: .build-mode/.production
 	@echo "MYSQL_ALLOW_EMPTY_PASSWORD=yes" >> .env.uat.list
 	@echo "Change ACCESS_TOKEN and DB passwords before deploying to production in .env.uat.list!\n"
 
-.PHONY: dev development production init-env build build-dev init-nexus init-nexus-js init-nexus-db run run-dev restart-nexus restart-javac restart-rng restart-io restart-config restart-db restart-mongodb restart-uat restart-sneakers restart-rabbitmq restart-syslog bash migrate-db stop restart restart-dev debug build-tests test-graders stop-tests
+.PHONY: dev development production init-env build build-dev init-nexus init-nexus-js init-nexus-db run run-dev restart-nexus restart-javac restart-rng restart-io restart-config restart-db restart-mongodb restart-uat restart-sneakers restart-rabbitmq restart-syslog bash migrate-db stop restart restart-dev debug build-tests test-graders stop-tests test-nexus
 
 init-env: .env.list .env.uat.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list .env.peerfeedback.list
 	@echo "All .env files initialised. Please ensure you change ACCESS_TOKEN information etc. before running Nexus.\n"
@@ -163,3 +163,9 @@ test-graders:
 stop-tests:
 	@echo "Working in $(build-mode) mode."
 	docker-compose $(docker-compose-files-test) down
+
+test-nexus:
+	@echo "Working in $(build-mode) mode."
+	@make run
+	docker-compose $(docker-compose-files) exec nexus bash -c "RAILS_ENV=test bundle exec rspec"
+	@make stop

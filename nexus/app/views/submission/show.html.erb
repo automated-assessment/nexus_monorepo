@@ -29,7 +29,7 @@
   </div>
   <div class="col-md-4">
     <div class="course-controls">
-      <% if current_user.admin? %>
+      <% if current_user.can_administrate?(@submission.assignment.course) %>
         <%= link_to edit_mark_for_submission_path(id: @submission.id) do %>
           <button type="button" name="button" class="btn btn-sm btn-danger"><%= icon 'exclamation' %> Override Mark</button>
         <% end %>
@@ -71,4 +71,4 @@
 
 <%= render 'feedback_items' %>
 
-<%= render partial: 'audit_item/panel', locals: { items: @submission.audit_items.asc } %>
+<%= render partial: 'audit_item/panel', locals: { items: @submission.audit_items.asc, course: @submission.assignment.course } %>

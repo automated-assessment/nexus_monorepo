@@ -3,10 +3,10 @@ class CourseController < ApplicationController
   require_relative '../lib/git_utils'
 
   before_action :authenticate_user!
-  before_action :authenticate_admin!, except: [:index, :mine, :show]
+  before_action :authenticate_admin!, except: [:index, :mine, :show, :enrolment_list, :edit, :update, :destroy]
 
   def index
-    @courses = Course.all
+    @courses = Course.all.order(:title)
   end
 
   def mine
@@ -18,16 +18,16 @@ class CourseController < ApplicationController
 
   def enrolment_list
     @course = return_course!
+    authenticate_can_administrate!(@course)
   end
 
   def new
     @course = Course.new
+    @course.teachers << current_user
   end
 
   def create
     @course = Course.new(course_params)
-    @course.teacher = current_user
-
     @course.save!
 
     current_user.courses << @course
@@ -37,10 +37,12 @@ class CourseController < ApplicationController
 
   def edit
     @course = return_course!
+    authenticate_can_administrate!(@course)
   end
 
   def update
     @course = return_course!
+    return unless authenticate_can_administrate!(@course)
     if @course.update_attributes(course_params)
       flash[:success] = 'Course updated'
       redirect_to @course
@@ -51,6 +53,8 @@ class CourseController < ApplicationController
 
   def destroy
     course = return_course!
+    return unless authenticate_can_administrate!(course)
+
     assignments = course.assignments
 
     # Delete all remote repos for all assignments before deleting
@@ -73,7 +77,9 @@ class CourseController < ApplicationController
   private
 
   def course_params
-    params.require(:course).permit(:title, :description)
+    params.require(:course).permit(:title,
+                                   :description,
+                                   teaching_team_members_attributes: [:id, :user_id, :_destroy])
   end
 
   def return_course!
