@@ -72,5 +72,28 @@ RSpec.describe User, type: :model do
         expect(s.enrolled_in? c.id).to be_nil
       end
     end
+    describe '#can_administrate?' do
+      let(:s1) { create(:student) }
+      let(:s2) { create(:student) }
+      let(:t1) { create(:staff) }
+      let(:t2) { create(:staff) }
+      let(:c) { c = create(:course); c.teachers << [t1, s1]; c }
+
+      it 'returns true for all admin staff' do
+        expect(t2.can_administrate?(c)).to be true
+      end
+
+      it 'returns true for admin teacher' do
+        expect(t1.can_administrate?(c)).to be true
+      end
+
+      it 'returns true for other teachers' do
+        expect(s1.can_administrate?(c)).to be true
+      end
+
+      it 'returns false for students' do
+        expect(s2.can_administrate?(c)).to be false
+      end
+    end
   end
 end
