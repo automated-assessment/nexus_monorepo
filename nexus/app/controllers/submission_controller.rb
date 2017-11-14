@@ -214,24 +214,26 @@ class SubmissionController < ApplicationController
 
   def override
     @submission = Submission.find(params[:id])
-    authenticate_can_administrate!(@submission.assignment.course) if @submission
+    if @submission
+      return unless authenticate_can_administrate!(@submission.assignment.course)
 
-    if params[:reason].to_s.strip.empty?
-      flash[:error] = 'Please provide a rationale for the proposed mark override'
-      render 'edit_mark'
-      return
-    end
-    old_mark = @submission.mark
-    if @submission.update_attributes(submission_override_params)
-      @submission.mark_override = true
-      @submission.save!
+      if params[:reason].to_s.strip.empty?
+        flash[:error] = 'Please provide a rationale for the proposed mark override'
+        render 'edit_mark'
+        return
+      end
+      old_mark = @submission.mark
+      if @submission.update_attributes(submission_override_params)
+        @submission.mark_override = true
+        @submission.save!
 
-      @submission.log("Mark overridden from #{old_mark}% to #{@submission.mark}% by #{current_user.name}. Rationale: #{params[:reason]}.")
+        @submission.log("Mark overridden from #{old_mark}% to #{@submission.mark}% by #{current_user.name}. Rationale: #{params[:reason]}.")
 
-      flash[:success] = 'Mark overridden successfully'
-      redirect_to @submission
-    else
-      render 'edit_mark'
+        flash[:success] = 'Mark overridden successfully'
+        redirect_to @submission
+      else
+        render 'edit_mark'
+      end
     end
   end
 
@@ -242,12 +244,14 @@ class SubmissionController < ApplicationController
 
   def resend
     @submission = Submission.find(params[:id])
-    authenticate_can_administrate!(@submission.assignment.course) if @submission
+    if @submission
+      return unless authenticate_can_administrate!(@submission.assignment.course)
 
-    if SubmissionUtils.resubmit!(@submission, current_user, flash)
-      redirect_to action: 'show', id: @submission.id
-    else
-      redirect_to action: 'list_failed'
+      if SubmissionUtils.resubmit!(@submission, current_user, flash)
+        redirect_to action: 'show', id: @submission.id
+      else
+        redirect_to action: 'list_failed'
+      end
     end
   end
 
@@ -264,15 +268,17 @@ class SubmissionController < ApplicationController
 
   def remark
     @submission = Submission.find(params[:id])
-    authenticate_can_administrate!(@submission.assignment.course) if @submission
+    if @submission
+      return unless authenticate_can_administrate!(@submission.assignment.course)
 
-    @submission.active_services = @submission.assignment.active_services
-    @submission.save!
-    if SubmissionUtils.remark!(@submission, current_user, flash)
-      flash[:success] = 'Successfully sent submission for remarking.'
+      @submission.active_services = @submission.assignment.active_services
+      @submission.save!
+      if SubmissionUtils.remark!(@submission, current_user, flash)
+        flash[:success] = 'Successfully sent submission for remarking.'
+      end
+
+      redirect_to action: 'show', id: @submission.id
     end
-
-    redirect_to action: 'show', id: @submission.id
   end
 
   private
