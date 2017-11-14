@@ -107,6 +107,7 @@ class AssignmentController < ApplicationController
 
   def edit
     @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
   end
 
   def update
