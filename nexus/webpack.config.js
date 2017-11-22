@@ -11,17 +11,14 @@ module.exports = {
     filename: "bundle.js"
   },
   resolve: {
-    extensions: ["", ".js", ".scss"]
+    extensions: [".js", ".scss"]
   },
   module: {
     loaders: [
       {
         test: /\.js$/,
         exclude: /(node_modules)/,
-        loader: "babel",
-        query: {
-          stage: 0
-        }
+        loader: "babel-loader"
       },
       {
         test: /\.woff$/,
@@ -32,7 +29,7 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        loader: ExtractTextPlugin.extract("style-loader", "css-loader!sass-loader")
+        loader: "style-loader!css-loader!sass-loader"
       }
     ]
   },
