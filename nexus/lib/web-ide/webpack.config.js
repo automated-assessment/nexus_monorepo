@@ -9,7 +9,7 @@ module.exports = {
     filename: "web-ide.bundle.js"
   },
   resolve: {
-    extensions: ["", ".js", ".jsx", ".js.jsx"]
+    extensions: [".js", ".jsx", ".js.jsx"]
   },
   module: {
     loaders: [
@@ -17,18 +17,18 @@ module.exports = {
         test: /\.jsx?$/,
         include: path.join(__dirname, "src"),
         exclude: /(node_modules)/,
-        loader: "babel",
+        loader: "babel-loader",
         query: {
-          presets: ["react", "es2015", "stage-0"]
+          presets: ["react", "env", "stage-0"]
         }
       },
       {
         test: require.resolve("react"),
-        loader: "expose?React"
+        loader: "expose-loader?React"
       },
       {
         test: require.resolve("react-dom"),
-        loader: "expose?ReactDOM"
+        loader: "expose-loader?ReactDOM"
       }
     ]
   },
