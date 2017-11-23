@@ -1,5 +1,5 @@
 #!/bin/bash
-set -uxe
+set -e
 
 if [ "$1" = 'start-rails' ]; then
 	exec rails server -b 0.0.0.0
