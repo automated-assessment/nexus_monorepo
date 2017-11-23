@@ -4,7 +4,7 @@
   "description": "Web IDE for Nexus",
   "author": "Sam White",
   "scripts": {
-    "build": "webpack"
+    "build": "./node_modules/.bin/webpack --display-error-details"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",

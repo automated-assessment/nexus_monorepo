@@ -5,7 +5,7 @@
   "author": "King's College London",
   "scripts": {
     "build-assets": "webpack",
-    "build-web-ide": "cd lib/web-ide && webpack",
+    "build-web-ide": "lib/web-ide/node_modules/.bin/webpack --display-error-details",
     "build": "npm run build-assets & npm run build-web-ide"
   },
   "dependencies": {
