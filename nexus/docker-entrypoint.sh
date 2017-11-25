@@ -32,7 +32,7 @@ if [ "$1" = 'init-db' ]; then
 	mkdir -p var/submissions/code
 	mkdir -p var/submissions/uploads
 	mkdir -p var/submissions/tmp
-	exec bundle exec rake db:setup
+  exec bundle exec rake db:setup
 fi
 
 if [ "$1" = 'init' ]; then
@@ -45,11 +45,11 @@ if [ "$1" = 'init' ]; then
 	npm run build
 
 	rm -rf var/
-  mkdir -p tmp/pids
-  mkdir -p var/submissions/code
-  mkdir -p var/submissions/uploads
-  mkdir -p var/submissions/tmp
-  exec bundle exec rake db:setup
+	mkdir -p tmp/pids
+	mkdir -p var/submissions/code
+	mkdir -p var/submissions/uploads
+	mkdir -p var/submissions/tmp
+	exec bundle exec rake db:setup
 fi
 
 exec "$@"
