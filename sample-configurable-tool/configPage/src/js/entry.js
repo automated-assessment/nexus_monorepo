@@ -1,4 +1,4 @@
-require("expose?Config!./components/config");
+require("expose-loader?Config!./components/config");
 
 import React from "react";
 import { render } from "react-dom";
