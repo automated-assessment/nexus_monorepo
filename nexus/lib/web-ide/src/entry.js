@@ -1,4 +1,4 @@
-require("expose?NexusWebIDE!./components/web-ide");
+require("expose-loader?NexusWebIDE!./components/web-ide");
 
 import React from "react";
 import { render } from "react-dom";

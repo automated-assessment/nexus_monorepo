@@ -36,21 +36,20 @@ if [ "$1" = 'init-db' ]; then
 fi
 
 if [ "$1" = 'init' ]; then
-        npm install --production --silent
+	npm install --production --silent
 
-        cd lib/web-ide
-        npm install --production --silent
-        cd ../..
+	cd lib/web-ide
+	npm install --production --silent
+	cd ../..
 
-        npm run build
+	npm run build
 
 	rm -rf var/
-        mkdir -p tmp/pids
-        mkdir -p var/submissions/code
-        mkdir -p var/submissions/uploads
-        mkdir -p var/submissions/tmp
-
-        exec bundle exec rake db:setup
+	mkdir -p tmp/pids
+	mkdir -p var/submissions/code
+	mkdir -p var/submissions/uploads
+	mkdir -p var/submissions/tmp
+	exec bundle exec rake db:setup
 fi
 
 exec "$@"
