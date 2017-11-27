@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Get List of all repos
 url="https://github.kcl.ac.uk/api/v3"
 
 # Extract the values for NEXUS_GITHUB_ORG and NEXUS_GITHUB_TOKEN from .env.list
