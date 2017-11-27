@@ -32,7 +32,7 @@ if [ "$1" = 'init-db' ]; then
 	mkdir -p var/submissions/code
 	mkdir -p var/submissions/uploads
 	mkdir -p var/submissions/tmp
-  exec bundle exec rake db:setup
+	exec bundle exec rake db:setup
 fi
 
 if [ "$1" = 'init' ]; then
