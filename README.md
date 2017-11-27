@@ -147,11 +147,11 @@ To add a grading tool, you need to provide a Dockerfile for it and mention it in
 
 ## Health checks
 
-The rabbitmq console can be found at `http://<hostname>:8081` using the user name and password as defined above.
+The rabbitmq console can be found at `http://<hostname>:8081` using the user name and password as defined below.
 
 Logs can be found in `logs/messages`. Use a command like `tail -f logs/messages` to keep on top of them.
 
-The health of all participant micro-services can be found by running `docker-compose ps`.
+The health of all participant micro-services can be found by running `make ps`.
 
 ## Env variables
 A `.env.list` file is expected in the root directory. Here is a template (more details on how to get the values for these variables can be found in the Wiki for `nexus` under the heading "Docker"):
