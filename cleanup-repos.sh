@@ -38,8 +38,8 @@ do
     # If curl yields a 403
     # exit loop because org has forbidden repo deletion by members
     if [[ $response == 403 ]]; then
-      echo "You do not have permission to remove organisation repositories"
-      break
+      echo "Error 403: You do not have permission to remove organisation repositories"
+      exit 1
     fi
     repos_deleted=$((repos_deleted+=1))
   fi
