@@ -14,7 +14,7 @@ fi
 echo "Are you sure you want to delete all assignment repositories in the $org organisation. [Y|y]"
 read prompt
 
-if [[ $prompt -ne "Y" ]] || [[ $prompt -ne "y" ]]; then
+if [[ $prompt -ne "Y" ]] && [[ $prompt -ne "y" ]]; then
   exit 0
 fi
 
