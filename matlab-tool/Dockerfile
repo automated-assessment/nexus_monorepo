@@ -1,56 +1,44 @@
-FROM node:4.4.5
+# Plan:
+#
+# 3. Add separate docker-compose files to be included when matlab flag is set and figure out how to configure matlab location for these
+# 4. Document usage in various README files
+# 5. Change server code to call python using python shell (optional)
+#
+#
+# These expect you to define some local information:
+# - `MATLAB_ROOT` is your matlab installation on the Docker host, perhaps `/usr/local/MATLAB/R2016a`. Mount this volume as per below.
+# - `MATLAB_LOGS` is optional path on the Docker host to receive Matlab logs, perhaps `~/matlab-logs`. Not currently supported.
+# - `MATLAB_MAC_ADDRESS` is the MAC address associated with your own Matlab License, of the form `00:00:00:00:00:00`. Spoof this when creating the Docker
+#    container.
+#
+# Inspired by https://github.com/benjamin-heasly/matlab-support/blob/master/Dockerfile
+#
+FROM node
 
-# grab gosu for easy step-down from root
-RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
-	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture)" \
-	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture).asc" \
-	&& gpg --verify /usr/local/bin/gosu.asc \
-	&& rm /usr/local/bin/gosu.asc \
-	&& chmod +x /usr/local/bin/gosu \
-	&& apt-get purge -y --auto-remove ca-certificates wget
+# Matlab dependencies
+RUN apt-get update && \
+    apt-get install -y \
+      libpng12-dev \
+			libfreetype6-dev \
+			libblas-dev \
+			liblapack-dev \
+			gfortran \
+			build-essential \
+			xorg
 
-# Install Java
-RUN \
-    echo "===> add webupd8 repository..."  && \
-    echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" | tee /etc/apt/sources.list.d/webupd8team-java.list  && \
-    echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list  && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886  && \
-    apt-get update  && \
-    echo "===> install Java"  && \
-    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections  && \
-    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections  && \
-    DEBIAN_FRONTEND=noninteractive  apt-get install -y --force-yes oracle-java8-installer oracle-java8-set-default  && \
-    echo "===> clean up..."  && \
-    rm -rf /var/cache/oracle-jdk8-installer  && \
-    apt-get clean  && \
-    rm -rf /var/lib/apt/lists/*
+# Map host's validated matlab installation to this volume
+VOLUME  /usr/local/MATLAB/from-host
+ENV PATH="/usr/local/MATLAB/from-host/bin:${PATH}"
 
-ENV HOME /home/app
-ENV APP_DIR $HOME/src
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
-# Set up submissions directory
-RUN mkdir -p /home/app/submissions
-ENV SUBMISSIONS_DIRECTORY $HOME/submissions
-# Not sure the volume statement is needed
-VOLUME ${SUBMISSIONS_DIRECTORY}
+# Install app dependencies
+COPY package.json /usr/src/app/
+RUN npm install
 
-RUN groupadd -r app && useradd -rmg app app
-RUN chown -R app:app $HOME
+# Bundle app source
+COPY . /usr/src/app
 
-WORKDIR $APP_DIR
-
-COPY package.json $APP_DIR/
-RUN npm install --production --silent
-
-COPY . $APP_DIR/
-
-RUN chown -R app:app $HOME
-
-EXPOSE 5000
-
-COPY docker-entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
-
-CMD ["start"]
+CMD [ "npm", "start" ]
