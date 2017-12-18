@@ -1,5 +1,4 @@
-## Nexus - `matlab` Marking Tool
-_A detailed explanation of the code can be found in the main Nexus repo's [Wiki](https://github.kcl.ac.uk/automated-assessment/nexus/wiki)_
+## Nexus - `matlab` Grader
 
 Takes a submission and attempts to run some MATLAB functions. Scores 0 for errors, 100 otherwise; and returns console output as feedback.
 
@@ -13,49 +12,17 @@ Takes a submission and attempts to run some MATLAB functions. Scores 0 for error
 #### Requirements
 - Node 4.x
 - Python
-- Matlab
+- Matlab -- see details below for setup
 
-#### Quick-start
-1. Clone the repo
-2. Install Node.js deps: `$ npm install`
-3. Start the tool: `$ NEXUS_ACCESS_TOKEN=foo SUBMISSIONS_DIRECTORY="/mnt/submissions/" npm start`
+### Including matlab tool in the Nexus setup
 
-As a minimum, `NEXUS_ACCESS_TOKEN` and `SUBMISSIONS_DIRECTORY` are required, although other environment variables are available:
+By default, the matlab grader is not included in the Nexus setup. This is
+because of licensing issues, which mean that we cannot simply package Matlab
+with Nexus. To include the matlab grader with Nexus, follow these steps:
 
-#### Environment Variables
-- `NEXUS_ACCESS_TOKEN`: valid access token registered with Nexus **(required)**
-- `NEXUS_BASE_URL`: the base URL (without trailing `/`) of Nexus  _(default: `http://localhost:3000`)_
-- `NEXUS_SUB_DIR`: the subdirectory in which Nexus is hosted, if any
-- `NEXUS_TOOL_CANONICAL_NAME`: the canonical (unique) name that Nexus associates with this tool _(default: `javac`)_
-- `PORT`: _(default: `5000`)_
-
-#### Linting
-- ESLint is configured
-
-### HTTP Endpoints
-##### `POST /mark`
-- Executes a selection of MATLAB functions
-- Scores `0` if errors are raised; `100` otherwise.
-- `.java` files found and console output are returned as feedback
-
-Required query parameters:
-- `sid`: Submission ID
-
-Returns:
-- `200 OK`
-- `400 Bad Request` if the submission ID is missing or NaN
-
-Example:
-
-```
-$ http POST localhost:5001/mark?sid=222                                   
-HTTP/1.1 200 OK
-Connection: keep-alive
-Content-Length: 2
-Content-Type: text/plain; charset=utf-8
-Date: Wed, 08 Jun 2016 15:51:10 GMT
-ETag: W/"2-4KoCHiHd29bYzs7HHpz1ZA"
-X-Powered-By: Express
-
-OK
-```
+1. Install Matlab on the host machine and activate it with your license. Your host should probably be a Unix-ish box.
+2. Set the `MATLAB_HOME` environment variable to point to the folder where Matlab is installed.
+3. Set the `MAC_ADDRESS` environment variable to the MAC address of the host machine (i.e., the MAC address for which the license was activated).
+4. Run `make matlab` to enable the matlab grader.
+5. Run `make build` ... `make run` as usual.
+6. It's probably worth checking that Matlab actually runs correctly. You can do so by invoking `make bash service=matlab-tool` and running `matlab` from the bash prompt that comes up. The most likely source of errors is that you've used the wrong MAC address in Step 3 above. In this case, Matlab will kindly tell you which MAC address it was expecting. Change `MAC_ADDRESS` accordingly (adding in the `:` again) and restart the matlab-tool.
