@@ -9,7 +9,7 @@ services:
     build: matlab-tool/
     volumes:
       - ${MATLAB_HOME}:/usr/local/MATLAB/from-host
-    #mac_address: ${MAC_ADDRESS} # May have to activate this depending on how matlab license works
+    mac_address: ${MAC_ADDRESS} # May have to activate this depending on how matlab license works
     env_file: .env.matlab.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
     environment:
       NEXUS_BASE_URL: http://nexus:3000
