@@ -13,7 +13,7 @@ services:
     env_file: .env.matlab.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
     environment:
       NEXUS_BASE_URL: http://nexus:3000
-      SUBMISSIONS_DIRECTORY: /usr/src/app/submissions
+      SUBMISSIONS_DIRECTORY: /mnt/submissions/
     logging:
       driver: syslog
       options:
