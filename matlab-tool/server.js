@@ -111,6 +111,8 @@ function handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir
   let exitCode = 0;
   let output = '';
 
+  console.log(`STDERR was:\n${stderr}`);
+
   if (error) {
     if ((error.code >= 0) && (error.code <= 100)) {
       console.log(`Marking tool produced error code for submission ${submissionID}: ${error.code}.`);
