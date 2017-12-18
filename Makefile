@@ -150,9 +150,10 @@ restart-syslog:
 	@echo "Working in $(build-mode) mode."
 	docker-compose $(docker-compose-files) restart syslog
 
+service := nexus
 bash:
 	@echo "Working in $(build-mode) mode."
-	docker-compose $(docker-compose-files) exec nexus bash
+	docker-compose $(docker-compose-files) exec $(service) bash
 
 migrate-db:
 	@echo "Working in $(build-mode) mode."
