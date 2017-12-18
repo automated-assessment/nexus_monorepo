@@ -26,7 +26,9 @@ RUN apt-get update && \
 			build-essential
 
 # Python3 and relevant packages
-RUN apt-get install -y python3
+RUN apt-get install -y python3 python3-pip && \
+    pip3 install nose && \
+    pip3 install psutil
 
 # Not installing xorg as this doesn't work well and isn't needed (we're planning on running Matlab in headless mode)
 
