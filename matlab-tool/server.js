@@ -8,7 +8,7 @@ import { execSync, exec } from 'child_process';
 import { sendMark, sendFeedback } from './utils';
 
 const port = process.env.PORT || 5000;
-const cmd = process.env.TOOL_CMD ? process.env.TOOL_CMD : `python ${path.resolve ('python', 'fm06assessor.py')}`;
+const cmd = process.env.TOOL_CMD ? process.env.TOOL_CMD : `python3 ${path.resolve ('python', 'fm06assessor.py')}`;
 
 if (!process.env.NEXUS_ACCESS_TOKEN) {
   console.log('Error: Specify NEXUS_ACCESS_TOKEN in environment');

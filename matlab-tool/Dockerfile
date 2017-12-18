@@ -25,6 +25,9 @@ RUN apt-get update && \
 			gfortran \
 			build-essential
 
+# Python3 and relevant packages
+RUN apt-get install -y python3
+
 # Not installing xorg as this doesn't work well and isn't needed (we're planning on running Matlab in headless mode)
 
 # Map host's validated matlab installation to this volume
