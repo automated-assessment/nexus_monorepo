@@ -90,7 +90,7 @@ def _execute( dir, function, timeout=10 ):
         if windows:
             os_args = ["-wait", "-logfile", log.name];
 
-        matlab_exe = '/usr/local/bin/matlab'
+        matlab_exe = '/usr/local/MATLAB/from-host/bin/matlab'
         if not os.path.isfile(matlab_exe):
             matlab_exe = 'matlab'
 
