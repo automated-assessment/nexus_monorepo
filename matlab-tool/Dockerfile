@@ -24,13 +24,12 @@ RUN apt-get update && \
 			liblapack-dev \
 			gfortran \
 			build-essential
+# Not installing xorg as this doesn't work well and isn't needed (we're planning on running Matlab in headless mode)
 
 # Python3 and relevant packages
 RUN apt-get install -y python3 python3-pip && \
     pip3 install nose && \
     pip3 install psutil
-
-# Not installing xorg as this doesn't work well and isn't needed (we're planning on running Matlab in headless mode)
 
 # Map host's validated matlab installation to this volume
 VOLUME  /usr/local/MATLAB/from-host
@@ -46,6 +45,9 @@ RUN npm install
 
 # Bundle app source
 COPY . /usr/src/app
+
+# Define submissions directory
+ENV SUBMISSIONS_DIRECTORY=/mnt/submissions/
 
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
