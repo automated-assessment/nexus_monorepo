@@ -1,12 +1,23 @@
+# Check whether including matlab grader: This will be determined by placing a file in the .build-mode directory
+# Targets are defined below to make it easier to switch between modes
+# By default, we're not including the grader
+ifeq ($(shell if [ ! -f .build-mode/.include_matlab ]; then echo "no_matlab"; else echo "matlab"; fi ),matlab)
+	docker-compose-matlab := -f docker-compose.matlab.yml
+	matlab-mode := with Matlab
+else
+	docker-compose-matlab :=
+	matlab-mode := without Matlab
+endif
+
 # Check for dev mode: This will be determined by placing a file in the .build-mode directory
 # Targets are defined below to make it easier to switch between modes
 # By default, we're in development mode
 ifeq ($(shell if [ ! -f .build-mode/.production ]; then echo "development"; else echo "production"; fi ),development)
-	docker-compose-files := -f docker-compose.yml -f docker-compose.graders.yml -f docker-compose.dev.yml -f docker-compose.graders.dev.yml
+	docker-compose-files := -f docker-compose.yml -f docker-compose.graders.yml $(docker-compose-matlab) -f docker-compose.dev.yml -f docker-compose.graders.dev.yml
 	docker-compose-files-test := -f docker-compose.tests.yml -f docker-compose.graders.yml -f docker-compose.graders.dev.yml -f docker-compose.graders.tests.yml
 	build-mode := development
 else
-	docker-compose-files := -f docker-compose.yml -f docker-compose.graders.yml
+	docker-compose-files := -f docker-compose.yml -f docker-compose.graders.yml $(docker-compose-matlab)
 	docker-compose-files-test := -f docker-compose.tests.yml -f docker-compose.graders.yml -f docker-compose.graders.tests.yml
 	build-mode := production
 endif
@@ -31,6 +42,22 @@ development: dev
 
 production: .build-mode/.production
 
+.build-mode/.include_matlab:
+	@mkdir -p .build-mode
+	@rm -rf .build-mode/.no_matlab
+	@touch .build-mode/.include_matlab
+	@echo "Now including matlab grader. Please make sure you have all environment vars set up and Matlab installed."
+
+matlab: .build-mode/.include_matlab
+
+.build-mode/.no_matlab:
+	@mkdir -p .build-mode
+	@rm -rf .build-mode/.include_matlab
+	@touch .build-mode/.no_matlab
+	@echo "No longer including matlab grader."
+
+no-matlab: .build-mode/.no_matlab
+
 .env.list:
 	@echo "NEXUS_GHE_OAUTH_ID=<O-AUTH-ID>" >> .env.list
 	@echo "NEXUS_GHE_OAUTH_SECRET=<O-AUTH-SECRET>" >> .env.list
@@ -54,9 +81,9 @@ production: .build-mode/.production
 	@echo "MYSQL_ALLOW_EMPTY_PASSWORD=yes" >> .env.uat.list
 	@echo "Change ACCESS_TOKEN and DB passwords before deploying to production in .env.uat.list!\n"
 
-.PHONY: dev development production init-env build build-dev init-nexus init-nexus-js init-nexus-db run run-dev restart-nexus restart-javac restart-rng restart-io restart-config restart-db restart-mongodb restart-uat restart-sneakers restart-rabbitmq restart-syslog bash migrate-db stop restart restart-dev debug build-tests test-graders stop-tests test-nexus ps
+.PHONY: dev development production init-env build build-dev init-nexus init-nexus-js init-nexus-db run run-dev restart-nexus restart-javac restart-rng restart-io restart-config restart-db restart-mongodb restart-uat restart-sneakers restart-rabbitmq restart-syslog bash migrate-db stop restart restart-dev debug build-tests test-graders stop-tests test-nexus ps matlab no-matlab
 
-init-env: .env.list .env.uat.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list .env.peerfeedback.list
+init-env: .env.list .env.uat.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list .env.peerfeedback.list .env.matlab.list
 	@echo "All .env files initialised. Please ensure you change ACCESS_TOKEN information etc. before running Nexus.\n"
 
 build:

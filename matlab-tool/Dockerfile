@@ -23,8 +23,9 @@ RUN apt-get update && \
 			libblas-dev \
 			liblapack-dev \
 			gfortran \
-			build-essential \
-			xorg
+			build-essential
+
+# Not installing xorg as this doesn't work well and isn't needed (we're planning on running Matlab in headless mode)
 
 # Map host's validated matlab installation to this volume
 VOLUME  /usr/local/MATLAB/from-host
@@ -41,4 +42,8 @@ RUN npm install
 # Bundle app source
 COPY . /usr/src/app
 
-CMD [ "npm", "start" ]
+COPY docker-entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
+CMD ["start"]
