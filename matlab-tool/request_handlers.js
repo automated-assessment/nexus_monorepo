@@ -40,38 +40,12 @@ const marker_queue = async.queue((task, cb) => {
 
 function markSubmission(submissionID, cloneURL, branch, sha, cb) {
   console.log(`Starting marking process for submission ${submissionID}.`);
+  const sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
 
-  let sourceDir = '';
-
-  // TODO Consider moving into its own methods to shorten this code and make it more readable
   async.series([
-      (cb) => {
-        sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
-        console.log(`Using directory ${sourceDir}.`);
-
-        // Clean up repository directory in case it already exists for some reason
-        removeDirectoryIfExists(sourceDir);
-
-        // clone repo
-        exec(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`,
-          (error, stdout, stderr) => {
-            cb(err);
-          }
-        );
-      },
-      (cb) => {
-        exec(`git checkout ${sha}`, { cwd: sourceDir },
-          (error, stdout, stderr) => {
-            cb(err);
-          }
-        );
-      },
-      (cb) => {
-        console.log(`About to run marking tool for submission ${submissionID}.`);
-        exec(`${cmd} --dir ${sourceDir}`, { cwd: sourceDir, env: {'NEXUS_ACCESS_TOKEN':''} }, (error, stdout, stderr) => {
-          handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir, cb);
-        });
-      }
+      cloneSubmissionCode(cloneURL, branch, sourceDir, cb),
+      checkoutSubmissionCode(sha, sourceDir, cb),
+      doMarkSubmission(submissionID, sourceDir, cb)
     ],
     (err, res) => {
       if (err) {
@@ -93,6 +67,35 @@ function markSubmission(submissionID, cloneURL, branch, sha, cb) {
       cb();
     }
   );
+}
+
+function cloneSubmissionCode(cloneURL, branch, sourceDir, cb) {
+  console.log(`Using directory ${sourceDir}.`);
+
+  // Clean up repository directory in case it already exists for some reason
+  removeDirectoryIfExists(sourceDir);
+
+  // clone repo
+  exec(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`,
+    (error, stdout, stderr) => {
+      cb(err);
+    }
+  );
+}
+
+function checkoutSubmissionCode(sha, sourceDir, cb) {
+  exec(`git checkout ${sha}`, { cwd: sourceDir },
+    (error, stdout, stderr) => {
+      cb(err);
+    }
+  );
+}
+
+function doMarkSubmission(submissionID, sourceDir, cb) {
+  console.log(`About to run marking tool for submission ${submissionID}.`);
+  exec(`${cmd} --dir ${sourceDir}`, { cwd: sourceDir, env: {'NEXUS_ACCESS_TOKEN':''} }, (error, stdout, stderr) => {
+    handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir, cb);
+  });
 }
 
 function handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir, cb) {
