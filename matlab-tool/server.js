@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import errorhandler from 'errorhandler';
-import markRequestHandler from './request_handlers';
+import { markRequestHandler } from './request_handlers';
 
 const port = process.env.PORT || 5000;
 
