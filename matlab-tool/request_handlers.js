@@ -5,7 +5,7 @@ import fsExtra from 'fs-extra';
 import { execSync, exec } from 'child_process';
 import { sendMark, sendFeedback } from './utils';
 
-const cmd = process.env.TOOL_CMD ? process.env.TOOL_CMD : `python ${path.resolve ('python', 'fm06assessor.py')}`;
+const cmd = process.env.TOOL_CMD ? process.env.TOOL_CMD : `python3 ${path.resolve ('python', 'fm06assessor.py')}`;
 const MAX_CONCURRENCY = 1;
 
 /**
