@@ -1,0 +1,22 @@
+# Requires Docker v 1.12 or above
+# The compose file that includes the matlab grader into the mix.
+version: '2'
+services:
+  nexus:
+    depends_on:
+      - matlab-tool
+  matlab-tool:
+    build: matlab-tool/
+    volumes:
+      - ${MATLAB_HOME}:/usr/local/MATLAB/from-host
+    mac_address: ${MAC_ADDRESS} # May have to activate this depending on how matlab license works
+    env_file: .env.matlab.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "matlab"
+    depends_on:
+      - syslog
