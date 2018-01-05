@@ -43,9 +43,15 @@ function markSubmission(submissionID, cloneURL, branch, sha, cb) {
   const sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
 
   async.series([
-      cloneSubmissionCode(cloneURL, branch, sourceDir, cb),
-      checkoutSubmissionCode(sha, sourceDir, cb),
-      doMarkSubmission(submissionID, sourceDir, cb)
+      (cb) => {
+        cloneSubmissionCode(cloneURL, branch, sourceDir, cb);
+      },
+      (cb) => {
+        checkoutSubmissionCode(sha, sourceDir, cb);
+      },
+      (cb) => {
+        doMarkSubmission(submissionID, sourceDir, cb);
+      }
     ],
     (err, res) => {
       if (err) {
@@ -78,7 +84,7 @@ function cloneSubmissionCode(cloneURL, branch, sourceDir, cb) {
   // clone repo
   exec(`git clone --branch ${branch} --single-branch ${cloneURL} ${sourceDir}`,
     (error, stdout, stderr) => {
-      cb(err);
+      cb(error);
     }
   );
 }
@@ -86,7 +92,7 @@ function cloneSubmissionCode(cloneURL, branch, sourceDir, cb) {
 function checkoutSubmissionCode(sha, sourceDir, cb) {
   exec(`git checkout ${sha}`, { cwd: sourceDir },
     (error, stdout, stderr) => {
-      cb(err);
+      cb(error);
     }
   );
 }
