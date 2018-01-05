@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import errorhandler from 'errorhandler';
-import mark_request_handler from './request_handlers';
+import markRequestHandler from './request_handlers';
 
 const port = process.env.PORT || 5000;
 
@@ -27,7 +27,7 @@ app.use(errorhandler({
   showStack: true
 }));
 
-app.post('/mark', mark_request_handler);
+app.post('/mark', markRequestHandler);
 
 app.listen(port, () => {
   console.log(`Tool listening on port ${port}!`);

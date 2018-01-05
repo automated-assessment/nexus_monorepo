@@ -12,7 +12,7 @@ const MAX_CONCURRENCY = 1;
  * Respond to a mark request. This will initially only enqueue the mark request
  * so that it can be handled at a later stage.
  */
-export function mark_request_handler (req, res, next) {
+export function markRequestHandler (req, res, next) {
   try {
     const submissionID = req.body.sid;
     console.log(`Request to mark submission ${submissionID} received.`);
