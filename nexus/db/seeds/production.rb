@@ -40,8 +40,7 @@ if ENV['DOCKER']
                      input: nil,
                      output: nil,
                      requires_config: true,
-                     config_url: "http://localhost:3005/#!/frame/configuration
-                     ?aid=%{aid}&token=#{a.access_token}&email=#{u.email}")
+                     config_url: 'http://localhost:3005/#!/frame/configuration?aid=%{aid}&token=%{a.access_token}&email=%{u.email}')
 else
   puts 'Invoked locally'
   MarkingTool.create(name: 'Java Compilation',
@@ -69,6 +68,5 @@ else
                      input: nil,
                      output: nil,
                      requires_config: true,
-                     config_url: "http://localhost:3005/#!/frame/configuration
-                     ?aid=%{aid}&token=#{a.access_token}&email=#{u.email}")
+                     config_url: 'http://localhost:3005/#!/frame/configuration?aid=%{aid}&token=%{a.access_token}&email=%{u.email}')
 end
