@@ -4,9 +4,11 @@
 ifeq ($(shell if [ ! -f .build-mode/.include_matlab ]; then echo "no_matlab"; else echo "matlab"; fi ),matlab)
 	docker-compose-matlab := -f docker-compose.matlab.yml
 	matlab-mode := with Matlab
+	test-files := /test-files/matlab.yml
 else
 	docker-compose-matlab :=
 	matlab-mode := without Matlab
+	test-files :=
 endif
 
 # Check for dev mode: This will be determined by placing a file in the .build-mode directory
@@ -182,7 +184,7 @@ test-graders:
 	@echo "Spinning up test infrastructure. This may take a little while..."
 	@docker-compose $(docker-compose-files-test) up -d > /dev/null 2>&1
 	@echo "Running tests"
-	@docker-compose $(docker-compose-files-test) exec grader-tester node test_runner.js ; \
+	@docker-compose $(docker-compose-files-test) exec grader-tester node test_runner.js ${test-files}; \
 	test_exit=$$?; \
 	echo "Shutting down test infrastructure. This may take a little while..."; \
 	docker-compose $(docker-compose-files-test) down > /dev/null 2>&1 ; \
