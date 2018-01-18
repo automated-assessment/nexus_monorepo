@@ -35,7 +35,7 @@ services:
         syslog-address: "udp://localhost:5514"
         tag: "grader-tester"
   git-server:
-    image: cirocosta/gitserver-http
+    build: grader_tester_gitserver/
     volumes:
       - ./grader_tester/tests/repositories:/var/lib/git
       - ./grader_tester/tests/scripts/submissions:/var/lib/initial:ro

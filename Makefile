@@ -177,12 +177,10 @@ debug:
 
 build-tests:
 	@echo "Working in $(build-mode) mode."
-	docker-compose $(docker-compose-files-test) build grader-tester
+	docker-compose $(docker-compose-files-test) build grader-tester git-server
 
 test-graders:
 	@echo "Working in $(build-mode) mode."
-	@echo "Removing temporary files. Provide your sudo password when asked..."
-	sudo rm -rf ./grader_tester/tests/repositories
 	@echo "Spinning up test infrastructure. This may take a little while..."
 	@docker-compose $(docker-compose-files-test) up -d > /dev/null 2>&1
 	@echo "Running tests"
