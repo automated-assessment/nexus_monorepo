@@ -1,0 +1,19 @@
+# Test specifications for grader grader tester
+graders:
+  matlab-tool:
+    canonical_name: matlab
+    port: 5000
+    mark: /mark
+tests:
+  matlab-success:
+    submission: matlab_success
+    graders:
+      matlab-tool:
+        mark: 100
+        feedback: dontcare
+  matlab-error:
+    submission: matlab_error
+    graders:
+      matlab-tool:
+        mark: 0
+        feedback: dontcare

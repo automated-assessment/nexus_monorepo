@@ -1,0 +1,10 @@
+# Requires Docker v 1.12 or above
+# The compose file that includes the matlab grader into the test setup.
+version: '2'
+services:
+  grader-tester:
+    depends_on:
+      - matlab-tool
+  matlab-tool:
+    environment:
+      NEXUS_BASE_URL: http://grader-tester:3000

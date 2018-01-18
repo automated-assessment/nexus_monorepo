@@ -42,16 +42,19 @@ function load_yaml(cb) {
   // Load and merge yml files
   var mergedConfig;
   async.each(files,
-    (f, cb) => {
+    (f, cb2) => {
       yaml.read (f, {schema: yaml.schema.defaultSafe}, (err, data) => {
-        if (!err) {
+        if (err) {
+          console.log(`Error reading test specification ${f}: ${err}.`.error);
+          process.exit(-1);
+        } else {
           if (!mergedConfig) {
             mergedConfig = data;
           } else {
             merge(mergedConfig, data);
           }
         }
-        cb(err);
+        cb2(err);
       });
     },
     (err) => { cb (err, mergedConfig); }
@@ -73,6 +76,7 @@ function start_tests() {
           (err, result) => {
             if (err) {
               console.log(`Error running tests: ${err}.`.error);
+              process.exit(-1);
             }
             else {
               console.log ("All tests have run.".log);
