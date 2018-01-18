@@ -2,11 +2,15 @@
 # Targets are defined below to make it easier to switch between modes
 # By default, we're not including the grader
 ifeq ($(shell if [ ! -f .build-mode/.include_matlab ]; then echo "no_matlab"; else echo "matlab"; fi ),matlab)
-	docker-compose-matlab := -f docker-compose.matlab.yml
+	docker-compose-matlab := -f docker-compose.matlab.yml -f docker-compose.matlab.nexus.yml
 	matlab-mode := with Matlab
+	test-files := /test-specs/matlab.yml
+	docker-compose-tests-matlab := -f docker-compose.matlab.yml -f docker-compose.matlab.tests.yml
 else
 	docker-compose-matlab :=
 	matlab-mode := without Matlab
+	test-files :=
+	docker-compose-tests-matlab :=
 endif
 
 # Check for dev mode: This will be determined by placing a file in the .build-mode directory
@@ -14,11 +18,11 @@ endif
 # By default, we're in development mode
 ifeq ($(shell if [ ! -f .build-mode/.production ]; then echo "development"; else echo "production"; fi ),development)
 	docker-compose-files := -f docker-compose.yml -f docker-compose.graders.yml $(docker-compose-matlab) -f docker-compose.dev.yml -f docker-compose.graders.dev.yml
-	docker-compose-files-test := -f docker-compose.tests.yml -f docker-compose.graders.yml -f docker-compose.graders.dev.yml -f docker-compose.graders.tests.yml
+	docker-compose-files-test := -f docker-compose.tests.yml -f docker-compose.graders.yml -f docker-compose.graders.dev.yml -f docker-compose.graders.tests.yml $(docker-compose-tests-matlab)
 	build-mode := development
 else
 	docker-compose-files := -f docker-compose.yml -f docker-compose.graders.yml $(docker-compose-matlab)
-	docker-compose-files-test := -f docker-compose.tests.yml -f docker-compose.graders.yml -f docker-compose.graders.tests.yml
+	docker-compose-files-test := -f docker-compose.tests.yml -f docker-compose.graders.yml -f docker-compose.graders.tests.yml $(docker-compose-tests-matlab)
 	build-mode := production
 endif
 
@@ -182,7 +186,7 @@ test-graders:
 	@echo "Spinning up test infrastructure. This may take a little while..."
 	@docker-compose $(docker-compose-files-test) up -d > /dev/null 2>&1
 	@echo "Running tests"
-	@docker-compose $(docker-compose-files-test) exec grader-tester node test_runner.js ; \
+	@docker-compose $(docker-compose-files-test) exec grader-tester node test_runner.js ${test-files}; \
 	test_exit=$$?; \
 	echo "Shutting down test infrastructure. This may take a little while..."; \
 	docker-compose $(docker-compose-files-test) down > /dev/null 2>&1 ; \

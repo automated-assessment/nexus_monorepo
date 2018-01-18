@@ -11,6 +11,8 @@ import waitOn from 'wait-on';
 var colors = require('colors');
 
 const fs = require('fs-extra');
+const glob = require('glob');
+const merge = require('lodash.merge');
 
 colors.setTheme({
   log: 'grey',
@@ -30,8 +32,37 @@ const GIT_BASE_URL = `http://${GIT_HOST}:${GIT_PORT}/`;
 
 start_tests();
 
+function load_yaml(cb) {
+  // Grab names of files / GLOBS to use from command line
+  var sources = process.argv.slice(2);
+  // Always include default tests.yml
+  sources.unshift("/test-specs/tests.yml");
+  const files = [].concat.apply([], sources.map(g => glob.sync(g, {nodir: true})));
+
+  // Load and merge yml files
+  var mergedConfig;
+  async.each(files,
+    (f, cb2) => {
+      yaml.read (f, {schema: yaml.schema.defaultSafe}, (err, data) => {
+        if (err) {
+          console.log(`Error reading test specification ${f}: ${err}.`.error);
+          process.exit(-1);
+        } else {
+          if (!mergedConfig) {
+            mergedConfig = data;
+          } else {
+            merge(mergedConfig, data);
+          }
+        }
+        cb2(err);
+      });
+    },
+    (err) => { cb (err, mergedConfig); }
+  );
+}
+
 function start_tests() {
-  yaml.read ("/test-specs/tests.yml", {schema: yaml.schema.defaultSafe}, (err, data) => {
+  load_yaml ((err, data) => {
     if (err) {
       console.log(`Error reading test specification: ${err}.`.error);
     } else {
@@ -45,6 +76,7 @@ function start_tests() {
           (err, result) => {
             if (err) {
               console.log(`Error running tests: ${err}.`.error);
+              process.exit(-1);
             }
             else {
               console.log ("All tests have run.".log);

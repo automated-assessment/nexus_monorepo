@@ -1,0 +1,7 @@
+# Requires Docker v 1.12 or above
+# The compose file that includes the matlab grader into the installation.
+version: '2'
+services:
+  nexus:
+    depends_on:
+      - matlab-tool

@@ -27,6 +27,11 @@ app.use(errorhandler({
   showStack: true
 }));
 
+// Health check
+app.head('/mark', (req, res, next) => {
+    res.sendStatus(200);
+});
+
 app.post('/mark', markRequestHandler);
 
 app.listen(port, () => {
