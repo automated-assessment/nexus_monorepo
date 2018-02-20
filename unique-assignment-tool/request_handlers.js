@@ -13,9 +13,8 @@ if (!process.env.UAT_ACCESS_TOKEN) {
 
 var mysql = require('mysql');
 
-var dbcon = null;
-
-dbcon = mysql.createConnection({
+var dbConnectionPool  = mysql.createPool({
+  connectionLimit : 10,
   host: process.env.MYSQL_HOST || "mysql",
   port: 3306,
   user: process.env.MYSQL_USER || "uat-tool",
@@ -23,14 +22,27 @@ dbcon = mysql.createConnection({
   database: process.env.MYSQL_DATABASE || "uat"
 });
 
-dbcon.connect((err) => {
-    if (err) {
-  	  console.log(err);
-    }
-    else {
-  	  console.log("DB connection successful.")
+dbConnectionPool.on('acquire', function (connection) {
+  console.log('Connection %d acquired', connection.threadId);
+});
+
+dbConnectionPool.on('connection', function (connection) {
+  connection.on('error', function(err) {
+    console.log(`Connection-level error occurred: ${err.code}.`);
+    if (err.fatal) {
+      // Cleanup is already handled by DB pool
+      console.log("This was a fatal error.");
     }
   });
+});
+
+dbConnectionPool.on('enqueue', function () {
+  console.log('Waiting for available connection slot');
+});
+
+dbConnectionPool.on('release', function (connection) {
+  console.log('Connection %d released', connection.threadId);
+});
 
 /**
  * Retrieve the parameters defined for the given assignment.
@@ -177,7 +189,7 @@ function ensure_tables_initialised (cb) {
     "param_type ENUM ('int','float','double','string','boolean'), param_construct TEXT, assign_id INT, "+
     "PRIMARY KEY (param_id)) ENGINE=INNODB;";
 
-  dbcon.query(sql, (err, result) => {
+  dbConnectionPool.query(sql, (err, result) => {
     if (err && err.code !== "ER_TABLE_EXISTS_ERROR") {
       cb(err);
       return;
@@ -186,7 +198,7 @@ function ensure_tables_initialised (cb) {
 
       var sql =
         "CREATE TABLE generated_parameters (assign_id INT, std_id INT, param_name VARCHAR(50), param_value TEXT) ENGINE=INNODB;";
-        dbcon.query(sql, (err, result) => {
+        dbConnectionPool.query(sql, (err, result) => {
           if (err && err.code !== "ER_TABLE_EXISTS_ERROR") {
             cb(err);
             return;
@@ -201,13 +213,13 @@ function ensure_tables_initialised (cb) {
 
 function do_delete_assignment_data (assignment, cb) {
   var sql = "DELETE FROM parameters WHERE assign_id=?";
-  dbcon.query(sql, [assignment], (err, result) => {
+  dbConnectionPool.query(sql, [assignment], (err, result) => {
     if (err) {
       console.log(`Failed to delete original parameters for assingment ${assignment}: ${err}`);
       cb(err);
     } else {
       var sql = "DELETE FROM generated_parameters WHERE assign_id=?";
-      dbcon.query(sql, [assignment], (err, result) => {
+      dbConnectionPool.query(sql, [assignment], (err, result) => {
         if (err) {
           console.log(`Failed to delete original generated parameters for assingment ${assignment}: ${err}`);
           cb(err);
@@ -224,7 +236,7 @@ function do_update_assignment_parameters (assignment, parameters, cb) {
   async.forEach (parameters,
     (p, cb2) => {
       var values = [p.name, p.type, p.construct, assignment];
-  		dbcon.query(sql, [values], (err, result) => {
+  		dbConnectionPool.query(sql, [values], (err, result) => {
         if (err) {
           console.log(`Failed to add parameter ${p.name} to database for assignment ${assignment}: ${err}.`);
           cb2(err);
@@ -300,7 +312,7 @@ function getParametersFor (parameters, assignmentID, cb) {
   console.log(`Fetching variable definitions for ${assignmentID} from database.`);
 
 	var sql = "SELECT param_name,param_type,param_construct FROM parameters WHERE assign_id=?";
-	dbcon.query(sql, [assignmentID], (err, rows, result) => {
+	dbConnectionPool.query(sql, [assignmentID], (err, rows, result) => {
     if (err) {
       cb(err);
     } else {
@@ -393,7 +405,7 @@ function getParameterValueForStudent(valueArray, studentID, assignmentID, paramN
   console.log("Starting with db lookup.");
   var sql = "SELECT param_value FROM generated_parameters WHERE assign_id=? and std_id=? and param_name=?";
   var values = [assignmentID, studentID, paramName];
-  dbcon.query(sql, values, function (err, rows, result) {
+  dbConnectionPool.query(sql, values, function (err, rows, result) {
     if (err) {
       console.log(err);
       callback(err);
@@ -434,7 +446,7 @@ function getParameterValueForStudent(valueArray, studentID, assignmentID, paramN
         console.log (`Pushing new value ${valueArray[paramName]} into database.`);
         sql = "INSERT INTO generated_parameters (assign_id, std_id, param_name, param_value) VALUES (?)";
         var values = [assignmentID,studentID,paramName,valueArray[paramName]];
-        dbcon.query(sql, [values], function (err, result) {
+        dbConnectionPool.query(sql, [values], function (err, result) {
           if (err) {
             console.log(err);
             callback(err);
