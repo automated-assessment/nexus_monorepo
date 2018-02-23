@@ -1,5 +1,6 @@
 # Code taken from https://gist.github.com/stevegraham/b60cc852c010c72760e7
 require 'sneakers/runner'
+# require 'sneakers/handlers/maxretry'
 
 task :environment
 
@@ -12,7 +13,10 @@ namespace :sneakers do
 
     workers = ActiveJob::Base.subclasses.map do |klass|
       klass.const_set("Wrapper", Class.new(ActiveJob::QueueAdapters::SneakersAdapter::JobWrapper) do
-        from_queue klass.queue_name
+        from_queue klass.queue_name #, {
+        #   handler: Sneakers::Handlers::Maxretry,
+        #   arguments: { :'x-dead-letter-exchange' => "#{klass.queue_name}-retry" }
+        # }
       end)
     end
 
