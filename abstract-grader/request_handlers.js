@@ -4,8 +4,8 @@ import fs from 'fs';
 import fsExtra from 'fs-extra';
 import { execSync, exec } from 'child_process';
 import { sendMark, sendFeedback } from './utils';
+import { doMarkSubmission } from './mark_submission';
 
-const cmd = process.env.TOOL_CMD ? process.env.TOOL_CMD : '/usr/src/app/grade_submission.sh';
 const MAX_CONCURRENCY = 1;
 
 /**
@@ -50,7 +50,7 @@ function markSubmission(submissionID, cloneURL, branch, sha, cb) {
         checkoutSubmissionCode(sha, sourceDir, cb);
       },
       (cb) => {
-        doMarkSubmission(submissionID, sourceDir, cb);
+        _doMarkSubmission(submissionID, sourceDir, cb);
       }
     ],
     (err, res) => {
@@ -97,59 +97,35 @@ function checkoutSubmissionCode(sha, sourceDir, cb) {
   );
 }
 
-// TODO Move to separate file so this can be overridden by grader implementers
-function doMarkSubmission(submissionID, sourceDir, cb) {
-  console.log(`About to run marking tool for submission ${submissionID}.`);
-  // TODO Properly call cmd and transfer relevant information. Set up return channel.
-  exec(`${cmd} --dir ${sourceDir}`, { cwd: sourceDir, env: {'NEXUS_ACCESS_TOKEN':''} }, (error, stdout, stderr) => {
-    handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir, cb);
-  });
-}
+function _doMarkSubmission(submissionID, sourceDir, cb) {
+  // Call out to user-definable function
+  doMarkSubmission(submissionID, sourceDir, (err, mark, feedback) => {
+    if (err || (mark == -1)) {
+      console.log(`Informing NEXUS of issues with marking submission ${submissionID}.`);
+      sendMark (0, submissionID);
+      sendFeedback('<div class="generic-feedback">There was an error marking your submission. Please contact your lecturer.</div>',
+            submissionID,
+            (err, res, body) => {
+              if (err) {
+                console.log(`Error from Nexus feedback request: ${err}`);
+              }
+            });
 
-// TODO Generalise protocol here so that it doesn't have to handle stdout/stderr directly
-function handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir, cb) {
-  let exitCode = 0;
-  let output = '';
-
-  if (error) {
-    if ((error.code >= 0) && (error.code <= 100)) {
-      console.log(`Marking tool produced error code for submission ${submissionID}: ${error.code}.`);
-      exitCode = error.code;
-      output = stdout;
+      cb(err);
     } else {
-      console.log(`Internal error running marking tool for submission ${submissionID}: ${error}: ${stdout}.`);
-      output = 'Internal error: testing tool failed to run command.\n'+stdout;
-      exitCode = -1;
+      console.log(`Reporting mark to NEXUS for submission ${submissionID}.`);
+      sendMark(mark, submissionID);
+
+      console.log(`Reporting feedback to NEXUS for submission ${submissionID}.`);
+      sendFeedback(`<div class="generic-feedback">${feedback}</div>`, submissionID, (err, res, body) => {
+          if (err) {
+            console.log(`Error from Nexus feedback request: ${err}`);
+          }
+      });
+
+      cb();
     }
-  } else {
-    console.log(`Marking tool ran successfully for submission ${submissionID}.`);
-    output = stdout;
-  }
-
-  // TODO Should really make the request sending into an async series, but this is probably OK for now
-  if (exitCode>=0) {
-    console.log(`Reporting mark to NEXUS for submission ${submissionID}.`);
-    sendMark(exitCode, submissionID);
-
-    console.log(`Reporting feedback to NEXUS for submission ${submissionID}.`);
-    sendFeedback(`<div class="generic-feedback">${output}</div>`, submissionID, (err, res, body) => {
-        if (err) {
-          console.log(`Error from Nexus feedback request: ${err}`);
-        }
-    });
-  } else {
-    console.log(`Informing NEXUS of issues with marking submission ${submissionID}.`);
-    sendMark (0, submissionID);
-    sendFeedback('<div class="generic-feedback">There was an error marking your submission. Please contact your lecturer.</div>',
-          submissionID,
-          (err, res, body) => {
-            if (err) {
-              console.log(`Error from Nexus feedback request: ${err}`);
-            }
-          });
-  }
-
-  cb();
+  });
 }
 
 // TODO: Make this async

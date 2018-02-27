@@ -23,6 +23,7 @@
     "eslint-plugin-react": "^4.2.3",
     "express": "^4.13.4",
     "fs-extra": "^0.30.0",
-    "request": "^2.70.0"
+    "request": "^2.70.0",
+    "tmp": "^0.1.0"
   }
 }
