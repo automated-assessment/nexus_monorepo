@@ -87,30 +87,30 @@ Nexus can be run in development or production mode. By default, you will run in 
 
 - To update JS components when added to or modified run `make init-nexus-js`
 
-### Tools
-#### Restart Tools
+### Graders
+#### Restart Graders
 - Run `make restart`
   - This stops the docker containers and re runs them in your current build mode
 
-##### Individual Tools
+##### Individual Graders
 - Run `make restart-nexus`
   - This restarts Nexus in the current environment
 
 
 - Run `make restart-javac`
-  - This restarts the Javac tool in the current environment
+  - This restarts the Javac grader in the current environment
 
 
 - Run `make restart-rng`
-  - This restarts the rng tool in the current environment
+  - This restarts the rng grader in the current environment
 
 
 - Run `make restart-io`
-  - This restarts the io tool in the current environment
+  - This restarts the io grader in the current environment
 
 
 - Run `make restart-config`
-  - This restarts the Config tool in the current environment
+  - This restarts the Config grader in the current environment
 
 
 - Run `make restart-db`
@@ -132,15 +132,17 @@ Nexus can be run in development or production mode. By default, you will run in 
 - Run `make restart-syslog`
   - This restarts Syslog in the current environment
 
-### Test tools
+### Test graders
 
-Run `make test-graders` to run grader tests. More information can be found in the [grader-testing documentation](grader_tester/README.md). Nexus needs to be down for this to run correctly. You should also only run this in a separate workspace from your dev workspace, as grading tools may be modifying their databases as part of the test runs.
+Run `make test-graders` to run grader tests. More information can be found in the [grader-testing documentation](grader_tester/README.md). Nexus needs to be down for this to run correctly. You should also only run this in a separate workspace from your dev workspace, as graders may be modifying their databases as part of the test runs.
 
 Run `make test-nexus` to run rspec tests on the core management component. These tests aren't yet complete, so contributions are always welcome. At the end of this, nexus will be down!
 
-### Adding tools
+### Adding graders
 
-To add a grading tool, you need to provide a Dockerfile for it and mention it in a number of places: the various `docker-compose.graders.*.yml` files need to be updated. The tool also needs to be mentioned in the dependencies for `nexus` in [`docker-compose.yml`](docker-compose.yml) as well as the dependencies of `grader-tester` in [`docker-compose.tests.yml`](docker-compose.test.yml) (at least if you want to be able to run black-box tests against it). See also [DOCKER-COMPOSE-FILES](DOCKER-COMPOSE-FILES.md).
+To add a new grader, you need to provide a Dockerfile for it and mention it in a number of places: the various `docker-compose.graders.*.yml` files need to be updated. The grader also needs to be mentioned in the dependencies for `nexus` in [`docker-compose.yml`](docker-compose.yml) as well as the dependencies of `grader-tester` in [`docker-compose.tests.yml`](docker-compose.test.yml) (at least if you want to be able to run black-box tests against it). See also [DOCKER-COMPOSE-FILES](DOCKER-COMPOSE-FILES.md).
+
+If your grader is to be implemented in JavaScript or as a shell script, you may be able to benfit from the [abstract grader stub implementation](abstract-grader/README.md). This provides everything required for communication with Nexus and GHE, allowing you to focus on the key grading functionality.
 
 ## Health checks
 
@@ -174,7 +176,7 @@ Note that the two user variables and the two password variables need to be set t
 
 An explanation of these vars can be found in the main Nexus repo
 
-Additionally, the tools that are included in the docker-compose require their own environment file each. For the RNG tool this is called `.env.rng.list`. For other tools the names are similar, they can be found from `docker-compose.yml` by looking for `env-file` entries. Each file should contain the following variables (as per the documentation in the relevant tool repository):
+Additionally, the graders that are included in the docker-compose require their own environment file each. For the RNG grader this is called `.env.rng.list`. For other graders the names are similar, they can be found from `docker-compose.yml` by looking for `env-file` entries. Each file should contain the following variables (as per the documentation in the relevant grader repository):
 
 ```
 NEXUS_TOOL_CANONICAL_NAME=
