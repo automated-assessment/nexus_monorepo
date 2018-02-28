@@ -177,7 +177,7 @@ debug:
 
 build-tests:
 	@echo "Working in $(build-mode) mode."
-	docker-compose $(docker-compose-files-test) build grader-tester git-server
+	docker-compose $(docker-compose-files-test) build grader-tester git-server abstract-grader
 
 test-graders:
 	@echo "Working in $(build-mode) mode."

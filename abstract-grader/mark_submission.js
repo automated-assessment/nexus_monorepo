@@ -1,11 +1,13 @@
 import tmp from 'tmp';
+import { exec } from 'child_process';
+import fs from 'fs';
 
 const cmd = process.env.TOOL_CMD ? process.env.TOOL_CMD : '/usr/src/app/grade_submission.sh';
 
 export function doMarkSubmission(submissionID, sourceDir, cb) {
   console.log(`About to run marking tool for submission ${submissionID}.`);
 
-  tmp.file({ mode: 0644, prefix: 'results-', postfix: '.html', discardDescriptor: true  },
+  tmp.file({ mode: 644, prefix: 'results-', postfix: '.html', discardDescriptor: true  },
     (err, path, fd, cleanupCallback) => {
       if (err) {
         cb(err);
