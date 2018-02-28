@@ -6,3 +6,17 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./peerfeedback:/src
+  sample-abstract-grader:
+    build: sample-abstract-grader/
+    env_file: .env.sag.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+    # ports:
+    #   - "6000:5000"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "sag"
+    depends_on:
+      - syslog
