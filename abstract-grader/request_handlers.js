@@ -6,7 +6,7 @@ import { execSync, exec } from 'child_process';
 import { sendMark, sendFeedback } from './utils';
 import { doMarkSubmission } from './mark_submission';
 
-const MAX_CONCURRENCY = 1;
+const MAX_CONCURRENCY = process.env.MAX_CONCURRENCY ? parseInt(process.env.MAX_CONCURRENCY, 10) : 1;
 
 /**
  * Respond to a mark request. This will initially only enqueue the mark request
@@ -111,7 +111,7 @@ function _doMarkSubmission(submissionID, sourceDir, cb) {
               }
             });
 
-      cb(err);
+      cb();
     } else {
       console.log(`Reporting mark to NEXUS for submission ${submissionID}.`);
       sendMark(mark, submissionID);
