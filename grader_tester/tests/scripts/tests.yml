@@ -18,8 +18,7 @@ tests:
       abstract-grader:
         mark: 57
         feedback:
-          text: '<div class="generic-feedback"><p>Some feedback</p>
-</div>'
+          text: <div class="generic-feedback"><p>Some feedback</p></div>
   no_compile:
     submission: basic_no_compile
     graders:
