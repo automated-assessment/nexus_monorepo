@@ -1,6 +1,5 @@
 import tmp from 'tmp';
 
-// TODO Implement default grade_submission.sh script
 const cmd = process.env.TOOL_CMD ? process.env.TOOL_CMD : '/usr/src/app/grade_submission.sh';
 
 export function doMarkSubmission(submissionID, sourceDir, cb) {
