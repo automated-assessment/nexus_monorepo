@@ -67,28 +67,25 @@ You will also find information about how to develop your own contributions to Ne
 Nexus can be run in development or production mode. By default, you will run in development mode. This gives you more detailed logs and some other nice features, but is not good for production. If you want to get a feel for what production would be like, run `make production` and then go back to step 6 above. The main difference is that `docker-compose` will now be run only with the main config file. To switch back to development mode, run `make development` (or `make dev` for short).
 
 ## Useful Commands
+
 - To attach into container to see terminal output, useful with Pry debugging
-1. Place your `binding.pry` command as normal where required. (Nexus)
-2. `make restart-nexus` to update changes in volume.
-3. `make debug` to use debugger when triggered.
-  3.1  which runs `docker attach nexus_deployment_nexus_1`
+  1. Place your `binding.pry` command as normal where required. (Nexus)
+  2. `make restart-nexus` to update changes in volume.
+  3. `make debug` to use debugger when triggered.
+    1.  which runs `docker attach nexus_deployment_nexus_1`
 
 - To attach into container with bash terminal, useful for accessing the `Rails Console`
-1. run `make bash`
-2. The bash terminal will appear, starting you in the `app/src` directory
-3. Type `rails c` to gain access to the running rails console.
-
+  1. run `make bash`
+  2. The bash terminal will appear, starting you in the `app/src` directory
+  3. Type `rails c` to gain access to the running rails console.
 
 - To update database after migration
-1. run `make migrate-db`
-
+  1. run `make migrate-db`
 
 - To reset database run `make init-nexus-db`
   - This will wipe all development records!
 
-
 - To update JS components when added to or modified run `make init-nexus-js`
-
 
 ### Tools
 #### Restart Tools
