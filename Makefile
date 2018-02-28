@@ -90,7 +90,13 @@ no-matlab: .build-mode/.no_matlab
 init-env: .env.list .env.uat.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list .env.peerfeedback.list .env.matlab.list
 	@echo "All .env files initialised. Please ensure you change ACCESS_TOKEN information etc. before running Nexus.\n"
 
-build:
+.build-mode/.abstract-grader: abstract-grader/*
+	@echo "Working in $(build-mode) mode."
+	docker build -t abstract-grader abstract-grader
+	@mkdir -p .build-mode
+	@touch .build-mode/.abstract-grader-registry
+
+build: .build-mode/.abstract-grader
 	@echo "Working in $(build-mode) mode."
 	docker-compose $(docker-compose-files) build
 
