@@ -18,11 +18,13 @@ Creating a new grader based on abstract grader is straightforward:
     2. Add `COPY mark_submission.js /usr/src/app` to the end of your `Dockerfile`.
     3. Ensure this file exports a function `export function doMarkSubmission(submissionID, sourceDir, cb)`. In this function, implement your grading process. Make sure to use node.js asynchronous execution sensibly. When you're done grading, invoke `cb(error, mark, feedback)`, where `error` is an error object or `null` if all went well, `mark` is the mark to report to Nexus, and `feedback` is the HTML-formatted feedback to report to Nexus.
     4. If you need to provide a `package.json` file to declare dependencies beyond those already included in `abstract-grader`, create this in your source directory. Make sure to include all dependencies currently listed in [`abstract-grader`'s `package.json` file](package.json). Add the following lines to your `Dockerfile`:
+
       ```
       # Install app dependencies
       COPY package.json /usr/src/app/
       RUN npm install
       ```
+
 4. Add the new grader to the relevant [docker-compose files](/DOCKER-COMPOSE-FILES.md) as usual.
 
 ### Grader configuration
