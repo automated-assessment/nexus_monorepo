@@ -11,6 +11,7 @@ services:
     env_file: .env.sag.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
     environment:
       NEXUS_BASE_URL: http://nexus:3000
+      MYSQL_HOST: "mysql-sag"
     ports:
       - "6000:5000"
     logging:
@@ -20,3 +21,16 @@ services:
         tag: "sag"
     depends_on:
       - syslog
+      - mysql-sag
+  mysql-sag:
+    image: mysql
+    # ports:
+    #   - 3306:3306
+    env_file: .env.sag.list
+    volumes:
+      - ./sag_data:/var/lib/mysql
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "sag-db"

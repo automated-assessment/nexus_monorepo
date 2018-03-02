@@ -5,6 +5,7 @@ import fsExtra from 'fs-extra';
 import { execSync, exec } from 'child_process';
 import { sendMark, sendFeedback } from './utils';
 import { doMarkSubmission } from './mark_submission';
+var mysql = require('mysql');
 
 const MAX_CONCURRENCY = process.env.MAX_CONCURRENCY ? parseInt(process.env.MAX_CONCURRENCY, 10) : 1;
 
@@ -65,11 +66,17 @@ export function configurationPageHandler(req, res, next) {
 export function storeConfigurationHandler(req, res, next) {
   // TODO: Check auth token
   const aid = req.body.aid;
+  if (isNaN(parseInt(req.body.aid, 10))) {
+    res.status(400).send('aid is not a number!');
+    return next();
+  }
   const config = JSON.stringify(req.body.config);
 
   console.log(`Received configuration information for assignment ${aid}: ${config}.`);
 
-  res.status(200).send('Not fully implemented yet.');
+  res.sendStatus(200);
+
+  storeConfigData(aid, config);
 }
 /**
  * Queue used to ensure only MAX_CONCURRENCY instances of the grader run at any given time.
@@ -180,12 +187,78 @@ function removeDirectoryIfExists(dir) {
   }
 }
 
+var dbConnectionPool  = mysql.createPool({
+  connectionLimit : 10,
+  host: process.env.MYSQL_HOST || "mysql",
+  port: 3306,
+  user: process.env.MYSQL_USER || "abstr-grader",
+  password: process.env.MYSQL_PASSWORD || "abstr-grader-pass",
+  database: process.env.MYSQL_DATABASE || "abstr-grader"
+});
+
+dbConnectionPool.on('acquire', function (connection) {
+  console.log('Connection %d acquired', connection.threadId);
+});
+
+dbConnectionPool.on('connection', function (connection) {
+  connection.on('error', function(err) {
+    console.log(`Connection-level error occurred: ${err.code}.`);
+    if (err.fatal) {
+      // Cleanup is already handled by DB pool
+      console.log("This was a fatal error.");
+    }
+  });
+});
+
+dbConnectionPool.on('enqueue', function () {
+  console.log('Waiting for available connection slot');
+});
+
+dbConnectionPool.on('release', function (connection) {
+  console.log('Connection %d released', connection.threadId);
+});
+
+dbConnectionPool.query("CREATE TABLE grader_config (aid INT, config TEXT, PRIMARY KEY (aid)) ENGINE=INNODB;", (err, result) => {
+  if (err && err.code !== "ER_TABLE_EXISTS_ERROR") {
+    console.log(`Error creating table: ${err}`);
+    process.exit(255);
+  }
+
+  console.log("Initialised database.");
+});
+
 function getConfigData(aid) {
   return {
     aid: aid,
     initMin: 10,
     initMax: 20
   };
+}
+
+function storeConfigData (aid, config) {
+  dbConnectionPool.query("SELECT * FROM grader_config WHERE aid=?", [aid], (err, result) => {
+    if (err) {
+      console.log(`Error querying database: ${err}.`);
+    } else {
+      var sql = "";
+      var args = [];
+      if (result.length > 0) {
+        sql = "UPDATE grader_config SET config=? WHERE aid=?";
+        args = [config, aid];
+      } else {
+        sql = "INSERT INTO grader_config VALUES(?)";
+        args = [[aid, config]];
+      }
+
+      dbConnectionPool.query(sql, args, (err, result) => {
+        if (err) {
+          console.log(`Error updating configuration for ${aid}: ${err}.`);
+        } else {
+          console.log(`Successfully updated configuration for ${aid}.`);
+        }
+      });
+    }
+  });
 }
 
 // A utility function to safely escape JSON for embedding in a <script> tag
