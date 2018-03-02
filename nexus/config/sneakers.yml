@@ -6,6 +6,7 @@ development:
   exchange_type: direct
   durable: true
   ack: true
+  timeout_job_after: 0
 
 production:
   exchange: sneakers
@@ -16,9 +17,11 @@ production:
   #daemonize: true        # Send to background
   log: sneakers.log      # Log file
   pid_path: sneakers.pid # Pid file
+  timeout_job_after: 0
 
 test:
   exchange: sneakers
   exchange_type: direct
   durable: true
   ack: true
+  timeout_job_after: 0
