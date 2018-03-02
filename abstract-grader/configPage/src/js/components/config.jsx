@@ -64,10 +64,10 @@ export default class ConfigComponent extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const url = `${document.location.origin}/config`;
+    const url = `${document.location.origin}/configuration`;
     $.post(
       url,
-      { aid: this.state.aid, min: this.state.min, max: this.state.max },
+      { aid: this.state.aid, config: { min: this.state.min, max: this.state.max } },
       (data, status, xhr) => {
         this.setState({status: status});
       }

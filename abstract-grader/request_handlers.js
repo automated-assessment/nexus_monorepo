@@ -63,7 +63,13 @@ export function configurationPageHandler(req, res, next) {
  * Receive and store configuration information.
  */
 export function storeConfigurationHandler(req, res, next) {
-  res.status(500).send('Not implemented yet.');
+  // TODO: Check auth token
+  const aid = req.body.aid;
+  const config = JSON.stringify(req.body.config);
+
+  console.log(`Received configuration information for assignment ${aid}: ${config}.`);
+
+  res.status(200).send('Not fully implemented yet.');
 }
 /**
  * Queue used to ensure only MAX_CONCURRENCY instances of the grader run at any given time.
