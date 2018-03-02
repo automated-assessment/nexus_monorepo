@@ -11,6 +11,9 @@ RUN npm install
 # Bundle app source
 COPY . /usr/src/app
 
+# Compile config page react components -- TODO move to ONBUILD command
+RUN cd configPage && npm install && npm run build
+
 # Define submissions directory
 ENV SUBMISSIONS_DIRECTORY=/mnt/submissions/
 

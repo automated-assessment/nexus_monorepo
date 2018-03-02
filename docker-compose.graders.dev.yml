@@ -11,8 +11,8 @@ services:
     env_file: .env.sag.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
     environment:
       NEXUS_BASE_URL: http://nexus:3000
-    # ports:
-    #   - "6000:5000"
+    ports:
+      - "6000:5000"
     logging:
       driver: syslog
       options:

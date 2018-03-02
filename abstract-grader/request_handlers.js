@@ -30,6 +30,42 @@ export function markRequestHandler(req, res, next) {
 }
 
 /**
+ * Render the configuration page, if any.
+ */
+export function configurationPageHandler(req, res, next) {
+  if (isNaN(parseInt(req.query.aid, 10))) {
+    res.status(400).send('aid is not a number!');
+    return next();
+  }
+  const aid = parseInt(req.query.aid);
+
+  // TODO: Check authorization token
+
+  res.status(200).send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Update Config</title>
+        </head>
+        <body>
+          <script>
+            var CONFIG_PROPS = ${safeStringify(getConfigData(aid))}
+          </script>
+          <div id="configNode"></div>
+          <script src="/static/assets/bundle.js" type="text/javascript"></script>
+        </body>
+      </html>
+    `);
+}
+
+/**
+ * Receive and store configuration information.
+ */
+export function storeConfigurationHandler(req, res, next) {
+  res.status(500).send('Not implemented yet.');
+}
+/**
  * Queue used to ensure only MAX_CONCURRENCY instances of the grader run at any given time.
  */
 const marker_queue = async.queue((task, cb) => {
@@ -136,4 +172,21 @@ function removeDirectoryIfExists(dir) {
       console.log(`Cleaned up directory ${dir}.`);
     }
   }
+}
+
+function getConfigData(aid) {
+  return {
+    aid: aid,
+    initMin: 10,
+    initMax: 20
+  };
+}
+
+// A utility function to safely escape JSON for embedding in a <script> tag
+function safeStringify(obj) {
+  return JSON.stringify(obj)
+    .replace(/<\/(script)/ig, '<\\/$1')
+    .replace(/<!--/g, '<\\!--')
+    .replace(/\u2028/g, '\\u2028') // Only necessary if interpreting as JS, which we do
+    .replace(/\u2029/g, '\\u2029') // Ditto
 }

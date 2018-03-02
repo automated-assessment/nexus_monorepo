@@ -1,7 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import errorhandler from 'errorhandler';
-import { markRequestHandler } from './request_handlers';
+import path from 'path';
+import { markRequestHandler, storeConfigurationHandler, configurationPageHandler } from './request_handlers';
 
 const port = process.env.PORT || 5000;
 
@@ -27,12 +28,17 @@ app.use(errorhandler({
   showStack: true
 }));
 
+app.use('/static', express.static(path.resolve(__dirname, 'configPage', 'dist')));
+
 // Health check
 app.head('/mark', (req, res, next) => {
     res.sendStatus(200);
 });
 
 app.post('/mark', markRequestHandler);
+
+app.get('/configure', configurationPageHandler);
+app.post('/configuration', storeConfigurationHandler);
 
 app.listen(port, () => {
   console.log(`Tool listening on port ${port}!`);
