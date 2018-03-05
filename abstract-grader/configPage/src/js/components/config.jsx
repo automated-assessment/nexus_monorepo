@@ -3,19 +3,24 @@ import XHR from "promised-xhr";
 
 export default class ConfigComponent extends React.Component {
   static propTypes = {
-    aid: React.PropTypes.number,
-    config: React.PropTypes.object
+    vals: React.PropTypes.object,
+    token: React.PropTypes.string
   };
   static defaultProps = {
-    config: { min: 0, max: 100 }
+    vals: {
+      config: {
+        min: 0,
+        max: 100
+      }
+    }
   };
 
   constructor(props) {
       super(props);
       this.state = {
-        aid: this.props.aid,
-        min: this.props.config.min,
-        max: this.props.config.max,
+        aid: this.props.vals.aid,
+        min: this.props.vals.config.min,
+        max: this.props.vals.config.max,
         status: ""
       }
   }
@@ -62,7 +67,7 @@ export default class ConfigComponent extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const url = `${document.location.origin}/configuration`;
+    const url = `${document.location.origin}/${this.props.token}/configuration`;
     $.post(
       url,
       { aid: this.state.aid, config: { min: this.state.min, max: this.state.max } },

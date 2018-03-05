@@ -40,8 +40,8 @@ app.head('/mark', (req, res, next) => {
 
 app.post('/mark', markRequestHandler);
 
-app.get('/configure', configurationPageHandler);
-app.post('/configuration', storeConfigurationHandler);
+app.get('/:auth_token/configure', configurationPageHandler);
+app.post('/:auth_token/configuration', storeConfigurationHandler);
 
 app.listen(port, () => {
   console.log(`Tool listening on port ${port}!`);

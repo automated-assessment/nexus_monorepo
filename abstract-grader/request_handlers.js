@@ -8,6 +8,11 @@ import { doMarkSubmission } from './mark_submission';
 var mysql = require('mysql');
 
 const MAX_CONCURRENCY = process.env.MAX_CONCURRENCY ? parseInt(process.env.MAX_CONCURRENCY, 10) : 1;
+const AUTH_TOKEN = process.env.AUTH_TOKEN;
+if (!AUTH_TOKEN) {
+  console.log("Define AUTH_TOKEN environment variable.");
+  process.exit(255);
+}
 
 /**
  * Respond to a mark request. This will initially only enqueue the mark request
@@ -34,13 +39,19 @@ export function markRequestHandler(req, res, next) {
  * Render the configuration page, if any.
  */
 export function configurationPageHandler(req, res, next) {
+  if ((!req.params.auth_token) ||
+      (!req.params.auth_token == AUTH_TOKEN)) {
+    console.log("Attempt to access configuration without proper authorization.");
+    req.status(400).send('Missing authorization!');
+    return next();
+  }
+
   if (isNaN(parseInt(req.query.aid, 10))) {
     res.status(400).send('aid is not a number!');
     return next();
   }
   const aid = parseInt(req.query.aid);
 
-  // TODO: Check authorization token
   getConfigData(aid, (err, data) => {
     if (err) {
       console.log (`Error getting config data: ${err}.`);
@@ -56,7 +67,8 @@ export function configurationPageHandler(req, res, next) {
           </head>
           <body>
             <script>
-              var CONFIG_PROPS = ${safeStringify(data)}
+              var CONFIG_PROPS = ${safeStringify(data)};
+              var TOKEN = "${AUTH_TOKEN}";
             </script>
             <div id="configNode"></div>
             <script src="/static/assets/bundle.js" type="text/javascript"></script>
@@ -72,7 +84,13 @@ export function configurationPageHandler(req, res, next) {
  * Receive and store configuration information.
  */
 export function storeConfigurationHandler(req, res, next) {
-  // TODO: Check auth token
+  if ((!req.params.auth_token) ||
+      (!req.params.auth_token == AUTH_TOKEN)) {
+    console.log("Attempt to access configuration without proper authorization.");
+    req.status(400).send('Missing authorization!');
+    return next();
+  }
+
   const aid = req.body.aid;
   if (isNaN(parseInt(req.body.aid, 10))) {
     res.status(400).send('aid is not a number!');
