@@ -15,9 +15,6 @@ RUN cd configPage && npm install
 # Bundle app source
 COPY . /usr/src/app
 
-# Compile config page react components -- TODO move to ONBUILD command
-RUN cd configPage && npm run build
-
 # Define submissions directory
 ENV SUBMISSIONS_DIRECTORY=/mnt/submissions/
 
@@ -26,3 +23,8 @@ RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["start"]
+
+# Compile config page react components
+ONBUILD RUN node generate_config_page.js
+ONBUILD RUN rm -rf generate_config_page.js
+ONBUILD RUN cd configPage && npm run build

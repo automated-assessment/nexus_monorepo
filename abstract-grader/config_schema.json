@@ -1,0 +1,18 @@
+{
+  "parameters": [
+    {
+      "name": "min",
+      "type": "int",
+      "min": 0,
+      "max": 100,
+      "initial": 0
+    },
+    {
+      "name": "max",
+      "type": "int",
+      "min": 0,
+      "max": 100,
+      "initial": 100
+    }
+  ]
+}
