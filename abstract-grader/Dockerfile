@@ -27,4 +27,5 @@ CMD ["start"]
 # Compile config page react components
 ONBUILD RUN node generate_config_page.js
 ONBUILD RUN rm -rf generate_config_page.js
+ONBUILD RUN rm -rf _generate_config_page.js
 ONBUILD RUN cd configPage && npm run build
