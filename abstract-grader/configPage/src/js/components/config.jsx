@@ -4,20 +4,18 @@ import XHR from "promised-xhr";
 export default class ConfigComponent extends React.Component {
   static propTypes = {
     aid: React.PropTypes.number,
-    initMin: React.PropTypes.number,
-    initMax: React.PropTypes.number
+    config: React.PropTypes.object
   };
   static defaultProps = {
-    initMin: 0,
-    initMax: 100
+    config: { min: 0, max: 100 }
   };
 
   constructor(props) {
       super(props);
       this.state = {
         aid: this.props.aid,
-        min: this.props.initMin,
-        max: this.props.initMax,
+        min: this.props.config.min,
+        max: this.props.config.max,
         status: ""
       }
   }

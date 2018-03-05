@@ -41,23 +41,31 @@ export function configurationPageHandler(req, res, next) {
   const aid = parseInt(req.query.aid);
 
   // TODO: Check authorization token
-
-  res.status(200).send(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <title>Update Config</title>
-        </head>
-        <body>
-          <script>
-            var CONFIG_PROPS = ${safeStringify(getConfigData(aid))}
-          </script>
-          <div id="configNode"></div>
-          <script src="/static/assets/bundle.js" type="text/javascript"></script>
-        </body>
-      </html>
-    `);
+  getConfigData(aid, (err, data) => {
+    if (err) {
+      console.log (`Error getting config data: ${err}.`);
+      res.status(500).send('An internal erro occurred.');
+    } else {
+      console.log(`Loaded config data: ${JSON.stringify(data)}`);
+      res.status(200).send(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <title>Update Config</title>
+          </head>
+          <body>
+            <script>
+              var CONFIG_PROPS = ${safeStringify(data)}
+            </script>
+            <div id="configNode"></div>
+            <script src="/static/assets/bundle.js" type="text/javascript"></script>
+          </body>
+        </html>
+        `);
+    }
+    return next();
+  });
 }
 
 /**
@@ -227,12 +235,25 @@ dbConnectionPool.query("CREATE TABLE grader_config (aid INT, config TEXT, PRIMAR
   console.log("Initialised database.");
 });
 
-function getConfigData(aid) {
-  return {
-    aid: aid,
-    initMin: 10,
-    initMax: 20
-  };
+function getConfigData(aid, cb) {
+  dbConnectionPool.query("SELECT * FROM grader_config WHERE aid=?", [aid], (err, result) => {
+    if (err) {
+      cb(err);
+    } else {
+      if (result.length > 0) {
+        cb(null,
+          {
+            aid: aid,
+            config: JSON.parse(result[0].config)
+          });
+      } else {
+        cb(null,
+          {
+            aid: aid
+          });
+      }
+    }
+  });
 }
 
 function storeConfigData (aid, config) {
