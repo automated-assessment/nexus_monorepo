@@ -6,10 +6,13 @@ import ConfigComponent from "./components/config"
 var ConfComponent = React.createFactory(ConfigComponent)
 
 const mountNode = document.getElementById("configNode");
-const initProps = {
-  vals: window.CONFIG_PROPS,
-  token: TOKEN
+var initProps = {
+  aid: window.AID,
+  token: window.TOKEN
 };
+if (window.CONFIG_PROPS) {
+  initProps.config = window.CONFIG_PROPS;
+}
 
 ReactDOM.render(
   ConfComponent(initProps),

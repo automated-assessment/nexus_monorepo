@@ -67,8 +67,9 @@ export function configurationPageHandler(req, res, next) {
           </head>
           <body>
             <script>
-              var CONFIG_PROPS = ${safeStringify(data)};
+              var CONFIG_PROPS = ${safeStringify(data.config)};
               var TOKEN = "${AUTH_TOKEN}";
+              var AID = ${aid};
             </script>
             <div id="configNode"></div>
             <script src="/static/assets/bundle.js" type="text/javascript"></script>
@@ -258,18 +259,17 @@ function getConfigData(aid, cb) {
     if (err) {
       cb(err);
     } else {
+      var data = {
+        aid: aid
+      };
+
       if (result.length > 0) {
-        cb(null,
-          {
-            aid: aid,
-            config: JSON.parse(result[0].config)
-          });
-      } else {
-        cb(null,
-          {
-            aid: aid
-          });
+        if (result[0].config) {
+          data.config = JSON.parse(result[0].config);
+        }
       }
+
+      cb(null, data);
     }
   });
 }
@@ -302,9 +302,13 @@ function storeConfigData (aid, config) {
 
 // A utility function to safely escape JSON for embedding in a <script> tag
 function safeStringify(obj) {
-  return JSON.stringify(obj)
+  if (obj) {
+    return JSON.stringify(obj)
     .replace(/<\/(script)/ig, '<\\/$1')
     .replace(/<!--/g, '<\\!--')
     .replace(/\u2028/g, '\\u2028') // Only necessary if interpreting as JS, which we do
     .replace(/\u2029/g, '\\u2029') // Ditto
+  } else {
+    return "null";
+  }
 }

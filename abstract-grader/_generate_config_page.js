@@ -11,21 +11,20 @@ function generateConfigComponent(configSchema) {
 
   export default class ConfigComponent extends React.Component {
     static propTypes = {
-      vals: React.PropTypes.object,
+      aid: React.PropTypes.number,
+      config: React.PropTypes.object,
       token: React.PropTypes.string
     };
     static defaultProps = {
-      vals: {
-        config: {
-          ${generateDefaultPropValues(configSchema)}
-        }
+      config: {
+        ${generateDefaultPropValues(configSchema)}
       }
     };
 
     constructor(props) {
         super(props);
         this.state = {
-          aid: this.props.vals.aid,
+          aid: this.props.aid,
           status: ""${generateStateInitalisation(configSchema)}
         }
     }
@@ -72,7 +71,7 @@ function generateDefaultPropValues(configSchema) {
 
 function generateStateInitalisation(configSchema) {
   var init = configSchema.parameters.map((val) => {
-        return val.name + ": " + "this.props.vals.config." + val.name;
+        return val.name + ": " + "this.props.config." + val.name;
       }).join(',\n          ');
 
   if (init != "") {
