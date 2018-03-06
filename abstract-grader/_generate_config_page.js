@@ -85,10 +85,10 @@ function generateStateInitalisation(configSchema) {
 function generateFormElements(configSchema) {
   // TODO support other types
   return configSchema.parameters.map((val) => {
-        return `${capitalizeFirstLetter(val.name)}: <input type="number"
+        return `${capitalizeFirstLetter(val.label)} (${val.description}): <input type="number"
                                                            min="${val.min}"
                                                            max="${val.max}"
-                                                           step="1"
+                                                           step="${val.step}"
                                                            defaultValue={this.state.${val.name}}
                                                            onChange={::this.handleChange${capitalizeFirstLetter(val.name)}}/>`;
       }).join('<br />\n          ');

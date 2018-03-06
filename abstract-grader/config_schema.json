@@ -2,16 +2,22 @@
   "parameters": [
     {
       "name": "min",
+      "label": "Min",
+      "description": "Lowest mark value to generate.",
       "type": "int",
       "min": 0,
       "max": 100,
+      "step": 1,
       "initial": 0
     },
     {
       "name": "max",
+      "label": "Max",
+      "description": "Highest mark value to generate.",
       "type": "int",
       "min": 0,
       "max": 100,
+      "step": 1,
       "initial": 100
     }
   ]
