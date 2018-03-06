@@ -109,12 +109,12 @@ export function storeConfigurationHandler(req, res, next) {
  * Queue used to ensure only MAX_CONCURRENCY instances of the grader run at any given time.
  */
 const marker_queue = async.queue((task, cb) => {
-    markSubmission(task.sid, task.cloneurl, task.branch, task.sha, cb);
+    markSubmission(task.aid, task.sid, task.cloneurl, task.branch, task.sha, cb);
   },
   MAX_CONCURRENCY
 );
 
-function markSubmission(submissionID, cloneURL, branch, sha, cb) {
+function markSubmission(aid, submissionID, cloneURL, branch, sha, cb) {
   console.log(`Starting marking process for submission ${submissionID}.`);
   const sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
 
@@ -126,7 +126,13 @@ function markSubmission(submissionID, cloneURL, branch, sha, cb) {
         checkoutSubmissionCode(sha, sourceDir, cb);
       },
       (cb) => {
-        _doMarkSubmission(submissionID, sourceDir, cb);
+        getConfigData(aid, (err, data) => {
+          if (err) {
+            cb(err);
+          } else {
+            _doMarkSubmission(submissionID, sourceDir, data.config, cb);
+          }
+        });
       }
     ],
     (err, res) => {
@@ -173,9 +179,9 @@ function checkoutSubmissionCode(sha, sourceDir, cb) {
   );
 }
 
-function _doMarkSubmission(submissionID, sourceDir, cb) {
+function _doMarkSubmission(submissionID, sourceDir, config, cb) {
   // Call out to user-definable function
-  doMarkSubmission(submissionID, sourceDir, (err, mark, feedback) => {
+  doMarkSubmission(submissionID, sourceDir, config, (err, mark, feedback) => {
     if (err || (mark == -1)) {
       console.log(`Informing NEXUS of issues with marking submission ${submissionID}.`);
       sendMark (0, submissionID);

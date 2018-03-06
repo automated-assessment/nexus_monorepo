@@ -65,7 +65,15 @@ function generateConfigComponent(configSchema) {
 
 function generateDefaultPropValues(configSchema) {
   return configSchema.parameters.map((val) => {
-        return val.name + ": " + val.initial;
+        if (val.type == "git") {
+          return `${val.name}: {
+                    repository: 'https://<<token>>@github.kcl.ac.uk/<<name>>/<<repository>>',
+                    branch: 'master',
+                    sha: ''
+                  }`;
+        } else {
+          return val.name + ": " + val.initial;
+        }
       }).join(',\n          ');
 }
 
@@ -82,29 +90,64 @@ function generateStateInitalisation(configSchema) {
 }
 
 function generateFormElements(configSchema) {
-  // TODO support other types
   return configSchema.parameters.map((val) => {
-        return `${capitalizeFirstLetter(val.label)} (${val.description}): <input type="number"
-                                                           min="${val.min}"
-                                                           max="${val.max}"
-                                                           step="${val.step}"
-                                                           defaultValue={this.state.${val.name}}
-                                                           onChange={::this.handleChange${capitalizeFirstLetter(val.name)}}/>`;
+        if (val.type == "git") {
+          return `${capitalizeFirstLetter(val.label)} (${val.description}): <br />
+                  Repository: <input defaultValue={this.state.${val.name}.repository} onChange={::this.handleChange${capitalizeFirstLetter(val.name)}Repository}/>
+                  <br />
+                  Branch: <input defaultValue={this.state.${val.name}.branch} onChange={::this.handleChange${capitalizeFirstLetter(val.name)}Branch}/>
+                  <br />
+                  SHA: <input defaultValue={this.state.${val.name}.sha} onChange={::this.handleChange${capitalizeFirstLetter(val.name)}SHA}/>`;
+        } else {
+          return `${capitalizeFirstLetter(val.label)} (${val.description}): <input type="number"
+                                                             min="${val.min}"
+                                                             max="${val.max}"
+                                                             step="${val.step}"
+                                                             defaultValue={this.state.${val.name}}
+                                                             onChange={::this.handleChange${capitalizeFirstLetter(val.name)}}/>`;
+        }
       }).join('<br />\n          ');
 }
 
 function generateHandleChangeMethods(configSchema) {
-  // TODO support other types
   return configSchema.parameters.map((val) => {
-        return `handleChange${capitalizeFirstLetter(val.name)}(event) {
-          this.setState({${val.name}: parseInt(event.target.value)});
-        }`;
+        if (val.type == "git") {
+          return `handleChange${capitalizeFirstLetter(val.name)}Repository(event) {
+            this.setState({${val.name}: {
+              repository: event.target.value,
+              branch: this.state.${val.name}.branch,
+              sha: this.state.${val.name}.sha
+            }});
+          }
+          handleChange${capitalizeFirstLetter(val.name)}Branch(event) {
+            this.setState({${val.name}: {
+              repository: this.state.${val.name}.repository,
+              branch: event.target.value,
+              sha: this.state.${val.name}.sha
+            }});
+          }
+          handleChange${capitalizeFirstLetter(val.name)}SHA(event) {
+            this.setState({${val.name}: {
+              repository: this.state.${val.name}.repository,
+              branch: this.state.${val.name}.branch,
+              sha: event.target.value
+            }});
+          }`;
+        } else {
+          return `handleChange${capitalizeFirstLetter(val.name)}(event) {
+            this.setState({${val.name}: parseInt(event.target.value)});
+          }`;
+        }
       }).join('\n\n       ');
 }
 
 function generateResultConfig(configSchema) {
   return configSchema.parameters.map((val) => {
-        return `${val.name}: this.state.${val.name}`;
+        if (val.type == "git") {
+          return `${val.name}: { repository: this.state.${val.name}.repository, branch: this.state.${val.name}.branch, sha: this.state.${val.name}.sha }`;
+        } else {
+          return `${val.name}: this.state.${val.name}`;
+        }
       }).join(', ');
 }
 

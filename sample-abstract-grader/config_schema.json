@@ -19,6 +19,12 @@
       "max": 100,
       "step": 1,
       "initial": 100
+    },
+    {
+      "name": "test_files",
+      "label": "Test files",
+      "description": "Provide information about where the test files are.",
+      "type": "git"
     }
   ]
 }
