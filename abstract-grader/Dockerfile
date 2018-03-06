@@ -24,8 +24,9 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["start"]
 
-# Compile config page react components
-ONBUILD RUN node generate_config_page.js
-ONBUILD RUN rm -rf generate_config_page.js
-ONBUILD RUN rm -rf _generate_config_page.js
-ONBUILD RUN cd configPage && npm run build
+# Compile config page react components from sub-image provided information
+ONBUILD COPY config_schema.json /usr/src/app/config_schema.json
+ONBUILD RUN node generate_config_page.js && \
+            rm -rf generate_config_page.js && \
+            rm -rf _generate_config_page.js && \
+            cd configPage && npm run build
