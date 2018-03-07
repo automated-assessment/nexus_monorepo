@@ -64,22 +64,23 @@ function generateConfigComponent(configSchema) {
 }
 
 function generateDefaultPropValues(configSchema) {
-  return configSchema.parameters.map((val) => {
+  return Object.keys(configSchema.parameters).map((pName) => {
+        const val = configSchema.parameters[pName];
         if (val.type == "git") {
-          return `${val.name}: {
+          return `${pName}: {
                     repository: 'https://<<token>>@github.kcl.ac.uk/<<name>>/<<repository>>',
                     branch: 'master',
                     sha: ''
                   }`;
         } else {
-          return val.name + ": " + val.initial;
+          return pName + ": " + val.initial;
         }
       }).join(',\n          ');
 }
 
 function generateStateInitalisation(configSchema) {
-  var init = configSchema.parameters.map((val) => {
-        return val.name + ": " + "this.props.config." + val.name;
+  var init = Object.keys(configSchema.parameters).map((pName) => {
+        return pName + ": " + "this.props.config." + pName;
       }).join(',\n          ');
 
   if (init != "") {
@@ -90,64 +91,62 @@ function generateStateInitalisation(configSchema) {
 }
 
 function generateFormElements(configSchema) {
-  return configSchema.parameters.map((val) => {
+  return Object.keys(configSchema.parameters).map((pName) => {
+        const val = configSchema.parameters[pName];
         if (val.type == "git") {
           return `${capitalizeFirstLetter(val.label)} (${val.description}): <br />
-                  Repository: <input defaultValue={this.state.${val.name}.repository} onChange={::this.handleChange${capitalizeFirstLetter(val.name)}Repository}/>
+                  Repository: <input defaultValue={this.state.${pName}.repository} onChange={::this.handleChange${capitalizeFirstLetter(pName)}Repository}/>
                   <br />
-                  Branch: <input defaultValue={this.state.${val.name}.branch} onChange={::this.handleChange${capitalizeFirstLetter(val.name)}Branch}/>
+                  Branch: <input defaultValue={this.state.${pName}.branch} onChange={::this.handleChange${capitalizeFirstLetter(pName)}Branch}/>
                   <br />
-                  SHA: <input defaultValue={this.state.${val.name}.sha} onChange={::this.handleChange${capitalizeFirstLetter(val.name)}SHA}/>`;
+                  SHA: <input defaultValue={this.state.${pName}.sha} onChange={::this.handleChange${capitalizeFirstLetter(pName)}SHA}/>`;
         } else {
           return `${capitalizeFirstLetter(val.label)} (${val.description}): <input type="number"
                                                              min="${val.min}"
                                                              max="${val.max}"
                                                              step="${val.step}"
-                                                             defaultValue={this.state.${val.name}}
-                                                             onChange={::this.handleChange${capitalizeFirstLetter(val.name)}}/>`;
+                                                             defaultValue={this.state.${pName}}
+                                                             onChange={::this.handleChange${capitalizeFirstLetter(pName)}}/>`;
         }
       }).join('<br />\n          ');
 }
 
 function generateHandleChangeMethods(configSchema) {
-  return configSchema.parameters.map((val) => {
+  return Object.keys(configSchema.parameters).map((pName) => {
+        const val = configSchema.parameters[pName];
         if (val.type == "git") {
-          return `handleChange${capitalizeFirstLetter(val.name)}Repository(event) {
-            this.setState({${val.name}: {
+          return `handleChange${capitalizeFirstLetter(pName)}Repository(event) {
+            this.setState({${pName}: {
               repository: event.target.value,
-              branch: this.state.${val.name}.branch,
-              sha: this.state.${val.name}.sha
+              branch: this.state.${pName}.branch,
+              sha: this.state.${pName}.sha
             }});
           }
-          handleChange${capitalizeFirstLetter(val.name)}Branch(event) {
-            this.setState({${val.name}: {
-              repository: this.state.${val.name}.repository,
+          handleChange${capitalizeFirstLetter(pName)}Branch(event) {
+            this.setState({${pName}: {
+              repository: this.state.${pName}.repository,
               branch: event.target.value,
-              sha: this.state.${val.name}.sha
+              sha: this.state.${pName}.sha
             }});
           }
-          handleChange${capitalizeFirstLetter(val.name)}SHA(event) {
-            this.setState({${val.name}: {
-              repository: this.state.${val.name}.repository,
-              branch: this.state.${val.name}.branch,
+          handleChange${capitalizeFirstLetter(pName)}SHA(event) {
+            this.setState({${pName}: {
+              repository: this.state.${pName}.repository,
+              branch: this.state.${pName}.branch,
               sha: event.target.value
             }});
           }`;
         } else {
-          return `handleChange${capitalizeFirstLetter(val.name)}(event) {
-            this.setState({${val.name}: parseInt(event.target.value)});
+          return `handleChange${capitalizeFirstLetter(pName)}(event) {
+            this.setState({${pName}: parseInt(event.target.value)});
           }`;
         }
       }).join('\n\n       ');
 }
 
 function generateResultConfig(configSchema) {
-  return configSchema.parameters.map((val) => {
-        if (val.type == "git") {
-          return `${val.name}: { repository: this.state.${val.name}.repository, branch: this.state.${val.name}.branch, sha: this.state.${val.name}.sha }`;
-        } else {
-          return `${val.name}: this.state.${val.name}`;
-        }
+  return Object.keys(configSchema.parameters).map((pName) => {
+        return `${pName}: this.state.${pName}`;
       }).join(', ');
 }
 

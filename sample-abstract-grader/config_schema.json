@@ -1,7 +1,6 @@
 {
-  "parameters": [
-    {
-      "name": "min",
+  "parameters": {
+    "min": {
       "label": "Min",
       "description": "Lowest mark value to generate.",
       "type": "int",
@@ -10,8 +9,7 @@
       "step": 1,
       "initial": 0
     },
-    {
-      "name": "max",
+    "max": {
       "label": "Max",
       "description": "Highest mark value to generate.",
       "type": "int",
@@ -20,11 +18,10 @@
       "step": 1,
       "initial": 100
     },
-    {
-      "name": "test_files",
+    "test_files": {
       "label": "Test files",
       "description": "Provide information about where the test files are.",
       "type": "git"
     }
-  ]
+  }
 }
