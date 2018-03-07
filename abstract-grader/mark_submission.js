@@ -1,13 +1,17 @@
+import async from 'async';
 import tmp from 'tmp';
 import { exec } from 'child_process';
 import fs from 'fs';
+import jsonfile from 'jsonfile';
+
+const configSchema = jsonfile.readFileSync('config_schema.json');
 
 const cmd = process.env.TOOL_CMD ? process.env.TOOL_CMD : '/usr/src/app/grade_submission.sh';
 
 export function doMarkSubmission(submissionID, sourceDir, config, cb) {
   console.log(`About to run marking tool for submission ${submissionID}.`);
 
-  tmp.file({ mode: 644, prefix: 'results-', postfix: '.html', discardDescriptor: true  },
+  tmp.file({ prefix: 'results-', postfix: '.html', discardDescriptor: true  },
     (err, path, fd, cleanupCallback) => {
       if (err) {
         cb(err);
@@ -59,26 +63,71 @@ export function doMarkSubmission(submissionID, sourceDir, config, cb) {
   });
 }
 
-// TODO: Check this code against JS spec (especially for use of fold and merge below.)
-// TODO: Handle git parameters
 function processConfig(config, cb) {
   if (!config) {
     cb(null, {'NEXUS_ACCESS_TOKEN':''}, () => {});
   } else {
     async.mapSeries(Object.keys(config),
       (param, cb) => {
-        var env = {};
-        env[param] = config[param];
-        cb(null, { env: env, cleanup: () => {} });
+        if (configSchema.parameters[param].type == "git") {
+          tmp.dir({ prefix: 'helperfiles-', postfix: '.' + param, unsafeCleanup: true },
+            (err, path, cleanupCallback) => {
+              if (err) {
+                cb(err, { env: {}, cleanup: () => {} });
+                return;
+              }
+
+              console.log('Checking out ' + param + ' into ' + path);
+
+              async.series([
+                  (cb) => {
+                    cloneFiles(configSchema.parameters[param].repository, configSchema.parameters[param].branch, path, cb);
+                  },
+                  (cb) => {
+                    checkoutFiles(configSchema.parameters[param].sha, path, cb);
+                  }],
+                  (err, res) => {
+                    if (err) {
+                      cb(err, { env: {}, cleanup: cleanupCallback });
+                    } else {
+                      var env = {};
+                      env[param] = path;
+                      cb(null, { env: env, cleanup: cleanupCallback });
+                    }
+                  });
+            });
+        } else {
+          var env = {};
+          env[param] = config[param];
+          cb(null, { env: env, cleanup: () => {} });
+        }
       },
       (err, result) => {
         cb(err,
-          result.fold({'NEXUS_ACCESS_TOKEN':''},
-                      (acc, val) => { return val.merge(val.env); }),
+          result.reduce((acc, val) => { return Object.assign(acc, val.env); }, {'NEXUS_ACCESS_TOKEN':''}),
           () => {
             result.forEach((val) => { val.cleanup(); });
           });
       }
     );
   }
+}
+
+function cloneFiles(cloneURL, branch, dir, cb) {
+  console.log(`Cloning into directory ${dir}.`);
+
+  // clone repo
+  exec(`git clone --branch ${branch} --single-branch ${cloneURL} ${dir}`,
+    (error, stdout, stderr) => {
+      cb(error);
+    }
+  );
+}
+
+function checkoutFiles(sha, dir, cb) {
+  exec(`git checkout ${sha}`, { cwd: dir },
+    (error, stdout, stderr) => {
+      cb(error);
+    }
+  );
 }
