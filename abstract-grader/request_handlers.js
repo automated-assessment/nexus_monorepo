@@ -251,14 +251,23 @@ dbConnectionPool.on('release', function (connection) {
   console.log('Connection %d released', connection.threadId);
 });
 
-dbConnectionPool.query("CREATE TABLE grader_config (aid INT, config TEXT, PRIMARY KEY (aid)) ENGINE=INNODB;", (err, result) => {
-  if (err && err.code !== "ER_TABLE_EXISTS_ERROR") {
-    console.log(`Error creating table: ${err}`);
-    process.exit(255);
-  }
+function initialiseDB() {
+  dbConnectionPool.query("CREATE TABLE grader_config (aid INT, config TEXT, PRIMARY KEY (aid)) ENGINE=INNODB;", (err, result) => {
+    if (err && err.code !== "ER_TABLE_EXISTS_ERROR") {
+      console.log(`Error creating table: ${err}`);
+      if (err.code == "ECONNREFUSED") {
+        console.log("Retrying to initialise DB.");
+        setTimeout(initialiseDB, 500);
+        return;
+      } else {
+        process.exit(255);
+      }
+    }
 
-  console.log("Initialised database.");
-});
+    console.log("Initialised database.");
+  });
+}
+initialiseDB();
 
 function getConfigData(aid, cb) {
   dbConnectionPool.query("SELECT * FROM grader_config WHERE aid=?", [aid], (err, result) => {
