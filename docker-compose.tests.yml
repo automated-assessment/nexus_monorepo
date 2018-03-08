@@ -53,6 +53,13 @@ services:
       NEXUS_BASE_URL: http://grader-tester:3000
       NEXUS_TOOL_CANONICAL_NAME: abstract-grader
       NEXUS_ACCESS_TOKEN: foo
+      AUTH_TOKEN: foo
+      MYSQL_DATABASE: ag
+      MYSQL_USER: ag-tool
+      MYSQL_PASSWORD: ag-pass
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_HOST: agmysql
     logging:
       driver: syslog
       options:
@@ -60,3 +67,17 @@ services:
         tag: "abstract-grader"
     depends_on:
       - syslog
+      - agmysql
+  agmysql:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: ag
+      MYSQL_USER: ag-tool
+      MYSQL_PASSWORD: ag-pass
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "ag-db"
