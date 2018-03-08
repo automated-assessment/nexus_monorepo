@@ -113,6 +113,7 @@ function processConfig(config, cb) {
   }
 }
 
+// TODO: DRY up
 function cloneFiles(cloneURL, branch, dir, cb) {
   console.log(`Cloning into directory ${dir}.`);
 
@@ -124,6 +125,7 @@ function cloneFiles(cloneURL, branch, dir, cb) {
   );
 }
 
+// TODO: DRY up
 function checkoutFiles(sha, dir, cb) {
   exec(`git checkout ${sha}`, { cwd: dir },
     (error, stdout, stderr) => {
