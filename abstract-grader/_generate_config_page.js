@@ -33,12 +33,18 @@ function generateConfigComponent(configSchema) {
     render() {
       return (
         <div>
-          <h1>Configuration page for assignment {this.state.aid}</h1>
           <h4>{this.state.status}</h4>
-          <form onSubmit={::this.handleSubmit}>
+          <form className="form-horizontal" onSubmit={::this.handleSubmit}>
             ${generateFormElements(configSchema)}
+
+            <hr />
             <br />
-            <button>Go</button>
+
+            <div className="form-group">
+              <div className="col-lg-10 col-lg-offset-2">
+                <button className="btn btn-primary">Go</button>
+              </div>
+            </div>
           </form>
         </div>
       );
@@ -95,27 +101,69 @@ function generateFormElements(configSchema) {
   return Object.keys(configSchema.parameters).map((pName) => {
         const val = configSchema.parameters[pName];
         if (val.type == "git") {
-          return `${capitalizeFirstLetter(val.label)} (${val.description}): <br />
-                  <p>
-                    Please ensure the following key is added as a read-only deploy key to this repository:
-                    <pre style={{whiteSpace: "pre-wrap"}}>
-                      ${deployKey}
-                    </pre>
-                  </p>
-                  Repository: <input defaultValue={this.state.${pName}.repository} onChange={::this.handleChange${capitalizeFirstLetter(pName)}Repository}/>
-                  <br />
-                  Branch: <input defaultValue={this.state.${pName}.branch} onChange={::this.handleChange${capitalizeFirstLetter(pName)}Branch}/>
-                  <br />
-                  SHA: <input defaultValue={this.state.${pName}.sha} onChange={::this.handleChange${capitalizeFirstLetter(pName)}SHA}/>`;
+          return `<div>
+                    <h4>${capitalizeFirstLetter(val.label)}</h4>
+                    <p>
+                      ${val.description}
+                    </p>
+                    <br />
+
+                    <div className="form-group">
+                      <label className="col-lg-2 col-sm-2 control-label" htmlFor="${pName}_repository">Repository:</label>
+                      <div className="col-lg-10 col-sm-10">
+                        <input className="form-control"
+                          id="${pName}_repository"
+                          defaultValue={this.state.${pName}.repository}
+                          onChange={::this.handleChange${capitalizeFirstLetter(pName)}Repository}/>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="col-lg-2 col-sm-2 control-label" htmlFor="${pName}_branch">Branch:</label>
+                      <div className="col-lg-10 col-sm-10">
+                        <input className="form-control"
+                          id="${pName}_branch"
+                          defaultValue={this.state.${pName}.branch}
+                          onChange={::this.handleChange${capitalizeFirstLetter(pName)}Branch}/>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="col-lg-2 col-sm-2 control-label" htmlFor="${pName}_sha">SHA:</label>
+                      <div className="col-lg-10 col-sm-10">
+                        <input className="form-control"
+                          id="${pName}_sha"
+                          defaultValue={this.state.${pName}.sha}
+                          onChange={::this.handleChange${capitalizeFirstLetter(pName)}SHA}/>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <div className="col-lg-10 col-sm-10 col-lg-offset-2 col-sm-offset-2">
+                        <p>Please ensure the following key is added as a read-only deploy key to this repository:</p>
+                        <pre style={{whiteSpace: "pre-wrap"}}>
+                          ${deployKey}
+                        </pre>
+                      </div>
+                    </div>
+                  </div>`;
         } else {
-          return `${capitalizeFirstLetter(val.label)} (${val.description}): <input type="number"
-                                                             min="${val.min}"
-                                                             max="${val.max}"
-                                                             step="${val.step}"
-                                                             defaultValue={this.state.${pName}}
-                                                             onChange={::this.handleChange${capitalizeFirstLetter(pName)}}/>`;
+          return `<div className="form-group">
+                    <label className="col-lg-2 col-sm-2 control-label" htmlFor="${pName}">${capitalizeFirstLetter(val.label)}:</label>
+                    <div className="col-lg-10 col-sm-10">
+                      <input className="form-control"
+                        id="${pName}"
+                        type="number"
+                        min="${val.min}"
+                        max="${val.max}"
+                        step="${val.step}"
+                        defaultValue={this.state.${pName}}
+                        onChange={::this.handleChange${capitalizeFirstLetter(pName)}}/>
+                        <p>${val.description}</p>
+                    </div>
+                  </div>`;
         }
-      }).join('<br />\n          ');
+      }).join('\n          ');
 }
 
 function generateHandleChangeMethods(configSchema) {

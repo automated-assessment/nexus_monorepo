@@ -64,6 +64,8 @@ export function configurationPageHandler(req, res, next) {
           <head>
             <meta charset="utf-8">
             <title>Update Config</title>
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
           </head>
           <body>
             <script>
@@ -71,7 +73,9 @@ export function configurationPageHandler(req, res, next) {
               var TOKEN = "${AUTH_TOKEN}";
               var AID = ${aid};
             </script>
-            <div id="configNode"></div>
+            <div class="container-fluid">
+              <div id="configNode"></div>
+            </div>
             <script src="/static/assets/bundle.js" type="text/javascript"></script>
           </body>
         </html>
