@@ -130,6 +130,7 @@ function markSubmission(aid, submissionID, cloneURL, branch, sha, cb) {
           if (err) {
             cb(err);
           } else {
+            console.log(`Config data is ${JSON.stringify(data.config)}`);
             _doMarkSubmission(submissionID, sourceDir, data.config, cb);
           }
         });
@@ -183,7 +184,7 @@ function _doMarkSubmission(submissionID, sourceDir, config, cb) {
   // Call out to user-definable function
   doMarkSubmission(submissionID, sourceDir, config, (err, mark, feedback) => {
     if (err || (mark == -1)) {
-      console.log(`Informing NEXUS of issues with marking submission ${submissionID}.`);
+      console.log(`Informing NEXUS of issues with marking submission ${submissionID}: ${err}.`);
       sendMark (0, submissionID);
       sendFeedback('<div class="generic-feedback">There was an error marking your submission. Please contact your lecturer.</div>',
             submissionID,

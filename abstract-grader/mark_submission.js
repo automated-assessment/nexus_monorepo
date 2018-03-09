@@ -81,10 +81,10 @@ function processConfig(config, cb) {
 
               async.series([
                   (cb) => {
-                    cloneFiles(configSchema.parameters[param].repository, configSchema.parameters[param].branch, path, cb);
+                    cloneFiles(config[param].repository, config[param].branch, path, cb);
                   },
                   (cb) => {
-                    checkoutFiles(configSchema.parameters[param].sha, path, cb);
+                    checkoutFiles(config[param].sha, path, cb);
                   }],
                   (err, res) => {
                     if (err) {
