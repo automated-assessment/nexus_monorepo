@@ -1,7 +1,7 @@
-import jsonfile from 'jsonfile';
+import yaml from 'node-yaml';
 import fs from 'fs';
 
-const configSchema = jsonfile.readFileSync('config_schema.json');
+const configSchema = yaml.readSync ('config_schema.yml', {schema: yaml.schema.defaultSafe});
 const deployKey = fs.readFileSync('/root/.ssh/id_rsa.pub');
 fs.writeFileSync('configPage/src/js/components/config.jsx', generateConfigComponent(configSchema), {mode: 0o666});
 

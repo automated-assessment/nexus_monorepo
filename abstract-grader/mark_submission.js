@@ -1,10 +1,10 @@
 import async from 'async';
 import tmp from 'tmp';
 import { exec } from 'child_process';
+import yaml from 'node-yaml';
 import fs from 'fs';
-import jsonfile from 'jsonfile';
 
-const configSchema = jsonfile.readFileSync('config_schema.json');
+const configSchema = yaml.readSync ('config_schema.yml', {schema: yaml.schema.defaultSafe});
 
 const cmd = process.env.TOOL_CMD ? process.env.TOOL_CMD : '/usr/src/app/grade_submission.sh';
 
