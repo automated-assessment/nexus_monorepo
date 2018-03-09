@@ -91,46 +91,8 @@ Nexus can be run in development or production mode. By default, you will run in 
 #### Restart Graders
 - Run `make restart`
   - This stops the docker containers and re runs them in your current build mode
-
-##### Individual Graders
-- Run `make restart-nexus`
-  - This restarts Nexus in the current environment
-
-
-- Run `make restart-javac`
-  - This restarts the Javac grader in the current environment
-
-
-- Run `make restart-rng`
-  - This restarts the rng grader in the current environment
-
-
-- Run `make restart-io`
-  - This restarts the io grader in the current environment
-
-
-- Run `make restart-config`
-  - This restarts the Config grader in the current environment
-
-
-- Run `make restart-db`
-  - This restarts the DB in the current environment
-
-
-- Run `make restart-mongodb`
-  - This restarts mongodb in the current environment
-
-
-- Run `make restart-sneakers`
-  - This restarts sneakers in the current environment
-
-
-- Run `make restart-rabbitmq`
-  - This restarts rabbitmq in the current environment
-
-
-- Run `make restart-syslog`
-  - This restarts Syslog in the current environment
+- Run `make restart-service service=<service-name>`
+  - This restarts only the named service in your current build mode
 
 ### Test graders
 
