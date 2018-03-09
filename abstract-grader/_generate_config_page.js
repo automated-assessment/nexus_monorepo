@@ -2,6 +2,7 @@ import jsonfile from 'jsonfile';
 import fs from 'fs';
 
 const configSchema = jsonfile.readFileSync('config_schema.json');
+const deployKey = fs.readFileSync('/root/.ssh/id_rsa.pub');
 fs.writeFileSync('configPage/src/js/components/config.jsx', generateConfigComponent(configSchema), {mode: 0o666});
 
 function generateConfigComponent(configSchema) {
@@ -68,7 +69,7 @@ function generateDefaultPropValues(configSchema) {
         const val = configSchema.parameters[pName];
         if (val.type == "git") {
           return `${pName}: {
-                    repository: 'https://<<token>>@github.kcl.ac.uk/<<name>>/<<repository>>',
+                    repository: 'git@github.kcl.ac.uk:{user}/{repo}.git',
                     branch: 'master',
                     sha: ''
                   }`;
@@ -95,6 +96,12 @@ function generateFormElements(configSchema) {
         const val = configSchema.parameters[pName];
         if (val.type == "git") {
           return `${capitalizeFirstLetter(val.label)} (${val.description}): <br />
+                  <p>
+                    Please ensure the following key is added as a read-only deploy key to this repository:
+                    <pre style={{whiteSpace: "pre-wrap"}}>
+                      ${deployKey}
+                    </pre>
+                  </p>
                   Repository: <input defaultValue={this.state.${pName}.repository} onChange={::this.handleChange${capitalizeFirstLetter(pName)}Repository}/>
                   <br />
                   Branch: <input defaultValue={this.state.${pName}.branch} onChange={::this.handleChange${capitalizeFirstLetter(pName)}Branch}/>
