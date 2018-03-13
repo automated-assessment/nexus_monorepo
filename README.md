@@ -188,9 +188,9 @@ The access token must be valid for the nexus instance to be run, so in the first
 
 ## Contributing
 
-To contribute your own code to Nexus, create a branch or make a fork of the repository. When your contribution is ready, submit a pull request against the `contributions` branch. This will be reviewed and you may get feedback that you will be asked to integrate into your contribution. Once it is ready, Steffen will merge into `contribution`. Anything that is merged into `master` will end up in production. Only Steffen can merge into master.
+To contribute your own code to Nexus, make a fork of the repository. When your contribution is ready, submit a pull request against a suitable `contribution/XYZ` branch. This will be reviewed and you may get feedback that you will be asked to integrate into your contribution. Once it is ready, Steffen will merge into the `contribution/XYZ` branch and from there eventually into `master`. Anything that is merged into `master` will end up in production. Only Steffen can merge into master.
 
-You should consider opening a pull request into `contribution` as soon as you have made the first commit into your own branch. This way, we will have an easy way of checking your contribution as it develops over time and you can receive feedback on your code as you create it. You are free to use your own branching protocol below your branch or fork (and are indeed encouraged to use branches extensively there.).
+You should consider opening a pull request into `contribution/XYZ` as soon as you have made the first commit into your own branch. This way, we will have an easy way of checking your contribution as it develops over time and you can receive feedback on your code as you create it. You are free to use your own branching protocol below your branch or fork (and are indeed encouraged to use branches extensively there.). Please talk to Steffen for a `contribution/XYZ` branch to be set up.
 
 ## References
 - https://docs.docker.com/compose/overview/
