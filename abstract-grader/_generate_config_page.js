@@ -3,7 +3,7 @@ import fs from 'fs';
 
 const configSchema = yaml.readSync ('config_schema.yml', {schema: yaml.schema.defaultSafe});
 const deployKey = fs.readFileSync('/root/.ssh/id_rsa.pub');
-fs.writeFileSync('configPage/src/js/components/config.jsx', generateConfigComponent(configSchema), {mode: 0o666});
+fs.writeFileSync('configPage/src/js/components/config.jsx', generateConfigComponent(configSchema));
 
 function generateConfigComponent(configSchema) {
   return `
