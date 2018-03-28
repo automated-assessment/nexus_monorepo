@@ -1,0 +1,21 @@
+parameters:
+  min:
+    label: Min
+    description: Lowest mark value to generate.
+    type: int
+    min: 0
+    max: 100
+    step: 1
+    initial: 0
+  max:
+    label: Max
+    description: Highest mark value to generate.
+    type: int
+    min: 0
+    max: 100
+    step: 1
+    initial: 100
+  test_files:
+    label: Test files
+    description: Provide information about where the test files are.
+    type: git

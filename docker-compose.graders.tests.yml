@@ -17,3 +17,6 @@ services:
   peer-feedback:
     environment:
       NEXUS_BASE_URL: http://grader-tester:3000
+  sample-abstract-grader:
+    environment:
+      NEXUS_BASE_URL: http://grader-tester:3000

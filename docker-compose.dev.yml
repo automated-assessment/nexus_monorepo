@@ -6,6 +6,8 @@ services:
       dockerfile: Dockerfile.dev
     tty: true
     stdin_open: true
+    depends_on:
+      - sample-abstract-grader    
   sneakers:
     build:
       context: nexus/

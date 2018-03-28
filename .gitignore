@@ -11,3 +11,4 @@ uat_data/
 .build-mode/
 grader_tester/tests/repositories/
 test-logs/
+sag_data/

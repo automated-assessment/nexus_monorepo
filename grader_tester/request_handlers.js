@@ -39,7 +39,8 @@ export function handle_receive_feedback (request, response) {
     var test_config = test_configurations[submission_id][tool_uid];
     if (test_config.feedback != "dontcare") {
       // TODO Need to figure out a better way of identifying the actual feedback text (this may well be a good bit of HTML, so will be too long for the yml file)
-      if (test_config.feedback.text == request.body.body) {
+      // Removing newlines, so expecting test expectation to be written without any newlines.
+      if (test_config.feedback.text == request.body.body.replace(/\r?\n|\r/g, "")) {
         console.log(`Received correct feedback from ${tool_uid}.`);
         store_test_results (submission_id, tool_uid, 'feedback', true, `Received correct feedback from ${tool_uid}.`);
       } else {

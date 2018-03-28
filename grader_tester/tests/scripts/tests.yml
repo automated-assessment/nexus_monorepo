@@ -4,6 +4,14 @@ graders:
     canonical_name: javac
     port: 5000
     mark: /mark
+  abstract-grader:
+    canonical_name: abstract-grader
+    port: 5000
+    mark: /mark
+  sample-abstract-grader:
+    canonical_name: sag
+    port: 5000
+    mark: /mark
 tests:
   compile:
     submission: basic_compiles
@@ -11,6 +19,15 @@ tests:
       javac-tool:
         mark: 100
         feedback: dontcare
+      # The two "graders" below don't actually look at the submission, so we take a random one
+      abstract-grader:
+        mark: 57
+        feedback:
+          text: <div class="generic-feedback"><p>Some feedback</p></div>
+      sample-abstract-grader:
+        mark: 97
+        feedback:
+          text: <div class="generic-feedback"><p>Some more specialised feedback</p></div>
   no_compile:
     submission: basic_no_compile
     graders:

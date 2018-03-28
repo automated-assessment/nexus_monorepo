@@ -67,83 +67,44 @@ You will also find information about how to develop your own contributions to Ne
 Nexus can be run in development or production mode. By default, you will run in development mode. This gives you more detailed logs and some other nice features, but is not good for production. If you want to get a feel for what production would be like, run `make production` and then go back to step 6 above. The main difference is that `docker-compose` will now be run only with the main config file. To switch back to development mode, run `make development` (or `make dev` for short).
 
 ## Useful Commands
+
 - To attach into container to see terminal output, useful with Pry debugging
-1. Place your `binding.pry` command as normal where required. (Nexus)
-2. `make restart-nexus` to update changes in volume.
-3. `make debug` to use debugger when triggered.
-  3.1  which runs `docker attach nexus_deployment_nexus_1`
+  1. Place your `binding.pry` command as normal where required. (Nexus)
+  2. `make restart-nexus` to update changes in volume.
+  3. `make debug` to use debugger when triggered.
+    1.  which runs `docker attach nexus_deployment_nexus_1`
 
 - To attach into container with bash terminal, useful for accessing the `Rails Console`
-1. run `make bash`
-2. The bash terminal will appear, starting you in the `app/src` directory
-3. Type `rails c` to gain access to the running rails console.
-
+  1. run `make bash`
+  2. The bash terminal will appear, starting you in the `app/src` directory
+  3. Type `rails c` to gain access to the running rails console.
 
 - To update database after migration
-1. run `make migrate-db`
-
+  1. run `make migrate-db`
 
 - To reset database run `make init-nexus-db`
   - This will wipe all development records!
 
-
 - To update JS components when added to or modified run `make init-nexus-js`
 
-
-### Tools
-#### Restart Tools
+### Graders
+#### Restart Graders
 - Run `make restart`
   - This stops the docker containers and re runs them in your current build mode
+- Run `make restart-service service=<service-name>`
+  - This restarts only the named service in your current build mode
 
-##### Individual Tools
-- Run `make restart-nexus`
-  - This restarts Nexus in the current environment
+### Test graders
 
-
-- Run `make restart-javac`
-  - This restarts the Javac tool in the current environment
-
-
-- Run `make restart-rng`
-  - This restarts the rng tool in the current environment
-
-
-- Run `make restart-io`
-  - This restarts the io tool in the current environment
-
-
-- Run `make restart-config`
-  - This restarts the Config tool in the current environment
-
-
-- Run `make restart-db`
-  - This restarts the DB in the current environment
-
-
-- Run `make restart-mongodb`
-  - This restarts mongodb in the current environment
-
-
-- Run `make restart-sneakers`
-  - This restarts sneakers in the current environment
-
-
-- Run `make restart-rabbitmq`
-  - This restarts rabbitmq in the current environment
-
-
-- Run `make restart-syslog`
-  - This restarts Syslog in the current environment
-
-### Test tools
-
-Run `make test-graders` to run grader tests. More information can be found in the [grader-testing documentation](grader_tester/README.md). Nexus needs to be down for this to run correctly. You should also only run this in a separate workspace from your dev workspace, as grading tools may be modifying their databases as part of the test runs.
+Run `make test-graders` to run grader tests. More information can be found in the [grader-testing documentation](grader_tester/README.md). Nexus needs to be down for this to run correctly. You should also only run this in a separate workspace from your dev workspace, as graders may be modifying their databases as part of the test runs.
 
 Run `make test-nexus` to run rspec tests on the core management component. These tests aren't yet complete, so contributions are always welcome. At the end of this, nexus will be down!
 
-### Adding tools
+### Adding graders
 
-To add a grading tool, you need to provide a Dockerfile for it and mention it in a number of places: the various `docker-compose.graders.*.yml` files need to be updated. The tool also needs to be mentioned in the dependencies for `nexus` in [`docker-compose.yml`](docker-compose.yml) as well as the dependencies of `grader-tester` in [`docker-compose.tests.yml`](docker-compose.test.yml) (at least if you want to be able to run black-box tests against it). See also [DOCKER-COMPOSE-FILES](DOCKER-COMPOSE-FILES.md).
+To add a new grader, you need to provide a Dockerfile for it and mention it in a number of places: the various `docker-compose.graders.*.yml` files need to be updated. The grader also needs to be mentioned in the dependencies for `nexus` in [`docker-compose.yml`](docker-compose.yml) as well as the dependencies of `grader-tester` in [`docker-compose.tests.yml`](docker-compose.test.yml) (at least if you want to be able to run black-box tests against it). See also [DOCKER-COMPOSE-FILES](DOCKER-COMPOSE-FILES.md).
+
+If your grader is to be implemented in JavaScript or as a shell script, you may be able to benfit from the [abstract grader stub implementation](abstract-grader/README.md). This provides everything required for communication with Nexus and GHE, allowing you to focus on the key grading functionality.
 
 ## Health checks
 
@@ -177,7 +138,7 @@ Note that the two user variables and the two password variables need to be set t
 
 An explanation of these vars can be found in the main Nexus repo
 
-Additionally, the tools that are included in the docker-compose require their own environment file each. For the RNG tool this is called `.env.rng.list`. For other tools the names are similar, they can be found from `docker-compose.yml` by looking for `env-file` entries. Each file should contain the following variables (as per the documentation in the relevant tool repository):
+Additionally, the graders that are included in the docker-compose require their own environment file each. For the RNG grader this is called `.env.rng.list`. For other graders the names are similar, they can be found from `docker-compose.yml` by looking for `env-file` entries. Each file should contain the following variables (as per the documentation in the relevant grader repository):
 
 ```
 NEXUS_TOOL_CANONICAL_NAME=
@@ -188,9 +149,9 @@ The access token must be valid for the nexus instance to be run, so in the first
 
 ## Contributing
 
-To contribute your own code to Nexus, create a branch or make a fork of the repository. When your contribution is ready, submit a pull request against the `contributions` branch. This will be reviewed and you may get feedback that you will be asked to integrate into your contribution. Once it is ready, Steffen will merge into `contribution`. Anything that is merged into `master` will end up in production. Only Steffen can merge into master.
+To contribute your own code to Nexus, make a fork of the repository. When your contribution is ready, submit a pull request against a suitable `contribution/XYZ` branch. This will be reviewed and you may get feedback that you will be asked to integrate into your contribution. Once it is ready, Steffen will merge into the `contribution/XYZ` branch and from there eventually into `master`. Anything that is merged into `master` will end up in production. Only Steffen can merge into master.
 
-You should consider opening a pull request into `contribution` as soon as you have made the first commit into your own branch. This way, we will have an easy way of checking your contribution as it develops over time and you can receive feedback on your code as you create it. You are free to use your own branching protocol below your branch or fork (and are indeed encouraged to use branches extensively there.).
+You should consider opening a pull request into `contribution/XYZ` as soon as you have made the first commit into your own branch. This way, we will have an easy way of checking your contribution as it develops over time and you can receive feedback on your code as you create it. You are free to use your own branching protocol below your branch or fork (and are indeed encouraged to use branches extensively there.). Please talk to Steffen for a `contribution/XYZ` branch to be set up.
 
 ## References
 - https://docs.docker.com/compose/overview/

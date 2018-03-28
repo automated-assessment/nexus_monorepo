@@ -29,6 +29,7 @@ services:
       - javac-tool # Need to include in dependencies or it won't get started
       - io-tool # Need to include in dependencies or it won't get started
       - peer-feedback # Need to include in dependencies or it won't get started
+      - abstract-grader
     logging:
       driver: syslog
       options:
@@ -46,3 +47,37 @@ services:
       options:
         syslog-address: "udp://localhost:5514"
         tag: "git-server"
+  abstract-grader:
+    build: abstract-grader/
+    environment:
+      NEXUS_BASE_URL: http://grader-tester:3000
+      NEXUS_TOOL_CANONICAL_NAME: abstract-grader
+      NEXUS_ACCESS_TOKEN: foo
+      AUTH_TOKEN: foo
+      MYSQL_DATABASE: ag
+      MYSQL_USER: ag-tool
+      MYSQL_PASSWORD: ag-pass
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_HOST: agmysql
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "abstract-grader"
+    depends_on:
+      - syslog
+      - agmysql
+  agmysql:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: ag
+      MYSQL_USER: ag-tool
+      MYSQL_PASSWORD: ag-pass
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "ag-db"
