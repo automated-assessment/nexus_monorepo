@@ -5,11 +5,11 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # Install app dependencies
-COPY package.json /usr/src/app/
+COPY package.json .
 RUN npm install
 
 # Install config page dependencies
-COPY configPage/package.json /usr/src/app/configPage/
+COPY configPage/package.json configPage/
 RUN cd configPage && \
     npm install
 
@@ -18,7 +18,7 @@ RUN ssh-keygen -q -t rsa -b 4096 -C "git repos" -N "" -f /root/.ssh/id_rsa && \
     ssh-keyscan -H -t rsa github.kcl.ac.uk > /root/.ssh/known_hosts
 
 # Bundle app source
-COPY . /usr/src/app
+COPY . .
 RUN cd configPage/src/js && \
     mkdir components
 
@@ -32,7 +32,7 @@ ENTRYPOINT ["/entrypoint.sh"]
 CMD ["start"]
 
 # Compile config page react components from sub-image provided information
-ONBUILD COPY config_schema.yml /usr/src/app/config_schema.yml
+ONBUILD COPY config_schema.yml config_schema.yml
 ONBUILD RUN node generate_config_page.js && \
             rm -rf generate_config_page.js && \
             rm -rf _generate_config_page.js && \
