@@ -10,7 +10,8 @@ RUN npm install
 
 # Install config page dependencies
 COPY configPage/package.json /usr/src/app/configPage/
-RUN cd configPage && npm install
+RUN cd configPage && \
+    npm install
 
 # Generate SSH key for use when pulling additional repositories and store GHE key in known_hosts
 RUN ssh-keygen -q -t rsa -b 4096 -C "git repos" -N "" -f /root/.ssh/id_rsa && \
@@ -18,6 +19,8 @@ RUN ssh-keygen -q -t rsa -b 4096 -C "git repos" -N "" -f /root/.ssh/id_rsa && \
 
 # Bundle app source
 COPY . /usr/src/app
+RUN cd configPage/src/js && \
+    mkdir components
 
 # Define submissions directory
 ENV SUBMISSIONS_DIRECTORY=/mnt/submissions/
