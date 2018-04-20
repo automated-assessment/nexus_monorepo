@@ -15,6 +15,19 @@ fi
 CLASSPATH="/usr/src/app/bin/:/usr/src/app/junit-4.12.jar:/usr/src/app/hamcrest-core-1.3.jar:$(find $test_files/ -name '*.jar' | paste -s -d':'):./tmp/:$(find . -name '*.jar' | paste -s -d':')"
 export CLASSPATH
 
-java uk.ac.kcl.inf.nexus.junit_grader.TestRunner $1 ./.tmp.mark
+MARK_FILE=$(mktemp)
+if [ $? -ne 0 ]; then
+  rm -f $MARK_FILE
+  exit -1
+fi
 
-exit $(cat ./.tmp.mark)
+java uk.ac.kcl.inf.nexus.junit_grader.TestRunner $1 $MARK_FILE
+if [ $? -ne 0 ]; then
+  rm -f $MARK_FILE
+  exit -1
+fi
+
+MARK=$(cat $MARK_FILE)
+rm -f $MARK_FILE
+
+exit $MARK
