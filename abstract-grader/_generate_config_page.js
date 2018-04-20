@@ -6,68 +6,72 @@ const deployKey = fs.readFileSync('/root/.ssh/id_rsa.pub');
 fs.writeFileSync('configPage/src/js/components/config.jsx', generateConfigComponent(configSchema));
 
 function generateConfigComponent(configSchema) {
-  return `
-  import React from "react";
-  import XHR from "promised-xhr";
+  if (Object.keys(configSchema.parameters).length > 0) {
+    return `
+    import React from "react";
+    import XHR from "promised-xhr";
 
-  export default class ConfigComponent extends React.Component {
-    static propTypes = {
-      aid: React.PropTypes.number,
-      config: React.PropTypes.object,
-      token: React.PropTypes.string
-    };
-    static defaultProps = {
-      config: {
-        ${generateDefaultPropValues(configSchema)}
-      }
-    };
+    export default class ConfigComponent extends React.Component {
+      static propTypes = {
+        aid: React.PropTypes.number,
+        config: React.PropTypes.object,
+        token: React.PropTypes.string
+      };
+      static defaultProps = {
+        config: {
+          ${generateDefaultPropValues(configSchema)}
+        }
+      };
 
-    constructor(props) {
+      constructor(props) {
         super(props);
         this.state = {
           aid: this.props.aid,
           status: ""${generateStateInitalisation(configSchema)}
         }
-    }
+      }
 
-    render() {
-      return (
-        <div>
+      render() {
+        return (
+          <div>
           <h4>{this.state.status}</h4>
           <form className="form-horizontal" onSubmit={::this.handleSubmit}>
-            ${generateFormElements(configSchema)}
+          ${generateFormElements(configSchema)}
 
-            <hr />
-            <br />
+          <hr />
+          <br />
 
-            <div className="form-group">
-              <div className="col-lg-10 col-lg-offset-2">
-                <button className="btn btn-primary">Go</button>
-              </div>
-            </div>
+          <div className="form-group">
+          <div className="col-lg-10 col-lg-offset-2">
+          <button className="btn btn-primary">Go</button>
+          </div>
+          </div>
           </form>
-        </div>
-      );
-    }
+          </div>
+        );
+      }
 
-    ${generateHandleChangeMethods(configSchema)}
+      ${generateHandleChangeMethods(configSchema)}
 
-    handleSubmit(event) {
-      event.preventDefault();
-      const url = \`\${document.location.origin}/\${this.props.token}/configuration\`;
-      $.post(
-        url,
-        { aid: this.state.aid, config: { ${generateResultConfig(configSchema)} } },
-        (data, status, xhr) => {
-          this.setState({status: status});
-        }
-      )
-      .fail(() => {
-        this.setState({status: "failed!"});
-      });
+      handleSubmit(event) {
+        event.preventDefault();
+        const url = \`\${document.location.origin}/\${this.props.token}/configuration\`;
+        $.post(
+          url,
+          { aid: this.state.aid, config: { ${generateResultConfig(configSchema)} } },
+          (data, status, xhr) => {
+            this.setState({status: status});
+          }
+        )
+        .fail(() => {
+          this.setState({status: "failed!"});
+        });
+      }
     }
+    `;
+  } else {
+    return '';
   }
-  `;
 }
 
 function generateDefaultPropValues(configSchema) {
