@@ -46,3 +46,7 @@ RUN curl http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4
 
 # Bundle app source
 COPY grade_submission.sh /usr/src/app
+
+COPY lib lib
+RUN mkdir ./bin && \
+    javac -d ./bin -cp .:junit-4.12.jar:hamcrest-core-1.3.jar $(find ./lib -name '*.java')

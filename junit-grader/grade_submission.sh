@@ -12,4 +12,9 @@ if ! javac -d ./tmp/ $(find $test_files/ -name '*.java') $(find . -name '*.java'
    exit 0
 fi
 
-exit 100
+CLASSPATH="/usr/src/app/bin/:/usr/src/app/junit-4.12.jar:/usr/src/app/hamcrest-core-1.3.jar:$(find $test_files/ -name '*.jar' | paste -s -d':'):./tmp/:$(find . -name '*.jar' | paste -s -d':')"
+export CLASSPATH
+
+java uk.ac.kcl.inf.nexus.junit_grader.TestRunner $1 ./.tmp.mark
+
+exit $(cat ./.tmp.mark)
