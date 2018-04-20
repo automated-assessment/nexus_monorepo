@@ -2,7 +2,7 @@
 
 echo "Compiling test code and submission"
 
-CLASSPATH="/usr/src/app/junit-4.12.jar;$test_files/;$(find $test_files/ -name '*.jar');.;$(find . -name '*.jar')"
+CLASSPATH="/usr/src/app/junit-4.12.jar:/usr/src/app/hamcrest-core-1.3.jar:$test_files/:$(find $test_files/ -name '*.jar' | paste -s -d':'):.:$(find . -name '*.jar' | paste -s -d':')"
 export CLASSPATH
 
 rm -rf ./tmp
