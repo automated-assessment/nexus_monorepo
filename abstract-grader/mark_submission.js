@@ -88,7 +88,11 @@ function processConfig(config, cb) {
                   }],
                   (err, res) => {
                     if (err) {
-                      cb(err, { env: {}, cleanup: cleanupCallback });
+                      if (fs.existsSync(path)) {
+                        cb(err, { env: {}, cleanup: cleanupCallback });
+                      } else {
+                        cb(err, { env: {}, cleanup: () => {} });
+                      }
                     } else {
                       var env = {};
                       env[param] = path;
