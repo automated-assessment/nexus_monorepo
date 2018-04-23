@@ -44,9 +44,14 @@ RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sou
 RUN curl http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar > junit-4.12.jar && \
     curl http://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar > hamcrest-core-1.3.jar
 
+# Add our custom annotations
+# FIXME: This isn't currently working: GHE deploy keys can only be used for a single repo... 
+RUN git clone git@github.kcl.ac.uk:automated-assessment/junit_annotations.git && \
+    mkdir ./bin && \
+    javac -d ./bin -cp ./bin:junit-4.12.jar:hamcrest-core-1.3.jar $(find ./junit_annotations/src -name '*.java')
+
 # Bundle app source
 COPY grade_submission.sh /usr/src/app
 
 COPY lib lib
-RUN mkdir ./bin && \
-    javac -d ./bin -cp .:junit-4.12.jar:hamcrest-core-1.3.jar $(find ./lib -name '*.java')
+RUN javac -d ./bin -cp ./bin:junit-4.12.jar:hamcrest-core-1.3.jar $(find ./lib -name '*.java')

@@ -3,6 +3,9 @@ package uk.ac.kcl.inf.nexus.junit_grader;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
+import org.junit.runner.notification.RunListener;
+
+import uk.ac.kcl.inf.nexus.junit_grader.annotations.TestWeight;
 
 import java.io.*;
 
@@ -14,10 +17,25 @@ public class TestRunner {
   public static void main(String[] args) {
     try {
       System.out.println("Running tests...");
-      Result result = JUnitCore.runClasses (Class.forName("TestSpecification"));
+
+      final int[] totalTestWeight = { 0 };
+
+      JUnitCore tester = new JUnitCore();
+      tester.addListener (new RunListener() {
+        @Override
+        public void testFinished(Description description) throws Exception {
+          TestWeight tw = description.getAnnotation(TestWeight.class);
+          if (tw != null) {
+            totalTestWeight[0] += tw.value();
+          } else {
+            totalTestWeight[0] += 1;
+          }
+        }
+      });
+      Result result = tester.run (Class.forName("TestSpecification"));
       System.out.println("Finished running tests.");
 
-      computeAndOutputMark(result, args[1]);
+      computeAndOutputMark(result, totalTestWeight[0], args[1]);
       computeAndOutputFeedback(result, args[0]);
     }
     catch (ClassNotFoundException e) {
@@ -28,8 +46,18 @@ public class TestRunner {
     }
   }
 
-  private static void computeAndOutputMark (Result result, String fileName) throws IOException {
-    int mark = (int) Math.round (Math.floor (((result.getRunCount() - result.getFailureCount()) / result.getRunCount()) * 100));
+  private static void computeAndOutputMark (Result result, int totalTestWeight, String fileName) throws IOException {
+    int marksAchieved = totalTestWeight;
+    for (Failure f : result.getFailures()) {
+      TestWeight tw = f.getDescription().getAnnotation(TestWeight.class);
+      if (tw != null) {
+        marksAchieved -= tw.value();
+      } else {
+        marksAchieved -= 1;
+      }
+    }
+
+    int mark = (int) Math.round (Math.floor ((marksAchieved / totalTestWeight) * 100));
 
     System.out.println("Mark will be " + mark);
 
@@ -43,9 +71,10 @@ public class TestRunner {
     } else {
       sbFeedback.append ("<p>Some tests had problems:</p>");
       for (Failure f : result.getFailures()) {
-        sbFeedback.append ("<div>")
-        .append ("  ").append (f.getMessage())
-        .append ("</div>");
+        sbFeedback
+          .append ("<div>")
+          .append ("  ").append (f.getMessage())
+          .append ("</div>");
       }
     }
     sbFeedback.append("</div>");
