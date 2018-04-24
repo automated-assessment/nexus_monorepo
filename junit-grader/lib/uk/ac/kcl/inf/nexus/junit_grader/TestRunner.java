@@ -58,7 +58,9 @@ public class TestRunner {
       }
     }
 
-    int mark = (int) Math.round (Math.floor ((marksAchieved / totalTestWeight) * 100));
+    System.out.println("Marks achieved: " + marksAchieved + "; total marks available: " + totalTestWeight + ".");
+
+    int mark = (int) Math.round (Math.floor (((float) marksAchieved / totalTestWeight) * 100));
 
     System.out.println("Mark will be " + mark);
 
