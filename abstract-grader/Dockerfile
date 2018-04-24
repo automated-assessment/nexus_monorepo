@@ -14,9 +14,11 @@ RUN cd configPage && \
     npm install
 
 # Generate SSH key for use when pulling additional repositories and store GHE key in known_hosts
-# FIXME: This isn't currently working: GHE deploy keys can only be used for a single repo... 
 RUN ssh-keygen -q -t rsa -b 4096 -C "git repos" -N "" -f /root/.ssh/id_rsa && \
     ssh-keyscan -H -t rsa github.kcl.ac.uk > /root/.ssh/known_hosts
+
+ARG GHE_USER
+ENV GHE_USER=$GHE_USER
 
 # Bundle app source
 COPY . .

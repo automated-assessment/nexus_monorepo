@@ -95,7 +95,10 @@ services:
       - syslog
       - mongodb
   junit-grader:
-    build: junit-grader/
+    build:
+      context: junit-grader/
+      args:
+        - CACHEBUST
     env_file: .env.junit.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
     environment:
       NEXUS_BASE_URL: http://nexus:3000

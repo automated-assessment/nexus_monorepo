@@ -2,7 +2,6 @@ import yaml from 'node-yaml';
 import fs from 'fs';
 
 const configSchema = yaml.readSync ('config_schema.yml', {schema: yaml.schema.defaultSafe});
-const deployKey = fs.readFileSync('/root/.ssh/id_rsa.pub');
 fs.writeFileSync('configPage/src/js/components/config.jsx', generateConfigComponent(configSchema));
 
 function generateConfigComponent(configSchema) {
@@ -144,10 +143,7 @@ function generateFormElements(configSchema) {
 
                     <div className="form-group">
                       <div className="col-lg-10 col-sm-10 col-lg-offset-2 col-sm-offset-2">
-                        <p>Please ensure the following key is added as a read-only deploy key to this repository:</p>
-                        <pre style={{whiteSpace: "pre-wrap"}}>
-                          ${deployKey}
-                        </pre>
+                        <p>Please ensure GHE user ${process.env.GHE_USER} has read-only access to this repository.</p>
                       </div>
                     </div>
                   </div>`;
