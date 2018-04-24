@@ -7,6 +7,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
 import uk.ac.kcl.inf.nexus.junit_grader.annotations.TestWeight;
+import uk.ac.kcl.inf.nexus.junit_grader.annotations.TestDescription;
 
 import java.io.*;
 
@@ -20,6 +21,7 @@ public class TestRunner {
       System.out.println("Running tests...");
 
       final int[] totalTestWeight = { 0 };
+      final int[] totalTestCount = { 0 };
 
       JUnitCore tester = new JUnitCore();
       tester.addListener (new RunListener() {
@@ -31,13 +33,14 @@ public class TestRunner {
           } else {
             totalTestWeight[0] += 1;
           }
+          totalTestCount[0]++;
         }
       });
       Result result = tester.run (Class.forName("TestSpecification"));
       System.out.println("Finished running tests.");
 
       computeAndOutputMark(result, totalTestWeight[0], args[1]);
-      computeAndOutputFeedback(result, args[0]);
+      computeAndOutputFeedback(result, totalTestCount[0], args[0]);
     }
     catch (ClassNotFoundException e) {
       System.err.println("Couldn't find test class.");
@@ -67,18 +70,26 @@ public class TestRunner {
     writeToFile(fileName, Integer.toString(mark));
   }
 
-  private static void computeAndOutputFeedback (Result result, String fileName) throws IOException {
+  private static void computeAndOutputFeedback (Result result, int totalTestCount, String fileName) throws IOException {
     StringBuffer sbFeedback = new StringBuffer("<div>");
     if (result.wasSuccessful()) {
       sbFeedback.append ("<p>All tests passed.</p>");
     } else {
-      sbFeedback.append ("<p>Some tests had problems:</p>");
+      sbFeedback.append ("<p>" + result.getFailures().size() + "/" + totalTestCount + " tests had problems:</p><ol>");
       for (Failure f : result.getFailures()) {
+        String description = "";
+        TestDescription td = f.getDescription().getAnnotation(TestDescription.class);
+        if (td != null) {
+          description = td.value();
+        } else {
+          description = f.getDescription().getMethodName();
+        }
         sbFeedback
-          .append ("<div>")
-          .append ("  ").append (f.getMessage())
-          .append ("</div>");
+          .append ("<li>")
+            .append(description).append(": ").append (f.getMessage())
+          .append ("</li>");
       }
+      sbFeedback.append("</ol>");
     }
     sbFeedback.append("</div>");
 
