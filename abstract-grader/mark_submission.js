@@ -51,8 +51,13 @@ export function doMarkSubmission(submissionID, sourceDir, config, cb) {
                   feedback = 'Internal error: testing tool failed to run command.';
                 }
               } else {
-                console.log(`Marking tool ran successfully for submission ${submissionID}.`);
-                feedback = stdout;
+                console.log(`Marking tool ran successfully for submission ${submissionID}. Reporting mark of 0 and feedback produced.`);
+                fs.readFile(path, 'utf8', (err, data) => {
+                  cleanupCallback();
+                  cb(err, mark, data);
+                });
+                cleanup();
+                return;
               }
 
               cleanup();
