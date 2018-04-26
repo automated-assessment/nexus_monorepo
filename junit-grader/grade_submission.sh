@@ -23,6 +23,10 @@ fi
 
 echo "Running tests"
 
+# Remove .git files so that running java code cannot simply access them
+rm -rf ./.git
+rm -rf "$test_files/.git"
+
 MARK_FILE=$(mktemp)
 if [ $? -ne 0 ]; then
   rm -rf $BIN_DIR
