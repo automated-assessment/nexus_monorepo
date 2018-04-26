@@ -40,6 +40,9 @@ RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sou
 # End Install Open-JDK
 ##########################################
 
+# We can afford a higher level of concurrency :-)
+ENV MAX_CONCURRENCY 10
+
 # Add JUnit -- for now, we're only providing jUnit4, jUnit5 support to be investigated
 RUN curl http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar > junit-4.12.jar && \
     curl http://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar > hamcrest-core-1.3.jar && \
