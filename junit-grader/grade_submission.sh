@@ -34,7 +34,7 @@ if [ $? -ne 0 ]; then
   exit -1
 fi
 
-java -cp "$TEST_CLASSPATH" uk.ac.kcl.inf.nexus.junit_grader.TestRunner $1 $MARK_FILE
+java -cp "$TEST_CLASSPATH" -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap uk.ac.kcl.inf.nexus.junit_grader.TestRunner $1 $MARK_FILE
 if [ $? -ne 0 ]; then
   rm -rf $BIN_DIR
   rm -f $MARK_FILE
