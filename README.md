@@ -58,11 +58,11 @@ You will also find information about how to develop your own contributions to Ne
   ```
 
   3. Create a new SSH key for the user you used in step 5 (usually your k-number on Github Enterprise). To do so:
-    1. Go to your profile settings as above.
-    2. Click on `SSH and GPG keys` in the side bar.
-    3. Click `New SSH key`.
-    4. Give the new key a name and copy the public RSA key into the key field.
-    5. Click `Add SSH key` to add the key.
+    - Go to your profile settings as above.
+    - Click on `SSH and GPG keys` in the side bar.
+    - Click `New SSH key`.
+    - Give the new key a name and copy the public RSA key into the key field.
+    - Click `Add SSH key` to add the key.
   4. Make sure that this user has read access to the [jUnit annotation repository](https://github.kcl.ac.uk/automated-assessment/junit_annotations). Talk to Steffen, if you haven't got access to this repository for some reason.
 
 **7. Run `make build`**
