@@ -15,6 +15,7 @@ public class CompileSubmission {
         .reportFeedback(args[0]);
   }
 
+  private DiagnosticAnalyser[] analysers = {};
   private DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
   // TODO Carefully check parameters, especially where they're null.
@@ -32,6 +33,8 @@ public class CompileSubmission {
         .getTask(null,fileManager, diagnostics, options, null, compilationUnits)
         .call();
 
+    fileManager.close();
+
     return this;
   }
 
@@ -44,12 +47,53 @@ public class CompileSubmission {
       mark = 0;
     }
 
-    
+    writeToFile(fileName, Integer.toString(mark));
 
     return this;
   }
 
   private CompileSubmission reportFeedback(String fileName) {
+    StringBuffer sb = new StringBuffer();
+
+    if (diagnostics.getDiagnostics().isEmpty()) {
+      sb.append("<p>All java files compiled successfully.");
+    } else {
+      Map<DiagnosticAnalyser, List<Diagnostic>> analysisIndex = new HashMap<>();
+
+      // First, show feedback directly from compiler. This should probably go into a separate tab
+      sb.append("<div><p>Compiler error messages.</p>");
+      for(Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()){
+        sb.append(diagnostic.toString());
+        sb.append("<br/><br/>");
+
+        // See if any analyser is interested in providing more context for this.
+        for (DiagnosticAnalyser da : analysers) {
+          if (da.canHandle(diagnostic)) {
+            List<Diagnostic> l = analysisIndex.get(da);
+            if (l == null) {
+              l = new ArrayList<>();
+              analysisIndex.put(da, l);
+            }
+
+            l.add(diagnostic);
+
+            break;
+          }
+        }
+      }
+      sb.append("</div>");
+
+      if (!analysisIndex.isEmpty()) {
+        for (DiagnosticAnalyser da : analysisIndex.keySet()) {
+          sb.append("<div>");
+          sb.append(da.handle(analysisIndex.get(da)));
+          sb.append("</div>");
+        }
+      }
+    }
+
+    writeToFile(fileName, sb.toString());
+
     return this;
   }
 
@@ -69,5 +113,11 @@ public class CompileSubmission {
         result.addAll (getFiles(f));
       }
     }
+  }
+
+  private void writeToFile (String fileName, String data) throws IOException {
+    BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+    out.write(data);
+    out.close();
   }
 }
