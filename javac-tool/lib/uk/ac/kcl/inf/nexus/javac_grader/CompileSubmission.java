@@ -2,6 +2,7 @@ package uk.ac.kcl.inf.nexus.javac_grader;
 
 import javax.tools.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -18,19 +19,21 @@ public class CompileSubmission {
   private DiagnosticAnalyser[] analysers = {};
   private DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
+  private StringWriter swOutput = new StringWriter();
+
   // TODO Carefully check parameters, especially where they're null.
   private CompileSubmission compile() {
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
     List<File> files = getFiles();
-    StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
+    StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, StandardCharsets.UTF_8);
     Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(files);
 
     List<String> options = new ArrayList<String>();
     options.add("-Xlint:all");
 
     compiler
-        .getTask(null,fileManager, diagnostics, options, null, compilationUnits)
+        .getTask(swOutput, fileManager, diagnostics, options, null, compilationUnits)
         .call();
 
     fileManager.close();
@@ -41,7 +44,7 @@ public class CompileSubmission {
   private CompileSubmission reportMark(String fileName) {
     int mark = 0;
 
-    if (diagnostics.getDiagnostics().isEmpty()) {
+    if (diagnostics.getDiagnostics().isEmpty() && swOutput.toString().isEmpty()) {
       mark = 100;
     } else {
       mark = 0;
@@ -55,13 +58,18 @@ public class CompileSubmission {
   private CompileSubmission reportFeedback(String fileName) {
     StringBuffer sb = new StringBuffer();
 
-    if (diagnostics.getDiagnostics().isEmpty()) {
+    if (diagnostics.getDiagnostics().isEmpty() && swOutput.toString().isEmpty()) {
       sb.append("<p>All java files compiled successfully.");
     } else {
       Map<DiagnosticAnalyser, List<Diagnostic>> analysisIndex = new HashMap<>();
 
       // First, show feedback directly from compiler. This should probably go into a separate tab
       sb.append("<div><p>Compiler error messages.</p>");
+      if (!swOutput.toString.isEmpty()) {
+        sb.append("<p>")
+          .append(swOutput.toString())
+          .append("</p>");
+      }
       for(Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()){
         sb.append(diagnostic.toString());
         sb.append("<br/><br/>");
