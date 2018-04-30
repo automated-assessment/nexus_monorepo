@@ -22,12 +22,14 @@ public class CompileSubmission {
   private StringWriter swOutput = new StringWriter();
   private Exception compilerException = null;
 
+  private List<File> files = null;
+
   // TODO Carefully check parameters, especially where they're null.
   private CompileSubmission compile() {
     try {
       JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
-      List<File> files = getFiles();
+      files = getFiles();
       StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, StandardCharsets.UTF_8);
       Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(files);
 
@@ -68,6 +70,14 @@ public class CompileSubmission {
 
   private CompileSubmission reportFeedback(String fileName) {
     StringBuffer sb = new StringBuffer();
+
+    // Report which files we tried to compile
+    sb.append("<div>");
+    sb.append("<p>List of java files found:</p><ul>");
+    for (File f : files) {
+      sb.append("<li>").append(f.getName()).append("</li>");
+    }
+    sb.append("</ul></div>");
 
     if (diagnostics.getDiagnostics().isEmpty() && swOutput.toString().isEmpty()) {
       sb.append("<p>All java files compiled successfully.");
