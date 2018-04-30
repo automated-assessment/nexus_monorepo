@@ -94,3 +94,34 @@ services:
     depends_on:
       - syslog
       - mongodb
+  junit-grader:
+    build:
+      context: junit-grader/
+      args:
+        - CACHEBUST
+    env_file: .env.junit.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+      MYSQL_HOST: "mysql-junit"
+    ports:
+      - "3006:5000"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "junit"
+    depends_on:
+      - syslog
+      - mysql-junit
+  mysql-junit:
+    image: mysql
+    # ports:
+    #   - 3306:3306
+    env_file: .env.junit.list
+    volumes:
+      - ./junit_data:/var/lib/mysql
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "junit-db"

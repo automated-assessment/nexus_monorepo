@@ -85,20 +85,24 @@ no-matlab: .build-mode/.no_matlab
 	@echo "MYSQL_ALLOW_EMPTY_PASSWORD=yes" >> .env.uat.list
 	@echo "Change ACCESS_TOKEN and DB passwords before deploying to production in .env.uat.list!\n"
 
-.PHONY: dev development production init-env build build-dev init-nexus init-nexus-js init-nexus-db run run-dev restart-service bash migrate-db stop restart debug build-tests test-graders stop-tests test-nexus ps matlab no-matlab
+.PHONY: dev development production init-env build build-dev init-nexus init-nexus-js init-nexus-db run run-dev restart-service bash migrate-db stop restart debug build-tests test-graders stop-tests test-nexus ps matlab no-matlab abstract-rsa
 
-init-env: .env.list .env.uat.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list .env.peerfeedback.list .env.matlab.list .env.sag.list
+init-env: .env.list .env.uat.list .env.javac.list .env.rng.list .env.iotool.list .env.conf.list .env.peerfeedback.list .env.matlab.list .env.sag.list .env.junit.list
 	@echo "All .env files initialised. Please ensure you change ACCESS_TOKEN information etc. before running Nexus.\n"
 
 .build-mode/.abstract-grader: abstract-grader/*
 	@echo "Working in $(build-mode) mode."
-	docker build -t abstract-grader abstract-grader
+	docker build -t abstract-grader --build-arg GHE_USER=$$(grep "NEXUS_GITHUB_USER" ./.env.list | cut -d = -f 2) abstract-grader
 	@mkdir -p .build-mode
-	@touch .build-mode/.abstract-grader-registry
+	@touch .build-mode/.abstract-grader
+
+abstract-rsa: .build-mode/.abstract-grader
+	@echo "Working in $(build-mode) mode."
+	@docker run abstract-grader cat /root/.ssh/id_rsa.pub
 
 build: .build-mode/.abstract-grader
 	@echo "Working in $(build-mode) mode."
-	docker-compose $(docker-compose-files) build
+	CACHEBUST=$$(date +%s) docker-compose $(docker-compose-files) build
 
 init-nexus:
 	@echo "Working in $(build-mode) mode."

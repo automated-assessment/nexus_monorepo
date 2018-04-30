@@ -20,3 +20,6 @@ services:
   sample-abstract-grader:
     environment:
       NEXUS_BASE_URL: http://grader-tester:3000
+  junit-grader:
+    environment:
+      NEXUS_BASE_URL: http://grader-tester:3000
