@@ -20,23 +20,29 @@ public class CompileSubmission {
   private DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
   private StringWriter swOutput = new StringWriter();
+  private Exception compilerException = null;
 
   // TODO Carefully check parameters, especially where they're null.
   private CompileSubmission compile() {
-    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+    try {
+      JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
-    List<File> files = getFiles();
-    StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, StandardCharsets.UTF_8);
-    Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(files);
+      List<File> files = getFiles();
+      StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, StandardCharsets.UTF_8);
+      Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(files);
 
-    List<String> options = new ArrayList<String>();
-    options.add("-Xlint:all");
+      List<String> options = new ArrayList<String>();
+      options.add("-Xlint:all");
 
-    compiler
-        .getTask(swOutput, fileManager, diagnostics, options, null, compilationUnits)
-        .call();
+      compiler
+      .getTask(swOutput, fileManager, diagnostics, options, null, compilationUnits)
+      .call();
 
-    fileManager.close();
+      fileManager.close();
+    }
+    catch (Exception e) {
+      compilerException = e;
+    }
 
     return this;
   }
@@ -50,7 +56,12 @@ public class CompileSubmission {
       mark = 0;
     }
 
-    writeToFile(fileName, Integer.toString(mark));
+    try {
+      writeToFile(fileName, Integer.toString(mark));
+    }
+    catch (IOException ioe) {
+      System.err.println("Exception writing mark file: " + ioe);
+    }
 
     return this;
   }
@@ -65,7 +76,7 @@ public class CompileSubmission {
 
       // First, show feedback directly from compiler. This should probably go into a separate tab
       sb.append("<div><p>Compiler error messages.</p>");
-      if (!swOutput.toString.isEmpty()) {
+      if (!swOutput.toString().isEmpty()) {
         sb.append("<p>")
           .append(swOutput.toString())
           .append("</p>");
@@ -100,7 +111,12 @@ public class CompileSubmission {
       }
     }
 
-    writeToFile(fileName, sb.toString());
+    try {
+      writeToFile(fileName, sb.toString());
+    }
+    catch (IOException ioe) {
+      System.err.println("Exception writing feedback file: " + ioe);
+    }
 
     return this;
   }
@@ -121,6 +137,8 @@ public class CompileSubmission {
         result.addAll (getFiles(f));
       }
     }
+
+    return result;
   }
 
   private void writeToFile (String fileName, String data) throws IOException {

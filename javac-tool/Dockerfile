@@ -47,5 +47,6 @@ ENV MAX_CONCURRENCY 10
 COPY --chown=app:app grade_submission.sh /usr/src/app
 
 COPY lib lib
-RUN javac -d ./bin $(find ./lib -name '*.java') && \
+RUN mkdir ./bin && \
+    javac -d ./bin $(find ./lib -name '*.java') && \
     chown -R app:app ./bin
