@@ -1,0 +1,11 @@
+There are an uneven number of parentheses and braces within the files:
+$filename
+
+{ occurs: $opening_braces times
+} occurs: $closing_braces times
+
+( occurs: $opening_parentheses times
+) occurs: $closing_parentheses times
+
+Perhaps you should look at the following line numbers:
+$line_numbers

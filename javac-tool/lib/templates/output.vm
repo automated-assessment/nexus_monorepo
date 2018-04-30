@@ -1,0 +1,30 @@
+<ul class="nav nav-tabs">
+  #if (!$allOK) <li class="active"><a data-toggle="tab" href="#javac_analysers">Suggestions for change</a></li> #end
+  <li #if ($allOK) class="active" #end><a data-toggle="tab" href="#javac_javac_output">Compiler output</a></li>
+  <li><a data-toggle="tab" href="#javac_files_list">Files found</a></li>
+</ul>
+
+<div class="tab-content">
+#if (!$allOK)
+  <div id="javac_analysers" class="tab-pane fade in active">
+    $diagnostics
+  </div>
+#end
+
+  <div id="javac_javac_output" class="tab-pane fade #if ($allOK) in active #end">
+    #if ($allOK)
+      <p>All java files compiled successfully.</p>
+    #else
+      $javacOutput
+    #end
+  </div>
+
+  <div id="javac_files_list" class="tab-pane fade">
+    <p>List of java files found:</p>
+    <ul>
+      #foreach ($f in $files)
+        <li>$f</li>
+      #end
+    </ul>
+  </div>
+</div>

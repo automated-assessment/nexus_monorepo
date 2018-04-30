@@ -28,6 +28,12 @@ tests:
         mark: 97
         feedback:
           text: <div class="generic-feedback"><p>Some more specialised feedback</p></div>
+  compile_with_jar_files:
+    submission: compiles_with_jar_files
+    graders:
+      javac-tool:
+        mark: 100
+        feedback: dontcare
   no_compile:
     submission: basic_no_compile
     graders:

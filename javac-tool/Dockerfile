@@ -1,68 +1,57 @@
-FROM node:4.4.5
+FROM abstract-grader
 
-# grab gosu for easy step-down from root
-RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
-	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture)" \
-	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture).asc" \
-	&& gpg --verify /usr/local/bin/gosu.asc \
-	&& rm /usr/local/bin/gosu.asc \
-	&& chmod +x /usr/local/bin/gosu \
-	&& apt-get purge -y --auto-remove ca-certificates wget
+##########################################
+# Install Open-JDK (inspired by official Docker image code)
+##########################################
 
-# Install Java
-#RUN \
-#    echo "===> add webupd8 repository..."  && \
-#    echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" | tee /etc/apt/sources.list.d/webupd8team-java.list  && \
-#    echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list  && \
-#    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886  && \
-#    apt-get update  && \
-#    echo "===> install Java"  && \
-#    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections  && \
-#    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections  && \
-#    DEBIAN_FRONTEND=noninteractive  apt-get install -y --force-yes oracle-java8-installer oracle-java8-set-default  && \
-#    echo "===> clean up..."  && \
-#    rm -rf /var/cache/oracle-jdk8-installer  && \
-#    apt-get clean  && \
-#    rm -rf /var/lib/apt/lists/*
-#
-# Replaced the above with an installation of default-jdk as there were download issues with the Oracle downloads
-RUN \
-		echo "===> install Java 8" && \
-		apt-get update && \
-		apt-get install -y default-jdk && \
-		echo "===> clean up..." && \
-		rm -rf /var/lib/apt/lists/*
+# Set up Open-JDK prerequisites
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+		    bzip2 \
+		    unzip \
+		    xz-utils && \
+    rm -rf /var/lib/apt/lists/*
 
-ENV HOME /home/app
-ENV APP_DIR $HOME/src
+# On Jessie, OpenJDK is only available as a backport
 
-# Set up submissions directory
-RUN mkdir -p /home/app/submissions
-ENV SUBMISSIONS_DIRECTORY $HOME/submissions
-# Not sure the volume statement is needed
-VOLUME ${SUBMISSIONS_DIRECTORY}
+# Default to UTF-8 file.encoding
+ENV LANG C.UTF-8
 
-RUN groupadd -r app && useradd -rmg app app
-RUN chown -R app:app $HOME
+# do some fancy footwork to create a JAVA_HOME that's cross-architecture-safe
+RUN ln -svT "/usr/lib/jvm/java-8-openjdk-$(dpkg --print-architecture)" /docker-java-home
+ENV JAVA_HOME /docker-java-home
 
-WORKDIR $APP_DIR
+ENV JAVA_VERSION 8u162
+ENV JAVA_DEBIAN_VERSION 8u162-b12-1~deb9u1
 
-COPY package.json $APP_DIR/
-RUN npm install --production --silent
+# May need to handle certificiates specially, if I run into problems with https at some point
+# See official openjdk 8 image for details
 
-# CHOWN installed modules
-RUN chown -R app:app $HOME
+RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get install -y -t jessie-backports openjdk-8-jdk && \
+    rm -rf /var/lib/apt/lists/* && \
+# update-alternatives so that future installs of other OpenJDK versions don't change /usr/bin/java
+    update-alternatives --get-selections | awk -v home="$(readlink -f "$JAVA_HOME")" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }' && \
+# ... and verify that it actually worked for one of the alternatives we care about
+    update-alternatives --query java | grep -q 'Status: manual'
 
-COPY . $APP_DIR/
+##########################################
+# End Install Open-JDK
+##########################################
 
-# CHOWN only app files -- had to export to separate shell script as it needs extended globbing
-RUN $APP_DIR/do_chown.sh
+# We can afford a higher level of concurrency :-)
+ENV MAX_CONCURRENCY 10
 
-EXPOSE 5000
+# Bundle app source
+COPY --chown=app:app grade_submission.sh /usr/src/app
 
-COPY docker-entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
-
-CMD ["start"]
+COPY lib lib
+RUN mkdir ./bin && \
+    javac -d ./bin -cp "$(find ./lib -name '*.jar' | paste -s -d':')" $(find ./lib -name '*.java') && \
+    cp lib/*.jar ./bin && \
+    mkdir ./bin/templates && \
+    cp lib/templates/* ./bin/templates/ && \
+    rm -rf lib && \
+    chown -R app:app ./bin && \
+    chmod -w -R ./bin
