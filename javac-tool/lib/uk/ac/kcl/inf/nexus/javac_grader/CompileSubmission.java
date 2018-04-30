@@ -89,31 +89,31 @@ public class CompileSubmission {
   }
 
   private CompileSubmission reportFeedback(String fileName) {
+    boolean allOK = diagnostics.getDiagnostics().isEmpty() && swOutput.toString().isEmpty();
     StringBuffer sb = new StringBuffer();
+    Map<DiagnosticAnalyser, List<Diagnostic>> analysisIndex = new HashMap<>();
 
-    // Report which files we tried to compile
-    sb.append("<div>");
-    sb.append("<p>List of java files found:</p><ul>");
-    for (File f : files) {
-      sb.append("<li>").append(f.getName()).append("</li>");
-    }
-    sb.append("</ul></div>");
+    StringBuffer sbJavacOutput = new StringBuffer();
+    StringBuffer sbDiagnostics = new StringBuffer();
 
-    if (diagnostics.getDiagnostics().isEmpty() && swOutput.toString().isEmpty()) {
-      sb.append("<p>All java files compiled successfully.");
-    } else {
-      Map<DiagnosticAnalyser, List<Diagnostic>> analysisIndex = new HashMap<>();
+    VelocityEngine ve = new VelocityEngine();
+    ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "file");
+    ve.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, "/usr/src/app/bin");
+    //ve.setProperty("classpath.resource.loader.class", FileResourceLoader.class.getName());
+    ve.init();
 
+    VelocityContext context = new VelocityContext();
+
+    if (!allOK) {
       // First, show feedback directly from compiler. This should probably go into a separate tab
-      sb.append("<div><p>Compiler error messages.</p>");
+      sbJavacOutput.append("<p>Compiler error messages.</p>");
+      sbJavacOutput.append("<pre>");
       if (!swOutput.toString().isEmpty()) {
-        sb.append("<p>")
-          .append(swOutput.toString())
-          .append("</p>");
+        sbJavacOutput.append(swOutput.toString());
       }
-      for(Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()){
-        sb.append(diagnostic.toString());
-        sb.append("<br/><br/>");
+      for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+        sbJavacOutput.append(diagnostic.toString());
+        sbJavacOutput.append("\n\n");
 
         // See if any analyser is interested in providing more context for this.
         for (DiagnosticAnalyser da : analysers) {
@@ -130,24 +130,31 @@ public class CompileSubmission {
           }
         }
       }
-      sb.append("</div>");
+      sbJavacOutput.append("</pre>");
 
       if (!analysisIndex.isEmpty()) {
-        VelocityEngine ve = new VelocityEngine();
-        ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "file");
-        ve.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, "/usr/src/app/bin");
-        //ve.setProperty("classpath.resource.loader.class", FileResourceLoader.class.getName());
-        ve.init();
-
-        VelocityContext context = new VelocityContext();
-
         for (DiagnosticAnalyser da : analysisIndex.keySet()) {
-          sb.append("<div>");
-          sb.append(da.handle(analysisIndex.get(da), ve, context));
-          sb.append("</div>");
+          sbDiagnostics.append("<div>");
+          sbDiagnostics.append(da.handle(analysisIndex.get(da), ve, context));
+          sbDiagnostics.append("</div>");
         }
       }
     }
+
+    String[] fileNames = new String[files.size()];
+    int i = 0;
+    for (File f : files) {
+      fileNames[i++] = f.getName();
+    }
+    Template t = ve.getTemplate ("templates/output.vm");
+    context.put ("allOK", allOK);
+    context.put ("diagnostics", sbDiagnostics.toString());
+    context.put ("javacOutput", sbJavacOutput.toString());
+    context.put ("files", fileNames);
+    StringWriter writer = new StringWriter();
+    t.merge (context, writer);
+    sb.append(writer.toString());
+    // System.out.println("Will produce the following feedback: \n" + writer.toString() + "\n");
 
     try {
       writeToFile(fileName, sb.toString());
