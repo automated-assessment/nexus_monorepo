@@ -6,6 +6,7 @@ import { execSync, exec } from 'child_process';
 import { sendMark, sendFeedback } from './utils';
 import { doMarkSubmission } from './mark_submission';
 var mysql = require('mysql');
+import yaml from 'node-yaml';
 
 const MAX_CONCURRENCY = process.env.MAX_CONCURRENCY ? parseInt(process.env.MAX_CONCURRENCY, 10) : 1;
 const AUTH_TOKEN = process.env.AUTH_TOKEN;
@@ -13,6 +14,8 @@ if (!AUTH_TOKEN) {
   console.log("Define AUTH_TOKEN environment variable.");
   process.exit(255);
 }
+
+const configSchema = yaml.readSync ('config_schema.yml', {schema: yaml.schema.defaultSafe});
 
 /**
  * Respond to a mark request. This will initially only enqueue the mark request
@@ -272,52 +275,62 @@ function initialiseDB() {
     console.log("Initialised database.");
   });
 }
-initialiseDB();
+if (Object.keys(configSchema.parameters).length > 0) {
+  // Only initialise database if there's actually any configuration data to be
+  // stored.
+  initialiseDB();
+}
 
 function getConfigData(aid, cb) {
-  dbConnectionPool.query("SELECT * FROM grader_config WHERE aid=?", [aid], (err, result) => {
-    if (err) {
-      cb(err);
-    } else {
-      var data = {
-        aid: aid
-      };
+  if (Object.keys(configSchema.parameters).length > 0) {
+    dbConnectionPool.query("SELECT * FROM grader_config WHERE aid=?", [aid], (err, result) => {
+      if (err) {
+        cb(err);
+      } else {
+        var data = {
+          aid: aid
+        };
 
-      if (result.length > 0) {
-        if (result[0].config) {
-          data.config = JSON.parse(result[0].config);
+        if (result.length > 0) {
+          if (result[0].config) {
+            data.config = JSON.parse(result[0].config);
+          }
         }
-      }
 
-      cb(null, data);
-    }
-  });
+        cb(null, data);
+      }
+    });
+  } else {
+    cb (null, {aid: aid});
+  }
 }
 
 function storeConfigData (aid, config) {
-  dbConnectionPool.query("SELECT * FROM grader_config WHERE aid=?", [aid], (err, result) => {
-    if (err) {
-      console.log(`Error querying database: ${err}.`);
-    } else {
-      var sql = "";
-      var args = [];
-      if (result.length > 0) {
-        sql = "UPDATE grader_config SET config=? WHERE aid=?";
-        args = [config, aid];
+  if (Object.keys(configSchema.parameters).length > 0) {
+    dbConnectionPool.query("SELECT * FROM grader_config WHERE aid=?", [aid], (err, result) => {
+      if (err) {
+        console.log(`Error querying database: ${err}.`);
       } else {
-        sql = "INSERT INTO grader_config VALUES(?)";
-        args = [[aid, config]];
-      }
-
-      dbConnectionPool.query(sql, args, (err, result) => {
-        if (err) {
-          console.log(`Error updating configuration for ${aid}: ${err}.`);
+        var sql = "";
+        var args = [];
+        if (result.length > 0) {
+          sql = "UPDATE grader_config SET config=? WHERE aid=?";
+          args = [config, aid];
         } else {
-          console.log(`Successfully updated configuration for ${aid}.`);
+          sql = "INSERT INTO grader_config VALUES(?)";
+          args = [[aid, config]];
         }
-      });
-    }
-  });
+
+        dbConnectionPool.query(sql, args, (err, result) => {
+          if (err) {
+            console.log(`Error updating configuration for ${aid}: ${err}.`);
+          } else {
+            console.log(`Successfully updated configuration for ${aid}.`);
+          }
+        });
+      }
+    });
+  }
 }
 
 // A utility function to safely escape JSON for embedding in a <script> tag
