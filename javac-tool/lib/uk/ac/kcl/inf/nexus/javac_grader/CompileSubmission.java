@@ -38,7 +38,11 @@ public class CompileSubmission {
   public CompileSubmission() {
     files = getFiles();
 
-    analysers = new DiagnosticAnalyser[] { new MissingSymbolAnalyser(files) };
+    analysers = new DiagnosticAnalyser[] {
+        new MissingSymbolAnalyser(files),
+        new HashCodeAnalyser(),
+        new StaticAnalyser()
+      };
   }
 
   // TODO Carefully check parameters, especially where they're null.
