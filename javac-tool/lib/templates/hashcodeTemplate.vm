@@ -1,0 +1,6 @@
+You have overridden the equals method without overriding the hashcode method.
+Failure to do so could be particularly problematic if any hashed based collections are used.
+Each index within a collection can store a list of elements. 
+During object retrieval, the hashcode of said object is used to determine the index within the collection and the equals method to locate the correct object within the specified index.
+For two objects to trule be equal, calling the hashcode method must return the same integer.
+For further information consult: https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html#hashCode()

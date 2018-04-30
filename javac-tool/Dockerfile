@@ -48,5 +48,10 @@ COPY --chown=app:app grade_submission.sh /usr/src/app
 
 COPY lib lib
 RUN mkdir ./bin && \
-    javac -d ./bin $(find ./lib -name '*.java') && \
-    chown -R app:app ./bin
+    javac -d ./bin -cp "$(find ./lib -name '*.jar' | paste -s -d':')" $(find ./lib -name '*.java') && \
+    cp lib/*.jar ./bin && \
+    mkdir ./bin/templates && \
+    cp lib/templates/* ./bin/templates/ && \
+    rm -rf lib && \
+    chown -R app:app ./bin && \
+    chmod -w -R ./bin

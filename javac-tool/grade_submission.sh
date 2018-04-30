@@ -16,7 +16,7 @@ if [ $? -ne 0 ]; then
   exit -1
 fi
 
-java -cp "/usr/src/app/bin/*.jar:/usr/src/app/bin/:$SUBMISSION_CLASSPATH" -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap uk.ac.kcl.inf.nexus.javac_grader.CompileSubmission $1 $MARK_FILE
+java -cp "$(find /usr/src/app/bin -name '*.jar' | paste -s -d':'):/usr/src/app/bin/:$SUBMISSION_CLASSPATH" -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap uk.ac.kcl.inf.nexus.javac_grader.CompileSubmission $1 $MARK_FILE
 if [ $? -ne 0 ]; then
   rm -rf $BIN_DIR
   rm -f $MARK_FILE

@@ -1,9 +1,20 @@
 package uk.ac.kcl.inf.nexus.javac_grader;
 
 import javax.tools.*;
+
 import java.io.*;
+
 import java.nio.charset.StandardCharsets;
+
 import java.util.*;
+
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.*;
+import org.apache.velocity.runtime.resource.loader.*;
+
+import uk.ac.kcl.inf.nexus.javac_grader.analysers.*;
 
 /**
  * Entry point for compiling java files and analysing compiler messages.
@@ -24,12 +35,17 @@ public class CompileSubmission {
 
   private List<File> files = null;
 
+  public CompileSubmission() {
+    files = getFiles();
+
+    analysers = new DiagnosticAnalyser[] { new MissingSymbolAnalyser(files) };
+  }
+
   // TODO Carefully check parameters, especially where they're null.
   private CompileSubmission compile() {
     try {
       JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
-      files = getFiles();
       StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, StandardCharsets.UTF_8);
       Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(files);
 
@@ -113,9 +129,17 @@ public class CompileSubmission {
       sb.append("</div>");
 
       if (!analysisIndex.isEmpty()) {
+        VelocityEngine ve = new VelocityEngine();
+        ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "file");
+        ve.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, "/usr/src/app/bin");
+        //ve.setProperty("classpath.resource.loader.class", FileResourceLoader.class.getName());
+        ve.init();
+
+        VelocityContext context = new VelocityContext();
+
         for (DiagnosticAnalyser da : analysisIndex.keySet()) {
           sb.append("<div>");
-          sb.append(da.handle(analysisIndex.get(da)));
+          sb.append(da.handle(analysisIndex.get(da), ve, context));
           sb.append("</div>");
         }
       }
