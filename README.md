@@ -49,16 +49,32 @@ You will also find information about how to develop your own contributions to Ne
   10. In your `.env.list` file. Set `NEXUS_GITHUB_TOKEN` to be your `Personal Access Token` github generated for you.
   11. Make sure you save the `.env.list` file.
 
-**6. Run `make build`**
+**6. Run `make abstract-rsa`**
+  1. This builds the [abstract-grader](abstract-grader/README.md) image and extracts the public RSA key from it.
+  2. Copy this key. It appears at the very end of the output and looks something like this (this is not an actual key):
+
+  ```
+  ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCdoZ3SMnSBjFhcHkkcwZItVo6JmrmX3so/4JWSVX1rKzg2yb5Lx6um5y9O2Sr+rRAUc9uMAN/d04KP3S3zHUoOz7pZrDxhHY9IMnNtJsK/QqQX0vUtSjYf9naQsXarzD6M1/DMEbaAK/6jfS4ROtnFXz1zfME+2vvJl0QOjUZR9q2kDIvJYOj/9JuGbz5K4TxJHeaM3tK75qGzej+b1QWkEi39xpkv0ccxPEKvfLYzPSNnNhHYEz4PM0LFYNv8aRvUe8mYXCB5JjhMCxnhkb87FXi6gIJhtYKNduiiArWad+qw5D10gKlnu5Xrl11CCqKtOuljd8hhO7diyxCb1klX2alyE54KFg8/2PCjCe9X5lDbAe5T28Nu0T898WE7boY5GQsMQTFkXE95CdQrY2ipRYIuz84RZo5remaimYndAhJ0ZH7zyHBvIHTd+YfqUxQ3rTbmQ9xnPAeEDcm30Xm/bivwkKEgFr708ou/t25+Rsc5Ah0J8OhqG0JJzPSjE7sI5FsXykIzenw/pj1Jz+IkZ/OG930Urh9k8xNLUzwd+sv6KpGdfk7130pEfekHGcoQEPPUG4QZEyTL6uFpFGhYDSlRJO9OYMj2dqdNgs1nKXGDX37RdkOsqQjOV1/DD1nG88vWqUIgEkwXYQbnWouLzFANppocKywR2mAsNHi/7w== git repos
+  ```
+
+  3. Create a new SSH key for the user you used in step 5 (usually your k-number on Github Enterprise). To do so:
+    - Go to your profile settings as above.
+    - Click on `SSH and GPG keys` in the side bar.
+    - Click `New SSH key`.
+    - Give the new key a name and copy the public RSA key into the key field.
+    - Click `Add SSH key` to add the key.
+  4. Make sure that this user has read access to the [jUnit annotation repository](https://github.kcl.ac.uk/automated-assessment/junit_annotations). Talk to Steffen, if you haven't got access to this repository for some reason.
+
+**7. Run `make build`**
   - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml build`
   - First time build will take a while, go get a coffee
 
-**6. Initialise Nexus with `make init-nexus`**
+**8. Initialise Nexus with `make init-nexus`**
   - Only needed the first time to set up everything.
   - See `Useful Commands` for partial set up commands which handle updates
   - Always takes time
 
-**6. Run `make run`**
+**9. Run `make run`**
   - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
   - This brings up the nexus server fully ready to run and detaches it from the current console. You should be able to get to nexus by opening `localhost:3000` in your browser.
 

@@ -2,6 +2,7 @@
 dbdata/
 rabbitmq_data/
 javac_data/
+junit_data/
 iotool_data/
 mongodata/
 logs/

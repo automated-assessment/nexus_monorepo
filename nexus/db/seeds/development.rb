@@ -76,6 +76,16 @@ if ENV['DOCKER']
                      config_url: 'http://localhost:3004/#/config?aid=%{aid}&sid=%{sid}&isUnique=%{isUnique}',
                      access_token: 'bar')
 
+  MarkingTool.create(name: 'jUnit grader',
+                     description: 'Grades submissions against jUnit test',
+                     url: 'https://junit-grader:5000/mark',
+                     uid: 'junit',
+                     input: nil,
+                     output: nil,
+                     requires_config: true,
+                     config_url: 'http://localhost:3006/foo/configure?aid=%{aid}',
+                     access_token: 'foo')
+
   MarkingTool.create(name: 'Peer Feedback',
                      description: 'Peer Feedback Tool',
                      url: 'http://peer-feedback:3050/mark',

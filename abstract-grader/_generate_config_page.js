@@ -2,72 +2,75 @@ import yaml from 'node-yaml';
 import fs from 'fs';
 
 const configSchema = yaml.readSync ('config_schema.yml', {schema: yaml.schema.defaultSafe});
-const deployKey = fs.readFileSync('/root/.ssh/id_rsa.pub');
 fs.writeFileSync('configPage/src/js/components/config.jsx', generateConfigComponent(configSchema));
 
 function generateConfigComponent(configSchema) {
-  return `
-  import React from "react";
-  import XHR from "promised-xhr";
+  if (Object.keys(configSchema.parameters).length > 0) {
+    return `
+    import React from "react";
+    import XHR from "promised-xhr";
 
-  export default class ConfigComponent extends React.Component {
-    static propTypes = {
-      aid: React.PropTypes.number,
-      config: React.PropTypes.object,
-      token: React.PropTypes.string
-    };
-    static defaultProps = {
-      config: {
-        ${generateDefaultPropValues(configSchema)}
-      }
-    };
+    export default class ConfigComponent extends React.Component {
+      static propTypes = {
+        aid: React.PropTypes.number,
+        config: React.PropTypes.object,
+        token: React.PropTypes.string
+      };
+      static defaultProps = {
+        config: {
+          ${generateDefaultPropValues(configSchema)}
+        }
+      };
 
-    constructor(props) {
+      constructor(props) {
         super(props);
         this.state = {
           aid: this.props.aid,
           status: ""${generateStateInitalisation(configSchema)}
         }
-    }
+      }
 
-    render() {
-      return (
-        <div>
+      render() {
+        return (
+          <div>
           <h4>{this.state.status}</h4>
           <form className="form-horizontal" onSubmit={::this.handleSubmit}>
-            ${generateFormElements(configSchema)}
+          ${generateFormElements(configSchema)}
 
-            <hr />
-            <br />
+          <hr />
+          <br />
 
-            <div className="form-group">
-              <div className="col-lg-10 col-lg-offset-2">
-                <button className="btn btn-primary">Go</button>
-              </div>
-            </div>
+          <div className="form-group">
+          <div className="col-lg-10 col-lg-offset-2">
+          <button className="btn btn-primary">Go</button>
+          </div>
+          </div>
           </form>
-        </div>
-      );
-    }
+          </div>
+        );
+      }
 
-    ${generateHandleChangeMethods(configSchema)}
+      ${generateHandleChangeMethods(configSchema)}
 
-    handleSubmit(event) {
-      event.preventDefault();
-      const url = \`\${document.location.origin}/\${this.props.token}/configuration\`;
-      $.post(
-        url,
-        { aid: this.state.aid, config: { ${generateResultConfig(configSchema)} } },
-        (data, status, xhr) => {
-          this.setState({status: status});
-        }
-      )
-      .fail(() => {
-        this.setState({status: "failed!"});
-      });
+      handleSubmit(event) {
+        event.preventDefault();
+        const url = \`\${document.location.origin}/\${this.props.token}/configuration\`;
+        $.post(
+          url,
+          { aid: this.state.aid, config: { ${generateResultConfig(configSchema)} } },
+          (data, status, xhr) => {
+            this.setState({status: status});
+          }
+        )
+        .fail(() => {
+          this.setState({status: "failed!"});
+        });
+      }
     }
+    `;
+  } else {
+    return '';
   }
-  `;
 }
 
 function generateDefaultPropValues(configSchema) {
@@ -140,10 +143,7 @@ function generateFormElements(configSchema) {
 
                     <div className="form-group">
                       <div className="col-lg-10 col-sm-10 col-lg-offset-2 col-sm-offset-2">
-                        <p>Please ensure the following key is added as a read-only deploy key to this repository:</p>
-                        <pre style={{whiteSpace: "pre-wrap"}}>
-                          ${deployKey}
-                        </pre>
+                        <p>Please ensure GHE user ${process.env.GHE_USER} has read-only access to this repository.</p>
                       </div>
                     </div>
                   </div>`;
