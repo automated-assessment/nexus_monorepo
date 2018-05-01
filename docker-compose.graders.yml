@@ -51,9 +51,7 @@ services:
     env_file: .env.iograder.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
     environment:
       NEXUS_BASE_URL: http://nexus:3000
-      MONGO_HOST: mongodb
-      UAT_HOST: unique-assignment-tool
-      UAT_PORT: 3009
+      MYSQL_HOST: mysql-iograder
     ports:
       - "3004:5000"
     logging:
@@ -63,18 +61,17 @@ services:
         tag: "io-grader"
     depends_on:
       - syslog
-      - mongodb
-  mongodb:
-    image: mongo:latest
+      - mysql-iograder
+  mysql-iograder:
+    image: mysql:5.7
+    env_file: .env.iograder.list
     volumes:
-      - ./mongodata:/data/db
+      - ./iograder_data:/var/lib/mysql
     logging:
       driver: syslog
       options:
         syslog-address: "udp://localhost:5514"
-        tag: "mongodb"
-    depends_on:
-      - syslog
+        tag: "iograder-db"
   peer-feedback:
     build: peerfeedback
     env_file: .env.peerfeedback.list
@@ -92,6 +89,17 @@ services:
     depends_on:
       - syslog
       - mongodb
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - ./mongodata:/data/db
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "mongodb"
+    depends_on:
+      - syslog
   junit-grader:
     build:
       context: junit-grader/
@@ -112,7 +120,7 @@ services:
       - syslog
       - mysql-junit
   mysql-junit:
-    image: mysql
+    image: mysql:5.7
     # ports:
     #   - 3306:3306
     env_file: .env.junit.list

@@ -69,7 +69,7 @@ services:
       - syslog
       - agmysql
   agmysql:
-    image: mysql
+    image: mysql:5.7
     environment:
       MYSQL_DATABASE: ag
       MYSQL_USER: ag-tool
