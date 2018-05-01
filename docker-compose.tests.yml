@@ -27,7 +27,7 @@ services:
       - rng-tool # Need to include in dependencies or it won't get started
       - config-tool # Need to include in dependencies or it won't get started
       - javac-tool # Need to include in dependencies or it won't get started
-      - io-tool # Need to include in dependencies or it won't get started
+      - io-grader # Need to include in dependencies or it won't get started
       - peer-feedback # Need to include in dependencies or it won't get started
       - abstract-grader
     logging:

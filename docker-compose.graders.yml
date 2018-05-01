@@ -46,23 +46,21 @@ services:
         tag: "javac-tool"
     depends_on:
       - syslog
-  io-tool:
-    build: IO-tool/
-    env_file: .env.iotool.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
+  io-grader:
+    build: io-grader/
+    env_file: .env.iograder.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
     environment:
       NEXUS_BASE_URL: http://nexus:3000
       MONGO_HOST: mongodb
       UAT_HOST: unique-assignment-tool
       UAT_PORT: 3009
     ports:
-      - "3004:3001"
-    volumes:
-      - ./iotool_data:/home/app/submissions
+      - "3004:5000"
     logging:
       driver: syslog
       options:
         syslog-address: "udp://localhost:5514"
-        tag: "io-tool"
+        tag: "io-grader"
     depends_on:
       - syslog
       - mongodb
