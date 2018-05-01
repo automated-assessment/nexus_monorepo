@@ -29,7 +29,7 @@ fi
 
 CLASSPATH="$TEST_CLASSPATH"
 export CLASSPATH
-java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap uk.ac.kcl.inf.nexus.io_grader.TestRunner $test_file/IO_specification.tests $1 $MARK_FILE
+java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap uk.ac.kcl.inf.nexus.io_grader.TestRunner $test_files/IO_specification.tests $1 $MARK_FILE
 if [ $? -ne 0 ]; then
   rm -rf $BIN_DIR
   rm -f $MARK_FILE

@@ -3,7 +3,7 @@ dbdata/
 rabbitmq_data/
 javac_data/
 junit_data/
-iotool_data/
+iograder_data/
 mongodata/
 logs/
 npm-debug.log
