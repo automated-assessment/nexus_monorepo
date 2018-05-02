@@ -11,7 +11,7 @@ services:
   javac-tool:
     environment:
       NEXUS_BASE_URL: http://grader-tester:3000
-  io-tool:
+  io-grader:
     environment:
       NEXUS_BASE_URL: http://grader-tester:3000
   peer-feedback:
