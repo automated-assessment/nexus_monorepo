@@ -123,7 +123,7 @@ const marker_queue = async.queue((task, cb) => {
 
 function markSubmission(aid, submissionID, cloneURL, branch, sha, cb) {
   console.log(`Starting marking process for submission ${submissionID}.`);
-  const sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}`);
+  const sourceDir = path.resolve(process.env.SUBMISSIONS_DIRECTORY, `cloned-submission-${submissionID}-${Date.now()}`);
 
   async.series([
       (cb) => {
