@@ -3,6 +3,11 @@
     <div>
       <h5 class="course-title"><%= icon 'tasks' %> <%= link_to @submission.assignment.title, @submission.assignment %></h5>
       <h2>Attempt #<%= @submission.attempt_number%></h2>
+      <% if @submission.user != current_user %>
+        <div>
+          <%= icon 'user' %>&nbsp;<%= @submission.user.name %>
+        </div>
+      <% end %>
       <div class="assignment-dates">
         Submitted <%= pretty_datetime @submission.submitted %>
         <% if @submission.late %>
