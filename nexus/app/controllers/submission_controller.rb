@@ -27,13 +27,22 @@ class SubmissionController < ApplicationController
     if @submission.assignment.allow_git
       if current_user.githubtoken
         @client = Octokit::Client.new(login: current_user.ghe_login, access_token: current_user.githubtoken, auto_paginate: true)
-        @repo_list = []
+        @ghe_repo_list = []
         @client.repos(sort: 'updated', per_page: 100, affiliation: 'owner,collaborator,organization_member', visibility: 'all').each do |r|
-          @repo_list << [r.full_name, r.clone_url]
+          @ghe_repo_list << [r.full_name, r.clone_url]
         end
       else
-        flash.now[:warning] = 'Git submission disabled as there is no GitHub token stored for your user'
-        @submission.assignment.allow_git = false
+        flash.now[:warning] = 'GitHub Enterprise submission disabled as there is no GitHub Enterpise token stored for you.'
+      end
+
+      if current_user.github_com_token
+        @client = Octokit::Client.new(api_endpoint: 'https://api.github.com/', login: current_user.github_com_login, access_token: current_user.github_com_token, auto_paginate: true)
+        @github_com_repo_list = []
+        @client.repos(sort: 'updated', per_page: 100, affiliation: 'owner,collaborator,organization_member', visibility: 'all').each do |r|
+          @github_com_repo_list << [r.full_name, r.clone_url]
+        end
+      else
+        flash.now[:warning] << 'GitHub.com submission disabled as there is no GitHub.com token stored for you. Please first associate your GitHub.com profile to your profile on Nexus.'
       end
     end
   end
