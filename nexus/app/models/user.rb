@@ -57,9 +57,9 @@ class User < ActiveRecord::Base
   end
 
   def associate_github_com_data(auth)
-    github_com_login = auth.extra.raw_info.login if auth.extra.raw_info.login
-    github_com_token = auth.credentials.token
-    github_com_profile_url = auth.extra.raw_info.html_url if auth.extra.raw_info.html_url
+    self.github_com_login = auth.extra.raw_info.login if auth.extra.raw_info.login
+    self.github_com_token = auth.credentials.token
+    self.github_com_profile_url = auth.extra.raw_info.html_url if auth.extra.raw_info.html_url
 
     save!
 
