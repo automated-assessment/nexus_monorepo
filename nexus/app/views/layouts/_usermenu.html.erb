@@ -11,20 +11,24 @@
           <% end %>
         </li>
       <% end %>
-      <% if current_user.github_com_token %>
-        <li>
-          <%= link_to current_user.github_com_profile_url, target: '_blank' do %>
-            <%= icon 'github' %> GitHub.com Profile
-          <% end %>
-        </li>
-      <% else %>
-        <li>
-          <%= link_to(user_omniauth_authorize_url(provider: :github_com)) do %>
-            <%= icon 'github' %> Associate GitHub.com account
-          <% end %>
-        </li>
+      <% if Rails.configuration.github_com_oauth_id %>
+        <% if current_user.github_com_token %>
+          <li>
+            <%= link_to current_user.github_com_profile_url, target: '_blank' do %>
+              <%= icon 'github' %> GitHub.com Profile
+            <% end %>
+          </li>
+        <% else %>
+          <li>
+            <%= link_to(user_omniauth_authorize_url(provider: :github_com)) do %>
+              <%= icon 'github' %> Associate GitHub.com account
+            <% end %>
+          </li>
+        <% end %>
       <% end %>
-      <li role="separator" class="divider"></li>
+      <% if Rails.configuration.github_com_oauth_id || current_user.ghe_profile_url %>
+        <li role="separator" class="divider"></li>
+      <% end %>
       <li><%= link_to(destroy_user_session_path) do %>
             <%= icon 'sign-out' %> Logout</a>
           <% end %>
