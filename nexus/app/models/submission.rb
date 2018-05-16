@@ -70,7 +70,11 @@ class Submission < ActiveRecord::Base
     return 'ERR' if repourl.nil? || repourl.index('//').nil?
     url = repourl.dup
     auth = if studentrepo
-             user.githubtoken
+             if repourl.include? 'github.com'
+               user.github_com_token
+             else
+               user.githubtoken
+             end
            else
              "#{Rails.configuration.ghe_user}:#{Rails.configuration.ghe_password}"
            end
