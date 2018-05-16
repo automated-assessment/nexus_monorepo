@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171113122415) do
+ActiveRecord::Schema.define(version: 20180516111715) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.string   "access_token", null: false
@@ -201,6 +201,9 @@ ActiveRecord::Schema.define(version: 20171113122415) do
     t.text     "githubtoken"
     t.text     "ghe_profile_url"
     t.string   "ghe_login"
+    t.text     "github_com_token"
+    t.text     "github_com_profile_url"
+    t.string   "github_com_login"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true

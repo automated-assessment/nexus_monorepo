@@ -9,4 +9,15 @@ class CallbacksController < Devise::OmniauthCallbacksController
       redirect_to error_url '500', status: 500
     end
   end
+
+  def github_com
+    omniauth_data = request.env['omniauth.auth']
+
+    authenticate_user!
+
+    current_user.associate_github_com_data(omniauth_data)
+
+    flash[:success] = 'Successfully associated your github.com profile.'
+    redirect_to '/'
+  end
 end

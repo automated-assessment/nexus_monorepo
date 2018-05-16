@@ -56,6 +56,16 @@ class User < ActiveRecord::Base
     courses.union(taught_courses).order(:title)
   end
 
+  def associate_github_com_data(auth)
+    github_com_login = auth.extra.raw_info.login if auth.extra.raw_info.login
+    github_com_token = auth.credentials.token
+    github_com_profile_url = auth.extra.raw_info.html_url if auth.extra.raw_info.html_url
+
+    save!
+
+    log("Associated github.com profile #{github_com_login} with this user.")
+  end
+
   def log(body, level = 'info')
     AuditItem.create!(user: self,
                       body: body,
