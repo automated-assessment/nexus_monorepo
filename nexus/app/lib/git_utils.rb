@@ -188,7 +188,7 @@ class GitUtils
     def valid_repo?(submission)
       return true unless submission.studentrepo # We've constructed the repo ourselves so this should be OK by default
 
-      client = new_user_git_client(submission.user)
+      client = new_user_git_client(submission)
       owner_repo = owner_and_repo_name(submission)
 
       begin
@@ -228,8 +228,13 @@ class GitUtils
       Octokit::Client.new(login: Rails.configuration.ghe_user, password: Rails.configuration.ghe_password)
     end
 
-    def new_user_git_client(user)
-      Octokit::Client.new(login: user.ghe_login, access_token: user.githubtoken)
+    def new_user_git_client(submission)
+      # Handle separately GHE and github.com repositories by checking the repo URL
+      if submission.repourl.include? 'github.com'
+        Octokit::Client.new(api_endpoint: 'https://api.github.com/', login: submission.user.github_com_login, access_token: submission.user.github_com_token)
+      else
+        Octokit::Client.new(login: submission.user.ghe_login, access_token: submission.user.githubtoken)
+      end
     end
 
     # Split on / and grab the last two entries (user and repo name)

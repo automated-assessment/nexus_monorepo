@@ -35,6 +35,7 @@ You will also find information about how to develop your own contributions to Ne
   14. In your `.env.list` file. Set `NEXUS_GITHUB_ORG` to be equal to the name you gave to your organisation.
   15. In your `.env.list` file. Set `NEXUS_GHE_OAUTH_ID` to be equal to the Client ID you were given.
   16. In your `.env.list` file. Set `NEXUS_GHE_OAUTH_SECRET` to be equal to the Client Secret you were given.
+  17. If you also want to support submissions via `github.com`, similarly create an OAuth application there and make the ID and secret available via variables `NEXUS_GITHUB_COM_OAUTH_ID` and `NEXUS_GITHUB_COM_OAUTH_SECRET`, respectively, in your `.env.list` file. This will allow users to associate their `github.com` profiles from their name menu in the top-right corner of the page.
 
 **5. Create a Personal Access Token**
   1. Go to your profile settings as in step 4

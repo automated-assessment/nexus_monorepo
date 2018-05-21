@@ -2,20 +2,19 @@
 
   <%= f.hidden_field :assignment_id, value: @submission.assignment.id %>
 
-  <p>When submitting through Git, you agree to the following:</p>
+  <p>When submitting via Git, you agree to the following:</p>
   <ol>
     <li>The specific commit you have indicated will constitute your submission
       for marking purposes. It is your responsibility to ensure that the data
-      you submit (including the Git URL, the branch name, and the commit SHA)
-      are correct and do not contain any typos.</li>
+      you submit (including the Git repository, the branch name, and the commit
+      SHA) are correct and do not contain any typos.</li>
     <li>It is your responsibility to ensure that your submission remains accessible
-      to the marking system and to teaching staff at any time. The easiest way
-      to do so is to (a) provide submissions from a King's Github Enterprise
-      repository only, and (b) not remove the repository until the marks have
-      been ratified by the College Exam Board. If the repository becomes
+      to the marking system and to teaching staff at any time. In particular, do
+      not remove the repository until the marks have ratified by the College Exam
+      Board and any appeals have been decided on. If the repository becomes
       inaccessible to the marking system at any point (except through a technical
-      failure of Github Enterprise), you are likely to receive a mark of zero
-      for your submission.</li>
+      failure of GitHub / GitHub Enterprise), you are likely to receive a mark
+      of zero for your submission.</li>
     <li>Attempts to alter the Git history for your submission or indeed the
       submission itself constitute misconduct according to the B3 Misconduct
       Regulations. Any suspected cases of this will be dealt with according to
@@ -27,9 +26,9 @@
   <br />
 
   <div class="form-group">
-    <%= f.label 'Repo', class: 'col-lg-2 control-label' %>
+    <%= f.label 'Repository', class: 'col-lg-2 control-label' %>
     <div class="col-lg-10">
-      <%= f.select :repourl, @repo_list, {}, class: 'form-control' %>
+      <%= f.select :repourl, repos, {}, class: 'form-control' %>
     </div>
   </div>
 

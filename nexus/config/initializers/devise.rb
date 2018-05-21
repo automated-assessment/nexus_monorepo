@@ -263,9 +263,21 @@ Devise.setup do |config|
                   Rails.configuration.ghe_oauth_id,
                   Rails.configuration.ghe_oauth_secret,
                   client_options: {
+                    # TODO Make these URLs configurable externally
                     site: 'https://github.kcl.ac.uk/api/v3',
                     authorize_url: 'https://github.kcl.ac.uk/login/oauth/authorize',
                     token_url: 'https://github.kcl.ac.uk/login/oauth/access_token'
                   },
                   scope: 'user repo'
+
+  # Support for allowing students to associated their github.com profiles
+  if Rails.configuration.github_com_oauth_id
+    config.omniauth :github_com,
+                    Rails.configuration.github_com_oauth_id,
+                    Rails.configuration.github_com_oauth_secret,
+                    # Also use the github omniauth strategy
+                    strategy_class: OmniAuth::Strategies::GitHub,
+                    name: :github_com,
+                    scope: 'user repo'
+  end
 end

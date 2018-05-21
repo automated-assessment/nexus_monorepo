@@ -18,7 +18,12 @@
       <li role="presentation" <% unless (had_active_tab) %>class="active"<% had_active_tab = true end %>><a href="#zip" aria-controls="zip" role="tab" data-toggle="tab"><%= icon 'file-archive-o' %> ZIP</a></li>
     <% end %>
     <% if @submission.assignment.allow_git %>
-      <li role="presentation" <% unless (had_active_tab) %>class="active"<% had_active_tab = true end %>><a href="#git" aria-controls="git" role="tab" data-toggle="tab"><%= icon 'git' %> Git</a></li>
+      <% if @ghe_repo_list %>
+        <li role="presentation" <% unless (had_active_tab) %>class="active"<% had_active_tab = true end %>><a href="#ghe" aria-controls="git" role="tab" data-toggle="tab"><%= icon 'git-square' %> GitHub Enterprise</a></li>
+      <% end %>
+      <% if @github_com_repo_list %>
+        <li role="presentation" <% unless (had_active_tab) %>class="active"<% had_active_tab = true end %>><a href="#github" aria-controls="git" role="tab" data-toggle="tab"><%= icon 'github' %> GitHub.com</a></li>
+      <% end %>
     <% end %>
     <% if @submission.assignment.allow_ide %>
       <li role="presentation" <% unless (had_active_tab) %>class="active"<% had_active_tab = true end %>><a href="#ide" aria-controls="ide" role="tab" data-toggle="tab"><%= icon 'code' %> Web IDE</a></li>
@@ -32,7 +37,12 @@
       <div role="tabpanel" class="tab-pane sub-pane <% unless (had_active_tab) %>active<% had_active_tab = true end %>" id="zip"><hr><%= render 'zip' %></div>
     <% end %>
     <% if @submission.assignment.allow_git %>
-      <div role="tabpanel" class="tab-pane sub-pane <% unless (had_active_tab) %>active<% had_active_tab = true end %>" id="git"><hr><%= render 'git' %></div>
+      <% if @ghe_repo_list %>
+        <div role="tabpanel" class="tab-pane sub-pane <% unless (had_active_tab) %>active<% had_active_tab = true end %>" id="ghe"><hr><%= render partial: 'git', locals: { repos: @ghe_repo_list } %></div>
+      <% end %>
+      <% if @github_com_repo_list %>
+        <div role="tabpanel" class="tab-pane sub-pane <% unless (had_active_tab) %>active<% had_active_tab = true end %>" id="github"><hr><%= render partial: 'git', locals: { repos: @github_com_repo_list } %></div>
+      <% end %>
     <% end %>
     <% if @submission.assignment.allow_ide %>
       <div role="tabpanel" class="tab-pane sub-pane <% unless (had_active_tab) %>active<% had_active_tab = true end %>" id="ide"><hr><%= render 'ide' %></div>
