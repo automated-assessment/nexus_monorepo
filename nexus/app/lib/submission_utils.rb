@@ -61,6 +61,12 @@ class SubmissionUtils
       end
     end
 
+    def mark_tool_running (submission, marking_tool_uid)
+      submission.active_services[marking_tool_uid] = Set.new
+      submission.active_services[marking_tool_uid].add WorkflowUtils::RUNNING
+      submission.save!
+    end
+
     def remark!(submission, user, flash)
       if submission.mark_override
         submission.log("Request to remark by user #{user.name} refused as mark has been manually overridden.", 'Warning')
