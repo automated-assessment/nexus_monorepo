@@ -62,9 +62,11 @@ class SubmissionUtils
     end
 
     def mark_tool_running (submission, marking_tool_uid)
-      submission.active_services[marking_tool_uid] = Set.new
-      submission.active_services[marking_tool_uid].add WorkflowUtils::RUNNING
-      submission.save!
+      # submission.transaction(:requires_new => true) do
+        submission.active_services[marking_tool_uid] = Set.new
+        submission.active_services[marking_tool_uid].add WorkflowUtils::RUNNING
+        submission.save!
+      # end
     end
 
     def remark!(submission, user, flash)
