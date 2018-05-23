@@ -42,7 +42,12 @@ class SubmissionController < ApplicationController
           @github_com_repo_list << [r.full_name, r.clone_url]
         end
       else
-        flash.now[:warning] << 'GitHub.com submission disabled as there is no GitHub.com token stored for you. Please first associate your GitHub.com profile to your profile on Nexus.'
+         warning_message = 'GitHub.com submission disabled as there is no GitHub.com token stored for you. Please first associate your GitHub.com profile to your profile on Nexus.'
+         if flash.now[:warning]
+           flash.now[:warning] << warning_message
+         else
+           flash.now[:warning] = warning_message
+         end
       end
     end
   end
