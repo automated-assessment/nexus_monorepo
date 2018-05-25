@@ -46,7 +46,17 @@ class SubmissionUtils
       # Assume this is all going to go well
       submission.failed = false
       submission.save!
+      
       to_invoke = WorkflowUtils.next_services_to_invoke(submission.active_services)
+
+      # First mark each service as running
+      to_invoke.each do |service|
+        submission.active_services[service] = Set.new
+        submission.active_services[service].add WorkflowUtils::RUNNING
+      end
+      submission.save!
+
+      # Then actually trigger them
       to_invoke.each do |service|
         mt = MarkingTool.find_by(uid: service)
         begin

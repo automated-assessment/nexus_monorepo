@@ -15,6 +15,7 @@ class SendSubmissionJob < ActiveJob::Base
 
     uri = URI.parse(marking_tool.url)
     @submission.log("Notifying #{marking_tool.name} at #{uri}...", 'Debug')
+
     Net::HTTP.start(uri.host, uri.port) do |http|
       req = Net::HTTP::Post.new(uri.request_uri, 'Content-Type' => 'application/json')
 

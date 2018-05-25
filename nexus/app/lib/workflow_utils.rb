@@ -2,6 +2,8 @@ require 'set'
 require 'uri'
 
 class WorkflowUtils
+  RUNNING = '__RUNNING__'
+  
   class << self
     # Given marking tool contexts and service dependency information
     # Constructs a workflow using a hash where each key is a marking service
