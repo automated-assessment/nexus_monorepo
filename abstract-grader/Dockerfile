@@ -1,4 +1,4 @@
-FROM node
+FROM node:9.11
 
 # grab gosu for easy step-down from root
 RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
