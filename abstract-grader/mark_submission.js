@@ -10,7 +10,7 @@ const configSchema = yaml.readSync ('config_schema.yml', {schema: yaml.schema.de
 
 const cmd = process.env.TOOL_CMD ? process.env.TOOL_CMD : '/usr/src/app/grade_submission.sh';
 
-export function doMarkSubmission(submissionID, sourceDir, config, cb) {
+export function doMarkSubmission(submissionID, sourceDir, config, is_unique, cb) {
   console.log(`About to run marking tool for submission ${submissionID}.`);
 
   tmp.file({ prefix: 'results-', postfix: '.html', discardDescriptor: true },
@@ -23,7 +23,7 @@ export function doMarkSubmission(submissionID, sourceDir, config, cb) {
       async.series({
           chownSourceDir: (cb) => { makeAppOwned(sourceDir, cb); },
           chownResultsFile: (cb) => { makeAppOwned(path, cb); },
-          mark: (cb) => { _doMarkSubmission(submissionID, sourceDir, config, path, cleanupCallback, cb); }
+          mark: (cb) => { _doMarkSubmission(submissionID, sourceDir, config, path, is_unique, cleanupCallback, cb); }
         },
         (err, res) => {
           if (res.mark) {
@@ -35,11 +35,11 @@ export function doMarkSubmission(submissionID, sourceDir, config, cb) {
     });
 }
 
-function _doMarkSubmission(submissionID, sourceDir, config, path, cleanupCallback, cb) {
+function _doMarkSubmission(submissionID, sourceDir, config, path, is_unique, cleanupCallback, cb) {
   console.log(`Processing marking of submission ${submissionID} using file ${path} for communication.`);
 
   // Call cmd and transfer relevant information.
-  processConfig(config, (err, env, cleanup) => {
+  processConfig(config, is_unique, (err, env, cleanup) => {
     if (err) {
       cleanup();
       cleanupCallback();
@@ -86,7 +86,7 @@ function _doMarkSubmission(submissionID, sourceDir, config, path, cleanupCallbac
   });
 }
 
-function processConfig(config, cb) {
+function processConfig(config, is_unique, cb) {
   if (!config) {
     cb(null, {'NEXUS_ACCESS_TOKEN':''}, () => {});
   } else {
@@ -108,6 +108,13 @@ function processConfig(config, cb) {
                   },
                   (cb) => {
                     checkoutFiles(config[param].sha, path, cb);
+                  },
+                  (cb) => {
+                    if ((is_unique) && (configSchema.parameters[param].uniquify)) {
+                      uniquifyFilesIfNeeded(path, configSchema.parameters[param].uniquify, cb);
+                    } else {
+                      cb();
+                    }
                   },
                   (cb) => {
                     makeAppOwned(path, cb);
@@ -156,6 +163,14 @@ function makeAppOwned(dir, cb) {
         .on('end', cb);
     }
   });
+}
+
+/**
+ * Find all files in path that match any of the glob patterns in uniquify and
+ * replace them by what the unique assignment tool reports for them.
+ */
+function uniquifyFilesIfNeeded(path, uniquify, cb) {
+  // TODO Implement!
 }
 
 // TODO: DRY up
