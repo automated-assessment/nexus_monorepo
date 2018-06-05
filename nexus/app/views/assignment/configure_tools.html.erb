@@ -3,9 +3,7 @@
     <h2>Configure Tools for <%= @assignment.title %></h2>
     <h6>Assignment ID: <code><%= @assignment.id %></code></h6>
 
-    <p>
-      <%= markdown(@assignment.displayable_description current_user) %>
-    </p>
+    <%= render 'assignment_description' %>
   </div>
   <div class="col-md-4">
     <%= link_to assignment_path(id: @assignment.id) do %>

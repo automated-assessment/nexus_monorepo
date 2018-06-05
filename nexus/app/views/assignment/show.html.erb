@@ -1,48 +1,46 @@
 <%= render 'header' %>
-<p>
-  <%= markdown(@assignment.displayable_description current_user) %>
-  <hr />
-  <% unless @assignment.feedback_only %>
-    <h4>Marking Scheme</h4>
-  <% end %>
-  <table class="table table-hover">
-    <thead>
+<%= render 'assignment_description' %>
+<hr />
+<% unless @assignment.feedback_only %>
+  <h4>Marking Scheme</h4>
+<% end %>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Rubric</th>
+      <th>Context</th>
+      <% unless @assignment.feedback_only %>
+        <th>Weight</th>
+      <% end %>
+      <% if admin? %>
+        <th>Update configuration</th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% @assignment.marking_tool_contexts.each do |t| %>
       <tr>
-        <th>Rubric</th>
-        <th>Context</th>
+        <th scope="row"><%= t.marking_tool.name %></th>
+        <td><%= t.context %></td>
         <% unless @assignment.feedback_only %>
-          <th>Weight</th>
+          <td><%= t.weight %>%</td>
         <% end %>
-        <% if admin? %>
-          <th>Update configuration</th>
-        <% end %>
-      </tr>
-    </thead>
-    <tbody>
-      <% @assignment.marking_tool_contexts.each do |t| %>
-        <tr>
-          <th scope="row"><%= t.marking_tool.name %></th>
-          <td><%= t.context %></td>
-          <% unless @assignment.feedback_only %>
-            <td><%= t.weight %>%</td>
-          <% end %>
 
-          <% if admin?%>
-            <td>
-            <% if t.marking_tool.requires_config? %>
-              <%= link_to(t.marking_tool.config_url.gsub('%{aid}', @assignment.id.to_s), target: '_blank') do %>
-                <button type="button" class="btn btn-xs btn-primary"><%= icon 'pencil-square-o' %></button>
-              <% end %>
-            <% else %>
-              <p>Not configurable</p>
-            <% end # End if t.configured %>
-            </td>
-          <% end # end if admin?%>
-        </tr>
-      <% end # End @assignment.marking_tool_contexts.each %>
-    </tbody>
-  </table>
-</p>
+        <% if admin?%>
+          <td>
+          <% if t.marking_tool.requires_config? %>
+            <%= link_to(t.marking_tool.config_url.gsub('%{aid}', @assignment.id.to_s), target: '_blank') do %>
+              <button type="button" class="btn btn-xs btn-primary"><%= icon 'pencil-square-o' %></button>
+            <% end %>
+          <% else %>
+            <p>Not configurable</p>
+          <% end # End if t.configured %>
+          </td>
+        <% end # end if admin?%>
+      </tr>
+    <% end # End @assignment.marking_tool_contexts.each %>
+  </tbody>
+</table>
 <% if @assignment.started? %>
   <hr />
   <h4>Your submissions</h4>

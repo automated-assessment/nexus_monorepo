@@ -1,0 +1,6 @@
+<div class="summary_and_detail">
+  <div class="collapse" id="assignment_description">
+    <%= markdown(@assignment.displayable_description current_user) %>
+  </div>
+  <a class="collapsed" data-toggle="collapse" href="#assignment_description" aria-expanded="false" aria-controls="assignment_description"></a>
+</div>
