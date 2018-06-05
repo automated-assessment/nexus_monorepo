@@ -86,3 +86,29 @@ $border: #e5e5e5;
     }
   }
 }
+
+.summary_and_detail {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.summary_and_detail div.collapse:not(.in) {
+    height: 42px !important;
+    overflow: hidden;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.summary_and_detail div.collapsing {
+    min-height: 42px !important;
+}
+
+.summary_and_detail a.collapsed:after  {
+    content: '+ Read More...';
+}
+
+.summary_and_detail a:not(.collapsed):after {
+    content: '- Read Less...';
+}
