@@ -71,7 +71,7 @@ class CourseController < ApplicationController
     else
       flash[:warning] = 'Course deleted successfully. However, one or more remote assignments were not removed from github'
     end
-    redirect_to '/'
+    redirect_to all_courses_url
   end
 
   private
