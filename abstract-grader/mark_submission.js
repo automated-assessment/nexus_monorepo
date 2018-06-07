@@ -5,6 +5,7 @@ import yaml from 'node-yaml';
 import fs from 'fs';
 import klaw from 'klaw';
 import userid from 'userid';
+import glob from 'glob'
 
 const configSchema = yaml.readSync ('config_schema.yml', {schema: yaml.schema.defaultSafe});
 
@@ -170,7 +171,23 @@ function makeAppOwned(dir, cb) {
  * replace them by what the unique assignment tool reports for them.
  */
 function uniquifyFilesIfNeeded(path, uniquify, cb) {
-  // TODO Implement!
+  // Find all file names that match the uniquify glob pattern.
+  glob(uniquify, {cwd: path, root: path, nodir: true, absolute: true}, (err, fileNames) {
+    if (err) {
+      cb(err);
+      return;
+    }
+
+    /*
+     * Plan:
+     *
+     * 2. Send files to UAT
+     * 3. Replace files with those received from UAT
+     */
+    
+
+    cb();
+  });
 }
 
 // TODO: DRY up
