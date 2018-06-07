@@ -178,15 +178,40 @@ function uniquifyFilesIfNeeded(path, uniquify, cb) {
       return;
     }
 
-    /*
-     * Plan:
-     *
-     * 2. Send files to UAT
-     * 3. Replace files with those received from UAT
-     */
-    
+    let fileData = new Map();
 
-    cb();
+    async.each(fileNames,
+      (fileName, cb) => {
+        // Load file and store contents in map under file name
+        fs.readFile(fileName, (err, data) => {
+          if (err) {
+            cb(err);
+            return;
+          }
+
+          fileData.set(fileName, data);
+          cb();
+        });
+      },
+      (err) => {
+        // Call UAT and replace file contents with generation result
+        if (err) {
+          cb(err);
+          return;
+        }
+
+        async.series([
+            (cb) => {
+              // TODO Call UAT
+              // TODO This would be much easier if UAT were to work off of the map directly rather than doing a somewhat hamfisted by-index thing
+            },
+            (cb) => {
+              // TODO Write changed files
+            }
+          ],
+          (err, res) => { cb(err); }
+        );
+      });
   });
 }
 
