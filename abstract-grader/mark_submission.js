@@ -178,7 +178,7 @@ function uniquifyFilesIfNeeded(path, uniquify, cb) {
       return;
     }
 
-    let fileData = new Map();
+    let fileData = {};
 
     async.each(fileNames,
       (fileName, cb) => {
@@ -189,7 +189,7 @@ function uniquifyFilesIfNeeded(path, uniquify, cb) {
             return;
           }
 
-          fileData.set(fileName, data);
+          fileData[fileName] = data;
           cb();
         });
       },
@@ -203,7 +203,7 @@ function uniquifyFilesIfNeeded(path, uniquify, cb) {
         async.series([
             (cb) => {
               // TODO Call UAT
-              // TODO This would be much easier if UAT were to work off of the map directly rather than doing a somewhat hamfisted by-index thing
+              // UAT now works off of the map directly, so we can just send our map across
             },
             (cb) => {
               // TODO Write changed files

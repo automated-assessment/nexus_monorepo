@@ -260,8 +260,11 @@ function do_generate (response, studentID, assignmentID, templates) {
   var parameters = [];
   // Hash storing the variables and their values
   var variableValues = {};
-  // Array storing the results, one per template
-  var results = new Array();
+  // Collection for storing the results, one per template. Either a map (object) or an array depending on what inputs we received.
+  var results = {};
+  if (Array.isArray(templates) {
+    results = new Array();
+  }
   async.series([
     (cb) => {
       getParametersFor (parameters, assignmentID, cb);
@@ -271,7 +274,7 @@ function do_generate (response, studentID, assignmentID, templates) {
       getVariableValuesFor (variableValues, parameters, studentID, assignmentID, cb);
     },
     (cb) => {
-      // Generate from each template
+      // Generate from each template -- this can handle both maps and arrays
       async.forEachOf (templates,
         (template, index, cb2) => {
           do_generate_one (results, template, assignmentID, studentID, index, variableValues, cb2);
