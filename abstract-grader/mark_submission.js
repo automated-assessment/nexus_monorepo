@@ -11,7 +11,7 @@ const configSchema = yaml.readSync ('config_schema.yml', {schema: yaml.schema.de
 
 const cmd = process.env.TOOL_CMD ? process.env.TOOL_CMD : '/usr/src/app/grade_submission.sh';
 
-export function doMarkSubmission(submissionID, sourceDir, config, is_unique, cb) {
+export function doMarkSubmission(aid, studentuid, submissionID, sourceDir, config, is_unique, cb) {
   console.log(`About to run marking tool for submission ${submissionID}.`);
 
   tmp.file({ prefix: 'results-', postfix: '.html', discardDescriptor: true },
@@ -24,7 +24,7 @@ export function doMarkSubmission(submissionID, sourceDir, config, is_unique, cb)
       async.series({
           chownSourceDir: (cb) => { makeAppOwned(sourceDir, cb); },
           chownResultsFile: (cb) => { makeAppOwned(path, cb); },
-          mark: (cb) => { _doMarkSubmission(submissionID, sourceDir, config, path, is_unique, cleanupCallback, cb); }
+          mark: (cb) => { _doMarkSubmission(aid, studentuid, submissionID, sourceDir, config, path, is_unique, cleanupCallback, cb); }
         },
         (err, res) => {
           if (res.mark) {
@@ -36,11 +36,11 @@ export function doMarkSubmission(submissionID, sourceDir, config, is_unique, cb)
     });
 }
 
-function _doMarkSubmission(submissionID, sourceDir, config, path, is_unique, cleanupCallback, cb) {
+function _doMarkSubmission(aid, studentuid, submissionID, sourceDir, config, path, is_unique, cleanupCallback, cb) {
   console.log(`Processing marking of submission ${submissionID} using file ${path} for communication.`);
 
   // Call cmd and transfer relevant information.
-  processConfig(config, is_unique, (err, env, cleanup) => {
+  processConfig(config, aid, studentuid, is_unique, (err, env, cleanup) => {
     if (err) {
       cleanup();
       cleanupCallback();
@@ -87,7 +87,7 @@ function _doMarkSubmission(submissionID, sourceDir, config, path, is_unique, cle
   });
 }
 
-function processConfig(config, is_unique, cb) {
+function processConfig(config, aid, studentuid, is_unique, cb) {
   if (!config) {
     cb(null, {'NEXUS_ACCESS_TOKEN':''}, () => {});
   } else {
@@ -112,7 +112,7 @@ function processConfig(config, is_unique, cb) {
                   },
                   (cb) => {
                     if ((is_unique) && (configSchema.parameters[param].uniquify)) {
-                      uniquifyFilesIfNeeded(path, configSchema.parameters[param].uniquify, cb);
+                      uniquifyFilesIfNeeded(aid, studentuid, path, configSchema.parameters[param].uniquify, cb);
                     } else {
                       cb();
                     }
@@ -170,7 +170,7 @@ function makeAppOwned(dir, cb) {
  * Find all files in path that match any of the glob patterns in uniquify and
  * replace them by what the unique assignment tool reports for them.
  */
-function uniquifyFilesIfNeeded(path, uniquify, cb) {
+function uniquifyFilesIfNeeded(aid, studentuid, path, uniquify, cb) {
   // Find all file names that match the uniquify glob pattern.
   glob(uniquify, {cwd: path, root: path, nodir: true, absolute: true}, (err, fileNames) {
     if (err) {
@@ -200,17 +200,25 @@ function uniquifyFilesIfNeeded(path, uniquify, cb) {
           return;
         }
 
-        async.series([
-            (cb) => {
-              // TODO Call UAT
-              // UAT now works off of the map directly, so we can just send our map across
+        // Call UAT
+        // UAT now works off of the map directly, so we can just send our map across
+        sendUniquificationRequest(aid, studentuid, fileData, (err, res, body) => {
+          if (err) {
+            cb(err);
+            return;
+          }
+
+          // Get stuff back from UAT and write out to those files.
+          async.each(fileNames,
+            (fileName, cb) => {
+              // Write new contents of this file
+              fs.writeFile(fileName, body.generated[fileName], cb);
             },
-            (cb) => {
-              // TODO Write changed files
+            (err) => {
+              cb(err);
             }
-          ],
-          (err, res) => { cb(err); }
-        );
+          );
+        });
       });
   });
 }
