@@ -28,9 +28,9 @@ export function sendFeedback(feedbackHTML, submissionID, callback) {
 
 export function sendUniquificationRequest(assignmentID, studentID, files, callback) {
   const requestBody = {
-    sid = studentID,
-    aid = assignmentID,
-    templates = files
+    sid: studentID,
+    aid: assignmentID,
+    templates: files
   };
 
   const requestOptions = {

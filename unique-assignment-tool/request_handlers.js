@@ -262,7 +262,7 @@ function do_generate (response, studentID, assignmentID, templates) {
   var variableValues = {};
   // Collection for storing the results, one per template. Either a map (object) or an array depending on what inputs we received.
   var results = {};
-  if (Array.isArray(templates) {
+  if (Array.isArray(templates)) {
     results = new Array();
   }
   async.series([

@@ -172,7 +172,7 @@ function makeAppOwned(dir, cb) {
  */
 function uniquifyFilesIfNeeded(aid, studentuid, path, uniquify, cb) {
   // Find all file names that match the uniquify glob pattern.
-  glob(uniquify, {cwd: path, root: path, nodir: true, absolute: true}, (err, fileNames) {
+  glob(uniquify, {cwd: path, root: path, nodir: true, absolute: true}, (err, fileNames) => {
     if (err) {
       cb(err);
       return;
