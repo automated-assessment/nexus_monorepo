@@ -378,6 +378,7 @@ function do_generate_one (gen_results, template, assignment, student, index, val
       pythonExec.run('/ribosome.py', options, (err, results) => {
         fs.remove(templatePath, (err2) => {
           if (err) {
+            console.log(`Issue running python ribosome: ${err.stack}`);
             cb(err);
             return;
           }
@@ -433,7 +434,7 @@ function getParameterValueForStudent(valueArray, studentID, assignmentID, paramN
         else if(paramType == 'string') {
           console.log("Found string type");
           var max = parameterBufferArray.length - 1;
-          valueArray[paramName] = parameterBufferArray[parseInt(Math.random() * (max - 0) + 0)];
+          valueArray[paramName] = `"${parameterBufferArray[parseInt(Math.random() * (max - 0) + 0)]}"`;
         }
         else if(paramType == 'boolean') {
           console.log ("Found boolean type.");
