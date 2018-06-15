@@ -184,7 +184,7 @@ function uniquifyFilesIfNeeded(aid, studentuid, path, uniquify, cb) {
     async.each(fileNames,
       (fileName, cb) => {
         // Load file and store contents in map under file name
-        fs.readFile(fileName, (err, data) => {
+        fs.readFile(fileName, 'utf8', (err, data) => {
           if (err) {
             cb(err);
             return;

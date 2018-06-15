@@ -274,15 +274,28 @@ function do_generate (response, studentID, assignmentID, templates) {
       getVariableValuesFor (variableValues, parameters, studentID, assignmentID, cb);
     },
     (cb) => {
-      // Generate from each template -- this can handle both maps and arrays
-      async.forEachOf (templates,
-        (template, index, cb2) => {
-          do_generate_one (results, template, assignmentID, studentID, index, variableValues, cb2);
-        },
-        (err) => {
-          cb(err);
-        }
-      );
+      if (Array.isArray(templates)) {
+        console.log("Treating as an array...");
+        async.forEachOf (templates,
+          (template, index, cb2) => {
+            do_generate_one (results, template, assignmentID, studentID, index, variableValues, cb2);
+          },
+          (err) => {
+            cb(err);
+          }
+        );
+      } else {
+        console.log("Treating as an object...");
+        async.each (Object.keys(templates),
+          (key, cb2) => {
+            console.log(`Starting generation for template "${key}".`);
+            do_generate_one (results, templates[key], assignmentID, studentID, key, variableValues, cb2);
+          },
+          (err) => {
+            cb(err);
+          }
+        );
+      }
     }
   ],
   (err, res) => {
