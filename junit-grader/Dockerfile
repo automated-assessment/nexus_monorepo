@@ -1,33 +1,8 @@
+# Generate UI from configuration file
 FROM abstract-grader AS core-grader
 
-FROM node:9.11
-
-# TODO: Slightly annoyingly, there's a fair bit of stuff we actually need to redo from abstract grader. Not happy with this.
-
-# grab gosu for easy step-down from root
-RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
-	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture)" \
-	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture).asc" \
-	&& gpg --verify /usr/local/bin/gosu.asc \
-	&& rm /usr/local/bin/gosu.asc \
-	&& chmod +x /usr/local/bin/gosu \
-	&& apt-get purge -y --auto-remove ca-certificates wget
-
-# Create app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-
-# Create app user. This user will be used to step down to when running the grade script
-RUN groupadd -r app && useradd -rmg app app
-
-ARG GHE_USER
-ENV GHE_USER=$GHE_USER
-
-# Define submissions directory
-ENV SUBMISSIONS_DIRECTORY=/mnt/submissions/
-
-# End copy from abstract grader setup
+# Install java and set up the grader
+FROM abstract-grader:core
 
 ##########################################
 # Install Open-JDK (inspired by on official Docker image code)
@@ -77,12 +52,8 @@ RUN curl http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4
     curl http://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar > hamcrest-core-1.3.jar && \
     chown app:app *.jar
 
-COPY --from=core-grader /root/.ssh/ /root/.ssh/
-
-COPY --from=core-grader --chown=app:app /usr/src/app /usr/src/app
-COPY --from=core-grader /entrypoint.sh /entrypoint.sh
-
 # Bundle app source
+COPY --from=core-grader --chown=app:app /usr/src/app /usr/src/app
 COPY --chown=app:app grade_submission.sh /usr/src/app
 
 # Add our custom annotations
@@ -95,7 +66,3 @@ RUN mkdir ./bin && \
 COPY lib lib
 RUN javac -d ./bin -cp ./bin:junit-4.12.jar:hamcrest-core-1.3.jar $(find ./lib -name '*.java') && \
     chown -R app:app ./bin
-
-ENTRYPOINT ["/entrypoint.sh"]
-
-CMD ["start"]
