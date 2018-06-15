@@ -92,7 +92,8 @@ init-env: .env.list .env.uat.list .env.javac.list .env.rng.list .env.iograder.li
 
 .build-mode/.abstract-grader: abstract-grader/*
 	@echo "Working in $(build-mode) mode."
-	docker build -t abstract-grader --build-arg GHE_USER=$$(grep "NEXUS_GITHUB_USER" ./.env.list | cut -d = -f 2) abstract-grader
+	docker build -t abstract-grader:core --build-arg GHE_USER=$$(grep "NEXUS_GITHUB_USER" ./.env.list | cut -d = -f 2) abstract-grader
+	docker build -t abstract-grader -f abstract-grader/Dockerfile.app_code abstract-grader
 	@mkdir -p .build-mode
 	@touch .build-mode/.abstract-grader
 
