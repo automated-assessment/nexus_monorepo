@@ -431,7 +431,7 @@ function getParameterValueForStudent(valueArray, studentID, assignmentID, paramN
         else if(paramType == 'string') {
           console.log("Found string type");
           var max = parameterBufferArray.length - 1;
-          valueArray[paramName] = `"${parameterBufferArray[parseInt(Math.random() * (max - 0) + 0)]}"`;
+          valueArray[paramName] = `"${parameterBufferArray[parseInt(Math.random() * max)]}"`;
         }
         else if(paramType == 'boolean') {
           console.log ("Found boolean type.");
