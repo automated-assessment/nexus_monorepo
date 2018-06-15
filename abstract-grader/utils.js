@@ -43,7 +43,7 @@ export function sendUniquificationRequest(assignmentID, studentID, files, callba
     body: requestBody
   };
 
-  request(resquestOptions, callback);
+  request(requestOptions, callback);
 }
 
 function sendNexusRequest(body, url_end, callback) {
