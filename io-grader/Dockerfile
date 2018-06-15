@@ -1,4 +1,8 @@
-FROM abstract-grader
+# Generate UI from configuration file
+FROM abstract-grader AS core-grader
+
+# Install java and set up the grader
+FROM abstract-grader:core
 
 ##########################################
 # Install Open-JDK (inspired by on official Docker image code)
@@ -44,6 +48,7 @@ RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sou
 ENV MAX_CONCURRENCY 10
 
 # Bundle app source
+COPY --from=core-grader --chown=app:app /usr/src/app /usr/src/app
 COPY --chown=app:app grade_submission.sh /usr/src/app
 
 COPY lib lib

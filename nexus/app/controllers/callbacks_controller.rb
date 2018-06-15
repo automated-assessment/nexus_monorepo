@@ -18,6 +18,6 @@ class CallbacksController < Devise::OmniauthCallbacksController
     current_user.associate_github_com_data(omniauth_data)
 
     flash[:success] = 'Successfully associated your github.com profile.'
-    redirect_to '/'
+    redirect_to root_url
   end
 end

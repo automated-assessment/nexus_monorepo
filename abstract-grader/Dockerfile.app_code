@@ -1,0 +1,23 @@
+# Dockerfile for abstract grader including full config-page code generation
+FROM abstract-grader:core
+
+# Install app dependencies
+COPY package.json .
+RUN npm install
+
+# Install config page dependencies
+COPY configPage/package.json configPage/
+RUN cd configPage && \
+    npm install
+
+# Bundle app source
+COPY . .
+RUN cd configPage/src/js && \
+    mkdir components
+
+# Compile config page react components from sub-image provided information
+ONBUILD COPY config_schema.yml config_schema.yml
+ONBUILD RUN node generate_config_page.js && \
+            rm -rf generate_config_page.js && \
+            rm -rf _generate_config_page.js && \
+            cd configPage && npm run build

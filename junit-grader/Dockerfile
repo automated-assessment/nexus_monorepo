@@ -1,4 +1,8 @@
-FROM abstract-grader
+# Generate UI from configuration file
+FROM abstract-grader AS core-grader
+
+# Install java and set up the grader
+FROM abstract-grader:core
 
 ##########################################
 # Install Open-JDK (inspired by on official Docker image code)
@@ -49,6 +53,7 @@ RUN curl http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4
     chown app:app *.jar
 
 # Bundle app source
+COPY --from=core-grader --chown=app:app /usr/src/app /usr/src/app
 COPY --chown=app:app grade_submission.sh /usr/src/app
 
 # Add our custom annotations
