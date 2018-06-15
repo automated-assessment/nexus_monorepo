@@ -2,6 +2,8 @@ import async from 'async';
 import forEachOf from 'async/eachOf';
 import series from 'async/series';
 
+const path = require('path');
+
 const fs = require('fs-extra');
 const pythonExec = require('python-shell');
 
@@ -348,7 +350,7 @@ function do_generate_one (gen_results, template, assignment, student, index, val
 
   //Writing the template to file to do generation
   console.log("Generating template invocation");
-  var templatePath = process.cwd() + `templates/${assignment}/${student}/${index}/`;
+  var templatePath = path.join(process.cwd(), 'templates', `${assignment}`, `${student}`, `${index}`);
   removeDirectoryIfExists(templatePath);
   fs.ensureDir(templatePath, (err) => {
     if (err) {
@@ -356,7 +358,7 @@ function do_generate_one (gen_results, template, assignment, student, index, val
       return;
     }
 
-    var dnaFileName = `${templatePath}template.py.dna`;
+    var dnaFileName = path.join(templatePath, 'template.py.dna');
     fs.writeFile(dnaFileName, template, 'utf8', (err) => {
       if (err) {
         cb(err);
@@ -366,14 +368,10 @@ function do_generate_one (gen_results, template, assignment, student, index, val
       //Executing generation with inputs
       console.log('Starting on generation')
       var argsList = [dnaFileName];
-      /*for(var j = 0; j < valueArray.length; j++) {
-        argsList.push(valueArray[j]);
-      }*/
       var options = {
         args: argsList
       }
       console.log("Generation args: " + JSON.stringify(options));
-      console.log('Generation args taken.');
       pythonExec.run('/ribosome.py', options, (err, results) => {
         fs.remove(templatePath, (err2) => {
           if (err) {
