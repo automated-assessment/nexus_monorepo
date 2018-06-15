@@ -5,7 +5,8 @@ import yaml from 'node-yaml';
 import fs from 'fs';
 import klaw from 'klaw';
 import userid from 'userid';
-import glob from 'glob'
+import glob from 'glob';
+import sendUniquificationRequest from './utils';
 
 const configSchema = yaml.readSync ('config_schema.yml', {schema: yaml.schema.defaultSafe});
 
