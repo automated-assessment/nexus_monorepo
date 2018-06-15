@@ -2,6 +2,8 @@ import async from 'async';
 import forEachOf from 'async/eachOf';
 import series from 'async/series';
 
+const path = require('path');
+
 const fs = require('fs-extra');
 const pythonExec = require('python-shell');
 
@@ -260,8 +262,11 @@ function do_generate (response, studentID, assignmentID, templates) {
   var parameters = [];
   // Hash storing the variables and their values
   var variableValues = {};
-  // Array storing the results, one per template
-  var results = new Array();
+  // Collection for storing the results, one per template. Either a map (object) or an array depending on what inputs we received.
+  var results = {};
+  if (Array.isArray(templates)) {
+    results = new Array();
+  }
   async.series([
     (cb) => {
       getParametersFor (parameters, assignmentID, cb);
@@ -271,7 +276,6 @@ function do_generate (response, studentID, assignmentID, templates) {
       getVariableValuesFor (variableValues, parameters, studentID, assignmentID, cb);
     },
     (cb) => {
-      // Generate from each template
       async.forEachOf (templates,
         (template, index, cb2) => {
           do_generate_one (results, template, assignmentID, studentID, index, variableValues, cb2);
@@ -346,7 +350,7 @@ function do_generate_one (gen_results, template, assignment, student, index, val
 
   //Writing the template to file to do generation
   console.log("Generating template invocation");
-  var templatePath = process.cwd() + `templates/${assignment}/${student}/${index}/`;
+  var templatePath = path.join(process.cwd(), 'templates', `${assignment}`, `${student}`, `${index}`);
   removeDirectoryIfExists(templatePath);
   fs.ensureDir(templatePath, (err) => {
     if (err) {
@@ -354,7 +358,7 @@ function do_generate_one (gen_results, template, assignment, student, index, val
       return;
     }
 
-    var dnaFileName = `${templatePath}template.py.dna`;
+    var dnaFileName = path.join(templatePath, 'template.py.dna');
     fs.writeFile(dnaFileName, template, 'utf8', (err) => {
       if (err) {
         cb(err);
@@ -364,17 +368,14 @@ function do_generate_one (gen_results, template, assignment, student, index, val
       //Executing generation with inputs
       console.log('Starting on generation')
       var argsList = [dnaFileName];
-      /*for(var j = 0; j < valueArray.length; j++) {
-        argsList.push(valueArray[j]);
-      }*/
       var options = {
         args: argsList
       }
       console.log("Generation args: " + JSON.stringify(options));
-      console.log('Generation args taken.');
       pythonExec.run('/ribosome.py', options, (err, results) => {
         fs.remove(templatePath, (err2) => {
           if (err) {
+            console.log(`Issue running python ribosome: ${err.stack}`);
             cb(err);
             return;
           }
@@ -430,7 +431,7 @@ function getParameterValueForStudent(valueArray, studentID, assignmentID, paramN
         else if(paramType == 'string') {
           console.log("Found string type");
           var max = parameterBufferArray.length - 1;
-          valueArray[paramName] = parameterBufferArray[parseInt(Math.random() * (max - 0) + 0)];
+          valueArray[paramName] = `"${parameterBufferArray[parseInt(Math.random() * max)]}"`;
         }
         else if(paramType == 'boolean') {
           console.log ("Found boolean type.");

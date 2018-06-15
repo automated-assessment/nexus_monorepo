@@ -3,3 +3,4 @@ parameters:
     label: Test files
     description: Provide the test files to be used for this assignment. The repository may contain java files and jar files.
     type: git
+    uniquify: "**/*.java"
