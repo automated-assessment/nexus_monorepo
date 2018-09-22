@@ -43,7 +43,7 @@ if [ $RETURN_CODE -ne 0 ]; then
   rm -rf $BIN_DIR
   rm -f $MARK_FILE
 
-  if [ $RETURN_CODE -ne 137 ]; then # man pages seem to be wrong about this exit code...
+  if [ $RETURN_CODE -ne 137 ]; then # Because we use KILL rather than TERM 128+9 indicates timeout
     exit -1
   else
     echo "Your code took too long to execute. Do you have an infinite loop somewhere?" > $1
