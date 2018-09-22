@@ -36,7 +36,8 @@ fi
 
 # Ensure we timeout after 1 minute
 # Note that a better alternative is for teachers to set the timeout option when adding the @Test annotation
-timeout --signal=9 1m java -cp "$TEST_CLASSPATH" -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap uk.ac.kcl.inf.nexus.junit_grader.TestRunner $1 $MARK_FILE
+echo "Asked to use timeout of $timeout."
+timeout --signal=9 $timeout java -cp "$TEST_CLASSPATH" -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap uk.ac.kcl.inf.nexus.junit_grader.TestRunner $1 $MARK_FILE
 RETURN_CODE=$?
 echo "Test run resulted in return code $RETURN_CODE"
 if [ $RETURN_CODE -ne 0 ]; then

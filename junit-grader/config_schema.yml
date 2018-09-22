@@ -4,3 +4,8 @@ parameters:
     description: Provide the test files to be used for this assignment. The repository may contain java files and jar files.
     type: git
     uniquify: "**/*.java"
+  timeout:
+    label: Timeout
+    description: "Provide the value for the timeout for the overall test run. A number with an optional suffix: s for seconds (the default), m for minutes, or h for hours."
+    type: string
+    initial: 1m
