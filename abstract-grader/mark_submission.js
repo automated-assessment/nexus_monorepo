@@ -5,12 +5,14 @@ import yaml from 'node-yaml';
 import fs from 'fs';
 import klaw from 'klaw';
 import userid from 'userid';
+import glob from 'glob';
+import { sendUniquificationRequest } from './utils';
 
 const configSchema = yaml.readSync ('config_schema.yml', {schema: yaml.schema.defaultSafe});
 
 const cmd = process.env.TOOL_CMD ? process.env.TOOL_CMD : '/usr/src/app/grade_submission.sh';
 
-export function doMarkSubmission(submissionID, sourceDir, config, cb) {
+export function doMarkSubmission(aid, studentuid, submissionID, sourceDir, config, is_unique, cb) {
   console.log(`About to run marking tool for submission ${submissionID}.`);
 
   tmp.file({ prefix: 'results-', postfix: '.html', discardDescriptor: true },
@@ -23,7 +25,7 @@ export function doMarkSubmission(submissionID, sourceDir, config, cb) {
       async.series({
           chownSourceDir: (cb) => { makeAppOwned(sourceDir, cb); },
           chownResultsFile: (cb) => { makeAppOwned(path, cb); },
-          mark: (cb) => { _doMarkSubmission(submissionID, sourceDir, config, path, cleanupCallback, cb); }
+          mark: (cb) => { _doMarkSubmission(aid, studentuid, submissionID, sourceDir, config, path, is_unique, cleanupCallback, cb); }
         },
         (err, res) => {
           if (res.mark) {
@@ -35,11 +37,11 @@ export function doMarkSubmission(submissionID, sourceDir, config, cb) {
     });
 }
 
-function _doMarkSubmission(submissionID, sourceDir, config, path, cleanupCallback, cb) {
+function _doMarkSubmission(aid, studentuid, submissionID, sourceDir, config, path, is_unique, cleanupCallback, cb) {
   console.log(`Processing marking of submission ${submissionID} using file ${path} for communication.`);
 
   // Call cmd and transfer relevant information.
-  processConfig(config, (err, env, cleanup) => {
+  processConfig(config, aid, studentuid, is_unique, (err, env, cleanup) => {
     if (err) {
       cleanup();
       cleanupCallback();
@@ -86,7 +88,7 @@ function _doMarkSubmission(submissionID, sourceDir, config, path, cleanupCallbac
   });
 }
 
-function processConfig(config, cb) {
+function processConfig(config, aid, studentuid, is_unique, cb) {
   if (!config) {
     cb(null, {'NEXUS_ACCESS_TOKEN':''}, () => {});
   } else {
@@ -108,6 +110,13 @@ function processConfig(config, cb) {
                   },
                   (cb) => {
                     checkoutFiles(config[param].sha, path, cb);
+                  },
+                  (cb) => {
+                    if ((is_unique) && (configSchema.parameters[param].uniquify)) {
+                      uniquifyFilesIfNeeded(aid, studentuid, path, configSchema.parameters[param].uniquify, cb);
+                    } else {
+                      cb();
+                    }
                   },
                   (cb) => {
                     makeAppOwned(path, cb);
@@ -155,6 +164,63 @@ function makeAppOwned(dir, cb) {
         .on('data', (item) => { fs.chownSync(item.path, uid, gid); })
         .on('end', cb);
     }
+  });
+}
+
+/**
+ * Find all files in path that match any of the glob patterns in uniquify and
+ * replace them by what the unique assignment tool reports for them.
+ */
+function uniquifyFilesIfNeeded(aid, studentuid, path, uniquify, cb) {
+  // Find all file names that match the uniquify glob pattern.
+  glob(uniquify, {cwd: path, root: path, nodir: true, absolute: true}, (err, fileNames) => {
+    if (err) {
+      cb(err);
+      return;
+    }
+
+    let fileData = {};
+
+    async.each(fileNames,
+      (fileName, cb) => {
+        // Load file and store contents in map under file name
+        fs.readFile(fileName, 'utf8', (err, data) => {
+          if (err) {
+            cb(err);
+            return;
+          }
+
+          fileData[fileName] = data;
+          cb();
+        });
+      },
+      (err) => {
+        // Call UAT and replace file contents with generation result
+        if (err) {
+          cb(err);
+          return;
+        }
+
+        // Call UAT
+        // UAT now works off of the map directly, so we can just send our map across
+        sendUniquificationRequest(aid, studentuid, fileData, (err, res, body) => {
+          if (err) {
+            cb(err);
+            return;
+          }
+
+          // Get stuff back from UAT and write out to those files.
+          async.each(fileNames,
+            (fileName, cb) => {
+              // Write new contents of this file
+              fs.writeFile(fileName, body.generated[fileName], cb);
+            },
+            (err) => {
+              cb(err);
+            }
+          );
+        });
+      });
   });
 }
 

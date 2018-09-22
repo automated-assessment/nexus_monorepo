@@ -3,3 +3,4 @@ parameters:
     label: Test files
     description: Provide the test files to be used for this assignment. The repository should contain files with input and output specifications.
     type: git
+    uniquify: "**/*.test*"
