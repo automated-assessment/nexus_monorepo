@@ -38,13 +38,14 @@ parameters:
   paramName:
     label: Label to use in configuration page.
     description: Additional description to provide in configuration page.
-    type: int or git
+    type: int, string, or git
     ... additional data depeding on type ...
 ```
 
-Currently, two types of configuration parameters are supported:
+Currently, three types of configuration parameters are supported:
 
 1. `int` parameters are numberic values. You can additionally specify `min`, `max`, `step`, and `initial`, which should be self-explanatory. The values of `int` parameters are passed to the shell script as environment variables named `paramName`, and as a value under that key in `config` to the javascript method.
+2. `string` parameters are text values. You can additionally specify `initial`. The values of `string` parameters are passed to the shell script as environment variables named `paramName`, and as a value under that key in `config` to the javascript method.
 2. `git` parameters allow files to be provided to the grader through a git commit. Git commits are specified by providing a repository URL (must be a SSH-protocol URL of the form `git@github.kcl.ac.uk/{user}/{repository}`), a branch, and a SHA. When calling the javascript mark function, these values are passed in a hash under the `paramName` key in config. For  shell-script graders, the files will already have been checked out (freshly for each grader run) and the name of the directory will be in an environment variable `paramName`. Note that files will not be checked out yet when the javascript function is called. You can additionally specify a `uniquify` block containing a file glob (as per the documentation for the [`node-glob` module](https://www.npmjs.com/package/glob)) relative to the repository root. If present, and if the current assignment is unique, `abstract-grader` will send all matching files to the unique assignment tool and replace them with their uniquified version before calling the grading shell script.
 
 All configurable graders need access to a MySQL instance to store configuration data. See the configuration of `sample-abstract-grader` for information on how to do this. At the moment, each grader has its own instance, but this is clearly inefficient and will change in the future.
