@@ -12,7 +12,8 @@ class SubmissionUtils
           %r{(.*\/)?\.DS_Store(\/.*)?}, # i.e. **/.DS_Store/* possibly with nothing at the end
           %r{(.*\/)?\.gitignore}, # i.e. **/.gitignore
           %r{(.*\/)?\.gitmodules},
-          %r{(.*\/)?__MACOSX(\/.*)?}
+          %r{(.*\/)?__MACOSX(\/.*)?},
+          %r{.*(\.\.\/)+.+} # Avoid Zip Slip vulnerability, where entry names navigate outside of extraction directory
         ]
       )
       output_path = Rails.root.join('var', 'submissions', 'code', submission.id.to_s)
@@ -46,7 +47,7 @@ class SubmissionUtils
       # Assume this is all going to go well
       submission.failed = false
       submission.save!
-      
+
       to_invoke = WorkflowUtils.next_services_to_invoke(submission.active_services)
 
       # First mark each service as running
