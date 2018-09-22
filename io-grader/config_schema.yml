@@ -4,3 +4,10 @@ parameters:
     description: Provide the test files to be used for this assignment. The repository should contain files with input and output specifications.
     type: git
     uniquify: "**/*.test*"
+  timeout:
+    label: Timeout
+    description: "Provide the value for the timeout for each individual test in seconds."
+    type: int
+    min: 0
+    step: 1
+    initial: 60
