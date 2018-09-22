@@ -55,6 +55,9 @@ public class TestRunner {
       // We expect the name of the main java class to be listed as the first line of the test specification
       String mainClassName = brTests.readLine();
 
+      // Check class actually exists (do not initialise the class here to avoid running student code
+      Class.forName(mainClassName, false, this.getClass().getClassLoader());
+      
       String currentTest = brTests.readLine();
       while (currentTest != null) {
         TestResult tr = runTest(currentTest, mainClassName);
@@ -72,6 +75,14 @@ public class TestRunner {
     }
     catch (IOException ioe) {
       System.err.println("IO exception: " + ioe);
+    }
+    catch (ClassNotFoundException cnfe) {
+      results.add(new TestResult(false,
+            "The expected main class could not be found in your submission."));
+    }
+    catch (LinkageError le) {
+      results.add(new TestResult(false,
+            "The expected main class could not be found in your submission."));
     }
     catch (InterruptedException ie) {}
   }
