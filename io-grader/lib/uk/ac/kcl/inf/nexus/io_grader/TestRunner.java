@@ -56,8 +56,10 @@ public class TestRunner {
       String mainClassName = brTests.readLine();
 
       // Check class actually exists (do not initialise the class here to avoid running student code
+      System.out.println("About to check for existience of class " + mainClassName);
       Class.forName(mainClassName, false, this.getClass().getClassLoader());
-      
+      System.out.println("Class exists.");
+
       String currentTest = brTests.readLine();
       while (currentTest != null) {
         TestResult tr = runTest(currentTest, mainClassName);
@@ -69,22 +71,29 @@ public class TestRunner {
 
         currentTest = brTests.readLine();
       }
-
-      computeAndOutputMark();
-      computeAndOutputFeedback();
     }
     catch (IOException ioe) {
       System.err.println("IO exception: " + ioe);
     }
     catch (ClassNotFoundException cnfe) {
+      System.out.println("Class does not exist.");
       results.add(new TestResult(false,
             "The expected main class could not be found in your submission."));
     }
     catch (LinkageError le) {
+      System.out.println("Class does not exist (linkage error).");
       results.add(new TestResult(false,
             "The expected main class could not be found in your submission."));
     }
     catch (InterruptedException ie) {}
+
+    try {
+      computeAndOutputMark();
+      computeAndOutputFeedback();
+    } catch (IOException ioe) {
+      System.err.println("Exception trying to report back mark or feedback.");
+      ioe.printStackTrace();
+    }
   }
 
   private TestResult runTest(String testSpecification, String mainClassName) throws IOException, InterruptedException {
