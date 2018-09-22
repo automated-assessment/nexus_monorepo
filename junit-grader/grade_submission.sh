@@ -37,12 +37,13 @@ fi
 # Ensure we timeout after 1 minute
 # Note that a better alternative is for teachers to set the timeout option when adding the @Test annotation
 timeout --signal=9 1m java -cp "$TEST_CLASSPATH" -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap uk.ac.kcl.inf.nexus.junit_grader.TestRunner $1 $MARK_FILE
-RETURN_CODE = $?
+RETURN_CODE=$?
+echo "Test run resulted in return code $RETURN_CODE"
 if [ $RETURN_CODE -ne 0 ]; then
   rm -rf $BIN_DIR
   rm -f $MARK_FILE
 
-  if [ $RETURN_CODE -ne 124 ]; then
+  if [ $RETURN_CODE -ne 137 ]; then # man pages seem to be wrong about this exit code...
     exit -1
   else
     echo "Your code took too long to execute. Do you have an infinite loop somewhere?" > $1
