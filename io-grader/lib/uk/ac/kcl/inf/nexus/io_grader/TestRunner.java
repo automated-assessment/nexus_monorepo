@@ -44,6 +44,8 @@ public class TestRunner {
 
   private void run() {
     try {
+      int timeout = Integer.parseInt(args[3]);
+
       mainTestFile = new File(args[0]);
       testDirectory = mainTestFile.getParent();
       if (testDirectory == null) {
@@ -62,7 +64,7 @@ public class TestRunner {
 
       String currentTest = brTests.readLine();
       while (currentTest != null) {
-        TestResult tr = runTest(currentTest, mainClassName);
+        TestResult tr = runTest(currentTest, mainClassName, timeout);
 
         results.add(tr);
         if (tr.wasSuccessful()) {
@@ -96,7 +98,7 @@ public class TestRunner {
     }
   }
 
-  private TestResult runTest(String testSpecification, String mainClassName) throws IOException, InterruptedException {
+  private TestResult runTest(String testSpecification, String mainClassName, int timeout) throws IOException, InterruptedException {
     /*
      We expect each line to be of the form "file name -> file name" where
      both file names are relative to the path at which the main test file
@@ -117,8 +119,7 @@ public class TestRunner {
 
     Process pRunning = pb.start();
 
-    // TODO Make timeout configurable
-    if (pRunning.waitFor(1, TimeUnit.MINUTES)) {
+    if (pRunning.waitFor(timeout, TimeUnit.SECONDS)) {
       // Successfully terminated within time allotted
       if (pRunning.exitValue() == 0) {
         // Check program output
@@ -175,7 +176,7 @@ public class TestRunner {
       pRunning.destroyForcibly();
 
       return new TestResult(false,
-          "Your programme took longer than 1 minute to complete the test and was stopped forcibly.");
+          "Your programme took longer than " + timeout + " seconds to complete the test and was stopped forcibly.");
     }
   }
 
