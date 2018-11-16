@@ -78,6 +78,22 @@ You will also find information about how to develop your own contributions to Ne
 **9. Run `make run`**
   - Which runs: `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d`
   - This brings up the nexus server fully ready to run and detaches it from the current console. You should be able to get to nexus by opening `localhost:3000` in your browser.
+  
+**10. Start your browser and navigate to Nexus**
+  - Run `tail -f logs/messages`, which brings up a scrolling view on the logs and wait to see a message from `nexus` saying that the server is listening for requests. If you miss this message, wait until the log stops scrolling.
+  - Start your browser and go to `http://localhost:3000/users/login`.
+  - Do **not** log in via Github. Instead, use the email/password input fields and enter the credentials for the admin user set up by default. You can find these in [nexus/db/seeds/development.rb](nexus/db/seeds/development.rb).
+  - You now should be seeing the main Nexus screen with a black menu bar (indicating that you have admin rights). If you had logged in via Github, you would not have admin rights and would see a white menu bar.
+  
+**11. Ensure graders are set up correctly**
+  - Unfortunately, graders are currently not yet set up automatically (not even in dev mode). Therefore, you will have to set them up manually. *If you are interested in fixing this, please feel free to discuss with Steffen and eventually submit a PR.* 
+  - In your browser go to the Nexus Admin Panel (see the link in the top right of the page). Use the `Marking Tools` section to configure the graders that you want to use. The image below shows an example of what a dev-mode configuration might look like. You must use these exact UIDs and URLs, but can change the more descriptive aspects.
+  
+  ![Sample grader configuration for dev mode](https://i.imgur.com/8P0wt6C.png)
+
+**12. Create your first course and assignment**
+  - Using the `Courses` menu on the top of the page create a new course
+  - Use the `Add Assignment` button to add a new assignment. 
 
 ## For *production* usage...
 
