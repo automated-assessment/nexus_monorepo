@@ -37,6 +37,7 @@ services:
       - javac-tool # Need to include in dependencies or it won't get started
       - io-grader # Need to include in dependencies or it won't get started
       - peer-feedback # Need to include in dependencies or it won't get started
+      - cpp-compilation
   db:
     image: postgres:9.5.3
     volumes:

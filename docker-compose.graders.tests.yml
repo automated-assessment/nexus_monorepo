@@ -23,3 +23,6 @@ services:
   junit-grader:
     environment:
       NEXUS_BASE_URL: http://grader-tester:3000
+  cpp-compilation:
+    environment:
+      NEXUS_BASE_URL: http://grader-tester:3000

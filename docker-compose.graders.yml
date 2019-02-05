@@ -131,3 +131,19 @@ services:
       options:
         syslog-address: "udp://localhost:5514"
         tag: "junit-db"
+  cpp-compilation:
+    build: cpp-compilation/
+    env_file: .env.cppcompilation.list # NEXUS_TOOL_CANONICAL_NAME, NEXUS_ACCESS_TOKEN, and possibly NEXUS_SUB_DIR
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+    ports:
+      - "3007:5000"
+    volumes:
+      - ./cpp-compilation_data:/home/app/submissions
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "cpp-compilation"
+    depends_on:
+      - syslog
