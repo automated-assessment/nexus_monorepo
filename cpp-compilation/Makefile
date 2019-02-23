@@ -1,22 +1,31 @@
+#SRCDIR := .
+SRCDIR := /usr/src/app
+OBJDIR := obj
+DEPDIR := dep
+
 CXX = g++
-CXXFLAGS = -c -Wall -Wextra
-TARGET = 
-
-#get all .cpp files from current directory and sub-directories
-SRCS = $(wildcard *.cpp)
-#Replace .cpp files with .o files
-OBJS = $(patsubst %.cpp,%.o,$(SRCS))
-
-all: $(TARGET)
-
-$(TARGET): $(OBJS)
-	$(CXX) -o $@ $^ # $@ = .PHONY		$^= all prerequisites 
-
-%.o %.cpp:
-	$(CXX) $(CXXFLAGS) $< # $<= first prerequisite
-
-clean:
-	rm -rf $(TARGET) *.o
+SRCS     := $(shell find $(SRCDIR) -name "*.cpp")
+OBJS     := $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+DEPS     := $(SRCS:$(SRCDIR)/%.cpp=$(DEPDIR)/%.d)
+TREE     := $(patsubst %/,%,$(dir $(OBJS)))
+CPPFLAGS  = -MMD -MP -MF $(@:$(OBJDIR)/%.o=$(DEPDIR)/%.d)
+CXXFLAGS += -std=c++14
 
 .PHONY: all clean
 
+all: $(OBJS)
+
+.SECONDEXPANSION:
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $$(@D)
+    $(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c -Wall -Wextra $<
+
+$(TREE): %:
+    mkdir -p $@
+    mkdir -p $(@:$(OBJDIR)%=$(DEPDIR)%)
+
+clean:
+    $(RM) -r $(OBJDIR) $(DEPDIR)
+
+ifeq "$(MAKECMDGOALS)" ""
+-include $(DEPS)
+endif

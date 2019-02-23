@@ -167,16 +167,13 @@ ENV MAX_CONCURRENCY 10
 #COPY --chown=app:app grade_submission.sh /usr/src/app
 COPY grade_submission.sh /usr/src/app
 
-#COPY lib lib
 COPY Makefile Makefile
 RUN mkdir ./cppsubmission && \
-    ls && \
-    cp Makefile ./cppsubmission && \
-    make -f cppsubmission/Makefile && \
-    rm -rf Makefile
-    # mkdir ./exec/templates && \
-    # chown -R app:app ./exec && \
-    # chmod -w -R ./exec
+    cp ./Makefile ./cppsubmission && \
+    #make -f ./cppsubmission/Makefile && \
+    #rm -rf ./cppsubmission/Makefile && \
+    chown -R app:app ./cppsubmission && \
+    chmod -w -R ./cppsubmission
 
 #COPY grade_submission.sh /usr/src/app
 #WORKDIR /usr/src/app

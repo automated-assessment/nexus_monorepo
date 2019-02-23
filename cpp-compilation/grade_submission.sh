@@ -18,7 +18,8 @@ if [ $? -ne 0 ]; then
 	exit -1
 fi
 
-make -f MakeFile $1 $MARK_FILE
+#make -f /usr/src/app/cppsubmission/Makefile:$SUBMISSION_CLASSPATH $1 $MARK_FILE
+make -C $SUBMISSION_CLASSPATH/Makefile $1 $MARK_FILE
 if [ $? -ne 0 ]; then
 	rm -rf $BIN_DIR
 	rm -f $MARK_FILE

@@ -147,3 +147,29 @@ services:
         tag: "cpp-compilation"
     depends_on:
       - syslog
+  # cpp-io-grader:
+  #   build: cpp-io-grader/
+  #   env_file: .env.cppiograder.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
+  #   environment:
+  #     NEXUS_BASE_URL: http://nexus:3000
+  #     MYSQL_HOST: mysql-iograder
+  #   ports:
+  #     - "3008:5000"
+  #   logging:
+  #     driver: syslog
+  #     options:
+  #       syslog-address: "udp://localhost:5514"
+  #       tag: "cpp-io-grader"
+  #   depends_on:
+  #     - syslog
+  #     - mysql-cppiograder
+  # mysql-cppiograder:
+  #   image: mysql:5.7
+  #   env_file: .env.cppiograder.list
+  #   volumes:
+  #     - ./cppiograder_data:/var/lib/mysql
+  #   logging:
+  #     driver: syslog
+  #     options:
+  #       syslog-address: "udp://localhost:5514"
+  #       tag: "cppiograder-db"
