@@ -1,182 +1,85 @@
+# Generate UI from configuration file
 FROM abstract-grader AS core-grader
 
-#Install gcc and set up the grader
+# Install java and set up the grader
 FROM abstract-grader:core
 
-FROM gcc:4.9
+##########################################
+# Install Open-JDK (inspired by official Docker image code)
+##########################################
 
-# ######
-# #Install GCC (inspired by official Docker image code)
-# ######
+# Set up Open-JDK prerequisites
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+		    bzip2 \
+		    unzip \
+		    xz-utils && \
+    rm -rf /var/lib/apt/lists/*
 
-# FROM buildpack-deps:stretch
 
-# RUN set -ex; \
-# 	if ! command -v gpg > /dev/null; then \
-# 		apt-get update; \
-# 		apt-get install -y --no-install-recommends \
-# 			gnupg \
-# 			dirmngr \
-# 		; \
-# 		rm -rf /var/lib/apt/lists/*; \
-# 	fi
+# On Jessie, OpenJDK is only available as a backport
 
-# # https://gcc.gnu.org/mirrors.html
-# ENV GPG_KEYS \
-# # 1024D/745C015A 1999-11-09 Gerald Pfeifer <gerald@pfeifer.com>
-# 	B215C1633BCA0477615F1B35A5B3A004745C015A \
-# # 1024D/B75C61B8 2003-04-10 Mark Mitchell <mark@codesourcery.com>
-# 	B3C42148A44E6983B3E4CC0793FA9B1AB75C61B8 \
-# # 1024D/902C9419 2004-12-06 Gabriel Dos Reis <gdr@acm.org>
-# 	90AA470469D3965A87A5DCB494D03953902C9419 \
-# # 1024D/F71EDF1C 2000-02-13 Joseph Samuel Myers <jsm@polyomino.org.uk>
-# 	80F98B2E0DAB6C8281BDF541A7C8C3B2F71EDF1C \
-# # 2048R/FC26A641 2005-09-13 Richard Guenther <richard.guenther@gmail.com>
-# 	7F74F97C103468EE5D750B583AB00996FC26A641 \
-# # 1024D/C3C45C06 2004-04-21 Jakub Jelinek <jakub@redhat.com>
-# 	33C235A34C46AA3FFB293709A328C3A2C3C45C06
-# RUN set -ex; \
-# 	for key in $GPG_KEYS; do \
-# 		gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
-# 	done
+# Default to UTF-8 file.encoding
+ENV LANG C.UTF-8
 
-# # https://gcc.gnu.org/mirrors.html
-# ENV GCC_MIRRORS \
-# 		https://ftpmirror.gnu.org/gcc \
-# 		https://bigsearcher.com/mirrors/gcc/releases \
-# 		https://mirrors-usa.go-parts.com/gcc/releases \
-# 		https://mirrors.concertpass.com/gcc/releases \
-# 		http://www.netgull.com/gcc/releases
 
-# # Last Modified: 2018-07-26
-# ENV GCC_VERSION 8.2.0
-# # Docker EOL: 2020-01-26
+# do some fancy footwork to create a JAVA_HOME that's cross-architecture-safe
+RUN ln -svT "/usr/lib/jvm/java-8-openjdk-$(dpkg --print-architecture)" /docker-java-home
+ENV JAVA_HOME /docker-java-home
 
-# RUN set -ex; \
-# 	\
-# 	savedAptMark="$(apt-mark showmanual)"; \
-# 	apt-get update; \
-# 	apt-get install -y --no-install-recommends \
-# 		dpkg-dev \
-# 		flex \
-# 	; \
-# 	rm -r /var/lib/apt/lists/*; \
-# 	\
-# 	_fetch() { \
-# 		local fetch="$1"; shift; \
-# 		local file="$1"; shift; \
-# 		for mirror in $GCC_MIRRORS; do \
-# 			if curl -fL "$mirror/$fetch" -o "$file"; then \
-# 				return 0; \
-# 			fi; \
-# 		done; \
-# 		echo >&2 "error: failed to download '$fetch' from several mirrors"; \
-# 		return 1; \
-# 	}; \
-# 	\
-# 	_fetch "gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.xz.sig" 'gcc.tar.xz.sig' \
-# # 6.5.0 (https://mirrors.kernel.org/gnu/gcc/6.5.0/), no gcc- prefix
-# 		|| _fetch "$GCC_VERSION/gcc-$GCC_VERSION.tar.xz.sig"; \
-# 	_fetch "gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.xz" 'gcc.tar.xz' \
-# 		|| _fetch "$GCC_VERSION/gcc-$GCC_VERSION.tar.xz" 'gcc.tar.xz'; \
-# 	gpg --batch --verify gcc.tar.xz.sig gcc.tar.xz; \
-# 	mkdir -p /usr/src/gcc; \
-# 	tar -xf gcc.tar.xz -C /usr/src/gcc --strip-components=1; \
-# 	rm gcc.tar.xz*; \
-# 	\
-# 	cd /usr/src/gcc; \
-# 	\
-# # "download_prerequisites" pulls down a bunch of tarballs and extracts them,
-# # but then leaves the tarballs themselves lying around
-# 	./contrib/download_prerequisites; \
-# 	{ rm *.tar.* || true; }; \
-# 	\
-# # explicitly update autoconf config.guess and config.sub so they support more arches/libcs
-# 	for f in config.guess config.sub; do \
-# 		wget -O "$f" "https://git.savannah.gnu.org/cgit/config.git/plain/$f?id=7d3d27baf8107b630586c962c057e22149653deb"; \
-# # find any more (shallow) copies of the file we grabbed and update them too
-# 		find -mindepth 2 -name "$f" -exec cp -v "$f" '{}' ';'; \
-# 	done; \
-# 	\
-# 	dir="$(mktemp -d)"; \
-# 	cd "$dir"; \
-# 	\
-# 	extraConfigureArgs=''; \
-# 	dpkgArch="$(dpkg --print-architecture)"; \
-# 	case "$dpkgArch" in \
-# # with-arch: https://anonscm.debian.org/viewvc/gcccvs/branches/sid/gcc-6/debian/rules2?revision=9450&view=markup#l491
-# # with-float: https://anonscm.debian.org/viewvc/gcccvs/branches/sid/gcc-6/debian/rules.defs?revision=9487&view=markup#l416
-# # with-mode: https://anonscm.debian.org/viewvc/gcccvs/branches/sid/gcc-6/debian/rules.defs?revision=9487&view=markup#l376
-# 		armel) \
-# 			extraConfigureArgs="$extraConfigureArgs --with-arch=armv4t --with-float=soft" \
-# 			;; \
-# 		armhf) \
-# 			extraConfigureArgs="$extraConfigureArgs --with-arch=armv7-a --with-float=hard --with-fpu=vfpv3-d16 --with-mode=thumb" \
-# 			;; \
-# 		\
-# # with-arch-32: https://anonscm.debian.org/viewvc/gcccvs/branches/sid/gcc-6/debian/rules2?revision=9450&view=markup#l590
-# 		i386) \
-# 			osVersionID="$(set -e; . /etc/os-release; echo "$VERSION_ID")"; \
-# 			case "$osVersionID" in \
-# 				8) extraConfigureArgs="$extraConfigureArgs --with-arch-32=i586" ;; \
-# 				*) extraConfigureArgs="$extraConfigureArgs --with-arch-32=i686" ;; \
-# 			esac; \
-# # TODO for some reason, libgo + i386 fails on https://github.com/gcc-mirror/gcc/blob/gcc-7_1_0-release/libgo/runtime/proc.c#L154
-# # "error unknown case for SETCONTEXT_CLOBBERS_TLS"
-# 			;; \
-# 	esac; \
-# 	\
-# 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
-# 	/usr/src/gcc/configure \
-# 		--build="$gnuArch" \
-# 		--disable-multilib \
-# 		--enable-languages=c,c++,fortran,go \
-# 		$extraConfigureArgs \
-# 	; \
-# 	make -j "$(nproc)"; \
-# 	make install-strip; \
-# 	\
-# 	cd ..; \
-# 	\
-# 	rm -rf "$dir" /usr/src/gcc; \
-# 	\
-# 	apt-mark auto '.*' > /dev/null; \
-# 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
-# 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+ENV JAVA_VERSION 8u162
+ENV JAVA_DEBIAN_VERSION 8u162-b12-1~deb9u1
 
-# # gcc installs .so files in /usr/local/lib64...
-# RUN set -ex; \
-# 	echo '/usr/local/lib64' > /etc/ld.so.conf.d/local-lib64.conf; \
-# 	ldconfig -v
+# May need to handle certificiates specially, if I run into problems with https at some point
+# See official openjdk 8 image for details
 
-# # ensure that alternatives are pointing to the new compiler and that old one is no longer used
-# RUN set -ex; \
-# 	dpkg-divert --divert /usr/bin/gcc.orig --rename /usr/bin/gcc; \
-# 	dpkg-divert --divert /usr/bin/g++.orig --rename /usr/bin/g++; \
-# 	dpkg-divert --divert /usr/bin/gfortran.orig --rename /usr/bin/gfortran; \
-# 	update-alternatives --install /usr/bin/cc cc /usr/local/bin/gcc 999
+RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get install -y -t jessie-backports openjdk-8-jdk && \
+    rm -rf /var/lib/apt/lists/* && \
+# update-alternatives so that future installs of other OpenJDK versions don't change /usr/bin/java
+    update-alternatives --get-selections | awk -v home="$(readlink -f "$JAVA_HOME")" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }' && \
+# ... and verify that it actually worked for one of the alternatives we care about
+    update-alternatives --query java | grep -q 'Status: manual' 
+    # update-alternatives --get-selections | awk -v home="$(readlink -f "$GCC_HOME")" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }' 
 
-# #####
-# #End install GCC
-# #####
 
+##########################################
+# End Install Open-JDK
+##########################################
+
+####INSTALL prerequisites for GCC Compiler 
+
+RUN set -ex; \
+	if ! command -v gpg > /dev/null; then \
+		apt-get update; \
+		apt-get install -y --no-install-recommends \
+			gnupg \
+			dirmngr \
+		; \
+		rm -rf /var/lib/apt/lists/*; \
+	fi
+
+
+RUN apt-get update
+RUN apt-get install --reinstall build-essential
+RUN apt-get update
+
+
+# We can afford a higher level of concurrency :-)
 ENV MAX_CONCURRENCY 10
 
 # Bundle app source
-#COPY --from=core-grader --chown=app:app /usr/src/app /usr/src/app
-#COPY --chown=app:app grade_submission.sh /usr/src/app
-COPY grade_submission.sh /usr/src/app
+COPY --from=core-grader --chown=app:app /usr/src/app /usr/src/app
+COPY --chown=app:app grade_submission.sh /usr/src/app
 
-COPY Makefile Makefile
-RUN mkdir ./cppsubmission && \
-    cp ./Makefile ./cppsubmission && \
-    #make -f ./cppsubmission/Makefile && \
-    #rm -rf ./cppsubmission/Makefile && \
-    chown -R app:app ./cppsubmission && \
-    chmod -w -R ./cppsubmission
+COPY lib lib
+RUN mkdir ./bin && \
+    javac -d ./bin -cp "$(find ./lib -name '*.jar' | paste -s -d':')" $(find ./lib -name '*.java') && \
+    cp lib/*.jar ./bin && \
+    mkdir ./bin/templates && \
+    cp lib/templates/* ./bin/templates/ && \
+    rm -rf lib && \
+    chown -R app:app ./bin && \
+    chmod -w -R ./bin
 
-#COPY grade_submission.sh /usr/src/app
-#WORKDIR /usr/src/app
-# RUN makefile da vidq kak da stane
-#RUN gcc -o app main.c
-#CMD [ "./appname" ]

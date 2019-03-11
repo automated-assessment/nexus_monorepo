@@ -1,0 +1,23 @@
+<ul class="nav nav-tabs">
+  <li #if ($allOK) class="active" #end><a data-toggle="tab" href="#cpp-compilation_output">Compiler output</a></li>
+  <li><a data-toggle="tab" href="#cpp_files_list">Files found</a></li>
+</ul>
+
+
+  <div id="cpp-compilation_output" class="tab-pane fade #if ($allOK) in active #end">
+    #if ($allOK)
+      <p>All cpp files compiled successfully.</p>
+    #else
+      $gccOutput
+    #end
+  </div>
+
+  <div id="cpp_files_list" class="tab-pane fade">
+    <p>List of cpp files found:</p>
+    <ul>
+      #foreach ($f in $files)
+        <li>$f</li>
+      #end
+    </ul>
+  </div>
+</div>

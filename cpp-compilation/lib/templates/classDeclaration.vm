@@ -1,0 +1,5 @@
+You are missing a class declaration within the file: $filename
+The first line in your file should always be a class declaration, for example:
+public class $filename_substr
+Refer to the following Java documentation below for more information:
+https://docs.oracle.com/javase/tutorial/java/javaOO/classdecl.html
