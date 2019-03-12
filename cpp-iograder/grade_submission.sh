@@ -1,9 +1,50 @@
 #!/bin/bash
 
-echo "Starting grading process. This message will go to the log file only."
+echo "Compiling submission"
 
-# Produce HTML feedback
-echo "<p>Some feedback</p>" > $1
+BIN_DIR=$(mktemp -d)
 
-# Return mark. Values in the range 0-100 will be interpreted as marks, all other values will be interpreted as error markers
-exit 57
+SUBMISSION_CLASSPATH="$(find . -name '*.jar' | paste -s -d':')"
+TEST_CLASSPATH="/usr/src/app/bin/:$BIN_DIR:$(find . -name '*.jar' | paste -s -d':')"
+
+echo "Compiling submission"
+export PATH="/usr/bin:/usr/lib:/usr/share/doc:/usr/share/doc/binutils":${PATH}
+SUBMISSION_FOLDER="$(find . -name '*.cpp' -exec dirname {} \; | uniq)"
+cp /usr/src/app/Makefile.zz $SUBMISSION_FOLDER
+# cd $SUBMISSION_FOLDER && make -f Makefile.zz ASD=$BIN_DIR/
+
+if ! (cd $SUBMISSION_FOLDER && make -f Makefile.zz TARGET_DIR=$BIN_DIR/); then
+  rm -rf $BIN_DIR
+  echo "<p>Failed to compile your submission code.</p>" > $1
+  exit 0
+fi
+
+echo "Running tests"
+
+# Remove .git files so that running java code cannot simply access them
+rm -rf ./.git
+rm -rf "$test_files/.git"
+
+MARK_FILE=$(mktemp)
+if [ $? -ne 0 ]; then
+  rm -rf $BIN_DIR
+  rm -f $MARK_FILE
+  exit -1
+fi
+
+CLASSPATH="$TEST_CLASSPATH"
+export CLASSPATH
+java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap uk.ac.kcl.inf.nexus.io_grader.TestRunner $test_files/IO_specification.tests $1 $MARK_FILE $timeout
+if [ $? -ne 0 ]; then
+  rm -rf $BIN_DIR
+  rm -f $MARK_FILE
+  exit -1
+fi
+
+echo "Cleaning up"
+
+MARK=$(cat $MARK_FILE)
+rm -f $MARK_FILE
+rm -rf $BIN_DIR
+
+exit $MARK

@@ -51,7 +51,9 @@ ENV MAX_CONCURRENCY 10
 COPY --from=core-grader --chown=app:app /usr/src/app /usr/src/app
 COPY --chown=app:app grade_submission.sh /usr/src/app
 
-# COPY lib lib
-# RUN mkdir ./bin && \
-#     javac -d ./bin -cp ./bin $(find ./lib -name '*.java') && \
-#     chown -R app:app ./bin
+# Makefile has extension as it is to be copied to submission's folder where there might already exist another 'Makefile'
+COPY Makefile.zz Makefile.zz 
+COPY lib lib
+RUN mkdir ./bin && \
+    javac -d ./bin -cp ./bin $(find ./lib -name '*.java') && \
+    chown -R app:app ./bin
