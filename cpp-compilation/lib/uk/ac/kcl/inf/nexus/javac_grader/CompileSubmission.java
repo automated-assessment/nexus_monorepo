@@ -17,7 +17,6 @@ public class CompileSubmission {
     public static void main(String[] args) {
 
         new CompileSubmission().CompileCprog().reportMark(args[1]).reportFeedback(args[0]);
-        // new CompileSubmission().CompileCprog().reportMark("test1.txt").reportFeedback("test2.txt");
         System.out.println("Done");
     }
 
@@ -35,8 +34,9 @@ public class CompileSubmission {
        for (File f : files) {
             try {
                String exeName = FilenameUtils.removeExtension(f.getName());
-                String command[] = {"/usr/bin/g++", "-c", "-std=c++11", f.getName()};
-                Process p = Runtime.getRuntime().exec(command,null,f.getParentFile());
+                String command[] = {"g++", "-c", "-std=c++11", "-Wall", "-O", f.getName()};
+                String envp[] = {"PATH=/usr/bin:/usr/lib:/usr/share/doc:/usr/share/doc/binutils:/usr/local/bin:/usr/local/sbin:/usr/sbin:/bin:/sbin:."};
+                Process p = Runtime.getRuntime().exec(command,envp,f.getParentFile());
                 
 
                 BufferedReader in2 = new BufferedReader(new InputStreamReader(p.getErrorStream()));

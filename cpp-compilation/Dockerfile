@@ -66,7 +66,7 @@ RUN apt-get install --reinstall build-essential
 RUN apt-get update
 
 
-# We can afford a higher level of concurrency :-)
+# We can afford a higher level of concurrency :-) 
 ENV MAX_CONCURRENCY 10
 
 # Bundle app source

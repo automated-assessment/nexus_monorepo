@@ -9,6 +9,7 @@ BIN_DIR=$(mktemp -d)
 
 SUBMISSION_CLASSPATH="$(find . -name '*.jar' | paste -s -d':')"
 
+
 MARK_FILE=$(mktemp)
 if [ $? -ne 0 ]; then
   rm -rf $BIN_DIR
