@@ -147,7 +147,7 @@ services:
         tag: "cpp-compilation"
     depends_on:
       - syslog
-  cpp-io-grader:
+  cpp-iograder:
     build: cpp-iograder/
     env_file: .env.cppiograder.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
     environment:

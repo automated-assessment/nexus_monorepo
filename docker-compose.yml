@@ -38,6 +38,7 @@ services:
       - io-grader # Need to include in dependencies or it won't get started
       - peer-feedback # Need to include in dependencies or it won't get started
       - cpp-compilation
+      - cpp-iograder
   db:
     image: postgres:9.5.3
     volumes:

@@ -87,7 +87,7 @@ no-matlab: .build-mode/.no_matlab
 
 .PHONY: dev development production init-env build build-dev init-nexus init-nexus-js init-nexus-db run run-dev restart-service bash migrate-db stop restart debug build-tests test-graders stop-tests test-nexus ps matlab no-matlab abstract-rsa
 
-init-env: .env.list .env.uat.list .env.javac.list .env.rng.list .env.iograder.list .env.conf.list .env.peerfeedback.list .env.matlab.list .env.sag.list .env.junit.list .env.cppcompilation.list
+init-env: .env.list .env.uat.list .env.javac.list .env.rng.list .env.iograder.list .env.conf.list .env.peerfeedback.list .env.matlab.list .env.sag.list .env.junit.list .env.cppcompilation.list .env.cppiograder.list
 	@echo "All .env files initialised. Please ensure you change ACCESS_TOKEN information etc. before running Nexus.\n"
 
 .build-mode/.abstract-grader: abstract-grader/*

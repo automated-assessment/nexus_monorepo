@@ -26,3 +26,6 @@ services:
   cpp-compilation:
     environment:
       NEXUS_BASE_URL: http://grader-tester:3000
+  cpp-iograder:
+    environment:
+      NEXUS_BASE_URL: http://grader-tester:3000
