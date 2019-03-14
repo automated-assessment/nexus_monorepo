@@ -1,9 +1,9 @@
 CXX=g++
-CXXFLAGS=-Wall -Werror -std=c++11
+CXXFLAGS=-Wall -O -std=c++11
 
 all: $(patsubst %.cpp, $(TARGET_DIR)%.o, $(wildcard *.cpp))
 
-$(ASD)%.o: %.cpp Makefile
+$(TARGET_DIR)%.o: %.cpp Makefile
 	$(CXX) $(CXXFLAGS) $< -o $(@:.o=)
 
 clean: $(patsubst %.cpp, %.clean, $(wildcard *.cpp))

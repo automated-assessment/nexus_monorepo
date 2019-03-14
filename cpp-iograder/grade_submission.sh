@@ -7,13 +7,12 @@ BIN_DIR=$(mktemp -d)
 SUBMISSION_CLASSPATH="$(find . -name '*.jar' | paste -s -d':')"
 TEST_CLASSPATH="/usr/src/app/bin/:$BIN_DIR:$(find . -name '*.jar' | paste -s -d':')"
 
-echo "Compiling submission"
 export PATH="/usr/bin:/usr/lib:/usr/share/doc:/usr/share/doc/binutils":${PATH}
 SUBMISSION_FOLDER="$(find . -name '*.cpp' -exec dirname {} \; | uniq)"
-cp /usr/src/app/Makefile.zz $SUBMISSION_FOLDER
+yes|cp -ruv /usr/src/app/Makefile $SUBMISSION_FOLDER #Override Makefile if present else just copy
 # cd $SUBMISSION_FOLDER && make -f Makefile.zz ASD=$BIN_DIR/
 
-if ! (cd $SUBMISSION_FOLDER && make -f Makefile.zz TARGET_DIR=$BIN_DIR/); then
+if ! (cd $SUBMISSION_FOLDER && make TARGET_DIR=$BIN_DIR/); then
   rm -rf $BIN_DIR
   echo "<p>Failed to compile your submission code.</p>" > $1
   exit 0
@@ -32,8 +31,10 @@ if [ $? -ne 0 ]; then
   exit -1
 fi
 
+FILE_DIR="$BIN_DIR"
 CLASSPATH="$TEST_CLASSPATH"
 export CLASSPATH
+export FILE_DIR
 java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap uk.ac.kcl.inf.nexus.io_grader.TestRunner $test_files/IO_specification.tests $1 $MARK_FILE $timeout
 if [ $? -ne 0 ]; then
   rm -rf $BIN_DIR

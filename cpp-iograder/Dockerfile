@@ -52,7 +52,7 @@ COPY --from=core-grader --chown=app:app /usr/src/app /usr/src/app
 COPY --chown=app:app grade_submission.sh /usr/src/app
 
 # Makefile has extension as it is to be copied to submission's folder where there might already exist another 'Makefile'
-COPY Makefile.zz Makefile.zz 
+COPY Makefile Makefile
 COPY lib lib
 RUN mkdir ./bin && \
     javac -d ./bin -cp ./bin $(find ./lib -name '*.java') && \

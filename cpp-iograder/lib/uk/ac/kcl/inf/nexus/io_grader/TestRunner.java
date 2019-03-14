@@ -56,7 +56,9 @@ public class TestRunner {
 
       // We expect the name of the main java class to be listed as the first line of the test specification
       String mainCppProgramName = brTests.readLine();
-      File cppProgram = new File(mainCppProgramName)
+
+      String filepath = System.getenv().get("FILE_DIR");
+      File cppProgram = new File(filepath + "/" + mainCppProgramName);
 
       // Check class actually exists (do not initialise the class here to avoid running student code
       System.out.println("About to check for existience of C++ executable program: " + mainCppProgramName);
@@ -106,13 +108,11 @@ public class TestRunner {
     File testInput = testInputPath.equals("EMPTY")?null:new File(testDirectory + "/" + testInputPath);
     File testOutput = new File(testDirectory + "/" + testOutputPath);
 
-    ProcessBuilder pb = new ProcessBuilder("./", mainCppProgramName);
-    pb.environment().put("CLASSPATH", System.getenv().get("CLASSPATH"));
-    if (testInput != null) {
-      pb.redirectInput(testInput);
-    }
+    String cp[] = {"CLASSPATH", System.getenv().get("CLASSPATH")};
+    String filepath = System.getenv().get("FILE_DIR");
 
-    Process pRunning = pb.start();
+    File tempFile = new File(filepath + "/" + mainCppProgramName);
+    Process pRunning = Runtime.getRuntime().exec("./" + mainCppProgramName, cp, tempFile.getParentFile());
 
     if (pRunning.waitFor(timeout, TimeUnit.SECONDS)) {
       // Successfully terminated within time allotted
