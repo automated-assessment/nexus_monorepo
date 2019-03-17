@@ -29,3 +29,6 @@ services:
   cpp-iograder:
     environment:
       NEXUS_BASE_URL: http://grader-tester:3000
+  cppunit-grader:
+    environment:
+      NEXUS_BASE_URL: http://grader-tester:3000
