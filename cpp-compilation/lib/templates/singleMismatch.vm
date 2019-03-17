@@ -1,8 +1,0 @@
-There are an uneven number of opening and closing $type within the files:
-$filename
-
-$opening occurs: $opening_amount times.
-$closing occurs: $closing_amount times.
-
-Perhaps you should look at the following line numbers:
-$line_numbers

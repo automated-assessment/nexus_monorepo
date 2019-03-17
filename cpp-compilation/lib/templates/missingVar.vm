@@ -1,3 +1,0 @@
-You have made a reference to the variable $symbol within the class $location which the compiler cannot locate.
-Are you sure the variable $symbol has been declared?
-Recall that declaring a variable within a block limits its scope to the block it was declared in.

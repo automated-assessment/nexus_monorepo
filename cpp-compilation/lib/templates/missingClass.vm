@@ -1,2 +1,0 @@
-You are referencing the class $symbol on line #foreach ($l in $lineno) $l #end, yet the class file could not be found as part of your submission.
-Did you mean to include a file called $symconcat as part of your submission?

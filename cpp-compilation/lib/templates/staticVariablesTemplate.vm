@@ -1,4 +1,0 @@
-Any variable that is declared static is a class variable and therefore belongs to the class.
-Any instances of this class will share the same copy of each class variable.
-You are using the 'this' keyword to initialise a variable that should belong to only one instance.
-You can either remove the static keyword to change a class variable to an instance variable so that each instance can have different values assigned to the variable, or you can keep it is a static variable and remove the this keyword.

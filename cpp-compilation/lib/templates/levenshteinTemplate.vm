@@ -1,2 +1,0 @@
-You have made a reference to the class $symbol on line #foreach ($l in $line_number) $l #end, and there is a file with a similar name in your submission called $filename.
-Did you mean to rename the file to $symconcat or did you perhaps misspell the name of the class you were referencing?
