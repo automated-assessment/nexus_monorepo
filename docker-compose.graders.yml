@@ -173,3 +173,34 @@ services:
       options:
         syslog-address: "udp://localhost:5514"
         tag: "cpp-iograder-db"
+  cppunit-grader:
+    build:
+      context: cppunit-grader/
+      args:
+        - CACHEBUST
+    env_file: .env.cppunit.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
+    environment:
+      NEXUS_BASE_URL: http://nexus:3000
+      MYSQL_HOST: "mysql-cppunit"
+    ports:
+      - "3015:5000"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "cppunit"
+    depends_on:
+      - syslog
+      - mysql-cppunit
+  mysql-cppunit:
+    image: mysql:5.7
+    # ports:
+    #   - 3306:3306
+    env_file: .env.cppunit.list
+    volumes:
+      - ./cppunit_data:/var/lib/mysql
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:5514"
+        tag: "cppunit-db"

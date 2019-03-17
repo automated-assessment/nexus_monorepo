@@ -10,7 +10,6 @@ TEST_CLASSPATH="/usr/src/app/bin/:$BIN_DIR:$(find . -name '*.jar' | paste -s -d'
 export PATH="/usr/bin:/usr/lib:/usr/share/doc:/usr/share/doc/binutils":${PATH}
 SUBMISSION_FOLDER="$(find . -name '*.cpp' -exec dirname {} \; | uniq)"
 yes|cp -ruv /usr/src/app/Makefile $SUBMISSION_FOLDER #Override Makefile if present else just copy
-# cd $SUBMISSION_FOLDER && make -f Makefile.zz ASD=$BIN_DIR/
 
 if ! (cd $SUBMISSION_FOLDER && make TARGET_DIR=$BIN_DIR/); then
   rm -rf $BIN_DIR

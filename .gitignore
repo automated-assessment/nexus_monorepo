@@ -15,3 +15,4 @@ test-logs/
 sag_data/
 cpp-compilation_data/
 cpp-iograder_data/
+cppunit_data/

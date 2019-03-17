@@ -1,0 +1,11 @@
+parameters:
+  test_files:
+    label: Test files
+    description: Provide the test files to be used for this assignment. The repository may contain cpp files.
+    type: git
+    uniquify: "**/*.cpp"
+  timeout:
+    label: Timeout
+    description: "Provide the value for the timeout for the overall test run. A number with an optional suffix: s for seconds (the default), m for minutes, or h for hours."
+    type: string
+    initial: 1m
