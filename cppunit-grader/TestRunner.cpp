@@ -15,6 +15,7 @@ using std::string;
 #include <sstream>
 
 
+// write given data to the given file.
     int writeToFail(string file, string data) {
         std::ofstream myfile (file);
         if (myfile.is_open())
@@ -44,11 +45,11 @@ main( int argc, char* argv[] )
   runner.run( controller );
 
   // Print test in a compiler compatible format. This goes to console log only.
+  // Uncomment the 2 lines of code above if want to use.
   //CPPUNIT_NS::CompilerOutputter outputter( &result, std::cerr );
   //outputter.write();  
   
 
-    //--------------------------------------------------------------------
     //computeAndOutputMark 
     int totalTests = result.runTests();
     int marksAchieved = totalTests;
@@ -57,11 +58,9 @@ main( int argc, char* argv[] )
     //cout << "MARK: " << mark << endl;
     writeToFail(argv[1], std::to_string(mark));
 
-    //endComputeAndOutputMark
-    //--------------------------------------------------------------------^
 
     //--------------------------------------------------------------------
-    //ProduceFeedback//
+    //ProduceFeedback
     
     std::stringstream ss;
     ss << "<div>" << endl;
@@ -80,8 +79,6 @@ main( int argc, char* argv[] )
     //cout << "Feedback is " << str << endl;
     writeToFail(argv[2], str);
 
-    //end ProduceFeedback
-    //--------------------------------------------------------------------^
 
   return 0;
 }

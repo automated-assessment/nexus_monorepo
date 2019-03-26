@@ -1,7 +1,7 @@
 # Generate UI from configuration file
 FROM abstract-grader AS core-grader
 
-# Install java and set up the grader
+# Install CPPUnit and set up the grader
 FROM abstract-grader:core
 
 
@@ -28,4 +28,7 @@ COPY --chown=app:app grade_submission.sh /usr/src/app
 COPY Makefile Makefile
 COPY TestRunner.cpp TestRunner.cpp
 RUN mkdir ./bin && \
-    cp Makefile ./bin && cp TestRunner.cpp ./bin 
+    cp Makefile ./bin && \
+    cp TestRunner.cpp ./bin && \
+    rm -rf Makefile && \
+    rm -rf TestRunner.cpp
