@@ -54,7 +54,7 @@ public class TestRunner {
 
       BufferedReader brTests = new BufferedReader(new FileReader(mainTestFile));
 
-      // We expect the name of the main java class to be listed as the first line of the test specification
+      // We expect the name of the main C++ class to be listed as the first line of the test specification
       String mainCppProgramName = brTests.readLine();
 
       String filepath = System.getenv().get("FILE_DIR");

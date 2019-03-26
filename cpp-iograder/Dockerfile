@@ -6,6 +6,7 @@ FROM abstract-grader:core
 
 ##########################################
 # Install Open-JDK (inspired by on official Docker image code)
+# Taken from IO-Grader
 ##########################################
 
 # Set up Open-JDK prerequisites
@@ -51,7 +52,7 @@ ENV MAX_CONCURRENCY 10
 COPY --from=core-grader --chown=app:app /usr/src/app /usr/src/app
 COPY --chown=app:app grade_submission.sh /usr/src/app
 
-# Makefile has extension as it is to be copied to submission's folder where there might already exist another 'Makefile'
+
 COPY Makefile Makefile
 COPY lib lib
 RUN mkdir ./bin && \

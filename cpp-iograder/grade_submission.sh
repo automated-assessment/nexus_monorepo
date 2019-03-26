@@ -2,15 +2,15 @@
 
 echo "Compiling submission"
 
+# Create a temp directory for the lifespan of the grader execution.
 BIN_DIR=$(mktemp -d)
 
-SUBMISSION_CLASSPATH="$(find . -name '*.jar' | paste -s -d':')"
 TEST_CLASSPATH="/usr/src/app/bin/:$BIN_DIR:$(find . -name '*.jar' | paste -s -d':')"
-
 export PATH="/usr/bin:/usr/lib:/usr/share/doc:/usr/share/doc/binutils":${PATH}
 SUBMISSION_FOLDER="$(find . -name '*.cpp' -exec dirname {} \; | uniq)"
 yes|cp -ruv /usr/src/app/Makefile $SUBMISSION_FOLDER #Override Makefile if present else just copy
 
+# Check submission for successful compilation
 if ! (cd $SUBMISSION_FOLDER && make TARGET_DIR=$BIN_DIR/); then
   rm -rf $BIN_DIR
   echo "<p>Failed to compile your submission code.</p>" > $1
