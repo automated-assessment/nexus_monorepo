@@ -41,7 +41,6 @@ RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sou
     update-alternatives --get-selections | awk -v home="$(readlink -f "$JAVA_HOME")" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }' && \
 # ... and verify that it actually worked for one of the alternatives we care about
     update-alternatives --query java | grep -q 'Status: manual' 
-    # update-alternatives --get-selections | awk -v home="$(readlink -f "$GCC_HOME")" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }' 
 
 
 ##########################################
@@ -49,21 +48,22 @@ RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sou
 ##########################################
 
 ####INSTALL prerequisites for GCC Compiler 
+#testvam bez tva doly
 
-RUN set -ex; \
-	if ! command -v gpg > /dev/null; then \
-		apt-get update; \
-		apt-get install -y --no-install-recommends \
-			gnupg \
-			dirmngr \
-		; \
-		rm -rf /var/lib/apt/lists/*; \
-	fi
+# RUN set -ex; \
+# 	if ! command -v gpg > /dev/null; then \
+# 		apt-get update; \
+# 		apt-get install -y --no-install-recommends \
+# 			gnupg \
+# 			dirmngr \
+# 		; \
+# 		rm -rf /var/lib/apt/lists/*; \
+# 	fi
 
 
-RUN apt-get update
-RUN apt-get install --reinstall build-essential
-RUN apt-get update
+# RUN apt-get update
+# RUN apt-get install --reinstall build-essential
+# RUN apt-get update
 
 
 # We can afford a higher level of concurrency :-) 

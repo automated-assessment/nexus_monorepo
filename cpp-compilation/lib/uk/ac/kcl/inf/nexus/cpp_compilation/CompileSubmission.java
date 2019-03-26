@@ -1,4 +1,4 @@
-package uk.ac.kcl.inf.nexus.javac_grader;
+package uk.ac.kcl.inf.nexus.cpp_compilation;
 
 import java.io.*;
 
@@ -8,15 +8,14 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.*;
-import org.apache.commons.io.FilenameUtils;
 
 /**
- * Entry point for compiling java files and analysing compiler messages.
+ * Entry point for compiling C++ files.
  */
 public class CompileSubmission {
     public static void main(String[] args) {
 
-        new CompileSubmission().CompileCprog().reportMark(args[1]).reportFeedback(args[0]);
+        new CompileSubmission().CompileCppProgram().reportMark(args[1]).reportFeedback(args[0]);
         System.out.println("Done");
     }
 
@@ -28,12 +27,11 @@ public class CompileSubmission {
         files = getFiles();
     }
 
-    private CompileSubmission CompileCprog() {
+    private CompileSubmission CompileCppProgram() {
                 
 
        for (File f : files) {
             try {
-               String exeName = FilenameUtils.removeExtension(f.getName());
                 String command[] = {"g++", "-c", "-std=c++11", "-Wall", "-O", f.getName()};
                 String envp[] = {"PATH=/usr/bin:/usr/lib:/usr/share/doc:/usr/share/doc/binutils:/usr/local/bin:/usr/local/sbin:/usr/sbin:/bin:/sbin:."};
                 Process p = Runtime.getRuntime().exec(command,envp,f.getParentFile());
@@ -42,7 +40,6 @@ public class CompileSubmission {
                 BufferedReader in2 = new BufferedReader(new InputStreamReader(p.getErrorStream()));
                 String line2 = null;
                 while ((line2 = in2.readLine()) != null) {
-                    //System.out.println(line2);
                     swOutput.append(line2 +"\n");
                 }
                 
@@ -73,7 +70,8 @@ public class CompileSubmission {
 
         return this;
     }
-private CompileSubmission reportFeedback(String fileName) {
+
+    private CompileSubmission reportFeedback(String fileName) {
         boolean allOK = swOutput.toString().isEmpty();
         StringBuffer sb = new StringBuffer();
 
@@ -119,7 +117,8 @@ private CompileSubmission reportFeedback(String fileName) {
         
         return this;
     }
-private List<File> getFiles() {
+
+    private List<File> getFiles() {
         return getFiles(new File("."));
     }
 
