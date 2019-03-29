@@ -32,7 +32,7 @@ public class CompileSubmission {
 
        for (File f : files) {
             try {
-                String command[] = {"g++", "-c", "-std=c++11", "-Wall", "-O", f.getName()};
+                String command[] = {"g++", "-c", "-std=c++11", "-O", f.getName()};
                 String envp[] = {"PATH=/usr/bin:/usr/lib:/usr/share/doc:/usr/share/doc/binutils:/usr/local/bin:/usr/local/sbin:/usr/sbin:/bin:/sbin:."};
                 Process p = Runtime.getRuntime().exec(command,envp,f.getParentFile());
                 
