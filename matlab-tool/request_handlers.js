@@ -115,7 +115,7 @@ function handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir
       output = stdout;
     } else {
       console.log(`Internal error running marking tool for submission ${submissionID}: ${error}: ${stdout}.`);
-      output = 'Internal error: testing tool failed to run command.\n'+stdout;
+      output = `Internal error: testing tool failed to run command.\nSTDOUT: ${stdout}\n\nSTDERR:${stderr}`;
       exitCode = -1;
     }
   } else {
@@ -137,7 +137,7 @@ function handleMarkingToolResults(error, stdout, stderr, submissionID, sourceDir
   } else {
     console.log(`Informing NEXUS of issues with marking submission ${submissionID}.`);
     sendMark (0, submissionID);
-    sendFeedback('<div class="generic-feedback">There was an error marking your submission. Please contact your lecturer.</div>',
+    sendFeedback(`<div class="generic-feedback"><p>There was an error marking your submission. Please contact your lecturer. Detailed error information is provided below.</p><pre>${output}</pre></div>`,
           submissionID,
           (err, res, body) => {
             if (err) {
