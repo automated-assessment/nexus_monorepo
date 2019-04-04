@@ -15,7 +15,6 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 
-
 # We can afford a higher level of concurrency :-)
 ENV MAX_CONCURRENCY 10
 

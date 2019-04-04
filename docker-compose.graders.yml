@@ -176,8 +176,6 @@ services:
   cppunit-grader:
     build:
       context: cppunit-grader/
-      args:
-        - CACHEBUST
     env_file: .env.cppunit.list # NEXUS_TOOL_CANONICAL_NAME and NEXUS_ACCESS_TOKEN
     environment:
       NEXUS_BASE_URL: http://nexus:3000

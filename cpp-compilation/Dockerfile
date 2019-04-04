@@ -47,24 +47,6 @@ RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sou
 # End Install Open-JDK
 ##########################################
 
-####INSTALL prerequisites for GCC Compiler 
-#testvam bez tva doly
-
-# RUN set -ex; \
-# 	if ! command -v gpg > /dev/null; then \
-# 		apt-get update; \
-# 		apt-get install -y --no-install-recommends \
-# 			gnupg \
-# 			dirmngr \
-# 		; \
-# 		rm -rf /var/lib/apt/lists/*; \
-# 	fi
-
-
-# RUN apt-get update
-# RUN apt-get install --reinstall build-essential
-# RUN apt-get update
-
 
 # We can afford a higher level of concurrency :-) 
 ENV MAX_CONCURRENCY 10
