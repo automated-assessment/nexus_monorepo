@@ -106,6 +106,8 @@ def _execute( dir, function, timeout=10 ):
         process.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
         timeout_occurred = True
+        if verbose:
+            print('Saw a timeout for ' + function);
         _kill(process.pid)
         process.wait()
     finally:
