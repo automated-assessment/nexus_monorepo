@@ -48,7 +48,7 @@ class MatlabFunction:
 def _execute( dir, function, timeout=10 ):
     """Executes a Matlab function in the given directory"""
 
-    verbose = False
+    verbose = True
 
     file = os.path.realpath( dir)
     file = file.replace('\\','\\\\')
