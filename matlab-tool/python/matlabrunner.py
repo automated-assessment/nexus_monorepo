@@ -104,7 +104,7 @@ def _execute( dir, function, timeout=10 ):
 
         process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         process.wait(timeout=timeout)
-    except subprocess.TimeoutExpired:
+    except TimeoutExpired:
         timeout_occurred = True
         if verbose:
             print('Saw a timeout for ' + function);
@@ -128,7 +128,7 @@ def _execute( dir, function, timeout=10 ):
         except:
             pass
     if verbose:
-        print('Output from matlab');
+        print('Output from matlab for ' + function);
         print(full_output)
 
     if timeout_occurred:
