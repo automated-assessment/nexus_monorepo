@@ -110,7 +110,13 @@ def _execute( dir, function, timeout=10 ):
     except TimeoutExpired:
         timeout_occurred = True
         if verbose:
-            print('Saw a timeout for ' + function);
+            print('Saw a timeout for ' + function)
+        _kill(process.pid)
+        stdout, stderr = process.communicate()
+    except:
+        timeout_occurred = True
+        if verbose:
+            print('Assumed a timeout for ' + function)
         _kill(process.pid)
         stdout, stderr = process.communicate()
     finally:
