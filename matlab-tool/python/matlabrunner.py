@@ -48,7 +48,7 @@ class MatlabFunction:
 def _execute( dir, function, timeout=10 ):
     """Executes a Matlab function in the given directory"""
 
-    verbose = False
+    verbose = True
 
     file = os.path.realpath( dir)
     file = file.replace('\\','\\\\')
@@ -83,6 +83,8 @@ def _execute( dir, function, timeout=10 ):
 
     process = None
     timeout_occurred = False
+    stdout = None
+    stderr = None
 
     try:
 
@@ -103,11 +105,20 @@ def _execute( dir, function, timeout=10 ):
             print( str(args))
 
         process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        process.wait(timeout=timeout)
-    except subprocess.TimeoutExpired:
+
+        stdout, stderr = process.communicate(timeout=timeout)
+    except TimeoutExpired:
         timeout_occurred = True
+        if verbose:
+            print('Saw a timeout for ' + function)
         _kill(process.pid)
-        process.wait()
+        stdout, stderr = process.communicate()
+    except:
+        timeout_occurred = True
+        if verbose:
+            print('Assumed a timeout for ' + function)
+        _kill(process.pid)
+        stdout, stderr = process.communicate()
     finally:
 
         if windows:
@@ -118,7 +129,7 @@ def _execute( dir, function, timeout=10 ):
             except:
                 pass
         else:
-            stdout, stderr = process.communicate()
+#            stdout, stderr = process.communicate()
             full_output = stdout.decode('utf-8')
 
         try:
@@ -126,7 +137,7 @@ def _execute( dir, function, timeout=10 ):
         except:
             pass
     if verbose:
-        print('Output from matlab');
+        print('Output from matlab for ' + function);
         print(full_output)
 
     if timeout_occurred:

@@ -24,6 +24,7 @@ def _summarize_as_html_helper( ret, diagnostics=True):
         if result.internal_error:
             summary.append("<tr><td></td><td></td><td class='error'>");
             summary.append("Server error. Please retry and if the problem persists report a bug.\n");
+            summary.append(result.internal_error);
             summary.append("</td></tr>\n")
         elif result.error:
             summary.append("<tr><td></td><td></td><td class='error'>Student error. ")
