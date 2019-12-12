@@ -13,3 +13,6 @@ uat_data/
 grader_tester/tests/repositories/
 test-logs/
 sag_data/
+cpp-compilation_data/
+cpp-iograder_data/
+cppunit_data/
