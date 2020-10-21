@@ -22,7 +22,7 @@ RUN apt-get update && \
 ENV LANG C.UTF-8
 
 # do some fancy footwork to create a JAVA_HOME that's cross-architecture-safe
-RUN ln -svT "/usr/lib/jvm/java-8-openjdk-$(dpkg --print-architecture)" /docker-java-home
+RUN ln -svT "/usr/lib/jvm/java-11-openjdk-$(dpkg --print-architecture)" /docker-java-home
 ENV JAVA_HOME /docker-java-home
 
 ENV JAVA_VERSION 8u162
@@ -31,9 +31,11 @@ ENV JAVA_DEBIAN_VERSION 8u162-b12-1~deb9u1
 # May need to handle certificiates specially, if I run into problems with https at some point
 # See official openjdk 8 image for details
 
-RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sources.list && \
+RUN echo deb http://deb.debian.org/debian buster main >> /etc/apt/sources.list
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 && \
     apt-get update && \
-    apt-get install -y -t jessie-backports openjdk-8-jdk && \
+    apt-get remove -y binutils && \
+    apt-get install -y default-jdk && \
     rm -rf /var/lib/apt/lists/* && \
 # update-alternatives so that future installs of other OpenJDK versions don't change /usr/bin/java
     update-alternatives --get-selections | awk -v home="$(readlink -f "$JAVA_HOME")" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }' && \
@@ -48,8 +50,8 @@ RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sou
 ENV MAX_CONCURRENCY 10
 
 # Add JUnit -- for now, we're only providing jUnit4, jUnit5 support to be investigated
-RUN curl http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar > junit-4.12.jar && \
-    curl http://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar > hamcrest-core-1.3.jar && \
+RUN curl https://repo1.maven.org/maven2/junit/junit/4.9/junit-4.9.jar > junit-4.9.jar && \
+    curl https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/2.2/hamcrest-core-2.2.jar > hamcrest-core-2.2.jar && \
     chown app:app *.jar
 
 # Bundle app source
@@ -61,8 +63,8 @@ ARG CACHEBUST=1
 # Anything below here won't be taken from Docker's build cache, ever
 RUN mkdir ./bin && \
     git clone git@github.kcl.ac.uk:automated-assessment/junit_annotations.git && \
-    javac -d ./bin -cp ./bin:junit-4.12.jar:hamcrest-core-1.3.jar $(find ./junit_annotations/src -name '*.java')
+    javac -d ./bin -cp ./bin:junit-4.9.jar:hamcrest-core-2.2.jar $(find ./junit_annotations/src -name '*.java')
 
 COPY lib lib
-RUN javac -d ./bin -cp ./bin:junit-4.12.jar:hamcrest-core-1.3.jar $(find ./lib -name '*.java') && \
+RUN javac -d ./bin -cp ./bin:junit-4.9.jar:hamcrest-core-2.2.jar $(find ./lib -name '*.java') && \
     chown -R app:app ./bin
