@@ -50,7 +50,7 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 &&
 ENV MAX_CONCURRENCY 10
 
 # Add JUnit -- for now, we're only providing jUnit4, jUnit5 support to be investigated
-RUN curl https://repo1.maven.org/maven2/junit/junit/4.9/junit-4.9.jar > junit-4.9.jar && \
+RUN curl https://repo1.maven.org/maven2/junit/junit/4.13/junit-4.13.jar > junit-4.13.jar && \
     curl https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/2.2/hamcrest-core-2.2.jar > hamcrest-core-2.2.jar && \
     chown app:app *.jar
 
@@ -62,9 +62,9 @@ COPY --chown=app:app grade_submission.sh /usr/src/app
 ARG CACHEBUST=1
 # Anything below here won't be taken from Docker's build cache, ever
 RUN mkdir ./bin && \
-    git clone git@github.kcl.ac.uk:automated-assessment/junit_annotations.git && \
-    javac -d ./bin -cp ./bin:junit-4.9.jar:hamcrest-core-2.2.jar $(find ./junit_annotations/src -name '*.java')
+    git clone git@github.com:automated-assessment/junit_annotations.git && \
+    javac -d ./bin -cp ./bin:junit-4.13.jar:hamcrest-core-2.2.jar $(find ./junit_annotations/src -name '*.java')
 
 COPY lib lib
-RUN javac -d ./bin -cp ./bin:junit-4.9.jar:hamcrest-core-2.2.jar $(find ./lib -name '*.java') && \
+RUN javac -d ./bin -cp ./bin:junit-4.13.jar:hamcrest-core-2.2.jar $(find ./lib -name '*.java') && \
     chown -R app:app ./bin

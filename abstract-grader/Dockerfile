@@ -19,7 +19,7 @@ RUN groupadd -r app && useradd -rmg app app
 
 # Generate SSH key for use when pulling additional repositories and store GHE key in known_hosts
 RUN ssh-keygen -q -t rsa -b 4096 -C "git repos" -N "" -f /root/.ssh/id_rsa && \
-    ssh-keyscan -H -t rsa github.kcl.ac.uk > /root/.ssh/known_hosts
+    ssh-keyscan -H -t rsa github.com > /root/.ssh/known_hosts
 
 ARG GHE_USER
 ENV GHE_USER=$GHE_USER
