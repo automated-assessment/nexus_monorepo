@@ -1,5 +1,8 @@
-FROM node:9.11
+FROM node:11
 
+RUN npm update && \
+	npm rebuild
+	
 # grab gosu for easy step-down from root
 RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
