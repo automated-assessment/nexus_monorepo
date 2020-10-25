@@ -44,6 +44,9 @@ tests:
       javac-tool:
         mark: 0
         feedback: dontcare
+      cpp-compilation:
+        mark: 0
+        feedback: dontcare
   cpp-compile:
     submission: basic_compiles_cpp
     graders:
@@ -59,9 +62,3 @@ tests:
         mark: 97
         feedback:
           text: <div class="generic-feedback"><p>Some more specialised feedback</p></div>
-  no_compile:
-    submission: basic_no_compile_cpp
-    graders:
-      cpp-compilation:
-        mark: 0
-        feedback: dontcare
