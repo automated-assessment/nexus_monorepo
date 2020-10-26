@@ -32,10 +32,11 @@ ENV JAVA_DEBIAN_VERSION 8u162-b12-1~deb9u1
 # See official openjdk 8 image for details
 
 RUN echo deb http://deb.debian.org/debian buster main >> /etc/apt/sources.list
+RUN echo deb http://security.debian.org/debian-security buster/updates main >> /etc/apt/sources.lit
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 && \
     apt-get update && \
     apt-get remove -y binutils && \
-    apt-get install -y default-jdk && \
+    apt-get install -y openjdk-11-jdk && \
     rm -rf /var/lib/apt/lists/* && \
 # update-alternatives so that future installs of other OpenJDK versions don't change /usr/bin/java
     update-alternatives --get-selections | awk -v home="$(readlink -f "$JAVA_HOME")" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }' && \
