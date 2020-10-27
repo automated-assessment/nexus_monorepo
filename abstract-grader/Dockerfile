@@ -1,4 +1,4 @@
-FROM node:14.14.0-buster
+FROM node:10.22.1-buster
 # RUN apt-get install g++ make python
 
 # grab gosu for easy step-down from root
