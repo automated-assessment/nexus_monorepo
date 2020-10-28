@@ -6,7 +6,7 @@
 #
 # Inspired by https://github.com/benjamin-heasly/matlab-support/blob/master/Dockerfile
 #
-FROM node:9.11
+FROM node:11
 
 # Matlab dependencies
 RUN apt-get update && \

@@ -1,4 +1,5 @@
-FROM node:9.11
+FROM node:10.22.1-buster
+# RUN apt-get install g++ make python
 
 # grab gosu for easy step-down from root
 RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
@@ -19,7 +20,7 @@ RUN groupadd -r app && useradd -rmg app app
 
 # Generate SSH key for use when pulling additional repositories and store GHE key in known_hosts
 RUN ssh-keygen -q -t rsa -b 4096 -C "git repos" -N "" -f /root/.ssh/id_rsa && \
-    ssh-keyscan -H -t rsa github.kcl.ac.uk > /root/.ssh/known_hosts
+    ssh-keyscan -H -t rsa github.com > /root/.ssh/known_hosts
 
 ARG GHE_USER
 ENV GHE_USER=$GHE_USER
