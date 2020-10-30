@@ -7,7 +7,7 @@ You will also find information about how to develop your own contributions to Ne
 
 ## Getting Started
 **1. Clone the repo and cd into it**
-  1. `git clone https://github.kcl.ac.uk/automated-assessment/nexus_monorepo.git`
+  1. `git clone https://github.com/automated-assessment/nexus_monorepo.git`
   2. `cd <pathToRepo>/nexus_monorepo`
 
 **2. Run `make init-env`. This executes the following:**
