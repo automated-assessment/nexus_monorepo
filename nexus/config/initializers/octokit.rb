@@ -1,3 +1,3 @@
 Octokit.configure do |c|
-  c.api_endpoint = 'https://github.kcl.ac.uk/api/v3/'
+  c.api_endpoint = 'https://api.github.com/'
 end
