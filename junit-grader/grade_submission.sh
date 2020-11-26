@@ -5,7 +5,7 @@ echo "Compiling test code and submission"
 BIN_DIR=$(mktemp -d)
 
 SUBMISSION_CLASSPATH="$(find . -name '*.jar' | paste -s -d':')"
-TEST_CLASSPATH="/usr/src/app/bin/:/usr/src/app/junit-4.12.jar:/usr/src/app/hamcrest-core-1.3.jar:$(find $test_files/ -name '*.jar' | paste -s -d':'):$BIN_DIR:$(find . -name '*.jar' | paste -s -d':')"
+TEST_CLASSPATH="/usr/src/app/bin/:/usr/src/app/junit-4.13.jar:/usr/src/app/hamcrest-2.2.jar:$(find $test_files/ -name '*.jar' | paste -s -d':'):$BIN_DIR:$(find . -name '*.jar' | paste -s -d':')"
 
 echo "Compiling submission"
 if ! /usr/local/openjdk-11/bin/javac -cp "$SUBMISSION_CLASSPATH" -d $BIN_DIR $(find . -name '*.java'); then
