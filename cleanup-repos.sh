@@ -1,6 +1,6 @@
 #!/bin/bash
 
-url="https://github.kcl.ac.uk/api/v3"
+url="https://api.github.com"
 
 # Extract the values for NEXUS_GITHUB_ORG and NEXUS_GITHUB_TOKEN from .env.list
 org=$(cat .env.list | grep NEXUS_GITHUB_ORG | awk -F "=" '/NEXUS_GITHUB_ORG/ {print $2}')
