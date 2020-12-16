@@ -111,7 +111,7 @@ public class TestRunner {
     File testInput = testInputPath.equals("EMPTY")?null:new File(testDirectory + "/" + testInputPath);
     File testOutput = new File(testDirectory + "/" + testOutputPath);
 
-    ProcessBuilder pb = new ProcessBuilder("java", mainClassName);
+    ProcessBuilder pb = new ProcessBuilder("/usr/local/openjdk-11/bin/java", mainClassName);
     pb.environment().put("CLASSPATH", System.getenv().get("CLASSPATH"));
     if (testInput != null) {
       pb.redirectInput(testInput);

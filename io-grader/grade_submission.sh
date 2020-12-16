@@ -8,7 +8,7 @@ SUBMISSION_CLASSPATH="$(find . -name '*.jar' | paste -s -d':')"
 TEST_CLASSPATH="/usr/src/app/bin/:$BIN_DIR:$(find . -name '*.jar' | paste -s -d':')"
 
 echo "Compiling submission"
-if ! javac -cp "$SUBMISSION_CLASSPATH" -d $BIN_DIR $(find . -name '*.java'); then
+if ! /usr/local/openjdk-11/bin/javac -cp "$SUBMISSION_CLASSPATH" -d $BIN_DIR $(find . -name '*.java'); then
   rm -rf $BIN_DIR
   echo "<p>Failed to compile your submission code.</p>" > $1
   exit 0
@@ -29,7 +29,7 @@ fi
 
 CLASSPATH="$TEST_CLASSPATH"
 export CLASSPATH
-java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap uk.ac.kcl.inf.nexus.io_grader.TestRunner $test_files/IO_specification.tests $1 $MARK_FILE $timeout
+/usr/local/openjdk-11/bin/java -XX:+UnlockExperimentalVMOptions -XX:+UseContainerSupport uk.ac.kcl.inf.nexus.io_grader.TestRunner $test_files/IO_specification.tests $1 $MARK_FILE $timeout
 if [ $? -ne 0 ]; then
   rm -rf $BIN_DIR
   rm -f $MARK_FILE

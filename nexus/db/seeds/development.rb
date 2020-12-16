@@ -68,12 +68,12 @@ if ENV['DOCKER']
 
   MarkingTool.create(name: 'IO Tool',
                      description: 'IO Tool',
-                     url: 'http://io-tool:3001/mark',
+                     url: 'http://io-grader:5000/mark',
                      uid: 'iotool',
                      input: 'java',
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://localhost:3004/#/config?aid=%{aid}&sid=%{sid}&isUnique=%{isUnique}',
+                     config_url: 'http://localhost:3004/foo/configure?aid=%{aid}&sid=%{sid}&isUnique=%{isUnique}',
                      access_token: 'bar')
 
   MarkingTool.create(name: 'jUnit grader',
@@ -131,7 +131,7 @@ else
                      input: 'java',
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://localhost:3001/#/config?aid=%{aid}&sid=%{sid}&isUnique=%{isUnique}',
+                     config_url: 'http://localhost:3001/#/configure?aid=%{aid}&sid=%{sid}&isUnique=%{isUnique}',
                      access_token: 'bar')
 
   MarkingTool.create(name: 'Peer Feedback',
