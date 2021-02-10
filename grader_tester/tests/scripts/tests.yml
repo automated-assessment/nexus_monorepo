@@ -59,7 +59,7 @@ tests:
         mark: 97
         feedback:
           text: <div class="generic-feedback"><p>Some more specialised feedback</p></div>
-  no_compile_cpp:
+  no_compile:
     submission: basic_no_compile_cpp
     graders:
       cpp-compilation:
