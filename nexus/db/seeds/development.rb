@@ -73,7 +73,7 @@ if ENV['DOCKER']
                      input: 'java',
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://localhost:3004/foo/configure?aid=%{aid}&sid=%{sid}&isUnique=%{isUnique}',
+                     config_url: 'http://localhost:3004/foo/config.html?aid=%{aid}&sid=%{sid}&isUnique=%{isUnique}',
                      access_token: 'bar')
 
   MarkingTool.create(name: 'jUnit grader',
@@ -83,7 +83,7 @@ if ENV['DOCKER']
                      input: nil,
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://localhost:3006/foo/configure?aid=%{aid}',
+                     config_url: 'http://localhost:3006/foo/config.html?aid=%{aid}',
                      access_token: 'foo')
 
   MarkingTool.create(name: 'Peer Feedback',
@@ -131,7 +131,7 @@ else
                      input: 'java',
                      output: nil,
                      requires_config: true,
-                     config_url: 'http://localhost:3001/foo/configure?aid=%{aid}&sid=%{sid}&isUnique=%{isUnique}',
+                     config_url: 'http://localhost:3001/foo/config.html?aid=%{aid}&sid=%{sid}&isUnique=%{isUnique}',
                      access_token: 'bar')
 
   MarkingTool.create(name: 'Peer Feedback',

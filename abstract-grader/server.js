@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import errorhandler from 'errorhandler';
 import path from 'path';
-import { markRequestHandler, storeConfigurationHandler, configurationPageHandler } from './request_handlers';
+import { markRequestHandler, storeConfigurationHandler, configurationPageHandler, getConfigurationHandler } from './request_handlers';
 
 const port = process.env.PORT || 5000;
 
@@ -33,6 +33,9 @@ app.use(errorhandler({
 
 app.use('/static', express.static(path.resolve(__dirname, 'configPage', 'dist')));
 
+// TODO: try to serve static -ally
+app.get('/:auth_token/config.html', configurationPageHandler);
+
 // Health check
 app.head('/mark', (req, res, next) => {
     res.sendStatus(200);
@@ -40,7 +43,9 @@ app.head('/mark', (req, res, next) => {
 
 app.post('/mark', markRequestHandler);
 
-app.get('/:auth_token/configure', configurationPageHandler);
+// app.get('/:auth_token/configure', configurationPageHandler);
+
+app.get('/:auth_token/configuration', getConfigurationHandler);
 app.post('/:auth_token/configuration', storeConfigurationHandler);
 
 app.listen(port, () => {

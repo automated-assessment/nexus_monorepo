@@ -89,6 +89,37 @@ export function configurationPageHandler(req, res, next) {
 }
 
 /**
+ * Respond to a request to get the configuration of an assignment
+ */
+export function getConfigurationHandler(req, res, next){
+  if ((!req.params.auth_token) ||
+      (!req.params.auth_token == AUTH_TOKEN)) {
+    console.log("Attempt to access configuration without proper authorization.");
+    req.status(400).send('Missing authorization!');
+    return next();
+  }
+
+  if (isNaN(parseInt(req.query.aid, 10))) {
+    res.status(400).send('aid is not a number!');
+    return next();
+  }
+  const aid = parseInt(req.query.aid);
+  getConfigData(aid, (err, data) => {
+    if (err) {
+      console.log (`Error getting config data: ${err}.`);
+      res.status(500).send('An internal erro occurred.');
+    } else {
+      res.status(200).json({
+        CONFIG_PROPS: safeStringify(data.config),
+        TOKEN: AUTH_TOKEN,
+        AID: aid
+      });
+      return next();
+    }
+  });
+}
+
+/**
  * Receive and store configuration information.
  */
 export function storeConfigurationHandler(req, res, next) {
