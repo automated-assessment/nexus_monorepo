@@ -33,7 +33,6 @@ app.use(errorhandler({
 
 app.use('/static', express.static(path.resolve(__dirname, 'configPage', 'dist')));
 
-// TODO: try to serve static -ally
 app.get('/:auth_token/config.html', configurationPageHandler);
 
 // Health check
