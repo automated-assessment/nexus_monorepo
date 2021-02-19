@@ -110,9 +110,9 @@ export function getConfigurationHandler(req, res, next){
       res.status(500).send('An internal erro occurred.');
     } else {
       res.status(200).json({
-        CONFIG_PROPS: safeStringify(data.config),
-        TOKEN: AUTH_TOKEN,
-        AID: aid
+        config: data.config,
+        token: AUTH_TOKEN,
+        aid: aid
       });
       return next();
     }
