@@ -42,7 +42,7 @@ export function markRequestHandler(req, res, next) {
  * Respond to a request asking for the configuration schema
  */
 export function getConfigurationSchema(req, res, next) {
-  res.sendStatus(200).json(configSchema);  
+  res.status(200).json(configSchema);  
 }
 
 /**
