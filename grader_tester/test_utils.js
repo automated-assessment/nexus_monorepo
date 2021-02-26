@@ -312,8 +312,24 @@ function setup_configuration(grader_spec, grader_test_spec, submission, cb){
   });
 }
 
+function get_submission_sha_sync(repo_name) {
+  const data = fs.readFileSync(`/repositories/${repo_name}.git/packed-refs`);
+  return /^([A-Za-z0-9]+)\s+refs\/heads\/master$/m.exec(data)[1]
+}
+
 function send_config(grader_spec, grader_test_spec, submission, cb){
   const grader_name = grader_spec.canonical_name;
+
+  for (var configkey in grader_test_spec.configuration){
+    if (grader_test_spec.configuration[configkey]["repository"]){
+      const repo_name = grader_test_spec.configuration[configkey]["repository"]
+      grader_test_spec.configuration[configkey] = {
+        repository: `${GIT_BASE_URL}${repo_name}.git`,
+        sha: get_submission_sha_sync(repo_name),
+        branch: "master"
+      }
+    }
+  }
 
   const requestOptions = {
     url: `http://${grader_name}:${grader_spec.port}${grader_spec.configuration}`,
@@ -358,15 +374,12 @@ function test_config(grader_spec, grader_test_spec, submission, cb){
     } else {
       if (res.statusCode == 200) {
         if (JSON.stringify(body.config) == JSON.stringify(grader_test_spec.configuration)){
-          console.log (`Recevied correct configurations back from ${grader_name}: ${err}.`.good)
+          console.log (`Recevied correct configurations back from ${grader_name}.`.good)
           cb();
         }
         else {
-          console.log(JSON.stringify(body.config));
-          console.log("vs");
-          console.log(JSON.stringify(grader_test_spec.configuration));
-          console.log(`Did not receive expected configurations from ${grader_name}: ${body}.`);
-          cb(`Did not receive expected configurations from ${grader_name}: ${body}.`);
+          console.log(`Did not receive expected configurations from ${grader_name}.`);
+          cb(`Did not receive expected configurations from ${grader_name}: ${JSON.stringify(body.config)} but expected ${JSON.stringify(grader_test_spec.configuration)}.`);
         }
       } else {
         console.log(`    Received non-200 return from ${grader_name}: ${body}.`.error);

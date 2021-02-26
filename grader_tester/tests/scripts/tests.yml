@@ -29,9 +29,7 @@ tests:
         feedback: dontcare
         configuration:
           test_files:
-            repository: git@github.com:automated-assessment/coursework_3_tests.git
-            branch: master
-            sha: 8f5fb0f4c8bffa355a3a34ba84916cf456b6d5e8
+            repository: car_coursework
           timeout: 1m
   compile:
     submission: basic_compiles
