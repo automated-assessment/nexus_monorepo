@@ -32,6 +32,9 @@ gem 'git'
 gem 'octokit', '~> 4.0'
 # Markdown rendering
 gem 'redcarpet'
+#LTI
+gem 'oauth-plugin' #Doesn't work without this. Why? No idea.
+gem 'omniauth-lti'
 
 group :production do
   # postgres adapter
@@ -42,7 +45,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
   # Rspec unit testing
-  gem 'rspec-rails', '~> 3.0'
+  gem 'rspec-rails'
 end
 
 group :development do
