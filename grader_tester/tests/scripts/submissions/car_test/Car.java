@@ -1,72 +1,82 @@
-class Car {
+public class Car {
+  private int id;
+  private int fuelLevel;
+  private int lowFuelBoost;
+  private int highFuelSlowdown;
+  private int fuelConsumptionPerLap;
+  private int pitStopTime;
+  private int rainSlowdown;
+  private int totalTime = 0;
 
-    private int id, fuel, lowFuelBoost, highFuelSlowdown, fuelConsumptionPerLap, pitStopTime, rainSlowdown, totalTime;
+  public Car(int id, int fuelLevel, int lowFuelBoost, int highFuelSlowdown,
+             int fuelConsumptionPerLap, int pitStopTime, int rainSlowdown) {
+    this.id = id;
+    this.fuelLevel = fuelLevel;
+    if (this.fuelLevel > 100) {
+      this.fuelLevel = 100;
+    }
+    this.lowFuelBoost = lowFuelBoost;
+    this.highFuelSlowdown = highFuelSlowdown;
+    this.fuelConsumptionPerLap = fuelConsumptionPerLap;
+    this.pitStopTime = pitStopTime;
+    this.rainSlowdown = rainSlowdown;
+  }
 
-    public Car(int id, int fuel, int lowFuelBoost, int highFuelSlowdown, int fuelConsumptionPerLap, int pitStopTime,
-            int rainSlowdown) {
-        this.id = id;
-        this.fuel = fuel;
-        this.lowFuelBoost = lowFuelBoost;
-        this.highFuelSlowdown = highFuelSlowdown;
-        this.fuelConsumptionPerLap = fuelConsumptionPerLap;
-        this.pitStopTime = pitStopTime;
-        this.rainSlowdown = rainSlowdown;
-        this.totalTime = 0;
+  public int completeLap(RaceTrack rt) {
+    int resultTime = rt.getAverageLapTime();
 
-        this.fuel = (this.fuel > 100) ? 100 : this.fuel;
+    if (fuelLevel >= 50) {
+      resultTime += highFuelSlowdown;
+    } else {
+      resultTime -= lowFuelBoost;
     }
 
-    public int completeLap(RaceTrack r) {
-
-        int laptime = r.getAverageLapTime();
-
-        if (this.fuel > 50) {
-            laptime += this.highFuelSlowdown;
-        } else {
-            laptime -= this.lowFuelBoost;
-        }
-
-        laptime += (r.isRaining()) ? this.rainSlowdown : 0;
-
-        this.fuel -= this.fuelConsumptionPerLap;
-
-        if (this.fuel <= 0) {
-            this.fuel = 100;
-            laptime += this.pitStopTime;
-        }
-
-        return laptime;
+    if (rt.isRaining()) {
+      resultTime += rainSlowdown;
     }
 
-    public int getTotalTime() {
-        return this.totalTime;
+    if (fuelLevel < fuelConsumptionPerLap) {
+      resultTime += pitStopTime;
+      fuelLevel = 100;
     }
 
-    public int getID() {
-        return this.id;
-    }
+    fuelLevel -= fuelConsumptionPerLap;
 
-    public int getFuel(){
-    	return this.fuel;
-    }
+    totalTime += resultTime;
 
-    public int getLowFuelBoost(){
-    	return this.lowFuelBoost;
-    }
+    return resultTime;
+  }
 
-    public int getHighFuelSlowdown(){
-    	return this.highFuelSlowdown;
-    }
+  public int getID() {
+    return id;
+  }
 
-    public int getFuelConsumptionPerLap(){
-    	return this.fuelConsumptionPerLap;
-    }
+  public int getFuel() {
+    return fuelLevel;
+  }
 
-    public int getPitStopTime(){
-    	return this.pitStopTime;
-    }
+  public int getLowFuelBoost() {
+    return lowFuelBoost;
+  }
 
-    public int getRainSlowdown(){
-    	return this.rainSlowdown;
-    }
+  public int getHighFuelSlowdown() {
+    return highFuelSlowdown;
+  }
+
+  public int getFuelConsumptionPerLap() {
+    return fuelConsumptionPerLap;
+  }
+
+  public int getPitStopTime() {
+    return pitStopTime;
+  }
+
+  public int getRainSlowdown() {
+    return rainSlowdown;
+  }
+
+  public int getTotalTime() {
+    return totalTime;
+  }
+
 }

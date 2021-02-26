@@ -1,21 +1,25 @@
-class RaceTrack {
-    private int av;
-    private boolean isr;
+public class RaceTrack {
+  private int averageLapTime;
+  private boolean isRaining;
 
-    public RaceTrack(int av, boolean isr) {
-        this.av = av;
-        this.isr = isr;
-    }
+  public RaceTrack(int averageLapTime, boolean isRaining) {
+    this.averageLapTime = averageLapTime;
+    this.isRaining = isRaining;
+  }
 
-    public int getAverageLapTime() {
-        return this.av;
-    }
+  public int getAverageLapTime() {
+    return this.averageLapTime;
+  }
 
-    public boolean isRaining() {
-        return this.isr;
-    }
+  public void setAverageLapTime(int averageLapTime) {
+    this.averageLapTime = averageLapTime;
+  }
 
-    public void setRain(boolean isr) {
-        this.isr = isr;
-    }
+  public boolean isRaining() {
+    return isRaining;
+  }
+
+  public void setRaining(boolean isRaining) {
+    this.isRaining = isRaining;
+  }
 }

@@ -1,39 +1,43 @@
 public class RaceSimulator {
+  public static void main(String[] args) {
+    RaceTrack silverstone = new RaceTrack(112, false);
+    Car car1 = new Car(1, 79, 6, 5, 19, 25, 15);
+    Car car2 = new Car(2, 67, 8, 4, 29, 16, 11);
+    Car car3 = new Car(3, 41, 7, 6, 31, 18, 13);
 
-    public static Car getWinner(Car c1, Car c2, Car c3) {
-
-        if (c1.getTotalTime() <= c2.getTotalTime() && c1.getTotalTime() <= c3.getTotalTime()) {
-            return c1;
-        }
-        if (c2.getTotalTime() <= c3.getTotalTime()) {
-            return c2;
-        }
-        return c3;
+    // First two laps
+    for (int lap = 0; lap < 2; lap++) {
+      race (silverstone, car1, car2, car3);
     }
 
-    public static void main(String args[]) {
-        RaceTrack silverstone = new RaceTrack(112, false);
+    // Now it starts raining
+    silverstone.setRaining(true);
 
-        Car c1 = new Car(1, 79, 6, 5, 19, 25, 15);
-        Car c2 = new Car(1, 79, 6, 5, 19, 25, 15);
-        Car c3 = new Car(1, 79, 6, 5, 19, 25, 15);
+    // And we race for a final time
+    race (silverstone, car1, car2, car3);
+  }
 
-        for (int i = 1; i <= 2; i++) {
-            c1.completeLap(silverstone);
-            c2.completeLap(silverstone);
-            c3.completeLap(silverstone);
+  private static void race (RaceTrack silverstone, Car car1, Car car2, Car car3) {
+    car1.completeLap(silverstone);
+    car2.completeLap(silverstone);
+    car3.completeLap(silverstone);
 
-            Car winner = getWinner(c1, c2, c3);
-            System.out.println(winner.getID());
-        }
+    int time1 = car1.getTotalTime();
+    int time2 = car2.getTotalTime();
+    int time3 = car3.getTotalTime();
 
-        silverstone.setRain(true);
-
-        c1.completeLap(silverstone);
-        c2.completeLap(silverstone);
-        c3.completeLap(silverstone);
-
-        Car winner = getWinner(c1, c2, c3);
-        System.out.println(winner.getID());
+    if (time1 > time2) {
+      if (time1 > time3) {
+        System.out.println(car1.getID());
+      } else {
+        System.out.println(car3.getID());
+      }
+    } else {
+      if (time2 > time3) {
+        System.out.println(car2.getID());
+      } else {
+        System.out.println(car3.getID());
+      }
     }
+  }
 }

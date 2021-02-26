@@ -9,14 +9,14 @@ graders:
     port: 5000
     mark: /mark
     configuration: /foo/configuration
-  # sample-abstract-grader:
-  #   canonical_name: sag
-  #   port: 5000
-  #   mark: /mark
-  # cpp-compilation:
-  #   canonical_name: cpp-compilation
-  #   port: 5000
-  #   mark: /mark
+  sample-abstract-grader:
+    canonical_name: sag
+    port: 5000
+    mark: /mark
+  cpp-compilation:
+    canonical_name: cpp-compilation
+    port: 5000
+    mark: /mark
 tests:
   car_test:
     submission: car_test
@@ -25,7 +25,7 @@ tests:
         mark: 100
         feedback: dontcare
       junit-grader:
-        mark: 62
+        mark: 100
         feedback: dontcare
         configuration:
           test_files:
@@ -33,44 +33,43 @@ tests:
             branch: master
             sha: 8f5fb0f4c8bffa355a3a34ba84916cf456b6d5e8
           timeout: 1m
-
-  # compile:
-  #   submission: basic_compiles
-  #   graders:
-  #     javac-tool:
-  #       mark: 100
-  #       feedback: dontcare
-  #     # The "grader" below doesn't actually look at the submission, so we take a random one
-  #     sample-abstract-grader:
-  #       mark: 97
-  #       feedback:
-  #         text: <div class="generic-feedback"><p>Some more specialised feedback</p></div>
-  # compile_with_jar_files:
-  #   submission: compiles_with_jar_files
-  #   graders:
-  #     javac-tool:
-  #       mark: 100
-  #       feedback: dontcare
-  # no_compile:
-  #   submission: basic_no_compile
-  #   graders:
-  #     javac-tool:
-  #       mark: 0
-  #       feedback: dontcare
-  # cpp-compile:
-  #   submission: basic_compiles_cpp
-  #   graders:
-  #     cpp-compilation:
-  #       mark: 100
-  #       feedback: dontcare
-  #     # The "grader" below doesn't actually look at the submission, so we take a random one
-  #     sample-abstract-grader:
-  #       mark: 97
-  #       feedback:
-  #         text: <div class="generic-feedback"><p>Some more specialised feedback</p></div>
-  # no_compile_cpp:
-  #   submission: basic_no_compile_cpp
-  #   graders:
-  #     cpp-compilation:
-  #       mark: 0
-  #       feedback: dontcare
+  compile:
+    submission: basic_compiles
+    graders:
+      javac-tool:
+        mark: 100
+        feedback: dontcare
+      # The "grader" below doesn't actually look at the submission, so we take a random one
+      sample-abstract-grader:
+        mark: 97
+        feedback:
+          text: <div class="generic-feedback"><p>Some more specialised feedback</p></div>
+  compile_with_jar_files:
+    submission: compiles_with_jar_files
+    graders:
+      javac-tool:
+        mark: 100
+        feedback: dontcare
+  no_compile:
+    submission: basic_no_compile
+    graders:
+      javac-tool:
+        mark: 0
+        feedback: dontcare
+  cpp-compile:
+    submission: basic_compiles_cpp
+    graders:
+      cpp-compilation:
+        mark: 100
+        feedback: dontcare
+      # The "grader" below doesn't actually look at the submission, so we take a random one
+      sample-abstract-grader:
+        mark: 97
+        feedback:
+          text: <div class="generic-feedback"><p>Some more specialised feedback</p></div>
+  no_compile_cpp:
+    submission: basic_no_compile_cpp
+    graders:
+      cpp-compilation:
+        mark: 0
+        feedback: dontcare
