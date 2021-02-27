@@ -298,26 +298,12 @@ function configure_test_for (grader_spec, grader_test_spec, submission, cb) {
   });
 }
 
-function setup_configuration(grader_spec, grader_test_spec, submission, cb){
-  async.series({
-    send_config: (cb) => {send_config(grader_spec, grader_test_spec, submission, cb)},
-    test_config: (cb) => {test_config(grader_spec, grader_test_spec, submission, cb)}
-  }, (err) => {
-    if (err) {
-      cb(err)
-    }
-    else {
-      cb(null);
-    }
-  });
-}
-
 function get_submission_sha_sync(repo_name) {
   const data = fs.readFileSync(`/repositories/${repo_name}.git/packed-refs`);
   return /^([A-Za-z0-9]+)\s+refs\/heads\/master$/m.exec(data)[1]
 }
 
-function send_config(grader_spec, grader_test_spec, submission, cb){
+function setup_configuration(grader_spec, grader_test_spec, submission, cb){
   const grader_name = grader_spec.canonical_name;
 
   for (var configkey in grader_test_spec.configuration){
@@ -346,8 +332,12 @@ function send_config(grader_spec, grader_test_spec, submission, cb){
       cb(err);
     } else {
       if (res.statusCode == 200) {
-        console.log(`    ${grader_name} reports successfully receiving configuration.`.good);
-        cb();
+        console.log(`${grader_name} reports successfully receiving configuration with sha ${grader_test_spec.configuration.test_files.sha}.`.good);
+
+        // wait a bit for the grader to put it in the database
+        setTimeout(() => {
+          test_config(grader_spec, grader_test_spec, submission, cb)
+        }, 100)
       } else {
         console.log(`    Received non-200 return from ${grader_name}: ${body}.`.error);
         cb(`Received non-200 return from ${grader_name}: ${body}.`);
@@ -365,7 +355,6 @@ function test_config(grader_spec, grader_test_spec, submission, cb){
     json: true,
     qs: {aid: submission.aid}, 
     queries: {aid: submission.aid},
-    body: grader_test_spec.configuration,
   };
   request(requestOptions, (err, res, body) => {
     if (err) {
@@ -374,12 +363,12 @@ function test_config(grader_spec, grader_test_spec, submission, cb){
     } else {
       if (res.statusCode == 200) {
         if (JSON.stringify(body.config) == JSON.stringify(grader_test_spec.configuration)){
-          console.log (`Recevied correct configurations back from ${grader_name}.`.good)
+          console.log (`Received correct configurations back from ${grader_name}.`.good)
           cb();
         }
         else {
           console.log(`Did not receive expected configurations from ${grader_name}.`);
-          cb(`Did not receive expected configurations from ${grader_name}: ${JSON.stringify(body.config)} but expected ${JSON.stringify(grader_test_spec.configuration)}.`);
+          cb(`Did not receive expected configurations from ${grader_name}: ${JSON.stringify(body)} but expected ${JSON.stringify(grader_test_spec.configuration)}.`);
         }
       } else {
         console.log(`    Received non-200 return from ${grader_name}: ${body}.`.error);
