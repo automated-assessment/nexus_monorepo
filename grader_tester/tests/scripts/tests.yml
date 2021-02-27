@@ -1,27 +1,37 @@
 # Test specifications for grader grader tester
 graders:
-  javac-tool:
-    canonical_name: javac-tool
-    port: 5000
-    mark: /mark
-  junit-grader:
-    canonical_name: junit-grader
-    port: 5000
-    mark: /mark
-    configuration: /foo/configuration
-  io-grader:
-    canonical_name: io-grader
-    port: 5000
-    mark: /mark
-    configuration: /foo/configuration
-  sample-abstract-grader:
-    canonical_name: sag
-    port: 5000
-    mark: /mark
+  # javac-tool:
+  #   canonical_name: javac-tool
+  #   port: 5000
+  #   mark: /mark
+  # junit-grader:
+  #   canonical_name: junit-grader
+  #   port: 5000
+  #   mark: /mark
+  #   configuration: /foo/configuration
+  # io-grader:
+  #   canonical_name: io-grader
+  #   port: 5000
+  #   mark: /mark
+  #   configuration: /foo/configuration
+  # sample-abstract-grader:
+  #   canonical_name: sag
+  #   port: 5000
+  #   mark: /mark
   cpp-compilation:
     canonical_name: cpp-compilation
     port: 5000
     mark: /mark
+  cppunit-grader:
+    canonical_name: cppunit-grader
+    port: 5000
+    mark: /mark
+    configuration: /foo/configuration
+  cpp-iograder:
+    canonical_name: cpp-iograder
+    port: 5000
+    mark: /mark
+    configuration: /foo/configuration
 tests:
   car_test:
     submission: car_test
@@ -83,3 +93,23 @@ tests:
       cpp-compilation:
         mark: 0
         feedback: dontcare
+  complex_cpp:
+    submission: complex_cpp
+    graders:
+      cpp-compilation:
+        mark: 100
+        feedback: dontcare
+      cppunit-grader:
+        mark: 100
+        feedback: dontcare
+        configuration:
+          test_files:
+            repository: complex_coursework
+          timeout: 1m
+      cpp-iograder:
+        mark: 100
+        feedback: dontcare
+        configuration:
+          test_files:
+            repository: complex_coursework
+          timeout: 15
