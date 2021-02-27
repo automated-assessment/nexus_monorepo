@@ -9,6 +9,11 @@ graders:
     port: 5000
     mark: /mark
     configuration: /foo/configuration
+  io-grader:
+    canonical_name: io-grader
+    port: 5000
+    mark: /mark
+    configuration: /foo/configuration
   sample-abstract-grader:
     canonical_name: sag
     port: 5000
@@ -31,6 +36,13 @@ tests:
           test_files:
             repository: car_coursework
           timeout: 1m
+      io-grader:
+        mark: 100
+        feedback: dontcare
+        configuration:
+          test_files:
+            repository: car_coursework
+          timeout: 15
   compile:
     submission: basic_compiles
     graders:
