@@ -1,23 +1,23 @@
 # Test specifications for grader grader tester
 graders:
-  # javac-tool:
-  #   canonical_name: javac-tool
-  #   port: 5000
-  #   mark: /mark
-  # junit-grader:
-  #   canonical_name: junit-grader
-  #   port: 5000
-  #   mark: /mark
-  #   configuration: /foo/configuration
-  # io-grader:
-  #   canonical_name: io-grader
-  #   port: 5000
-  #   mark: /mark
-  #   configuration: /foo/configuration
-  # sample-abstract-grader:
-  #   canonical_name: sag
-  #   port: 5000
-  #   mark: /mark
+  javac-tool:
+    canonical_name: javac-tool
+    port: 5000
+    mark: /mark
+  junit-grader:
+    canonical_name: junit-grader
+    port: 5000
+    mark: /mark
+    configuration: /foo/configuration
+  io-grader:
+    canonical_name: io-grader
+    port: 5000
+    mark: /mark
+    configuration: /foo/configuration
+  sample-abstract-grader:
+    canonical_name: sag
+    port: 5000
+    mark: /mark
   cpp-compilation:
     canonical_name: cpp-compilation
     port: 5000
