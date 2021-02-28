@@ -277,7 +277,7 @@ function configure_test_for (grader_spec, grader_test_spec, submission, cb) {
     url: `http://grader-tester:3000/tests/configure/${submission.sid}/${grader_spec.canonical_name}`,
     method: 'POST',
     json: true,
-    body: grader_test_spec
+    body: {...grader_test_spec, feedback: get_feedback_html(grader_test_spec.feedback)}
   };
 
   request(requestOptions, (err, res, body) => {
@@ -299,7 +299,7 @@ function configure_test_for (grader_spec, grader_test_spec, submission, cb) {
 }
 
 function get_submission_sha_sync(repo_name) {
-  const data = fs.readFileSync(`/repositories/${repo_name}.git/packed-refs`);
+  const data = fs.readFileSync(`/repositories/${repo_name}.git/packed-refs`, 'utf8');
   return /^([A-Za-z0-9]+)\s+refs\/heads\/master$/m.exec(data)[1]
 }
 
@@ -424,4 +424,32 @@ function wait_for_test_results (grader_canonical_name, grader_test_spec, submiss
       }
     }
   });
+}
+
+function get_feedback_html(feedback){
+  if (feedback == "dontcare") {
+    return feedback;
+  }
+
+  if (feedback["text"]){
+    return feedback["text"];
+  }
+
+  if (feedback["file"]){
+    var data = "";
+    try {
+      data = fs.readFileSync(`/test-specs/feedback/${feedback["file"]}.html`, 'utf8');
+      console.log("Successfully found relevant feedback html file");
+    }
+    catch (err) {
+      // tbh, there's no point in halting the tests at this point
+      console.log("Failed to read from file. Using default empty string".error);
+    }
+    finally{
+      return data; 
+    }
+  }
+
+  // else ...
+  console.log("Did find specifications for feedback. Using default empty string".error)
 }

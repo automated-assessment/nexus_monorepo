@@ -38,17 +38,20 @@ tests:
     graders:
       javac-tool:
         mark: 100
-        feedback: dontcare
+        feedback: 
+          file: javac_cartest
       junit-grader:
         mark: 100
-        feedback: dontcare
+        feedback: 
+          file: junit_cartest
         configuration:
           test_files:
             repository: car_coursework
           timeout: 1m
       io-grader:
         mark: 100
-        feedback: dontcare
+        feedback: 
+          file: iograder_cartest
         configuration:
           test_files:
             repository: car_coursework
