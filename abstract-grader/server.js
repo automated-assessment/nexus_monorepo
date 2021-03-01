@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import errorhandler from 'errorhandler';
 import path from 'path';
-import { markRequestHandler, storeConfigurationHandler, configurationPageHandler, getConfigurationHandler } from './request_handlers';
+import { getConfigurationSchema, markRequestHandler, storeConfigurationHandler, configurationPageHandler, getConfigurationHandler } from './request_handlers';
 
 const port = process.env.PORT || 5000;
 
@@ -44,6 +44,7 @@ app.post('/mark', markRequestHandler);
 
 // app.get('/:auth_token/configure', configurationPageHandler);
 
+app.get('/config_schema', getConfigurationSchema);
 app.get('/:auth_token/configuration', getConfigurationHandler);
 app.post('/:auth_token/configuration', storeConfigurationHandler);
 

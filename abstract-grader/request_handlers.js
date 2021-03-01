@@ -39,6 +39,13 @@ export function markRequestHandler(req, res, next) {
 }
 
 /**
+ * Respond to a request asking for the configuration schema
+ */
+export function getConfigurationSchema(req, res, next) {
+  res.status(200).json(configSchema);  
+}
+
+/**
  * Render the configuration page, if any.
  */
 export function configurationPageHandler(req, res, next) {
@@ -123,25 +130,30 @@ export function getConfigurationHandler(req, res, next){
  * Receive and store configuration information.
  */
 export function storeConfigurationHandler(req, res, next) {
+  const aid = req.body.aid;
+  const config = req.body.config;
+
   if ((!req.params.auth_token) ||
       (!req.params.auth_token == AUTH_TOKEN)) {
     console.log("Attempt to access configuration without proper authorization.");
     req.status(400).send('Missing authorization!');
-    return next();
   }
-
-  const aid = req.body.aid;
-  if (isNaN(parseInt(req.body.aid, 10))) {
+  else if (isNaN(parseInt(req.body.aid, 10))) {
     res.status(400).send('aid is not a number!');
-    return next();
   }
-  const config = JSON.stringify(req.body.config);
-
-  console.log(`Received configuration information for assignment ${aid}: ${config}.`);
-
-  res.sendStatus(200);
-
-  storeConfigData(aid, config);
+  else {
+    const error = getValidationError(config);
+    if (error){
+      console.log(`Invalid configuration received: ${error}`.error);
+      res.status(400).send(`Invalid configuration received: ${error}`);
+    }
+    else {
+      res.status(200);
+      console.log(`Received configuration information for assignment ${aid}: ${config}.`);
+      storeConfigData(aid, JSON.stringify(config));
+    }
+  }
+  return next();
 }
 /**
  * Queue used to ensure only MAX_CONCURRENCY instances of the grader run at any given time.
@@ -375,4 +387,39 @@ function safeStringify(obj) {
   } else {
     return "null";
   }
+}
+
+/**
+ * A utility function to check if a configuration is valid or not
+ */
+function getValidationError(config) {
+
+  const paraschema = configSchema.parameters;
+
+  for (var pkey in paraschema){
+    if (!config[pkey]) {
+      console.log(pkey);
+      console.log(config[pkey])
+      console.log(config["test_files"]);
+      return `${pkey} not found`
+    }
+    const paratype = paraschema[pkey].type;
+
+    if (paratype == "git"){
+      for (var gitparam of ["repository", "branch", "sha"])
+        if (!config[pkey][gitparam])
+          return `${pkey} parameter is missing field ${gitparam}`;
+    }
+    else if (paratype == "int"){
+      const val = parseInt(config[pkey], 10);
+      if (isNaN(val))
+        return `Expected ${pkey} to be a number`;
+    }
+    else {
+      // should be a str
+      if (typeof(config[pkey]) !== "string")
+        return `Expected ${pkey} to be a string`;
+    }
+  }
+  return null;
 }
