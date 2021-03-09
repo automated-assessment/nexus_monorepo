@@ -237,7 +237,7 @@ function run_graders(grader_test_specs, submission_folder, sha, graders, cb) {
 
 function run_grader(grader_name, grader_test_spec, submission_request_body, grader_spec, cb) {
   async.series({
-      configure: (cb) => { configure_test_for (grader_spec.canonical_name, grader_test_spec, submission_request_body.sid, cb); },
+      configure: (cb) => { configure_test_for (grader_spec, grader_test_spec, submission_request_body, cb); },
       invoke: (cb) => { do_invoke_grader (grader_name, grader_test_spec, submission_request_body, grader_spec, cb); },
       results: (cb) => { wait_for_test_results (grader_spec.canonical_name, grader_test_spec, submission_request_body.sid, cb); }
     },
@@ -272,25 +272,107 @@ function run_grader(grader_name, grader_test_spec, submission_request_body, grad
   );
 }
 
-function configure_test_for (grader_canonical_name, grader_test_spec, submission_id, cb) {
+function configure_test_for (grader_spec, grader_test_spec, submission, cb) {
   const requestOptions = {
-    url: `http://grader-tester:3000/tests/configure/${submission_id}/${grader_canonical_name}`,
+    url: `http://grader-tester:3000/tests/configure/${submission.sid}/${grader_spec.canonical_name}`,
     method: 'POST',
     json: true,
-    body: grader_test_spec
+    body: {...grader_test_spec, feedback: get_feedback_html(grader_test_spec.feedback)}
   };
 
   request(requestOptions, (err, res, body) => {
     if (err) {
       console.log(`    Could not configure test server: ${err}.`.error);
       cb(err);
+    } 
+    else if (res.statusCode != 200){
+      console.log(`    Received non-200 return from test server: ${body}.`.error);
+      cb(`Received non-200 return from test server: ${body}.`);
+    }
+    else if (grader_spec.configuration){
+      setup_configuration(grader_spec, grader_test_spec, submission, cb);
+    }
+    else {
+      cb();
+    }
+  });
+}
+
+function get_submission_sha_sync(repo_name) {
+  const data = fs.readFileSync(`/repositories/${repo_name}.git/packed-refs`, 'utf8');
+  return /^([A-Za-z0-9]+)\s+refs\/heads\/master$/m.exec(data)[1]
+}
+
+function setup_configuration(grader_spec, grader_test_spec, submission, cb){
+  const grader_name = grader_spec.canonical_name;
+
+  for (var configkey in grader_test_spec.configuration){
+    if (grader_test_spec.configuration[configkey]["repository"]){
+      const repo_name = grader_test_spec.configuration[configkey]["repository"]
+      grader_test_spec.configuration[configkey] = {
+        repository: `${GIT_BASE_URL}${repo_name}.git`,
+        sha: get_submission_sha_sync(repo_name),
+        branch: "master"
+      }
+    }
+  }
+
+  const requestOptions = {
+    url: `http://${grader_name}:${grader_spec.port}${grader_spec.configuration}`,
+    method: 'POST',
+    json: true,
+    body: {
+      aid: submission.aid,
+      config: grader_test_spec.configuration,
+    }
+  };
+  request(requestOptions, (err, res, body) => {
+    if (err) {
+      console.log(`Retrieved error from call to ${grader_name}: ${err}.`.error);
+      cb(err);
     } else {
       if (res.statusCode == 200) {
-        //console.log('Test server configured.'.log);
-        cb();
+        console.log(`${grader_name} reports successfully receiving configuration with sha ${grader_test_spec.configuration.test_files.sha}.`.good);
+
+        // wait a bit for the grader to put it in the database
+        setTimeout(() => {
+          test_config(grader_spec, grader_test_spec, submission, cb)
+        }, 100)
       } else {
-        console.log(`    Received non-200 return from test server: ${body}.`.error);
-        cb(`Received non-200 return from test server: ${body}.`);
+        console.log(`    Received non-200 return from ${grader_name}: ${body}.`.error);
+        cb(`Received non-200 return from ${grader_name}: ${body}.`);
+      }
+    }
+  });
+}
+
+function test_config(grader_spec, grader_test_spec, submission, cb){
+  const grader_name = grader_spec.canonical_name;
+
+  const requestOptions = {
+    url: `http://${grader_spec.canonical_name}:${grader_spec.port}${grader_spec.configuration}?${submission.aid}`,
+    method: 'GET',
+    json: true,
+    qs: {aid: submission.aid}, 
+    queries: {aid: submission.aid},
+  };
+  request(requestOptions, (err, res, body) => {
+    if (err) {
+      console.log(`    Retrieved error from call to ${grader_name}: ${err}.`.error);
+      cb(err);
+    } else {
+      if (res.statusCode == 200) {
+        if (JSON.stringify(body.config) == JSON.stringify(grader_test_spec.configuration)){
+          console.log (`Received correct configurations back from ${grader_name}.`.good)
+          cb();
+        }
+        else {
+          console.log(`Did not receive expected configurations from ${grader_name}.`);
+          cb(`Did not receive expected configurations from ${grader_name}: ${JSON.stringify(body)} but expected ${JSON.stringify(grader_test_spec.configuration)}.`);
+        }
+      } else {
+        console.log(`    Received non-200 return from ${grader_name}: ${body}.`.error);
+        cb(`Received non-200 return from ${grader_name}: ${body}.`);
       }
     }
   });
@@ -342,4 +424,32 @@ function wait_for_test_results (grader_canonical_name, grader_test_spec, submiss
       }
     }
   });
+}
+
+function get_feedback_html(feedback){
+  if (feedback == "dontcare") {
+    return feedback;
+  }
+
+  if (feedback["text"]){
+    return feedback["text"];
+  }
+
+  if (feedback["file"]){
+    var data = "";
+    try {
+      data = fs.readFileSync(`/test-specs/feedback/${feedback["file"]}.html`, 'utf8');
+      console.log("Successfully found relevant feedback html file");
+    }
+    catch (err) {
+      // tbh, there's no point in halting the tests at this point
+      console.log("Failed to read from file. Using default empty string".error);
+    }
+    finally{
+      return data; 
+    }
+  }
+
+  // else ...
+  console.log("Did find specifications for feedback. Using default empty string".error)
 }

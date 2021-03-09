@@ -38,15 +38,16 @@ export function handle_receive_feedback (request, response) {
 
     var test_config = test_configurations[submission_id][tool_uid];
     if (test_config.feedback != "dontcare") {
-      // TODO Need to figure out a better way of identifying the actual feedback text (this may well be a good bit of HTML, so will be too long for the yml file)
-      // Removing newlines, so expecting test expectation to be written without any newlines.
-      if (test_config.feedback.text == request.body.body.replace(/\r?\n|\r/g, "")) {
+      const correctfeedback = get_formatted_html(test_config.feedback);
+      const receivedfeedback = get_formatted_html(request.body.body);
+      if (correctfeedback == receivedfeedback){
+      // if (format(test_config.feedback) == format(request.body.body.replace(/\r?\n|\r/g, ""))) {
         console.log(`Received correct feedback from ${tool_uid}.`);
         store_test_results (submission_id, tool_uid, 'feedback', true, `Received correct feedback from ${tool_uid}.`);
       } else {
-        console.log(`Received wrong feedback ${request.body.body} from ${tool_uid}. Was expecting ${test_config.feedback.text}.`);
+        console.log(`Received wrong feedback ${request.body.body} from ${tool_uid}. Was expecting ${test_config.feedback}.`);
         store_test_results (submission_id, tool_uid, 'feedback', false,
-          `Received wrong feedback ${request.body.body} from ${tool_uid}. Was expecting ${test_config.feedback.text}.`);
+          `Received wrong feedback ${request.body.body} from ${tool_uid}. Was expecting ${test_config.feedback}.`);
       }
     } else {
       console.log(`Ignoring feedback from grader: received "${request.body.body}".`);
@@ -140,4 +141,26 @@ function check_completeness (test_outcome) {
       }
     }
   }
+}
+
+function get_formatted_html(html) {
+  // source: https://stackoverflow.com/a/60338028
+
+  var tab = '\t';
+  var result = '';
+  var indent= '';
+
+  html.split(/>\s*</).forEach(function(element) {
+      if (element.match( /^\/\w/ )) {
+          indent = indent.substring(tab.length);
+      }
+
+      result += indent + '<' + element + '>\r\n';
+
+      if (element.match( /^<?\w[^>]*[^\/]$/ ) && !element.startsWith("input")  ) { 
+          indent += tab;              
+      }
+  });
+
+  return result.substring(1, result.length-3);
 }

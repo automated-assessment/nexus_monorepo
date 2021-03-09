@@ -34,7 +34,7 @@ FILE_DIR="$BIN_DIR"
 CLASSPATH="$TEST_CLASSPATH"
 export CLASSPATH
 export FILE_DIR
-java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap uk.ac.kcl.inf.nexus.io_grader.TestRunner $test_files/IO_specification.tests $1 $MARK_FILE $timeout
+/usr/local/openjdk-11/bin/java -XX:+UnlockExperimentalVMOptions -XX:+UseContainerSupport uk.ac.kcl.inf.nexus.io_grader.TestRunner $test_files/IO_specification.tests $1 $MARK_FILE $timeout
 if [ $? -ne 0 ]; then
   rm -rf $BIN_DIR
   rm -f $MARK_FILE
