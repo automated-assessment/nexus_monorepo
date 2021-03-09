@@ -1,4 +1,4 @@
-FROM rails:4.2.4
+FROM ruby:2.5
 
 # install node
 # gpg keys listed at https://github.com/nodejs/node

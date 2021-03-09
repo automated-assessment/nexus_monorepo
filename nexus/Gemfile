@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.4'
+gem 'rails'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -20,6 +20,7 @@ gem 'rubyzip', '>= 1.0.0'
 gem 'daemons'
 # Schema validations
 gem 'json-schema'
+gem 'json_schemer'
 # Nested forms with jQuery
 gem 'cocoon'
 # Fake data generation
