@@ -161,52 +161,50 @@ class AssignmentController < ApplicationController
       GitUtils.move_tmp_assignment_repo(tmp_path, @assignment)
       
       # Configure graders
-
-      # Temporary, need to figure out where to put this, possibly have it in the db?
-      grader_config_apis = {
-        'javac' => 'http://localhost:3003/foo/configuration',
-        'rng' => 'http://localhost:3001/foo/configuration',
-        'conf' => 'http://localhost:3002/foo/configuration',
-        'iotool' => 'http://localhost:3004/foo/configuration',
-        # 'junit' => 'http://localhost:3006/foo/configuration',
-        'junit' => 'http://junit-grader:5000/foo/configuration',
-        'cppiograder' => 'http://localhost:3008/foo/configuration',
-        'cppcompilation' => 'http://localhost:3007/foo/configuration',
-        'cppunit' => 'http://localhost:3015/foo/configuration'
-      }
-
-      puts 'V grader_config'
-      puts grader_config
-      puts '^'
-
-      grader_config.each { |grader|
-        puts "#{grader}-----"
-        unless grader['configuration'].nil?
-          begin
-            uri = URI(grader_config_apis[grader['name']])
-            http = Net::HTTP.new(uri.host, uri.port)
-            req = Net::HTTP::Post.new(uri.path, {'Content-Type' => 'application/json'})
-            req.body = format_grader_config(@assignment, grader['configuration'])
-            res = http.request(req)
-            puts "response #{res.body}"
-            puts JSON.parse(res.body)
-          rescue => e
-            puts "failed #{e}"
-          end
-        end
-      }
+      configure_graders(grader_config, @assignment)
 
       redirect_to action: 'show', id: @assignment.id
     end
   end
 
+  def configure_graders(grader_config, assignment)
+    # Temporary, need to figure out where to put this, possibly have it in the db?
+    grader_config_apis = {
+      'javac' => 'http://javac-tool:5000/foo/configuration',
+      'rng' => 'http://rng-tool:3000/foo/configuration',
+      'conf' => 'http://config-tool:3000/foo/configuration',
+      'iotool' => 'http://io-grader:5000/foo/configuration',
+      'junit' => 'http://junit-grader:5000/foo/configuration'
+      # 'cppiograder' => 'http://localhost:3008/foo/configuration',
+      # 'cppcompilation' => 'http://localhost:3007/foo/configuration',
+      # 'cppunit' => 'http://localhost:3015/foo/configuration'
+    }
+
+    grader_config.each { |grader|
+      unless grader['configuration'].nil?
+        begin
+          uri = URI(grader_config_apis[grader['name']])
+          http = Net::HTTP.new(uri.host, uri.port)
+          req = Net::HTTP::Post.new(uri.path, {'Content-Type' => 'application/json'})
+          req.body = format_grader_config(@assignment, grader['configuration'])
+          res = http.request(req)
+          puts "response #{res.body}"
+          puts JSON.parse(res.body)
+        rescue => e
+          puts "failed #{e}"
+        end
+      end
+    }
+  end
+
   # Get the origin url and latest commit sha of the repo in which an assignment is defined
-  def get_assignment_git_repo_url(assignment)
+  def get_assignment_git_repo_url_and_sha(assignment)
     assignment_path = GitUtils.gen_assignment_path(assignment)
     g = Git.open(assignment_path, :log => Logger.new(STDOUT))
-    url = g.remote('origin').url
-    sha = g.object('HEAD').sha
-    return [url, sha]
+    return {
+      'url' => g.remote('origin').url,
+      'sha' => g.object('HEAD').sha
+    }
   end
 
   # Grader configurations in a git repo can have special values: 'this' for
@@ -218,12 +216,12 @@ class AssignmentController < ApplicationController
     }
 
     if parameter['repository'] == 'this'
-      url, sha = get_assignment_git_repo_url(assignment)
+      repo_details = get_assignment_git_repo_url_and_sha(assignment)
 
-      converted_parameter['repository'] = url
+      converted_parameter['repository'] = repo_details['url']
 
       if parameter['sha'] == 'latest'
-        converted_parameter['sha'] = sha
+        converted_parameter['sha'] = repo_details['sha']
       end
     end
     # There is also a third special case where repository is not 'this' and sha is 'latest'.
