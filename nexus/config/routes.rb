@@ -32,7 +32,9 @@ Rails.application.routes.draw do
   get 'assignments/:id/quick_config_confirm' => 'assignment#quick_config_confirm', as: :assignment_quick_config_confirm
   get 'assignments/:id/configure_tools' => 'assignment#configure_tools', as: :assignment_configure_tools
   post 'assignments/create' => 'assignment#create', as: :create_assignment
+  post 'assignments/create_from_git' => 'assignment#create_from_git', as: :create_assignment_from_git
   get 'assignments/new/:cid' => 'assignment#new', as: :new_assignment
+  get 'assignments/new_from_git/:cid' => 'assignment#new_from_git', as: :new_assignment_from_git
   get 'assignments/:id/edit' => 'assignment#edit', as: :edit_assignment
   patch 'assignments/:id' => 'assignment#update', as: :update_assignment
   get 'assignments/:id/export_submissions_data' => 'assignment#export_submissions_data', as: :assignment_export_submissions_data

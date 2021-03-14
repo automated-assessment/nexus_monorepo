@@ -1,10 +1,11 @@
 class AssignmentController < ApplicationController
   include ApplicationHelper
+  require 'yaml'
   require_relative '../lib/git_utils'
   require_relative '../lib/workflow_utils'
 
   before_action :authenticate_user!
-  before_action :authenticate_admin!, except: [:mine, :show, :show_deadline_extensions, :quick_config_confirm, :configure_tools, :new, :create, :edit, :update, :destroy, :export_submissions_data, :list_submissions, :list_ordered_submissions, :prepare_submission_repush, :submission_repush]
+  before_action :authenticate_admin!, except: [:mine, :show, :show_deadline_extensions, :quick_config_confirm, :configure_tools, :new, :create, :create_from_git, :edit, :update, :destroy, :export_submissions_data, :list_submissions, :list_ordered_submissions, :prepare_submission_repush, :submission_repush]
 
   def mine
   end
@@ -96,6 +97,58 @@ class AssignmentController < ApplicationController
         error_flash_and_cleanup!(e.message)
         return
       end
+
+      if @assignment.marking_tools.configurable.any?
+        redirect_to action: 'quick_config_confirm', id: @assignment.id
+      else
+        redirect_to action: 'show', id: @assignment.id
+      end
+    end
+  end
+
+  def create_from_git
+    # Maybe here we need to perform some sort of validation on the url
+    # Or possible find some form tag in rails to have it only allow to enter url
+    # Or actually both?
+    repo_url = params[:repository_url]
+    course = Course.find_by(id: params[:cid])
+
+    # Clone the repository to a temporary folder
+    tmp_path = GitUtils.clone_tmp_assignment(repo_url)
+
+    assignment_config = GitUtils.get_assignment_config_from_path(tmp_path)
+    grader_config = GitUtils.get_grader_config_from_path(tmp_path)
+    
+    formatted_config = GitUtils.convert_assignment_config_format(assignment_config, grader_config)
+
+    @assignment = Assignment.new(formatted_config)
+    if @assignment
+      return unless authenticate_can_administrate!(@assignment.course)
+      
+      unless @assignment.save
+        error_flash_and_cleanup_from_git!(@assignment.errors.full_messages[0])
+        return
+      end
+      
+      unless GitUtils.setup_remote_assignment_repo!(@assignment)
+        error_flash_and_cleanup_from_git!('Error creating repository for assignment!')
+        return
+      end
+      
+      begin
+        marking_tool_contexts = formatted_config['marking_tool_contexts_attributes']
+        active_services = formatted_config['active_services']
+        @assignment.active_services = WorkflowUtils.construct_workflow(marking_tool_contexts, active_services)
+        @assignment.dataflow = WorkflowUtils.construct_dataflow(@assignment.active_services)
+        @assignment.save!
+      rescue StandardError => e
+        error_flash_and_cleanup_from_git!(e.message)
+        return
+      end
+
+      # Move assignment repository from a temporary folder to a permanent folder.
+      # This also essentially deletes the temporary directory
+      GitUtils.move_tmp_assignment_repo(tmp_path, @assignment)
 
       if @assignment.marking_tools.configurable.any?
         redirect_to action: 'quick_config_confirm', id: @assignment.id
@@ -233,6 +286,12 @@ class AssignmentController < ApplicationController
   def error_flash_and_cleanup!(message)
     flash[:error] = message
     redirect_to action: 'new', cid: @assignment.course.id
+    @assignment.destroy
+  end
+
+  def error_flash_and_cleanup_from_git!(message)
+    flash[:error] = message
+    redirect_to action: 'new_from_git', cid: @assignment.course.id
     @assignment.destroy
   end
 end

@@ -1,5 +1,160 @@
 class GitUtils
   class << self
+    # Assignment definition utils
+    def gen_assignment_path(assignment)
+      Rails.root.join('var', 'assignments', 'code', assignment.id.to_s)
+    end
+
+    def gen_tmp_assignment_path()
+      Rails.root.join('var', 'assignments', 'tmp', SecureRandom.alphanumeric(10))
+    end
+    
+    def clone_assignment(repo_url, assignment)
+      assignment_path = gen_assignment_path(assignment)
+
+      # Nuke whatever repo was there before
+      FileUtils.rm_rf(assignment_path, secure: true) if Dir.exist?(assignment_path)
+
+      Git.clone(repo_url, assignment_path)
+    end
+    
+    # Clones an assignment to a temporary directory and returns the path to it
+    def clone_tmp_assignment(repo_url)
+      tmp_path = gen_tmp_assignment_path()
+      # Nuke whatever repo was there before
+      FileUtils.rm_rf(tmp_path, secure: true) if Dir.exist?(tmp_path)
+      Git.clone(repo_url, tmp_path)
+      return tmp_path
+    end
+
+    # Moves an assignment repository from a temporary directory to a permanent one
+    def move_tmp_assignment_repo(tmp_path, assignment)
+      assignment_path = gen_assignment_path(assignment)
+      FileUtils.mv(tmp_path, assignment_path)
+    end
+
+    def pull_assignment(assignment)
+      assignment_path = gen_assignment_path(assignment)
+      raise "Assignment has no folder, therefore it cannot be pulled from a git repo" unless Dir.exist?(File.join(assignment_path, '.git'))
+
+      g = Git.open(assignment_path, :log => Logger.new(STDOUT))
+      g.pull
+      return true
+    rescue StandardError => e
+      Rails.logger.error "Error pulling assignment repository for assignment #{assignment.id}, #{assignment.title}: #{e.inspect}"
+      assignment.log("Error pulling assignment repository: #{e.inspect}", 'error')
+      return false
+    end
+
+    def get_assignment_config(assignment)
+      assignment_config_file = File.join(gen_assignment_path(assignment), 'assignment.yml')
+      assignment_config = YAML.load(File.read(assignment_config_file))
+      assignment_config
+    end
+    
+    def get_grader_config(assignment)
+      grader_config_file = File.join(gen_assignment_path(assignment), 'grader-config.yml')
+      grader_config = YAML.load(File.read(grader_config_file))
+      grader_config
+    end
+
+    def get_assignment_config_from_path(path)
+      assignment_config_file = File.join(path, 'assignment.yml')
+      assignment_config = YAML.load(File.read(assignment_config_file))
+      return assignment_config
+    end
+    
+    def get_grader_config_from_path(path)
+      grader_config_file = File.join(path, 'grader-config.yml')
+      grader_config = YAML.load(File.read(grader_config_file))
+      return grader_config
+    end
+
+    def convert_marking_tool_names_to_ids(name)
+      # Temporary solution
+      id_map = {
+        'nexus' => '1',
+        'javac' => '2',
+        'rng' => '3',
+        'conf' => '4',
+        'iotool' => '5',
+        'junit' => '6'
+      }
+      return id_map[name]
+    end
+
+    def gen_marking_tool_attributes(grader)
+      attributes = {
+        'marking_tool_id' => convert_marking_tool_names_to_ids(grader['name']),
+        'weight' => grader['weight'].to_s,
+        'condition' => grader['condition'].to_s,
+        'context' => grader['context'],
+        '_destroy' => 'false'
+      }
+      return attributes
+    end
+
+    def gen_marking_tool_contexts_attributes(grader_config)
+      marking_tool_contexts_attributes = grader_config.map.with_index { |grader, idx| [idx.to_s, gen_marking_tool_attributes(grader)] }.to_h
+      return marking_tool_contexts_attributes
+    end
+    
+    def convert_uat_parameter_type_name_to_type(name)
+      # Temporary solution
+      id_map = {
+        'int' => '1',
+        'float' => '2',
+        'double' => '3',
+        'string' => '4',
+        'boolean' => '5'
+      }
+      return id_map[name]
+    end
+
+    def gen_uat_parameters(uat)
+      parameters = {
+        'name' => uat['name'],
+        'type' => convert_uat_parameter_type_name_to_type(uat['type']),
+        'construct' => uat['construction_constraints'],
+        '_destroy' => ''
+      }
+      return parameters
+    end
+
+    def gen_uat_parameters_attributes(assignment_config)
+      uat_parameters_attributes = assignment_config['uat_parameters'].map.with_index { |uat, idx| [idx, gen_uat_parameters(uat)] }.to_h
+      return uat_parameters_attributes
+    end
+
+    def gen_active_services(grader_config)
+      active_services = grader_config.map.with_index { |grader, idx| [idx, grader['depends-on']] }.select {|grader| grader[1]!= nil }.to_h
+      return active_services
+    end
+
+    def convert_assignment_config_format(assignment_config, grader_config)
+      assignment = {
+        'course_id' => '2',
+        'title' => assignment_config['title'],
+        'is_unique' => assignment_config['is_unique'],
+        'description' => assignment_config['description'],
+        'start' => assignment_config['start'],
+        'deadline' => assignment_config['deadline'],
+        'max_attempts' => assignment_config['max_attempts'],
+        'allow_late' => assignment_config['allow_late'],
+        'feedback_only' => assignment_config['feedback_only'],
+        'late_cap' => assignment_config['late_cap'],
+        'latedeadline' => assignment_config['latedeadline'],
+        'allow_zip' => assignment_config['allow_zip'],
+        'allow_git' => assignment_config['allow_git'],
+        'allow_ide' => assignment_config['allow_ide'],
+        'marking_tool_contexts_attributes' => gen_marking_tool_contexts_attributes(grader_config),
+        'uat_parameters_attributes' => gen_uat_parameters_attributes(assignment_config),
+        'active_services' => gen_active_services(grader_config)
+      }
+      return assignment
+    end
+
+    # Submission utils
     def gen_repo_path(submission)
       Rails.root.join('var', 'submissions', 'code', submission.id.to_s)
     end

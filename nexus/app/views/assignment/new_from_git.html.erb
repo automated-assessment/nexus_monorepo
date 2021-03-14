@@ -1,0 +1,20 @@
+<div class="well">
+  <h2>Create Assignment from Git</h2>
+  <hr />
+  <%= form_tag(create_assignment_from_git_path, class: 'form-horizontal' ) do %>
+    <%= hidden_field_tag(:cid, params[:cid]) %>
+
+    <div class="form-group">
+      <%= label_tag(:repository_url, "Repository URL:", class: 'col-lg-2 control-label') %>
+      <div class="col-lg-10">
+        <%= text_field_tag(:repository_url, nil, class: 'form-control') %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <%= submit_tag("Create", class: 'btn btn-primary') %>
+      </div>
+    </div>
+  <% end %>
+</div>
