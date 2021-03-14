@@ -33,6 +33,12 @@ class GitUtils
       FileUtils.mv(tmp_path, assignment_path)
     end
 
+    # Deletes assignment repository directory if it exists
+    def delete_assignment_repo(assignment)
+      assignment_path = gen_assignment_path(assignment)
+      FileUtils.rm_rf(assignment_path, secure: true) if Dir.exist?(assignment_path)
+    end
+
     # def pull_assignment(assignment)
     #   assignment_path = gen_assignment_path(assignment)
     #   raise "Assignment has no folder, therefore it cannot be pulled from a git repo" unless Dir.exist?(File.join(assignment_path, '.git'))
