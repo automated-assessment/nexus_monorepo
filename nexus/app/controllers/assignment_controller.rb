@@ -295,7 +295,7 @@ class AssignmentController < ApplicationController
       if repo_was_deleted
         # Deletes assignment definition repository
         GitUtils.delete_assignment_repo(assignment)
-        
+
         course = assignment.course
         course.log("Assignment #{assignment.id} deleted by #{current_user.name}")
         Assignment.destroy(assignment.id)
