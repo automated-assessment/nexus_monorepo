@@ -1,11 +1,21 @@
 class AssignmentController < ApplicationController
   include ApplicationHelper
   require 'yaml'
+  require 'net/http'
+  require 'json'
   require_relative '../lib/git_utils'
   require_relative '../lib/workflow_utils'
 
   before_action :authenticate_user!
   before_action :authenticate_admin!, except: [:mine, :show, :show_deadline_extensions, :quick_config_confirm, :configure_tools, :new, :create, :create_from_git, :edit, :update, :destroy, :export_submissions_data, :list_submissions, :list_ordered_submissions, :prepare_submission_repush, :submission_repush]
+
+  # skip_before_action :authenticate_admin!
+  # skip_before_action :authenticate_user!
+  # skip_before_action :verify_authenticity_token
+
+  skip_before_action :authenticate_admin!, only: [:create_from_git, :edit_from_git, :new_from_git]
+  skip_before_action :authenticate_user!, only: [:create_from_git, :edit_from_git, :new_from_git]
+  skip_before_action :verify_authenticity_token, only: [:create_from_git, :edit_from_git, :new_from_git]
 
   def mine
   end
@@ -149,13 +159,112 @@ class AssignmentController < ApplicationController
       # Move assignment repository from a temporary folder to a permanent folder.
       # This also essentially deletes the temporary directory
       GitUtils.move_tmp_assignment_repo(tmp_path, @assignment)
+      
+      # Configure graders
 
-      if @assignment.marking_tools.configurable.any?
-        redirect_to action: 'quick_config_confirm', id: @assignment.id
-      else
-        redirect_to action: 'show', id: @assignment.id
+      # Temporary, need to figure out where to put this, possibly have it in the db?
+      grader_config_apis = {
+        'javac' => 'http://localhost:3003/foo/configuration',
+        'rng' => 'http://localhost:3001/foo/configuration',
+        'conf' => 'http://localhost:3002/foo/configuration',
+        'iotool' => 'http://localhost:3004/foo/configuration',
+        # 'junit' => 'http://localhost:3006/foo/configuration',
+        'junit' => 'http://junit-grader:5000/foo/configuration',
+        'cppiograder' => 'http://localhost:3008/foo/configuration',
+        'cppcompilation' => 'http://localhost:3007/foo/configuration',
+        'cppunit' => 'http://localhost:3015/foo/configuration'
+      }
+
+      puts 'V grader_config'
+      puts grader_config
+      puts '^'
+
+      grader_config.each { |grader|
+        puts "#{grader}-----"
+        unless grader['configuration'].nil?
+          begin
+            uri = URI(grader_config_apis[grader['name']])
+            http = Net::HTTP.new(uri.host, uri.port)
+            req = Net::HTTP::Post.new(uri.path, {'Content-Type' => 'application/json'})
+            req.body = format_grader_config(@assignment, grader['configuration'])
+            res = http.request(req)
+            puts "response #{res.body}"
+            puts JSON.parse(res.body)
+          rescue => e
+            puts "failed #{e}"
+          end
+        end
+      }
+
+      redirect_to action: 'show', id: @assignment.id
+    end
+  end
+
+  # Get the origin url and latest commit sha of the repo in which an assignment is defined
+  def get_assignment_git_repo_url(assignment)
+    assignment_path = GitUtils.gen_assignment_path(assignment)
+    g = Git.open(assignment_path, :log => Logger.new(STDOUT))
+    url = g.remote('origin').url
+    sha = g.object('HEAD').sha
+    return [url, sha]
+  end
+
+  # Grader configurations in a git repo can have special values: 'this' for
+  # repository and 'latest' for sha. This function converts those special values
+  # to what our program already takes - a git repo URL and a sha of the commit.
+  def convert_grader_special_git_parameters(parameter, assignment)
+    converted_parameter = {
+      'branch' => parameter['branch']
+    }
+
+    if parameter['repository'] == 'this'
+      url, sha = get_assignment_git_repo_url(assignment)
+
+      converted_parameter['repository'] = url
+
+      if parameter['sha'] == 'latest'
+        converted_parameter['sha'] = sha
       end
     end
+    # There is also a third special case where repository is not 'this' and sha is 'latest'.
+    # We will not handle such case and in that case, sha will have to be specified manually.
+    return converted_parameter
+  end
+
+  # Returns true if the grader config parameter is of type 'git', false otherwise
+  def grader_config_parameter_is_git(parameter)
+    return parameter.is_a?(Hash) &&
+      parameter.key?('repository') &&
+      parameter.key?('branch') &&
+      parameter.key?('sha')
+  end
+
+  # Returns true if the grader config parameter has special values, false
+  # otherwise. This assumes that the parameter is of type 'git'
+  def grader_config_git_parameter_has_special_values(parameter)
+    return parameter['repository'] == 'this' || parameter['sha'] == 'latest'
+  end
+
+  # Receives a single grader configuration in the format that it is defined in
+  # an assignment git repo. Formats it for a HTTP POST request which is going to
+  # be sent to the configuration endpoint for a grader. This assumes that the
+  # grader is configurable.
+  def format_grader_config(assignment, grader_configuration)
+    # Gets an array of parameters which are of type 'git' and have special values
+    git_params = grader_configuration.select { |k, v|
+      grader_config_parameter_is_git(v) &&
+      grader_config_git_parameter_has_special_values(v)
+    }
+
+    # Convert special values of git parameters to values that graders accept
+    git_params.each do |k, v|
+      grader_configuration[k] = convert_grader_special_git_parameters(v, assignment)
+    end
+
+    return {
+      'aid' => assignment.id,
+      'config' => grader_configuration
+    }.to_json
   end
 
   def edit
