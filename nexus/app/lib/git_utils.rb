@@ -9,14 +9,14 @@ class GitUtils
       Rails.root.join('var', 'assignments', 'tmp', SecureRandom.alphanumeric(10))
     end
     
-    def clone_assignment(repo_url, assignment)
-      assignment_path = gen_assignment_path(assignment)
+    # def clone_assignment(repo_url, assignment)
+    #   assignment_path = gen_assignment_path(assignment)
 
-      # Nuke whatever repo was there before
-      FileUtils.rm_rf(assignment_path, secure: true) if Dir.exist?(assignment_path)
+    #   # Nuke whatever repo was there before
+    #   FileUtils.rm_rf(assignment_path, secure: true) if Dir.exist?(assignment_path)
 
-      Git.clone(repo_url, assignment_path)
-    end
+    #   Git.clone(repo_url, assignment_path)
+    # end
     
     # Clones an assignment to a temporary directory and returns the path to it
     def clone_tmp_assignment(repo_url)
@@ -33,30 +33,30 @@ class GitUtils
       FileUtils.mv(tmp_path, assignment_path)
     end
 
-    def pull_assignment(assignment)
-      assignment_path = gen_assignment_path(assignment)
-      raise "Assignment has no folder, therefore it cannot be pulled from a git repo" unless Dir.exist?(File.join(assignment_path, '.git'))
+    # def pull_assignment(assignment)
+    #   assignment_path = gen_assignment_path(assignment)
+    #   raise "Assignment has no folder, therefore it cannot be pulled from a git repo" unless Dir.exist?(File.join(assignment_path, '.git'))
 
-      g = Git.open(assignment_path, :log => Logger.new(STDOUT))
-      g.pull
-      return true
-    rescue StandardError => e
-      Rails.logger.error "Error pulling assignment repository for assignment #{assignment.id}, #{assignment.title}: #{e.inspect}"
-      assignment.log("Error pulling assignment repository: #{e.inspect}", 'error')
-      return false
-    end
+    #   g = Git.open(assignment_path, :log => Logger.new(STDOUT))
+    #   g.pull
+    #   return true
+    # rescue StandardError => e
+    #   Rails.logger.error "Error pulling assignment repository for assignment #{assignment.id}, #{assignment.title}: #{e.inspect}"
+    #   assignment.log("Error pulling assignment repository: #{e.inspect}", 'error')
+    #   return false
+    # end
 
-    def get_assignment_config(assignment)
-      assignment_config_file = File.join(gen_assignment_path(assignment), 'assignment.yml')
-      assignment_config = YAML.load(File.read(assignment_config_file))
-      assignment_config
-    end
+    # def get_assignment_config(assignment)
+    #   assignment_config_file = File.join(gen_assignment_path(assignment), 'assignment.yml')
+    #   assignment_config = YAML.load(File.read(assignment_config_file))
+    #   assignment_config
+    # end
     
-    def get_grader_config(assignment)
-      grader_config_file = File.join(gen_assignment_path(assignment), 'grader-config.yml')
-      grader_config = YAML.load(File.read(grader_config_file))
-      grader_config
-    end
+    # def get_grader_config(assignment)
+    #   grader_config_file = File.join(gen_assignment_path(assignment), 'grader-config.yml')
+    #   grader_config = YAML.load(File.read(grader_config_file))
+    #   grader_config
+    # end
 
     def get_assignment_config_from_path(path)
       assignment_config_file = File.join(path, 'assignment.yml')
