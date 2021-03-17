@@ -23,6 +23,8 @@ class GitUtils
       tmp_path = gen_tmp_assignment_path()
       # Nuke whatever repo was there before
       FileUtils.rm_rf(tmp_path, secure: true) if Dir.exist?(tmp_path)
+      # Need to set this, otherwise, if an invalid url is given, it will freeze nexus
+      ENV['GIT_TERMINAL_PROMPT'] = '0'
       Git.clone(repo_url, tmp_path)
       return tmp_path
     end
@@ -39,30 +41,26 @@ class GitUtils
       FileUtils.rm_rf(assignment_path, secure: true) if Dir.exist?(assignment_path)
     end
 
-    # def pull_assignment(assignment)
-    #   assignment_path = gen_assignment_path(assignment)
-    #   raise "Assignment has no folder, therefore it cannot be pulled from a git repo" unless Dir.exist?(File.join(assignment_path, '.git'))
+    def pull_assignment(assignment)
+      assignment_path = gen_assignment_path(assignment)
+      raise "Assignment has no folder, therefore it cannot be pulled from a git repo" unless Dir.exist?(File.join(assignment_path, '.git'))
 
-    #   g = Git.open(assignment_path, :log => Logger.new(STDOUT))
-    #   g.pull
-    #   return true
-    # rescue StandardError => e
-    #   Rails.logger.error "Error pulling assignment repository for assignment #{assignment.id}, #{assignment.title}: #{e.inspect}"
-    #   assignment.log("Error pulling assignment repository: #{e.inspect}", 'error')
-    #   return false
-    # end
+      g = Git.open(assignment_path, :log => Logger.new(STDOUT))
+      g.pull
+      return true
+    rescue StandardError => e
+      Rails.logger.error "Error pulling assignment repository for assignment #{assignment.id}, #{assignment.title}: #{e.inspect}"
+      assignment.log("Error pulling assignment repository: #{e.inspect}", 'error')
+      return false
+    end
 
-    # def get_assignment_config(assignment)
-    #   assignment_config_file = File.join(gen_assignment_path(assignment), 'assignment.yml')
-    #   assignment_config = YAML.load(File.read(assignment_config_file))
-    #   assignment_config
-    # end
+    def get_assignment_config(assignment)
+      return get_assignment_config_from_path(gen_assignment_path(assignment))
+    end
     
-    # def get_grader_config(assignment)
-    #   grader_config_file = File.join(gen_assignment_path(assignment), 'grader-config.yml')
-    #   grader_config = YAML.load(File.read(grader_config_file))
-    #   grader_config
-    # end
+    def get_grader_config(assignment)
+      return get_grader_config_from_path(gen_assignment_path(assignment))
+    end
 
     def get_assignment_config_from_path(path)
       assignment_config_file = File.join(path, 'assignment.yml')
@@ -137,9 +135,9 @@ class GitUtils
       return active_services
     end
 
-    def convert_assignment_config_format(assignment_config, grader_config)
+    def convert_assignment_config_format(course_id, assignment_config, grader_config)
       assignment = {
-        'course_id' => '2',
+        'course_id' => course_id,
         'title' => assignment_config['title'],
         'is_unique' => assignment_config['is_unique'],
         'description' => assignment_config['description'],

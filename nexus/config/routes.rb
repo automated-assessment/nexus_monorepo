@@ -36,6 +36,8 @@ Rails.application.routes.draw do
   get 'assignments/new/:cid' => 'assignment#new', as: :new_assignment
   get 'assignments/new_from_git/:cid' => 'assignment#new_from_git', as: :new_assignment_from_git
   get 'assignments/:id/edit' => 'assignment#edit', as: :edit_assignment
+  get 'assignments/:id/edit_from_git' => 'assignment#edit_from_git', as: :edit_assignment_from_git
+  get 'assignments/:id/edit_from_git_json' => 'assignment#edit_from_git_json', as: :edit_assignment_from_git_json
   patch 'assignments/:id' => 'assignment#update', as: :update_assignment
   get 'assignments/:id/export_submissions_data' => 'assignment#export_submissions_data', as: :assignment_export_submissions_data
   get 'assignments/:id/list_submissions' => 'assignment#list_submissions', as: :assignment_list_submissions

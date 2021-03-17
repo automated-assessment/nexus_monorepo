@@ -6,16 +6,28 @@ class AssignmentController < ApplicationController
   require_relative '../lib/git_utils'
   require_relative '../lib/workflow_utils'
 
-  before_action :authenticate_user!
-  before_action :authenticate_admin!, except: [:mine, :show, :show_deadline_extensions, :quick_config_confirm, :configure_tools, :new, :create, :create_from_git, :edit, :update, :destroy, :export_submissions_data, :list_submissions, :list_ordered_submissions, :prepare_submission_repush, :submission_repush]
-
-  # skip_before_action :authenticate_admin!
-  # skip_before_action :authenticate_user!
-  # skip_before_action :verify_authenticity_token
-
-  skip_before_action :authenticate_admin!, only: [:create_from_git, :edit_from_git, :new_from_git]
-  skip_before_action :authenticate_user!, only: [:create_from_git, :edit_from_git, :new_from_git]
-  skip_before_action :verify_authenticity_token, only: [:create_from_git, :edit_from_git, :new_from_git]
+  before_action :authenticate_user!, except: [:edit_from_git_json]
+  before_action :authenticate_admin!, except: [
+    :mine,
+    :show,
+    :show_deadline_extensions,
+    :quick_config_confirm,
+    :configure_tools,
+    :new,
+    :new_from_git,
+    :create,
+    :create_from_git,
+    :edit,
+    :edit_from_git,
+    :edit_from_git_json,
+    :update,
+    :destroy,
+    :export_submissions_data,
+    :list_submissions,
+    :list_ordered_submissions,
+    :prepare_submission_repush,
+    :submission_repush
+  ]
 
   def mine
   end
@@ -124,12 +136,30 @@ class AssignmentController < ApplicationController
     course = Course.find_by(id: params[:cid])
 
     # Clone the repository to a temporary folder
-    tmp_path = GitUtils.clone_tmp_assignment(repo_url)
-
-    assignment_config = GitUtils.get_assignment_config_from_path(tmp_path)
-    grader_config = GitUtils.get_grader_config_from_path(tmp_path)
+    tmp_path = nil
+    begin
+      tmp_path = GitUtils.clone_tmp_assignment(repo_url)
+    rescue StandardError => e
+      flash[:error] = "Could not clone git repo: #{e.message}"
+      redirect_to action: 'new_from_git', cid: course.id
+      return
+    end
     
-    formatted_config = GitUtils.convert_assignment_config_format(assignment_config, grader_config)
+    assignment_config = nil
+    grader_config = nil
+    begin
+      assignment_config = GitUtils.get_assignment_config_from_path(tmp_path)
+      grader_config = GitUtils.get_grader_config_from_path(tmp_path)
+    rescue StandardError => e
+      # Cleanup
+      FileUtils.rm_rf(tmp_path, secure: true) if Dir.exist?(tmp_path)
+
+      flash[:error] = "Repository does not contain assignment.yml or grader-config.yml"
+      redirect_to action: 'new_from_git', cid: course.id
+      return
+    end
+    
+    formatted_config = GitUtils.convert_assignment_config_format(course.id, assignment_config, grader_config)
 
     @assignment = Assignment.new(formatted_config)
     if @assignment
@@ -155,13 +185,18 @@ class AssignmentController < ApplicationController
         error_flash_and_cleanup_from_git!(e.message)
         return
       end
-
+      
       # Move assignment repository from a temporary folder to a permanent folder.
       # This also essentially deletes the temporary directory
       GitUtils.move_tmp_assignment_repo(tmp_path, @assignment)
       
       # Configure graders
-      configure_graders(grader_config, @assignment)
+      begin
+        configure_graders(grader_config, @assignment)
+      rescue StandardError => e
+        error_flash_and_cleanup_from_git!(e.message)
+        return
+      end
 
       redirect_to action: 'show', id: @assignment.id
     end
@@ -188,13 +223,20 @@ class AssignmentController < ApplicationController
           req = Net::HTTP::Post.new(uri.path, {'Content-Type' => 'application/json'})
           req.body = format_grader_config(@assignment, grader['configuration'])
           res = http.request(req)
-          puts "response #{res.body}"
-          puts JSON.parse(res.body)
-        rescue => e
-          puts "failed #{e}"
+          # Uncomment later
+          # raise res.body unless res.code.to_i < 400
+        rescue StandardError => e
+          raise "Failed to configure grader #{grader['name']}: #{e.message}"
+          return
         end
       end
     }
+
+    # Mark all graders as configured
+    @assignment.marking_tool_contexts.each do |marking_tool|
+      marking_tool.configured = true
+      marking_tool.save!
+    end
   end
 
   # Get the origin url and latest commit sha of the repo in which an assignment is defined
@@ -263,6 +305,91 @@ class AssignmentController < ApplicationController
       'aid' => assignment.id,
       'config' => grader_configuration
     }.to_json
+  end
+  
+  def edit_from_git_json
+    edit_from_git_main(true)
+  end
+
+  def edit_from_git
+    edit_from_git_main(false)
+  end
+
+  def edit_from_git_main(json_response)
+    @assignment = return_assignment!
+
+    # Pull latest version of assignment
+    unless GitUtils.pull_assignment(@assignment)
+      handle_edit_from_git_error(json_response, 'Failed to pull latest version of assignment repository.')
+      return
+    end
+
+    begin
+      assignment_config = GitUtils.get_assignment_config(@assignment)
+      grader_config = GitUtils.get_grader_config(@assignment)
+    rescue StandardError => e
+      handle_edit_from_git_error(json_response, "assignment.yml or grader-config.yml not found in updated repository")
+      return
+    end
+
+    formatted_config = GitUtils.convert_assignment_config_format(@assignment.course.id, assignment_config, grader_config)
+    
+    # Delete old marking tool contexts
+    begin
+      destroyed_contexts = @assignment.marking_tool_contexts.destroy_all
+    rescue StandardError => e
+      handle_edit_from_git_error(json_response, "Error removing old marking schema: #{e.message}")
+      return
+    end
+
+    # Update main assignment properties
+    unless @assignment.update_attributes(formatted_config)
+      handle_edit_from_git_error(json_response, @assignment.errors.full_messages[0])
+      return
+    end
+
+    # Update active_services and dataflow
+    begin
+      marking_tool_contexts = formatted_config['marking_tool_contexts_attributes']
+      active_services = formatted_config['active_services']
+      @assignment.active_services = WorkflowUtils.construct_workflow(marking_tool_contexts, active_services)
+      @assignment.dataflow = WorkflowUtils.construct_dataflow(@assignment.active_services)
+      @assignment.save!
+    rescue StandardError => e
+      handle_edit_from_git_error(json_response, "Error when updating active services and dataflow: #{e.message}")
+      return
+    end
+    
+    # Configure graders
+    begin
+      configure_graders(grader_config, @assignment)
+    rescue StandardError => e
+      handle_edit_from_git_error(json_response, e.message)
+      return
+    end
+
+    if json_response
+      render json: {
+        success: true,
+        error: nil
+      }.to_json, status: 200
+      return
+    else
+      flash[:success] = 'Assignment updated.'
+      redirect_to @assignment
+    end
+  end
+
+  def handle_edit_from_git_error(json_response, error_message)
+    if json_response
+      render json: {
+        success: false,
+        error: error_message
+      }.to_json, status: 200
+    else
+      flash[:error] = error_massage
+      redirect_to @assignment
+    end
   end
 
   def edit

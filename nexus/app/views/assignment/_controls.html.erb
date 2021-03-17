@@ -9,6 +9,9 @@
     <%= link_to(edit_assignment_path(id: @assignment.id)) do %>
       <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'edit' %> Edit Assignment</button>
     <% end %>
+    <%= link_to(edit_assignment_from_git_path(id: @assignment.id)) do %>
+      <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'github' %> Pull latest Assignment from Git</button>
+    <% end %>
 
     <%= link_to(assignment_export_submissions_data_path(id: @assignment.id, format: :csv)) do %>
       <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'cloud-download' %> Export Submissions Data</button>
