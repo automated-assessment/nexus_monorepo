@@ -265,9 +265,13 @@ class AssignmentController < ApplicationController
       if parameter['sha'] == 'latest'
         converted_parameter['sha'] = repo_details['sha']
       end
+    else
+      # Get sha of a specified repository that is not 'this'
+      if parameter['sha'] == 'latest'
+        converted_parameter['repository'] = parameter['repository']
+        converted_parameter['sha'] = Git.ls_remote(parameter['repository'])['head'][:sha]
+      end
     end
-    # There is also a third special case where repository is not 'this' and sha is 'latest'.
-    # We will not handle such case and in that case, sha will have to be specified manually.
     return converted_parameter
   end
 
