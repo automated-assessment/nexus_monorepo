@@ -322,65 +322,88 @@ class AssignmentController < ApplicationController
   def edit_from_git_main(json_response)
     @assignment = return_assignment!
 
-    # Pull latest version of assignment
-    unless GitUtils.pull_assignment(@assignment)
-      handle_edit_from_git_error(json_response, 'Failed to pull latest version of assignment repository.')
-      return
-    end
+    if @assignment
+      # Allow usage of the edit_from_git_json endpoint without authentication,
+      # but need to authenticate for edit_from_git endpoint
+      unless json_response
+        return unless authenticate_can_administrate!(@assignment.course)
+      end
 
-    begin
-      assignment_config = GitUtils.get_assignment_config(@assignment)
-      grader_config = GitUtils.get_grader_config(@assignment)
-    rescue StandardError => e
-      handle_edit_from_git_error(json_response, "assignment.yml or grader-config.yml not found in updated repository")
-      return
-    end
+      # Check whether the remote repository has a different sha from what we
+      # have right now. Since the json update notification receiver endpoint
+      # will not need any authentication, someone could just spam it and try to
+      # DDOS in this way. This is here to prevent that - no update means that
+      # this function will stop here. We leave the ability to do that manually
+      # when the user is authenticated - maybe something went wrong and the user
+      # needs to force-update the repo.
+      if json_response
+        repo_up_to_date = GitUtils.assignment_repo_up_to_date!(@assignment)
+        if repo_up_to_date
+          handle_edit_from_git_error(json_response, 'Assignment already up to date.')
+          return
+        end
+      end
 
-    formatted_config = GitUtils.convert_assignment_config_format(@assignment.course.id, assignment_config, grader_config)
-    
-    # Delete old marking tool contexts
-    begin
-      destroyed_contexts = @assignment.marking_tool_contexts.destroy_all
-    rescue StandardError => e
-      handle_edit_from_git_error(json_response, "Error removing old marking schema: #{e.message}")
-      return
-    end
+      # Pull latest version of assignment
+      unless GitUtils.pull_assignment(@assignment)
+        handle_edit_from_git_error(json_response, 'Failed to pull latest version of assignment repository.')
+        return
+      end
 
-    # Update main assignment properties
-    unless @assignment.update_attributes(formatted_config)
-      handle_edit_from_git_error(json_response, @assignment.errors.full_messages[0])
-      return
-    end
+      begin
+        assignment_config = GitUtils.get_assignment_config(@assignment)
+        grader_config = GitUtils.get_grader_config(@assignment)
+      rescue StandardError => e
+        handle_edit_from_git_error(json_response, "assignment.yml or grader-config.yml not found in updated repository")
+        return
+      end
 
-    # Update active_services and dataflow
-    begin
-      marking_tool_contexts = formatted_config['marking_tool_contexts_attributes']
-      active_services = formatted_config['active_services']
-      @assignment.active_services = WorkflowUtils.construct_workflow(marking_tool_contexts, active_services)
-      @assignment.dataflow = WorkflowUtils.construct_dataflow(@assignment.active_services)
-      @assignment.save!
-    rescue StandardError => e
-      handle_edit_from_git_error(json_response, "Error when updating active services and dataflow: #{e.message}")
-      return
-    end
-    
-    # Configure graders
-    begin
-      configure_graders(grader_config, @assignment)
-    rescue StandardError => e
-      handle_edit_from_git_error(json_response, e.message)
-      return
-    end
+      formatted_config = GitUtils.convert_assignment_config_format(@assignment.course.id, assignment_config, grader_config)
+      
+      # Delete old marking tool contexts
+      begin
+        destroyed_contexts = @assignment.marking_tool_contexts.destroy_all
+      rescue StandardError => e
+        handle_edit_from_git_error(json_response, "Error removing old marking schema: #{e.message}")
+        return
+      end
 
-    if json_response
-      render json: {
-        success: true,
-        error: nil
-      }.to_json, status: 200
-      return
-    else
-      flash[:success] = 'Assignment updated.'
-      redirect_to @assignment
+      # Update main assignment properties
+      unless @assignment.update_attributes(formatted_config)
+        handle_edit_from_git_error(json_response, @assignment.errors.full_messages[0])
+        return
+      end
+
+      # Update active_services and dataflow
+      begin
+        marking_tool_contexts = formatted_config['marking_tool_contexts_attributes']
+        active_services = formatted_config['active_services']
+        @assignment.active_services = WorkflowUtils.construct_workflow(marking_tool_contexts, active_services)
+        @assignment.dataflow = WorkflowUtils.construct_dataflow(@assignment.active_services)
+        @assignment.save!
+      rescue StandardError => e
+        handle_edit_from_git_error(json_response, "Error when updating active services and dataflow: #{e.message}")
+        return
+      end
+      
+      # Configure graders
+      begin
+        configure_graders(grader_config, @assignment)
+      rescue StandardError => e
+        handle_edit_from_git_error(json_response, e.message)
+        return
+      end
+
+      if json_response
+        render json: {
+          success: true,
+          error: nil
+        }.to_json, status: 200
+        return
+      else
+        flash[:success] = 'Assignment updated.'
+        redirect_to @assignment
+      end
     end
   end
 

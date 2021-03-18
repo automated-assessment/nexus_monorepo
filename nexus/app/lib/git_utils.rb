@@ -66,6 +66,18 @@ class GitUtils
       return false
     end
 
+    # Returns true is the local assignment git definiton repository is up to
+    # date OR the assignemnt is not defined in a local git repository. False
+    # otherwise.
+    def assignment_repo_up_to_date!(assignment)
+      # If the assignment doesn't have a local git repo - of course it is "up to date"
+      return true unless assignment_has_git_definition!(assignment)
+      
+      assignment_path = gen_assignment_path(assignment)
+      g = Git.open(assignment_path, :log => Logger.new(STDOUT))
+      return g.object('HEAD').sha == Git.ls_remote(g.remote('origin').url)['head'][:sha]
+    end
+
     def get_assignment_config(assignment)
       return get_assignment_config_from_path(gen_assignment_path(assignment))
     end
