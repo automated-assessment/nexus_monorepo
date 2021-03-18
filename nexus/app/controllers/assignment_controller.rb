@@ -391,7 +391,7 @@ class AssignmentController < ApplicationController
         error: error_message
       }.to_json, status: 200
     else
-      flash[:error] = error_massage
+      flash[:error] = error_message
       redirect_to @assignment
     end
   end
