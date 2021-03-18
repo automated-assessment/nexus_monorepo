@@ -45,10 +45,18 @@ class GitUtils
       FileUtils.rm_rf(assignment_path, secure: true) if Dir.exist?(assignment_path)
     end
 
-    def pull_assignment(assignment)
-      assignment_path = gen_assignment_path(assignment)
-      raise "Assignment has no folder, therefore it cannot be pulled from a git repo" unless Dir.exist?(File.join(assignment_path, '.git'))
+    # Returns true if assignment has a git repo definition, false otherwise
+    def assignment_has_git_definition!(assignment)
+      assignment_path = gen_assignment_path(assignment)  
+      return Dir.exist?(File.join(assignment_path, '.git'))
+    end
 
+    def pull_assignment(assignment)
+      unless assignment_has_git_definition!(assignment)
+        raise "Assignment has no folder, therefore it cannot be pulled from a git repo"
+      end
+      
+      assignment_path = gen_assignment_path(assignment)
       g = Git.open(assignment_path, :log => Logger.new(STDOUT))
       g.pull
       return true
