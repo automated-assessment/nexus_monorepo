@@ -31,6 +31,10 @@ class GitUtils
 
     # Moves an assignment repository from a temporary directory to a permanent one
     def move_tmp_assignment_repo(tmp_path, assignment)
+      # Delete the assignment git repo directory if it exists, maybe something
+      # went wrong before. We want to completely replace it.
+      delete_assignment_repo(assignment)
+
       assignment_path = gen_assignment_path(assignment)
       FileUtils.mv(tmp_path, assignment_path)
     end
