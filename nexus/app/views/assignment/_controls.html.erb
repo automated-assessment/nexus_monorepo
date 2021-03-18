@@ -9,8 +9,18 @@
     <%= link_to(edit_assignment_path(id: @assignment.id)) do %>
       <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'edit' %> Edit Assignment</button>
     <% end %>
-    <%= link_to(edit_assignment_from_git_path(id: @assignment.id)) do %>
-      <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'github' %> Pull latest Assignment from Git</button>
+
+    <% if GitUtils.assignment_has_git_definition!(@assignment) %>
+      <%= link_to(edit_assignment_from_git_path(id: @assignment.id)) do %>
+        <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'github' %> Pull latest Assignment from Git</button>
+      <% end %>
+      <%= link_to(disconnect_from_git_path(id: @assignment.id)) do %>
+        <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'unlink' %> Disconnect Assignment from Git</button>
+      <% end %>
+    <% else %>
+      <%= link_to(connect_to_git_page_path(id: @assignment.id)) do %>
+        <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'link' %> Connect Assignment to Git</button>
+      <% end %>
     <% end %>
 
     <%= link_to(assignment_export_submissions_data_path(id: @assignment.id, format: :csv)) do %>

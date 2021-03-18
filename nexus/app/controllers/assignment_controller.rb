@@ -312,23 +312,27 @@ class AssignmentController < ApplicationController
   end
   
   def edit_from_git_json
-    edit_from_git_main(true)
+    @assignment = return_assignment!
+    if @assignment
+      edit_from_git_main(true, false, 'Assignment updated.')
+    end
   end
 
   def edit_from_git
-    edit_from_git_main(false)
+    @assignment = return_assignment!
+    if @assignment
+      edit_from_git_main(false, false, 'Assignment updated.')
+    end
   end
 
-  def edit_from_git_main(json_response)
-    @assignment = return_assignment!
+  def edit_from_git_main(json_response, disable_pull, success_message)
+    # Allow usage of the edit_from_git_json endpoint without authentication,
+    # but need to authenticate for edit_from_git endpoint
+    unless json_response
+      return unless authenticate_can_administrate!(@assignment.course)
+    end
 
-    if @assignment
-      # Allow usage of the edit_from_git_json endpoint without authentication,
-      # but need to authenticate for edit_from_git endpoint
-      unless json_response
-        return unless authenticate_can_administrate!(@assignment.course)
-      end
-
+    unless disable_pull
       # Check whether the remote repository has a different sha from what we
       # have right now. Since the json update notification receiver endpoint
       # will not need any authentication, someone could just spam it and try to
@@ -349,61 +353,61 @@ class AssignmentController < ApplicationController
         handle_edit_from_git_error(json_response, 'Failed to pull latest version of assignment repository.')
         return
       end
+    end
 
-      begin
-        assignment_config = GitUtils.get_assignment_config(@assignment)
-        grader_config = GitUtils.get_grader_config(@assignment)
-      rescue StandardError => e
-        handle_edit_from_git_error(json_response, "assignment.yml or grader-config.yml not found in updated repository")
-        return
-      end
+    begin
+      assignment_config = GitUtils.get_assignment_config(@assignment)
+      grader_config = GitUtils.get_grader_config(@assignment)
+    rescue StandardError => e
+      handle_edit_from_git_error(json_response, "assignment.yml or grader-config.yml not found in updated repository")
+      return
+    end
 
-      formatted_config = GitUtils.convert_assignment_config_format(@assignment.course.id, assignment_config, grader_config)
-      
-      # Delete old marking tool contexts
-      begin
-        destroyed_contexts = @assignment.marking_tool_contexts.destroy_all
-      rescue StandardError => e
-        handle_edit_from_git_error(json_response, "Error removing old marking schema: #{e.message}")
-        return
-      end
+    formatted_config = GitUtils.convert_assignment_config_format(@assignment.course.id, assignment_config, grader_config)
+    
+    # Delete old marking tool contexts
+    begin
+      destroyed_contexts = @assignment.marking_tool_contexts.destroy_all
+    rescue StandardError => e
+      handle_edit_from_git_error(json_response, "Error removing old marking schema: #{e.message}")
+      return
+    end
 
-      # Update main assignment properties
-      unless @assignment.update_attributes(formatted_config)
-        handle_edit_from_git_error(json_response, @assignment.errors.full_messages[0])
-        return
-      end
+    # Update main assignment properties
+    unless @assignment.update_attributes(formatted_config)
+      handle_edit_from_git_error(json_response, @assignment.errors.full_messages[0])
+      return
+    end
 
-      # Update active_services and dataflow
-      begin
-        marking_tool_contexts = formatted_config['marking_tool_contexts_attributes']
-        active_services = formatted_config['active_services']
-        @assignment.active_services = WorkflowUtils.construct_workflow(marking_tool_contexts, active_services)
-        @assignment.dataflow = WorkflowUtils.construct_dataflow(@assignment.active_services)
-        @assignment.save!
-      rescue StandardError => e
-        handle_edit_from_git_error(json_response, "Error when updating active services and dataflow: #{e.message}")
-        return
-      end
-      
-      # Configure graders
-      begin
-        configure_graders(grader_config, @assignment)
-      rescue StandardError => e
-        handle_edit_from_git_error(json_response, e.message)
-        return
-      end
+    # Update active_services and dataflow
+    begin
+      marking_tool_contexts = formatted_config['marking_tool_contexts_attributes']
+      active_services = formatted_config['active_services']
+      @assignment.active_services = WorkflowUtils.construct_workflow(marking_tool_contexts, active_services)
+      @assignment.dataflow = WorkflowUtils.construct_dataflow(@assignment.active_services)
+      @assignment.save!
+    rescue StandardError => e
+      handle_edit_from_git_error(json_response, "Error when updating active services and dataflow: #{e.message}")
+      return
+    end
+    
+    # Configure graders
+    begin
+      configure_graders(grader_config, @assignment)
+    rescue StandardError => e
+      handle_edit_from_git_error(json_response, e.message)
+      return
+    end
 
-      if json_response
-        render json: {
-          success: true,
-          error: nil
-        }.to_json, status: 200
-        return
-      else
-        flash[:success] = 'Assignment updated.'
-        redirect_to @assignment
-      end
+    if json_response
+      render json: {
+        success: true,
+        error: nil
+      }.to_json, status: 200
+      return
+    else
+      flash[:success] = success_message
+      redirect_to @assignment
     end
   end
 
@@ -416,6 +420,31 @@ class AssignmentController < ApplicationController
     else
       flash[:error] = error_message
       redirect_to @assignment
+    end
+  end
+
+  def disconnect_from_git
+    @assignment = return_assignment!
+    if @assignment
+      return unless authenticate_can_administrate!(@assignment.course)
+      GitUtils.delete_assignment_repo(@assignment)
+      flash[:success] = 'Assignment successfully disconnected from git repository.'
+      redirect_to @assignment
+    end
+  end
+
+  def connect_to_git
+    @assignment = return_assignment!
+    if @assignment
+      repo_url = params[:repository_url]
+      begin
+        GitUtils.clone_assignment(repo_url, @assignment)
+      rescue StandardError => e
+        flash[:error] = "Could not clone git repo: #{e.message}"
+        redirect_to action: 'connect_to_git'
+        return
+      end
+      edit_from_git_main(false, true, 'Assignment successfully connected to Git repostory.')
     end
   end
 
