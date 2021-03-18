@@ -9,24 +9,29 @@ class GitUtils
       Rails.root.join('var', 'assignments', 'tmp', SecureRandom.alphanumeric(10))
     end
     
-    # def clone_assignment(repo_url, assignment)
-    #   assignment_path = gen_assignment_path(assignment)
-
-    #   # Nuke whatever repo was there before
-    #   FileUtils.rm_rf(assignment_path, secure: true) if Dir.exist?(assignment_path)
-
-    #   Git.clone(repo_url, assignment_path)
-    # end
+    # Clones an assignment to its directory
+    def clone_assignment(repo_url, assignment)
+      assignment_path = gen_assignment_path(assignment)
+      clone_to_dir(repo_url, assignment_path)
+    end
     
     # Clones an assignment to a temporary directory and returns the path to it
     def clone_tmp_assignment(repo_url)
       tmp_path = gen_tmp_assignment_path()
+      clone_to_dir(repo_url, tmp_path)
+      return tmp_path
+    end
+
+    # Clones repo_url to path and returns path
+    def clone_to_dir(repo_url, path)
       # Nuke whatever repo was there before
-      FileUtils.rm_rf(tmp_path, secure: true) if Dir.exist?(tmp_path)
+      FileUtils.rm_rf(path, secure: true) if Dir.exist?(path)
+
       # Need to set this, otherwise, if an invalid url is given, it will freeze nexus
       ENV['GIT_TERMINAL_PROMPT'] = '0'
-      Git.clone(repo_url, tmp_path)
-      return tmp_path
+
+      Git.clone(repo_url, path)
+      return path
     end
 
     # Moves an assignment repository from a temporary directory to a permanent one
