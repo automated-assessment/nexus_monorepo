@@ -159,7 +159,7 @@ class GitUtils
     end
 
     def gen_active_services(grader_config)
-      active_services = grader_config.map.with_index { |grader, idx| [idx, grader['depends-on']] }.select {|grader| grader[1]!= nil }.to_h
+      active_services = grader_config.map.with_index { |grader, idx| [idx.to_s, grader['depends-on']] }.select {|grader| grader[1] != nil }.to_h
       return active_services
     end
 
