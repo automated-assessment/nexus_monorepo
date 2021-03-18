@@ -126,8 +126,32 @@ class GitUtils
     end
 
     def gen_uat_parameters_attributes(assignment_config)
-      uat_parameters_attributes = assignment_config['uat_parameters'].map.with_index { |uat, idx| [idx, gen_uat_parameters(uat)] }.to_h
-      return uat_parameters_attributes
+      if assignment_config['is_unique']
+        if assignment_config['uat_parameters']
+          uat_parameters_attributes = assignment_config['uat_parameters'].map.with_index { |uat, idx| [idx, gen_uat_parameters(uat)] }.to_h
+          return uat_parameters_attributes
+        else
+          # A default uat_parameters_attributes is sent if assignment is unique, but all parameters are removed
+          return {
+            "0" => {
+              "name" => "name",
+              "type" => "1",
+              "construct" => "",
+              "_destroy" => "1"
+            }
+          }
+        end
+      else
+        # A default uat_parameters_attributes is sent even if assignment isn't unique, so we replicate it
+        return {
+          "0" => {
+            "name" => "name",
+            "type" => "1",
+            "construct" => "",
+            "_destroy" => ""
+          }
+        }
+      end
     end
 
     def gen_active_services(grader_config)
