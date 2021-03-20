@@ -399,6 +399,14 @@ class AssignmentController < ApplicationController
       return
     end
 
+    # Remark all assignment submissions
+    begin
+      remark_all_submissions(@assignment)
+    rescue StandardError => e
+      handle_edit_from_git_error(json_response, e.message)
+      return
+    end
+
     if json_response
       render json: {
         success: true,
@@ -408,6 +416,37 @@ class AssignmentController < ApplicationController
     else
       flash[:success] = success_message
       redirect_to @assignment
+    end
+  end
+
+  def remark_all_submissions(assignment)
+    # If we are receiving an update notification from outside (i.e.
+    # json_response is true), then there will not be a current_user, but we need
+    # to specify a user for submission remarking. The solution here is to create
+    # a fake user with only a 'name' method, since 'name' is the only thing that
+    # is actually used from the passed in user.
+    json_user = Object.new
+    json_user.singleton_class.define_method(:name) do
+      return 'Github Action'
+    end
+    
+    # Remark all assignment submissions
+    assignment.submissions.each do |submission|
+      submission.active_services = submission.assignment.active_services
+      submission.save!
+
+      # We're essentially creating a mock flash here so we could reuse the
+      # submission remark function exactly how it is without any changes
+      remark_status = {}
+      if SubmissionUtils.remark!(submission, json_user, remark_status)
+        remark_status[:success] = 'Successfully sent submission for remarking.'
+      end
+
+      # If at least one remark fails, raise an error here and do not continue
+      if remark_status.key?(:error)
+        raise "Failed to remark submission id #{submission.id}: #{remark_status[:error]}"
+        return
+      end
     end
   end
 
