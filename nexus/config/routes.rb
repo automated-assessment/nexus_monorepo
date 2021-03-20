@@ -107,6 +107,7 @@ Rails.application.routes.draw do
 
   # Assignment validation
   post 'validation/assignment' => 'validation#test_assignment', as: :assignment_validation
+  get 'validation/assignment_schema' => 'validation#assignment_schema', as: :assignment_schema
 
   ### Root
   root 'pages#landing'

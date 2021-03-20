@@ -3,6 +3,75 @@ class ValidationController < ApplicationController
 
   skip_before_action :verify_authenticity_token, only: [:test_assignment]
 
+  def assignment_schema
+    assignment_schema = {
+      '$schema' => 'http://json-schema.org/draft-07/schema#',
+      'type' => 'object',
+      'properties' => {
+        'title' => { 'type' => 'string' },
+        'description' => { 'type' => 'string' },
+        'start' => {
+          'type' => 'string',
+          'format' => 'date-time'
+        },
+        'deadline' => {
+          'type' => 'string',
+          'format' => 'date-time'
+        },
+        'allow_late' => { 'type' => 'boolean' },
+        'late_cap' => {
+          'type' => 'integer',
+          'minimum' => 0,
+          'maximum' => 100
+        },
+        'allow_zip' => { 'type' => 'boolean' },
+        'allow_git' => { 'type' => 'boolean' },
+        'allow_ide' => { 'type' => 'boolean' },
+        'max_attempts' => { 'type' => 'integer' },
+        'latedeadline' => {
+          'type' => 'string',
+          'format' => 'date-time'
+        },
+        'feedback_only' => { 'type' => 'boolean' },
+        'is_unique' => { 'type' => 'boolean' },
+        'uat_parameters' => {
+          'type' => 'array',
+          'items' => {
+            'type' => 'object',
+            'properties' => {
+              'name' => { 'type' => 'string' },
+              'type' => {
+                'type' => 'string',
+                'enum' => [ 'int', 'float', 'double', 'string', 'boolean' ]
+              },
+              'construction_constraints' => { 'type' => 'string' }
+            },
+            'required' => [ 'name', 'type', 'construction_constraints' ]
+          }
+        }
+      },
+      'required' => [
+        'description',
+        'start',
+        'deadline',
+        'allow_late',
+        'late_cap',
+        'allow_zip',
+        'allow_git',
+        'allow_ide',
+        'max_attempts',
+        'latedeadline',
+        'feedback_only',
+        'is_unique'
+      ],
+      'additionalProperties' => false,
+      'if': { 'properties': { 'is_unique': { 'const': true } } },
+      'then': { 'required': [ 'uat_parameters' ] }
+    }
+
+    render json: assignment_schema.to_json, status: 200
+  end
+
   def test_assignment
     assignment = params[:validation]
 
