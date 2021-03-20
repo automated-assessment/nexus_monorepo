@@ -435,8 +435,9 @@ class AssignmentController < ApplicationController
 
   def connect_to_git
     @assignment = return_assignment!
+    repo_url = params[:repository_url]
     if @assignment
-      repo_url = params[:repository_url]
+      return unless authenticate_can_administrate!(@assignment.course)
       begin
         GitUtils.clone_assignment(repo_url, @assignment)
       rescue StandardError => e
