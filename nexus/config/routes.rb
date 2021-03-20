@@ -106,8 +106,8 @@ Rails.application.routes.draw do
   post 'report_feedback/:sid/:tool_uid' => 'feedback_item#report', as: :report_feedback
 
   # Assignment validation
-  post 'validation/assignment' => 'validation#test_assignment', as: :assignment_validation
   get 'validation/assignment_schema' => 'validation#assignment_schema', as: :assignment_schema
+  get 'validation/grader_config_schema' => 'validation#grader_config_schema', as: :grader_config_schema
 
   ### Root
   root 'pages#landing'
