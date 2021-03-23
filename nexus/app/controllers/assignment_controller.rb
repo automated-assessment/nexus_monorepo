@@ -312,10 +312,16 @@ class AssignmentController < ApplicationController
   end
   
   def edit_from_git_json
-    @assignment = return_assignment!
-    if @assignment
-      edit_from_git_main(true, false, 'Assignment updated.')
+    @assignment = Assignment.find_by(id: params[:id])
+    Rails.logger.info @assignment
+    unless @assignment
+      render json: {
+        success: false,
+        error: "Assignment #{params[:id]} does not exist"
+      }.to_json, status: 200
+      return
     end
+    edit_from_git_main(true, false, 'Assignment updated.')
   end
 
   def edit_from_git
