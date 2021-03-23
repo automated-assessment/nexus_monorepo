@@ -17,6 +17,9 @@
       <%= link_to(disconnect_from_git_path(id: @assignment.id)) do %>
         <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'unlink' %> Disconnect Assignment from Git</button>
       <% end %>
+      <%= link_to(show_assignment_github_actions_path(id: @assignment.id)) do %>
+        <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'github' %> Show Assignment GitHub Actions</button>
+      <% end %>
     <% else %>
       <%= link_to(connect_to_git_page_path(id: @assignment.id)) do %>
         <button type="button" name="button" class="btn btn-sm btn-primary"><%= icon 'link' %> Connect Assignment to Git</button>

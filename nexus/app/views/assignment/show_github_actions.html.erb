@@ -1,0 +1,19 @@
+<div class="page-header">
+  <h2>GitHub Actions <small>for <%= link_to @assignment do @assignment.title end %></small></h2>
+</div>
+
+<p>These are the files that will create GitHub Actions which will provide CI/CD and assignment and grader configuration testing to your repository.</p>
+
+<code>notify.yml</code>
+<pre><code><%= GitUtils.gen_notify_action(root_url, @assignment) %></code></pre>
+
+<code>test.yml</code>
+<pre><code><%= GitUtils.gen_test_action(root_url, @assignment) %></code></pre>
+
+<p>To create the GitHub Actions, download them below, extract the zip file to the root directory of your repository and commit the newly added files.</p>
+
+<div class="center-controls">
+  <%= link_to(assignment_github_actions_path(id: @assignment.id)) do %>
+    <button type="button" class="btn btn-success"><%= icon 'github' %> Download GitHub Actions</button>
+  <% end %>
+</div>

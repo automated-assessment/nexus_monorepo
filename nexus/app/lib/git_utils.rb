@@ -1,4 +1,8 @@
+require 'yaml'
+
 class GitUtils
+  include Rails.application.routes.url_helpers
+
   class << self
     # Assignment definition utils
     def gen_assignment_path(assignment)
@@ -209,6 +213,125 @@ class GitUtils
         'active_services' => gen_active_services(grader_config)
       }
       return assignment
+    end
+
+    # Utils for generating urls for Github Actions
+
+    # Generate url for the route edit_assignment_from_git_json
+    def gen_edit_from_git_json_url(host, id)
+      return Rails.application.routes.url_helpers.edit_assignment_from_git_json_url({:id => id, :host => host})
+    end
+    
+    # Generate url for the route assignment_schema
+    def gen_assignment_schema_url(host)
+      return Rails.application.routes.url_helpers.assignment_schema_url(:host => host)
+    end
+
+    # Generate url for the route grader_config_schema
+    def gen_grader_config_schema_url(host)
+      return Rails.application.routes.url_helpers.grader_config_schema_url(:host => host)
+    end
+
+    # Gets the default branch name of an assignmetn github repo
+    def get_assignment_repo_default_branch(assignment)
+      # TODO make it actually get the remote default branch name
+      # assignment_path = gen_assignment_path(assignment)
+      # g = Git.open(assignment_path, :log => Logger.new(STDOUT))
+      return 'master'
+    end
+    
+    # Generate a YAML Github action to notify nexus about an assignment update
+    def gen_notify_action(host, assignment)
+      endpoint = gen_edit_from_git_json_url(host, assignment.id)
+      branch = get_assignment_repo_default_branch(assignment)
+      action = {
+        'name' => 'Notify',
+        'on' => {
+          'push' => {
+            'branches' => [ branch ]
+          }
+        },
+        'env' => {
+          'assignment-update-endpoint' => endpoint
+        },
+        'jobs' => {
+          'notify-nexus-about-assignment-update' => {
+            'name' => 'Nexus assignment update notifier',
+            'runs-on' => 'ubuntu-latest',
+            'steps' => [
+              {
+                'name' => 'Send update notification',
+                'uses' => 'mpoc/nexus-update-notifier-action@main',
+                'with' => {
+                  'api-endpoint' => '${{ env.assignment-update-endpoint }}'
+                }
+              }
+            ]
+          }
+        }
+      }
+      return action.to_yaml
+    end
+
+    # Generate a YAML Github action to test assignment and grader config definition
+    def gen_test_action(host, assignment)
+      assignment_schema_endpoint = gen_assignment_schema_url(host)
+      grader_config_schema_endpoint = gen_grader_config_schema_url(host)
+      branch = get_assignment_repo_default_branch(assignment)
+      action = {
+        'name' => 'Test',
+        'on' => {
+          'pull_request' => {
+            'branches' => [ branch ]
+          },
+          'push' => {
+            'branches' => [ branch ]
+          }
+        },
+        'env' => {
+          'assignment-schema-endpoint' => assignment_schema_endpoint,
+          'grader-config-schema-endpoint' => grader_config_schema_endpoint
+        },
+        'jobs' => {
+          'test-assignment-validity' => {
+            'name' => 'Test assignment validity',
+            'runs-on' => 'ubuntu-latest',
+            'steps' => [
+              {
+                'name' => 'Checkout repo',
+                'uses' => 'actions/checkout@v2'
+              },
+              {
+                'name' => 'Validate assignment',
+                'uses' => 'mpoc/nexus-validate-using-remote-schema-action@main',
+                'with' => {
+                  'api-endpoint' => '${{ env.assignment-schema-endpoint }}',
+                  'yaml-file' => 'assignment.yml'
+                }
+              }
+            ]
+          },
+          'test-grader-configuration-validity' => {
+            'name' => 'Test grader configuration validity',
+            'runs-on' => 'ubuntu-latest',
+            'steps' => [
+              {
+                'name' => 'Checkout repo',
+                'uses' => 'actions/checkout@v2'
+              },
+              {
+                'name' => 'Validate grader config',
+                'uses' => 'mpoc/nexus-validate-using-remote-schema-action@main',
+                'with' => {
+                  'api-endpoint' => '${{ env.grader-config-schema-endpoint }}',
+                  'yaml-file' => 'grader-config.yml'
+                }
+              }
+            ]
+          }
+        }
+      }
+      return action.to_yaml
     end
 
     # Submission utils

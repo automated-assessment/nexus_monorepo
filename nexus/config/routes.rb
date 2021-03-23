@@ -41,6 +41,8 @@ Rails.application.routes.draw do
   get 'assignments/:id/disconnect_from_git' => 'assignment#disconnect_from_git', as: :disconnect_from_git
   get 'assignments/:id/connect_to_git' => 'assignment#connect_to_git_page', as: :connect_to_git_page
   post 'assignments/:id/connect_to_git' => 'assignment#connect_to_git', as: :connect_to_git
+  get 'assignments/:id/show_github_actions' => 'assignment#show_github_actions', as: :show_assignment_github_actions
+  get 'assignments/:id/github_actions' => 'assignment#github_actions', as: :assignment_github_actions
   patch 'assignments/:id' => 'assignment#update', as: :update_assignment
   get 'assignments/:id/export_submissions_data' => 'assignment#export_submissions_data', as: :assignment_export_submissions_data
   get 'assignments/:id/list_submissions' => 'assignment#list_submissions', as: :assignment_list_submissions

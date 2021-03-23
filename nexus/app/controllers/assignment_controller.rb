@@ -3,6 +3,7 @@ class AssignmentController < ApplicationController
   require 'yaml'
   require 'net/http'
   require 'json'
+  require 'zip'
   require_relative '../lib/git_utils'
   require_relative '../lib/workflow_utils'
 
@@ -20,6 +21,8 @@ class AssignmentController < ApplicationController
     :edit,
     :edit_from_git,
     :edit_from_git_json,
+    :github_actions,
+    :show_github_actions,
     :update,
     :destroy,
     :export_submissions_data,
@@ -198,6 +201,7 @@ class AssignmentController < ApplicationController
         return
       end
 
+      flash[:success] = 'Assignment successfully created from git repository. You can now add GitHub actions to your repository by clicking "Show Assignment GitHub Actions"'
       redirect_to action: 'show', id: @assignment.id
     end
   end
@@ -490,7 +494,37 @@ class AssignmentController < ApplicationController
         redirect_to action: 'connect_to_git'
         return
       end
-      edit_from_git_main(false, true, 'Assignment successfully connected to Git repostory.')
+      edit_from_git_main(false, true, 'Assignment successfully connected to Git repostory. You can now add GitHub actions to your repository by clicking "Show Assignment GitHub Actions"')
+    end
+  end
+
+  def show_github_actions
+    @assignment = return_assignment!
+    authenticate_can_administrate!(@assignment.course) if @assignment
+  end
+
+  def github_actions
+    @assignment = return_assignment!
+    if @assignment
+      return unless authenticate_can_administrate!(@assignment.course)
+
+      notify_action = GitUtils.gen_notify_action(root_url, @assignment)
+      puts "\n notify_action: #{notify_action}\n"
+
+      test_action = GitUtils.gen_test_action(root_url, @assignment)
+      puts "\n test_action: #{test_action}\n"
+
+      action_zip_stream = Zip::OutputStream.write_buffer do |zip|
+        zip.put_next_entry '.github/workflows/notify.yml'
+        zip.print notify_action
+        zip.put_next_entry '.github/workflows/test.yml'
+        zip.print test_action
+      end
+      action_zip_stream.rewind
+
+      send_data action_zip_stream.read, type: 'application/zip',
+                        disposition: 'attachment',
+                        filename: 'actions.zip'
     end
   end
 
