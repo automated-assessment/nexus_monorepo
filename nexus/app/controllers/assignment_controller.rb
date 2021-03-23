@@ -168,7 +168,9 @@ class AssignmentController < ApplicationController
     if @assignment
       return unless authenticate_can_administrate!(@assignment.course)
       
-      unless @assignment.save
+      if @assignment.save
+        @assignment.log("Assignment created from Git repository #{repo_url}", 'info')
+      else
         error_flash_and_cleanup_from_git!(@assignment.errors.full_messages[0])
         return
       end
@@ -227,9 +229,12 @@ class AssignmentController < ApplicationController
           req = Net::HTTP::Post.new(uri.path, {'Content-Type' => 'application/json'})
           req.body = format_grader_config(@assignment, grader['configuration'])
           res = http.request(req)
-          # Uncomment later
+          # Temporary commenting because graders return 'Cannot POST' even
+          # though you actually can and they do get cofngiured
           # raise res.body unless res.code.to_i < 400
+          assignment.log("Configured #{grader['name']} grader", 'info')
         rescue StandardError => e
+          assignment.log("Failed to configure #{grader['name']} grader", 'error')
           raise "Failed to configure grader #{grader['name']}: #{e.message}"
           return
         end
@@ -325,6 +330,7 @@ class AssignmentController < ApplicationController
       }.to_json, status: 200
       return
     end
+    @assignment.log('Received update notification from GitHub Action', 'debug')
     edit_from_git_main(true, false, 'Assignment updated.')
   end
 
@@ -400,6 +406,8 @@ class AssignmentController < ApplicationController
       handle_edit_from_git_error(json_response, "Error when updating active services and dataflow: #{e.message}")
       return
     end
+
+    @assignment.log('Assignment definition updated from its Git repository', 'success')
     
     # Configure graders
     begin
@@ -411,7 +419,8 @@ class AssignmentController < ApplicationController
 
     # Remark all assignment submissions
     begin
-      remark_all_submissions(@assignment)
+      remark_all_submissions(@assignment, json_response)
+      @assignment.log('Sent submission remarking requests to graders', 'info')
     rescue StandardError => e
       handle_edit_from_git_error(json_response, e.message)
       return
@@ -429,15 +438,21 @@ class AssignmentController < ApplicationController
     end
   end
 
-  def remark_all_submissions(assignment)
-    # If we are receiving an update notification from outside (i.e.
-    # json_response is true), then there will not be a current_user, but we need
-    # to specify a user for submission remarking. The solution here is to create
-    # a fake user with only a 'name' method, since 'name' is the only thing that
-    # is actually used from the passed in user.
-    json_user = Object.new
-    json_user.singleton_class.define_method(:name) do
-      return 'Github Action'
+  def remark_all_submissions(assignment, json_response)
+    remark_user = nil
+    if json_response
+      # If we are receiving an update notification from outside (i.e.
+      # json_response is true), then there will not be a current_user, but we need
+      # to specify a user for submission remarking. The solution here is to create
+      # a fake user with only a 'name' method, since 'name' is the only thing that
+      # is actually used from the passed in user.
+      json_user = Object.new
+      json_user.singleton_class.define_method(:name) do
+        return 'Github Action'
+      end
+      remark_user = json_user
+    else
+      remark_user = current_user
     end
     
     # Remark all assignment submissions
@@ -448,7 +463,7 @@ class AssignmentController < ApplicationController
       # We're essentially creating a mock flash here so we could reuse the
       # submission remark function exactly how it is without any changes
       remark_status = {}
-      if SubmissionUtils.remark!(submission, json_user, remark_status)
+      if SubmissionUtils.remark!(submission, remark_user, remark_status)
         remark_status[:success] = 'Successfully sent submission for remarking.'
       end
 
@@ -477,7 +492,8 @@ class AssignmentController < ApplicationController
     if @assignment
       return unless authenticate_can_administrate!(@assignment.course)
       GitUtils.delete_assignment_repo(@assignment)
-      flash[:success] = 'Assignment successfully disconnected from git repository.'
+      @assignment.log('Assignment disconnected from git repository.', 'info')
+      flash[:success] = 'Assignment successfully disconnected from Git repository.'
       redirect_to @assignment
     end
   end
@@ -490,7 +506,9 @@ class AssignmentController < ApplicationController
       begin
         GitUtils.clone_assignment(repo_url, @assignment)
       rescue StandardError => e
-        flash[:error] = "Could not clone git repo: #{e.message}"
+        error_message = "Could not clone git repo for assignment: #{e.message}"
+        assignment.log(error_message, 'error')
+        flash[:error] = error_message
         redirect_to action: 'connect_to_git'
         return
       end

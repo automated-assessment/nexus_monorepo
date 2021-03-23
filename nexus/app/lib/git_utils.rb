@@ -17,6 +17,7 @@ class GitUtils
     def clone_assignment(repo_url, assignment)
       assignment_path = gen_assignment_path(assignment)
       clone_to_dir(repo_url, assignment_path)
+      assignment.log("Cloned #{repo_url} for assignment", 'debug')
     end
     
     # Clones an assignment to a temporary directory and returns the path to it
@@ -46,12 +47,14 @@ class GitUtils
 
       assignment_path = gen_assignment_path(assignment)
       FileUtils.mv(tmp_path, assignment_path)
+      assignment.log("Moved assignment Git repository from a temporary to a permanent location", 'debug')
     end
 
     # Deletes assignment repository directory if it exists
     def delete_assignment_repo(assignment)
       assignment_path = gen_assignment_path(assignment)
       FileUtils.rm_rf(assignment_path, secure: true) if Dir.exist?(assignment_path)
+      assignment.log('Deleted assignment definition Git repository', 'debug')
     end
 
     # Returns true if assignment has a git repo definition, false otherwise
@@ -68,6 +71,7 @@ class GitUtils
       assignment_path = gen_assignment_path(assignment)
       g = Git.open(assignment_path, :log => Logger.new(STDOUT))
       g.pull
+      assignment.log('Successfully pulled updated assignment Git repository', 'debug')
       return true
     rescue StandardError => e
       Rails.logger.error "Error pulling assignment repository for assignment #{assignment.id}, #{assignment.title}: #{e.inspect}"
@@ -232,7 +236,7 @@ class GitUtils
       return Rails.application.routes.url_helpers.grader_config_schema_url(:host => host)
     end
 
-    # Gets the default branch name of an assignmetn github repo
+    # Gets the default branch name of an assignment github repo
     def get_assignment_repo_default_branch(assignment)
       # TODO make it actually get the remote default branch name
       # assignment_path = gen_assignment_path(assignment)
