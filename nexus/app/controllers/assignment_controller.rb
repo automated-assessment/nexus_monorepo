@@ -455,9 +455,28 @@ class AssignmentController < ApplicationController
       remark_user = current_user
     end
     
+    active_services = assignment.active_services
+    marking_tool_contexts = assignment.marking_tool_contexts
+
     # Remark all assignment submissions
     assignment.submissions.each do |submission|
-      submission.active_services = submission.assignment.active_services
+      # Because the grading tools might have changed, we delete the existing feedback items and intermediate marks
+      submission.feedback_items.destroy_all
+      submission.intermediate_marks.destroy_all
+      
+      # Recreate intermediate marks
+      submission.intermediate_marks = marking_tool_contexts.map do |mt|
+        IntermediateMark.new({
+          'mark' => nil,
+          'marking_tool_id' => mt.marking_tool_id,
+          'submission_id' => submission.id
+        })
+      end
+    
+      submission.mark = nil
+      submission.failed = false
+
+      submission.active_services = active_services
       submission.save!
 
       # We're essentially creating a mock flash here so we could reuse the
