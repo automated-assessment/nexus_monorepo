@@ -5,8 +5,9 @@ import series from 'async/series';
 import mapSeries from 'async/mapSeries';
 import yaml from 'node-yaml';
 import { execSync } from 'child_process';
-import request from 'request';
+import request, { del } from 'request';
 import waitOn from 'wait-on';
+import { json } from 'body-parser';
 
 var colors = require('colors');
 
@@ -172,10 +173,22 @@ function run_tests(graders, tests, cb) {
     (test, cb) => {
       console.log ('Running test '.log + test.yellow + '.'.log);
 
-      var sha = [];
-      async.series({
-          sha: (cb) => { get_submission_sha(sha, tests[test].submission, cb); },
-          tests: (cb) => { run_graders(tests[test].graders, tests[test].submission, sha, graders, cb); }
+      for (var subindex in Object.keys(tests[test].submissions)){
+        var gradertestspec = JSON.parse(JSON.stringify(tests[test]));
+        gradertestspec.submission = tests[test].submissions[subindex];
+        delete tests[test].submissions;
+        for (var grader in tests[test].graders){
+          console.log(grader);
+          console.log(tests[test].graders[grader]);
+          gradertestspec.graders[grader].mark = tests[test].graders[grader].marks[subindex];
+          gradertestspec.graders[grader].feedback = tests[test].graders[grader].feedbacks[subindex]
+          delete tests[test].graders[grader].feedbacks;
+          delete tests[test].graders[grader].marks
+        }
+        var sha = []
+        async.series({
+          sha: (cb) => { get_submission_sha(sha, gradertestspec.submission, cb); },
+          tests: (cb) => { run_graders(gradertestspec.graders, gradertestspec.submission, sha, graders, cb); }
         },
         (err, results) => {
           if (err) {
@@ -186,6 +199,7 @@ function run_tests(graders, tests, cb) {
           }
         }
       );
+      }
     },
     cb
   );
