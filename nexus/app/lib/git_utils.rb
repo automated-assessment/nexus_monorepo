@@ -117,16 +117,13 @@ class GitUtils
     end
 
     def convert_marking_tool_names_to_ids(name)
-      # Temporary solution
-      id_map = {
-        'nexus' => '1',
-        'javac' => '2',
-        'rng' => '3',
-        'conf' => '4',
-        'iotool' => '5',
-        'junit' => '6'
-      }
-      return id_map[name]
+      marking_tool = MarkingTool.find_by(uid: name)
+      
+      unless marking_tool
+        raise "Invalid marking tool: #{name}"
+      end
+
+      return marking_tool.id.to_s
     end
 
     def gen_marking_tool_attributes(grader)
