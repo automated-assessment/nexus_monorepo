@@ -273,16 +273,11 @@ class ValidationController < ApplicationController
   end
 
   def grader_config_schema
-    grader_urls = {
-      'javac' => 'http://javac-tool:5000/config_schema',
-      'rng' => 'http://rng-tool:3000/config_schema',
-      'conf' => 'http://config-tool:3000/config_schema',
-      'iotool' => 'http://io-grader:5000/config_schema',
-      'junit' => 'http://junit-grader:5000/config_schema'
-      # 'cppiograder' => 'http://localhost:3008/config_schema',
-      # 'cppcompilation' => 'http://localhost:3007/config_schema',
-      # 'cppunit' => 'http://localhost:3015/config_schema'
-    }
+    # Grab all marking tools that have URLs and are not Nexus itself
+    non_nexus_marking_tools = MarkingTool.where.not(url: 'n/a').where.not(url: nil)
+
+    # Turn the marking tools into a hash of format uid => grader_config_schema_url
+    grader_urls = non_nexus_marking_tools.map { |mt| [mt.uid, mt.url.sub('https://', 'http://').sub!('/mark', '/config_schema')] }.to_h
 
     # Generate grader config JSON schema
     grader_config_schema = nil
