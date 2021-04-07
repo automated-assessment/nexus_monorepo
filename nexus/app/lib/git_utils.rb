@@ -238,10 +238,23 @@ class GitUtils
 
     # Gets the default branch name of an assignment github repo
     def get_assignment_repo_default_branch(assignment)
-      # TODO make it actually get the remote default branch name
-      # assignment_path = gen_assignment_path(assignment)
-      # g = Git.open(assignment_path, :log => Logger.new(STDOUT))
-      return 'master'
+      assignment_path = gen_assignment_path(assignment)
+      g = Git.open(assignment_path, :log => Logger.new(STDOUT))
+      g = Git.open(assignment_path)
+
+      # We are going to try and find the default branch name, but if for
+      # whatever reason it doesn't work, fall back to master.
+      branch_regex = /remotes\/origin\/HEAD -> origin\/(.+)/
+      branch = 'master'
+      g.branches.remote.each do |remote|
+        match = remote.full.match(branch_regex)
+        if match
+          branch = match[1]
+          break
+        end
+      end
+
+      return branch
     end
     
     # Generate a YAML Github action to notify nexus about an assignment update
