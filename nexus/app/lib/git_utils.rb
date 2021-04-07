@@ -69,8 +69,13 @@ class GitUtils
       end
       
       assignment_path = gen_assignment_path(assignment)
-      g = Git.open(assignment_path, :log => Logger.new(STDOUT))
-      g.pull
+      g = Git.open(assignment_path)
+
+      # We need the get the remote default branch name before pulling so we
+      # could specify it, because this library hardcodes 'master'.
+      branch = get_assignment_repo_default_branch(assignment)
+      g.pull('origin', branch)
+
       assignment.log('Successfully pulled updated assignment Git repository', 'debug')
       return true
     rescue StandardError => e
