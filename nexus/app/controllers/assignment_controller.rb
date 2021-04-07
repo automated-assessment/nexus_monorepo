@@ -162,7 +162,13 @@ class AssignmentController < ApplicationController
       return
     end
     
-    formatted_config = GitUtils.convert_assignment_config_format(course.id, assignment_config, grader_config)
+    formatted_config = nil
+    begin
+      formatted_config = GitUtils.convert_assignment_config_format(course.id, assignment_config, grader_config)
+    rescue StandardError => e
+      handle_edit_from_git_error(json_response, "Failed to convert assignment config format: #{e.message}")
+      return
+    end
 
     @assignment = Assignment.new(formatted_config)
     if @assignment
@@ -375,11 +381,17 @@ class AssignmentController < ApplicationController
       assignment_config = GitUtils.get_assignment_config(@assignment)
       grader_config = GitUtils.get_grader_config(@assignment)
     rescue StandardError => e
-      handle_edit_from_git_error(json_response, "assignment.yml or grader-config.yml not found in updated repository")
+      handle_edit_from_git_error(json_response, 'assignment.yml or grader-config.yml not found in updated repository')
       return
     end
 
-    formatted_config = GitUtils.convert_assignment_config_format(@assignment.course.id, assignment_config, grader_config)
+    formatted_config = nil
+    begin
+      formatted_config = GitUtils.convert_assignment_config_format(@assignment.course.id, assignment_config, grader_config)
+    rescue StandardError => e
+      handle_edit_from_git_error(json_response, "Failed to convert assignment config format: #{e.message}")
+      return
+    end
     
     # Delete old marking tool contexts
     begin
