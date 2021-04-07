@@ -215,29 +215,28 @@ class AssignmentController < ApplicationController
   end
 
   def configure_graders(grader_config, assignment)
-    # Temporary, need to figure out where to put this, possibly have it in the db?
-    grader_config_apis = {
-      'javac' => 'http://javac-tool:5000/foo/configuration',
-      'rng' => 'http://rng-tool:3000/foo/configuration',
-      'conf' => 'http://config-tool:3000/foo/configuration',
-      'iotool' => 'http://io-grader:5000/foo/configuration',
-      'junit' => 'http://junit-grader:5000/foo/configuration'
-      # 'cppiograder' => 'http://localhost:3008/foo/configuration',
-      # 'cppcompilation' => 'http://localhost:3007/foo/configuration',
-      # 'cppunit' => 'http://localhost:3015/foo/configuration'
-    }
+    # Grab all marking tools that have URLs and are not Nexus itself
+    non_nexus_marking_tools = MarkingTool.where.not(url: 'n/a').where.not(url: nil)
+
+    # Turn the marking tools into a hash of format uid => grader_configuration_url
+    grader_config_apis = non_nexus_marking_tools.map { |mt| [mt.uid, mt.url.sub!('/mark', "/#{mt.access_token}/configuration")] }.to_h
 
     grader_config.each { |grader|
       unless grader['configuration'].nil?
         begin
+          unless grader_config_apis.key?(grader['name'])
+            raise "Could not get configuration url for grader #{grader['name']}"
+          end
+
           uri = URI(grader_config_apis[grader['name']])
           http = Net::HTTP.new(uri.host, uri.port)
           req = Net::HTTP::Post.new(uri.path, {'Content-Type' => 'application/json'})
           req.body = format_grader_config(@assignment, grader['configuration'])
           res = http.request(req)
           # Temporary commenting because graders return 'Cannot POST' even
-          # though you actually can and they do get cofngiured
+          # though you actually can and they do get configured
           # raise res.body unless res.code.to_i < 400
+          
           assignment.log("Configured #{grader['name']} grader", 'info')
         rescue StandardError => e
           assignment.log("Failed to configure #{grader['name']} grader", 'error')
