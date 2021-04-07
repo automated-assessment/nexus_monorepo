@@ -42,7 +42,7 @@ tests:
         feedback: dontcare
 ```
 
-This defines a test called `compile`, which uses the files in directory [`tests/scripts/submissions/basic_compiles`](tests/scripts/submissions/basic_compiles). This submission will be sent to the `javac-tool` grader, which is expected to return a mark of 100. It is expected to return some feedback, but we do not care about what it is.
+This defines a test called `compile`, which uses the files in directory [`tests/scripts/test_files/basic_compiles`](tests/scripts/test_files/basic_compiles). This submission will be sent to the `javac-tool` grader, which is expected to return a mark of 100. It is expected to return some feedback, but we do not care about what it is.
 
 ### Open items
 
