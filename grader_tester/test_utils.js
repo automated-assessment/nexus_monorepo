@@ -364,7 +364,7 @@ function configure_graders(graders, grader_test_specs, aid, cb){
         cb();
       }
       else {
-        console.log(`Expected expected configurations ${JSON.stringify(result.post)} but received ${JSON.stringify(result.get)} from ${grader_name}`.error);
+        console.log(`Expected configurations ${JSON.stringify(result.post)} but received ${JSON.stringify(result.get)} from ${grader_name}`.error);
         cb(null, grader_test_spec_key);
       }
     });
@@ -428,7 +428,7 @@ function get_configuration(grader_spec, aid, cb){
       console.log(`    Retrieved error from GETting configuration from ${grader_name}: ${err}.`.error);
       cb(err);
     } else {
-      if (true || res.statusCode == 200) {
+      if (res.statusCode == 200) {
         cb(null, body.config);
       } else {
         console.log(`    Received non-200 return from ${grader_name}: ${body}.`.error);
