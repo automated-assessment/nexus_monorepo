@@ -239,8 +239,13 @@ class GitUtils
     # Gets the default branch name of an assignment github repo
     def get_assignment_repo_default_branch(assignment)
       assignment_path = gen_assignment_path(assignment)
-      g = Git.open(assignment_path, :log => Logger.new(STDOUT))
-      g = Git.open(assignment_path)
+      default_branch = get_repo_default_branch(assignment_path)
+      return default_branch
+    end
+
+    # Gets the default remote branch for a git directory in the specified path 
+    def get_repo_default_branch(path)
+      g = Git.open(path)
 
       # We are going to try and find the default branch name, but if for
       # whatever reason it doesn't work, fall back to master.
