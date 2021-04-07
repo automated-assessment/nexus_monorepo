@@ -33,7 +33,7 @@ graders:
     mark: /mark
     configuration: /foo/configuration
 tests:
-  car_test:
+  car_series:
     submissions: 
       - car_test
     graders:
@@ -49,7 +49,7 @@ tests:
           - file: junit_cartest
         configuration:
           test_files:
-            repository: car_coursework
+            git: car_coursework
           timeout: 1m
       io-grader:
         marks: 
@@ -58,7 +58,7 @@ tests:
           - file: iograder_cartest
         configuration:
           test_files:
-            repository: car_coursework
+            git: car_coursework
           timeout: 15
   # compile:
   #   submission: 

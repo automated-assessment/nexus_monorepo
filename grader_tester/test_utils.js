@@ -70,6 +70,9 @@ function start_tests() {
       console.log("Read test specification, getting ready to run tests...".log);
 
       if (data.graders && data.tests) {
+
+        const NUM_OF_TESTS = get_number_of_tests(data.tests);
+
         async.series({
             wait: (cb) => { wait_for_graders(data.graders, cb); },
             tests: (cb) => { run_tests(data.graders, data.tests, cb); }
@@ -80,53 +83,42 @@ function start_tests() {
               process.exit(-1);
             }
             else {
-              console.log ("All tests have run.".log);
               var total_results = result.tests.reduce (
-                (acc, test_result) => {
-                  return test_result.reduce (
-                    (acc, grader_result) => {
+                (acc, test_results) => {
+                  if (test_results.bad_configurations){
+                    acc.total_bad_configuration += test_results.bad_configurations;
+                    return acc;
+                  }
+                  return test_results.test_submissions.reduce((acc, test_result) => {
+                    return test_result.reduce((acc, grader_result) => {
                       acc.total_tests++;
                       if (grader_result.mark_correct) {
                         acc.total_good_marks++;
                       } else {
                         acc.total_bad_marks++;
                       }
-
                       if (grader_result.feedback_correct) {
                         acc.total_good_feedback++;
                       } else {
                         acc.total_bad_feedback++;
-                      }
-
+                      }                    
                       return acc;
                     },
                     acc);
+
+                  }, acc);
                 },
                 {
                   total_tests: 0,
                   total_good_marks: 0,
                   total_good_feedback: 0,
                   total_bad_marks: 0,
-                  total_bad_feedback: 0
+                  total_bad_feedback: 0,
+                  total_bad_configuration: 0
                 }
               );
-
-              console.log (`Ran ${total_results.total_tests} tests.`);
-              if ((total_results.total_bad_marks == 0) && (total_results.total_bad_feedback == 0)) {
-                console.log ('All tests passed.'.good);
-              } else {
-                if (total_results.total_bad_marks == 0) {
-                  console.log ('All marks computed correctly.'.good);
-                } else {
-                  console.log (`${total_results.total_bad_marks} marks computed incorrectly (see above for details).`.error)
-                }
-
-                if (total_results.total_bad_feedback == 0) {
-                  console.log ('All feedback computed correctly or ignored.'.good);
-                } else {
-                  console.log (`${total_results.total_bad_feedback} feedback items computed incorrectly (see above for details).`.error)
-                }
-              }
+              
+              display_outcome(NUM_OF_TESTS, total_results);
 
               process.exit (total_results.total_bad_marks + total_results.total_bad_feedback);
             }
@@ -169,41 +161,53 @@ function wait_for_graders(graders, cb) {
 }
 
 function run_tests(graders, tests, cb) {
+  // For each test
   async.mapSeries(Object.keys(tests),
     (test, cb) => {
       console.log ('Running test '.log + test.yellow + '.'.log);
 
-      for (var subindex in Object.keys(tests[test].submissions)){
-        var gradertestspec = JSON.parse(JSON.stringify(tests[test]));
-        gradertestspec.submission = tests[test].submissions[subindex];
-        delete tests[test].submissions;
-        for (var grader in tests[test].graders){
-          console.log(grader);
-          console.log(tests[test].graders[grader]);
-          gradertestspec.graders[grader].mark = tests[test].graders[grader].marks[subindex];
-          gradertestspec.graders[grader].feedback = tests[test].graders[grader].feedbacks[subindex]
-          delete tests[test].graders[grader].feedbacks;
-          delete tests[test].graders[grader].marks
+      const aid = 1;
+
+      configure_graders(graders, tests[test].graders, aid, (err, res) => {
+        if (err){
+          cb(err);
+        } 
+        // count the number of graders that failed to get configured
+        var count = 0;
+        res.forEach(_ => count++);
+        
+        if (res == 0){
+          test_submissions(graders, tests[test], aid, cb)     
+        } else {
+          cb(null, {"bad_configurations": count});
         }
-        var sha = []
-        async.series({
-          sha: (cb) => { get_submission_sha(sha, gradertestspec.submission, cb); },
-          tests: (cb) => { run_graders(gradertestspec.graders, gradertestspec.submission, sha, graders, cb); }
-        },
-        (err, results) => {
-          if (err) {
-            cb(err, results.tests);
-          } else {
-            console.log ('Finished running test '.log + test.yellow + '.'.log);
-            cb(null, results.tests);
-          }
-        }
-      );
-      }
+      });
+    }, cb);
+};
+
+function test_submissions(graders, test, aid, cb) {
+  // For each submission
+  async.mapSeries(Object.keys(test.submissions), (subindex, cb) => {
+    console.log('Using submission '.log + test.submissions[subindex].yellow + '.'.log);
+
+    var gradertestspecs = get_grader_tester_specs(test, subindex);
+    var sha = [];
+    // Run the test
+    async.series({
+      sha: (cb) => { get_submission_sha(sha, gradertestspecs.submission, cb); },
+      tests: (cb) => { run_graders(gradertestspecs.graders, gradertestspecs.submission, graders, sha, aid, cb); }
     },
-    cb
-  );
+    (err, results) => {
+      if (err) {
+        cb(err, results.tests);
+      } else {
+        console.log ('Finished running test '.log + test.yellow + '.'.log);
+        cb(null, results.tests);
+      }
+    });
+  }, cb);
 }
+
 
 function get_submission_sha(sha, submission_folder, cb) {
   fs.readFile(`/repositories/${submission_folder}.git/packed-refs`, (err, data) => {
@@ -222,7 +226,7 @@ function get_submission_sha(sha, submission_folder, cb) {
   });
 }
 
-function run_graders(grader_test_specs, submission_folder, sha, graders, cb) {
+function run_graders(grader_test_specs, submission_folder, graders, sha, aid, cb) {
   console.log(`  Ready to run graders on SHA ${sha[0]}.`.log);
 
   // Fake submission data
@@ -231,7 +235,7 @@ function run_graders(grader_test_specs, submission_folder, sha, graders, cb) {
     studentuid: 77,
     studentemail: "tamara.test_student@kcl.ac.uk",
     sid: 15,
-    aid: 1,
+    aid: aid,
     is_unique: false,
     description_string: "",
     cloneurl: `${GIT_BASE_URL}${submission_folder}.git`,
@@ -275,7 +279,6 @@ function run_grader(grader_name, grader_test_spec, submission_request_body, grad
           } else {
             console.log("    " + test_result.feedback.message.error);
           }
-
           cb(null, result);
         } else {
           // Really strange: Why did we receive this in the first place, then?
@@ -298,16 +301,13 @@ function configure_test_for (grader_spec, grader_test_spec, submission, cb) {
     if (err) {
       console.log(`    Could not configure test server: ${err}.`.error);
       cb(err);
-    } 
-    else if (res.statusCode != 200){
-      console.log(`    Received non-200 return from test server: ${body}.`.error);
-      cb(`Received non-200 return from test server: ${body}.`);
-    }
-    else if (grader_spec.configuration){
-      setup_configuration(grader_spec, grader_test_spec, submission, cb);
-    }
-    else {
-      cb();
+    } else {
+      if (res.statusCode == 200) {
+        cb();
+      } else {
+        console.log(`    Received non-200 return from test server: ${body}.`.error);
+        cb(`Received non-200 return from test server: ${body}.`);
+      }
     }
   });
 }
@@ -317,12 +317,47 @@ function get_submission_sha_sync(repo_name) {
   return /^([A-Za-z0-9]+)\s+refs\/heads\/master$/m.exec(data)[1]
 }
 
-function setup_configuration(grader_spec, grader_test_spec, submission, cb){
-  const grader_name = grader_spec.canonical_name;
+function print(obj){
+  console.log({...obj});
+}
+function configure_graders(graders, grader_test_specs, aid, cb){
+  // for every grader_test_spec
+  async.mapSeries(Object.keys(grader_test_specs), (grader_test_spec_key, cb) => {
+    const grader_test_spec = grader_test_specs[grader_test_spec_key];
+    const grader_spec = graders[grader_test_spec_key];
+    const grader_name = grader_spec.canonical_name;
 
+    if (!grader_spec.configuration){
+      cb();
+      return;
+    }
+
+    async.series({
+      post: (cb) => {post_configuration(grader_spec, grader_test_spec, aid, cb);},
+      get: (cb) => {get_configuration(grader_spec, aid, cb);}
+    }, (err, result) => {
+      if (err){
+        console.log(`Retrieved error while configuring ${grader_spec.canonical_name} : ${err}`);
+        cb(err);
+      }
+      else if (JSON.stringify(result.post) != JSON.stringify(result.get)){
+        console.log (`Received correct configurations back from ${grader_name}.`.good)
+        cb();
+      }
+      else {
+        console.log(`Expected expected configurations ${JSON.stringify(result.post)} but received ${JSON.stringify(result.get)} from ${grader_name}`.error);
+        cb(null, grader_test_spec_key);
+      }
+    });
+  }, cb);
+}
+
+function post_configuration(grader_spec, grader_test_spec, aid, cb){
+  const grader_name = grader_spec.canonical_name;
+  // inject proper configuration for git-type parameters
   for (var configkey in grader_test_spec.configuration){
-    if (grader_test_spec.configuration[configkey]["repository"]){
-      const repo_name = grader_test_spec.configuration[configkey]["repository"]
+    if (grader_test_spec.configuration[configkey]["git"]){
+      const repo_name = grader_test_spec.configuration[configkey]["git"]
       grader_test_spec.configuration[configkey] = {
         repository: `${GIT_BASE_URL}${repo_name}.git`,
         sha: get_submission_sha_sync(repo_name),
@@ -330,28 +365,26 @@ function setup_configuration(grader_spec, grader_test_spec, submission, cb){
       }
     }
   }
+  const url = `http://${grader_name}:${grader_spec.port}${grader_spec.configuration}`;
 
   const requestOptions = {
-    url: `http://${grader_name}:${grader_spec.port}${grader_spec.configuration}`,
+    url: url,
     method: 'POST',
     json: true,
     body: {
-      aid: submission.aid,
+      aid: aid,
       config: grader_test_spec.configuration,
     }
   };
+  
   request(requestOptions, (err, res, body) => {
     if (err) {
-      console.log(`Retrieved error from call to ${grader_name}: ${err}.`.error);
+      console.log(url);
+      console.log(`Retrieved error from POSTing configuration to ${grader_name}: ${err}.`.error);
       cb(err);
     } else {
       if (res.statusCode == 200) {
-        console.log(`${grader_name} reports successfully receiving configuration with sha ${grader_test_spec.configuration.test_files.sha}.`.good);
-
-        // wait a bit for the grader to put it in the database
-        setTimeout(() => {
-          test_config(grader_spec, grader_test_spec, submission, cb)
-        }, 100)
+        cb(null, grader_test_spec.configuration)
       } else {
         console.log(`    Received non-200 return from ${grader_name}: ${body}.`.error);
         cb(`Received non-200 return from ${grader_name}: ${body}.`);
@@ -360,30 +393,23 @@ function setup_configuration(grader_spec, grader_test_spec, submission, cb){
   });
 }
 
-function test_config(grader_spec, grader_test_spec, submission, cb){
+function get_configuration(grader_spec, aid, cb){
   const grader_name = grader_spec.canonical_name;
 
   const requestOptions = {
-    url: `http://${grader_spec.canonical_name}:${grader_spec.port}${grader_spec.configuration}?${submission.aid}`,
+    url: `http://${grader_name}:${grader_spec.port}${grader_spec.configuration}?${aid}`,
     method: 'GET',
     json: true,
-    qs: {aid: submission.aid}, 
-    queries: {aid: submission.aid},
+    qs: {aid: aid}, 
+    queries: {aid: aid},
   };
   request(requestOptions, (err, res, body) => {
     if (err) {
-      console.log(`    Retrieved error from call to ${grader_name}: ${err}.`.error);
+      console.log(`    Retrieved error from GETting configuration from ${grader_name}: ${err}.`.error);
       cb(err);
     } else {
       if (res.statusCode == 200) {
-        if (JSON.stringify(body.config) == JSON.stringify(grader_test_spec.configuration)){
-          console.log (`Received correct configurations back from ${grader_name}.`.good)
-          cb();
-        }
-        else {
-          console.log(`Did not receive expected configurations from ${grader_name}.`);
-          cb(`Did not receive expected configurations from ${grader_name}: ${JSON.stringify(body)} but expected ${JSON.stringify(grader_test_spec.configuration)}.`);
-        }
+        cb(null, body.config);
       } else {
         console.log(`    Received non-200 return from ${grader_name}: ${body}.`.error);
         cb(`Received non-200 return from ${grader_name}: ${body}.`);
@@ -466,4 +492,61 @@ function get_feedback_html(feedback){
 
   // else ...
   console.log("Did find specifications for feedback. Using default empty string".error)
+}
+
+function get_grader_tester_specs(test, index) {
+  var gradertestspecs = JSON.parse(JSON.stringify(test));
+  gradertestspecs.submission = test.submissions[index];
+  delete gradertestspecs.submissions;
+  for (var grader in test.graders){
+    gradertestspecs.graders[grader].mark = test.graders[grader].marks[index];
+    gradertestspecs.graders[grader].feedback = test.graders[grader].feedbacks[index]
+    delete gradertestspecs.graders[grader].feedbacks;
+    delete gradertestspecs.graders[grader].marks
+  }
+  return gradertestspecs;
+}
+
+function display_outcome(num_of_tests, total_results){
+  console.log (`Ran ${total_results.total_tests} tests out of ${num_of_tests}`);
+
+  if (total_results.total_tests == num_of_tests){
+    console.log(`Ran all tests`.good)
+  } else {
+    console.log(`Did not run all tests`.error);
+  }
+
+  // everything went well?
+  if ((total_results.total_bad_marks == 0) 
+  && (total_results.total_bad_feedback == 0) && (total_results.total_bad_configuration == 0)) {
+    console.log ('All tests passed.'.good);
+    return;
+  }
+
+  if (total_results.total_bad_configuration == 0) {
+    console.log ('All configurable graders were configured correctly.');
+  } else {
+    console.log(`${total_results.total_bad_configuration} configurable graders configured incorrectly (see above for details)`.error);
+  }
+
+  if (total_results.total_tests > 0) {
+    if (total_results.total_bad_marks == 0) {
+      console.log ('All marks computed correctly.'.good);
+    } else {
+      console.log (`${total_results.total_bad_marks} marks computed incorrectly (see above for details).`.error)
+    }
+
+    if (total_results.total_bad_feedback == 0) {
+      console.log ('All feedback computed correctly or ignored.'.good);
+    } else {
+      console.log (`${total_results.total_bad_feedback} feedback items computed incorrectly (see above for details).`.error)
+    }
+  }
+}
+
+function get_number_of_tests(tests){
+  console.log({...tests});
+  return Object.keys(tests).map( (test) => {
+    return tests[test].submissions.length * Object.keys(tests[test].graders).length
+  }).reduce((a, b) => a + b, 0)
 }
