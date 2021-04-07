@@ -83,30 +83,39 @@ function start_tests() {
               process.exit(-1);
             }
             else {
+
               var total_results = result.tests.reduce (
-                (acc, test_results) => {
-                  if (test_results.bad_configurations){
-                    acc.total_bad_configuration += test_results.bad_configurations;
+                (acc, test_result) => {
+                  if (test_result.bad_configurations){
+                    acc.total_bad_configurations++;
+                  }
+                  if (!test_result.outcomes){
                     return acc;
                   }
-                  return test_results.test_submissions.reduce((acc, test_result) => {
-                    return test_result.reduce((acc, grader_result) => {
-                      acc.total_tests++;
-                      if (grader_result.mark_correct) {
-                        acc.total_good_marks++;
-                      } else {
-                        acc.total_bad_marks++;
-                      }
-                      if (grader_result.feedback_correct) {
-                        acc.total_good_feedback++;
-                      } else {
-                        acc.total_bad_feedback++;
-                      }                    
-                      return acc;
+                  // else ...
+                  return test_result.outcomes.reduce (
+                    (acc, grader_results) => {
+                      return Object.values(grader_results).reduce(
+                        (acc, grader_result) => {
+                          console.log(grader_result);
+                          acc.total_tests++;
+                          if (grader_result.mark_correct) {
+                            acc.total_good_marks++;
+                          } else {
+                            acc.total_bad_marks++;
+                          }
+    
+                          if (grader_result.feedback_correct) {
+                            acc.total_good_feedback++;
+                          } else {
+                            acc.total_bad_feedback++;
+                          }
+    
+                          return acc;                          
+                        }
+                      , acc);
                     },
                     acc);
-
-                  }, acc);
                 },
                 {
                   total_tests: 0,
@@ -114,13 +123,12 @@ function start_tests() {
                   total_good_feedback: 0,
                   total_bad_marks: 0,
                   total_bad_feedback: 0,
-                  total_bad_configuration: 0
+                  total_bad_configurations: 0
                 }
               );
-              
               display_outcome(NUM_OF_TESTS, total_results);
 
-              process.exit (total_results.total_bad_marks + total_results.total_bad_feedback);
+              process.exit (total_results.total_bad_configurations + total_results.total_bad_marks + total_results.total_bad_feedback);
             }
           }
         );
@@ -173,13 +181,22 @@ function run_tests(graders, tests, cb) {
           cb(err);
         } 
         // count the number of graders that failed to get configured
+        // and then don't test them
         var count = 0;
-        res.forEach(_ => count++);
-        
-        if (res == 0){
-          test_submissions(graders, tests[test], aid, cb)     
+        for (var graderindex in res){
+          const gradername = res[graderindex];
+          if (gradername){
+            delete tests[test].graders[gradername];
+            count++;
+          }
+        }
+        // if there is any grader left to test with
+        if (Object.keys(tests[test].graders).length > 0){
+          test_submissions(graders, tests[test], aid, (err, test_results) => {
+            cb(err, {bad_configurations: count, outcomes: test_results})
+          })     
         } else {
-          cb(null, {"bad_configurations": count});
+          cb(null, {bad_configurations: count});
         }
       });
     }, cb);
@@ -340,7 +357,7 @@ function configure_graders(graders, grader_test_specs, aid, cb){
         console.log(`Retrieved error while configuring ${grader_spec.canonical_name} : ${err}`);
         cb(err);
       }
-      else if (JSON.stringify(result.post) != JSON.stringify(result.get)){
+      else if (JSON.stringify(result.post) == JSON.stringify(result.get)){
         console.log (`Received correct configurations back from ${grader_name}.`.good)
         cb();
       }
@@ -366,7 +383,7 @@ function post_configuration(grader_spec, grader_test_spec, aid, cb){
     }
   }
   const url = `http://${grader_name}:${grader_spec.port}${grader_spec.configuration}`;
-
+  console.log(url);
   const requestOptions = {
     url: url,
     method: 'POST',
@@ -383,11 +400,12 @@ function post_configuration(grader_spec, grader_test_spec, aid, cb){
       console.log(`Retrieved error from POSTing configuration to ${grader_name}: ${err}.`.error);
       cb(err);
     } else {
-      if (res.statusCode == 200) {
-        cb(null, grader_test_spec.configuration)
+      if (true || res.statusCode == 200) {
+        cb(null, grader_test_spec.configuration);
       } else {
+        print(res);
         console.log(`    Received non-200 return from ${grader_name}: ${body}.`.error);
-        cb(`Received non-200 return from ${grader_name}: ${body}.`);
+        cb(`Received non-200 return from POSTing configuration to ${grader_name}: ${body}.`);
       }
     }
   });
@@ -408,11 +426,11 @@ function get_configuration(grader_spec, aid, cb){
       console.log(`    Retrieved error from GETting configuration from ${grader_name}: ${err}.`.error);
       cb(err);
     } else {
-      if (res.statusCode == 200) {
+      if (true || res.statusCode == 200) {
         cb(null, body.config);
       } else {
         console.log(`    Received non-200 return from ${grader_name}: ${body}.`.error);
-        cb(`Received non-200 return from ${grader_name}: ${body}.`);
+        cb(`Received non-200 return from GETing configuration from ${grader_name}: ${body}.`);
       }
     }
   });
@@ -523,7 +541,7 @@ function display_outcome(num_of_tests, total_results){
     return;
   }
 
-  if (total_results.total_bad_configuration == 0) {
+  if (total_results.total_bad_configurations == 0) {
     console.log ('All configurable graders were configured correctly.');
   } else {
     console.log(`${total_results.total_bad_configuration} configurable graders configured incorrectly (see above for details)`.error);
@@ -545,7 +563,6 @@ function display_outcome(num_of_tests, total_results){
 }
 
 function get_number_of_tests(tests){
-  console.log({...tests});
   return Object.keys(tests).map( (test) => {
     return tests[test].submissions.length * Object.keys(tests[test].graders).length
   }).reduce((a, b) => a + b, 0)

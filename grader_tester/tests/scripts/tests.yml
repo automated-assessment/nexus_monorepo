@@ -35,18 +35,28 @@ graders:
 tests:
   car_series:
     submissions: 
-      - car_test
+      - car_perfect
+      - car_okayish
+      - basic_no_compile
     graders:
       javac-tool:
         marks: 
           - 100
+          - 100
+          - 0
         feedbacks: 
           - file: javac_cartest
+          - file: javac_cartest
+          - dontcare
       junit-grader:
         marks: 
           - 100
+          - 0
+          - 0
         feedbacks: 
           - file: junit_cartest
+          - dontcare
+          - dontcare
         configuration:
           test_files:
             git: car_coursework
@@ -54,7 +64,11 @@ tests:
       io-grader:
         marks: 
           - 100
+          - 0
+          - 0
         feedbacks: 
+          - file: iograder_cartest
+          - file: iograder_cartest
           - file: iograder_cartest
         configuration:
           test_files:
