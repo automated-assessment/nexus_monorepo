@@ -229,6 +229,8 @@ function test_submissions(graders, test, aid, cb) {
 function get_submission_sha(sha, submission_folder, cb) {
   fs.readFile(`/repositories/${submission_folder}.git/packed-refs`, (err, data) => {
     if (err) {
+      console.log(err);
+      fs.readFile('/')
       cb(err);
       return;
     }
