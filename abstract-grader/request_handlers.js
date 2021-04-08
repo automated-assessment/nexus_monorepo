@@ -53,7 +53,7 @@ export function configurationPageHandler(req, res, next) {
   if ((!req.params.auth_token) ||
       (!req.params.auth_token == AUTH_TOKEN)) {
     console.log("Attempt to access configuration without proper authorization.");
-    req.status(400).send('Missing authorization!');
+    res.status(400).send('Missing authorization!');
     return next();
   }
 
@@ -409,6 +409,13 @@ function safeStringify(obj) {
 function getValidationError(config) {
 
   const paraschema = configSchema.parameters;
+
+  for (var ckey in config){
+    if (!paraschema[ckey]){
+        return `Unrecognized key "${ckey}"`
+    }
+  }
+
 
   for (var pkey in paraschema){
     if (!config[pkey]) {
