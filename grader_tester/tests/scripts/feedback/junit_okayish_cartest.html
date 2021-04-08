@@ -1,0 +1,24 @@
+<div class="generic-feedback">
+    <div>
+        <p>5/7 tests had problems:</p>
+        <ol>
+            <li>Check structure and construction of RaceTrack class: isRaining is not correctly tracked</li>
+            <li>When it is raining, the car goes slower in this lap by the amount of seconds specified by rainSlowdown.:
+                When it's not raining, there should be no slowdown because of rain. expected:<50> but was:<66>
+            </li>
+            <li>The car will need to take a pit stop when the fuel level drops below the amount of fuel that the car
+                requires to complete one lap. When the car takes a pit stop, this makes the car go slower in this lap by
+                the amount of seconds specified in pitStopTime. This also refuels the car to full capacity.: Car
+                refuelling requires a pitstop. expected:<73> but was:<74>
+            </li>
+            <li>The base time for one lap is the race track's average lap time.: Base time miscalculated expected:<50>
+                    but was:<51>
+            </li>
+            <li>When the fuel level is above 50 units, the car is heavier and therefore, goes slower in this lap by the
+                amount of seconds specified by highFuelSlowdown. Otherwise, the car goes faster in this lap by the
+                amount of seconds specified by lowFuelBoost.: High fuel slowdown has not been taken into account
+                correctly expected:<75> but was:<76>
+            </li>
+        </ol>
+    </div>
+</div>

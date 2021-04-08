@@ -7,6 +7,7 @@ import { sendMark, sendFeedback } from './utils';
 import { doMarkSubmission } from './mark_submission';
 var mysql = require('mysql');
 import yaml from 'node-yaml';
+import { RSA_NO_PADDING } from 'constants';
 
 const MAX_CONCURRENCY = process.env.MAX_CONCURRENCY ? parseInt(process.env.MAX_CONCURRENCY, 10) : 1;
 const AUTH_TOKEN = process.env.AUTH_TOKEN;
@@ -102,7 +103,7 @@ export function getConfigurationHandler(req, res, next){
   if ((!req.params.auth_token) ||
       (!req.params.auth_token == AUTH_TOKEN)) {
     console.log("Attempt to access configuration without proper authorization.");
-    req.status(400).send('Missing authorization!');
+    res.status(400).send('Missing authorization!');
     return next();
   }
 
@@ -129,31 +130,42 @@ export function getConfigurationHandler(req, res, next){
 /**
  * Receive and store configuration information.
  */
-export function storeConfigurationHandler(req, res, next) {
+export async function storeConfigurationHandler(req, res, next) {
   const aid = req.body.aid;
   const config = req.body.config;
 
   if ((!req.params.auth_token) ||
       (!req.params.auth_token == AUTH_TOKEN)) {
     console.log("Attempt to access configuration without proper authorization.");
-    req.status(400).send('Missing authorization!');
+    res.status(400).send('Missing authorization!');
+    return next();
   }
   else if (isNaN(parseInt(req.body.aid, 10))) {
     res.status(400).send('aid is not a number!');
+    return next();
   }
   else {
     const error = getValidationError(config);
     if (error){
       console.log(`Invalid configuration received: ${error}`.error);
       res.status(400).send(`Invalid configuration received: ${error}`);
+      return next();
     }
     else {
-      res.status(200);
       console.log(`Received configuration information for assignment ${aid}: ${config}.`);
-      storeConfigData(aid, JSON.stringify(config));
+      res.status(200);
+      storeConfigData(aid, JSON.stringify(config), (err) => {
+        if (err){
+          res.status(500).send('An internal error occurred');
+          next();
+        }
+        else {
+          res.sendStatus(200);
+        }
+        return next();
+      });
     }
   }
-  return next();
 }
 /**
  * Queue used to ensure only MAX_CONCURRENCY instances of the grader run at any given time.
@@ -280,6 +292,7 @@ var dbConnectionPool  = mysql.createPool({
   database: process.env.MYSQL_DATABASE || "abstr-grader"
 });
 
+console.log(`MYSQL >> ${process.env.MYSQL_HOST || "mysql"}`);
 dbConnectionPool.on('acquire', function (connection) {
   console.log('Connection %d acquired', connection.threadId);
 });
@@ -348,7 +361,7 @@ function getConfigData(aid, cb) {
   }
 }
 
-function storeConfigData (aid, config) {
+function storeConfigData (aid, config, cb) {
   if (Object.keys(configSchema.parameters).length > 0) {
     dbConnectionPool.query("SELECT * FROM grader_config WHERE aid=?", [aid], (err, result) => {
       if (err) {
@@ -363,12 +376,13 @@ function storeConfigData (aid, config) {
           sql = "INSERT INTO grader_config VALUES(?)";
           args = [[aid, config]];
         }
-
         dbConnectionPool.query(sql, args, (err, result) => {
           if (err) {
             console.log(`Error updating configuration for ${aid}: ${err}.`);
+            cb(err);
           } else {
             console.log(`Successfully updated configuration for ${aid}.`);
+            cb();
           }
         });
       }

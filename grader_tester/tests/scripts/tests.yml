@@ -45,18 +45,18 @@ tests:
           - 100
           - 0
         feedbacks: 
-          - file: javac_cartest
-          - file: javac_cartest
-          - dontcare
+          - file: javac_positive_cartest
+          - file: javac_positive_cartest
+          - file: javac_negative_cartest
       junit-grader:
         marks: 
           - 100
-          - 0
+          - 25
           - 0
         feedbacks: 
-          - file: junit_cartest
-          - dontcare
-          - dontcare
+          - file: junit_perfect_cartest
+          - file: junit_okayish_cartest
+          - file: javac_negative_cartest
         configuration:
           test_files:
             git: car_coursework

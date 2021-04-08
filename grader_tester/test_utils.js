@@ -390,22 +390,21 @@ function post_configuration(grader_spec, grader_test_spec, aid, cb){
     url: url,
     method: 'POST',
     json: true,
+    timeout: 30000, // timeout in ms
     body: {
       aid: aid,
       config: grader_test_spec.configuration,
-    }
+    },
   };
-  
   request(requestOptions, (err, res, body) => {
     if (err) {
-      console.log(url);
       console.log(`Retrieved error from POSTing configuration to ${grader_name}: ${err}.`.error);
       cb(err);
     } else {
-      if (true || res.statusCode == 200) {
+      if (res.statusCode == 200) {
         cb(null, grader_test_spec.configuration);
       } else {
-        print(res);
+        console.log(res.url);
         console.log(`    Received non-200 return from ${grader_name}: ${body}.`.error);
         cb(`Received non-200 return from POSTing configuration to ${grader_name}: ${body}.`);
       }
