@@ -559,10 +559,7 @@ class AssignmentController < ApplicationController
       return unless authenticate_can_administrate!(@assignment.course)
 
       notify_action = GitUtils.gen_notify_action(root_url, @assignment)
-      puts "\n notify_action: #{notify_action}\n"
-
       test_action = GitUtils.gen_test_action(root_url, @assignment)
-      puts "\n test_action: #{test_action}\n"
 
       action_zip_stream = Zip::OutputStream.write_buffer do |zip|
         zip.put_next_entry '.github/workflows/notify.yml'
