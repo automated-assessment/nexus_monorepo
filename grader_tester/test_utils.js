@@ -97,7 +97,6 @@ function start_tests() {
                     (acc, grader_results) => {
                       return Object.values(grader_results).reduce(
                         (acc, grader_result) => {
-                          console.log(grader_result);
                           acc.total_tests++;
                           if (grader_result.mark_correct) {
                             acc.total_good_marks++;
@@ -176,6 +175,8 @@ function run_tests(graders, tests, cb) {
 
       const aid = 1;
 
+      // note: we don't use async.series here
+      // since we want to test the graders that worked successfully
       configure_graders(graders, tests[test].graders, aid, (err, res) => {
         if (err){
           cb(err);
@@ -336,9 +337,6 @@ function get_submission_sha_sync(repo_name) {
   return /^([A-Za-z0-9]+)\s+refs\/heads\/master$/m.exec(data)[1]
 }
 
-function print(obj){
-  console.log({...obj});
-}
 function configure_graders(graders, grader_test_specs, aid, cb){
   // for every grader_test_spec
   async.mapSeries(Object.keys(grader_test_specs), (grader_test_spec_key, cb) => {
@@ -384,10 +382,8 @@ function post_configuration(grader_spec, grader_test_spec, aid, cb){
       }
     }
   }
-  const url = `http://${grader_name}:${grader_spec.port}${grader_spec.configuration}`;
-  console.log(url);
   const requestOptions = {
-    url: url,
+    url: `http://${grader_name}:${grader_spec.port}${grader_spec.configuration}`,
     method: 'POST',
     json: true,
     timeout: 30000, // timeout in ms
@@ -401,13 +397,10 @@ function post_configuration(grader_spec, grader_test_spec, aid, cb){
       console.log(`Retrieved error from POSTing configuration to ${grader_name}: ${err}.`.error);
       cb(err);
     } else {
-      if (res.statusCode == 200) {
-        cb(null, grader_test_spec.configuration);
-      } else {
-        console.log(res.url);
+      if (res.statusCode != 200){
         console.log(`    Received non-200 return from ${grader_name}: ${body}.`.error);
-        cb(`Received non-200 return from POSTing configuration to ${grader_name}: ${body}.`);
       }
+      cb(null, grader_test_spec.configuration);
     }
   });
 }
@@ -510,7 +503,7 @@ function get_feedback_html(feedback){
   }
 
   // else ...
-  console.log("Did find specifications for feedback. Using default empty string".error)
+  console.log("Did not find specifications for feedback. Using default empty string".error)
 }
 
 function get_grader_tester_specs(test, index) {

@@ -144,23 +144,6 @@ function check_completeness (test_outcome) {
 }
 
 function get_formatted_html(html) {
-  // source: https://stackoverflow.com/a/60338028
-
-  var tab = '\t';
-  var result = '';
-  var indent= '';
-
-  html.split(/>\s*</).forEach(function(element) {
-      if (element.match( /^\/\w/ )) {
-          indent = indent.substring(tab.length);
-      }
-
-      result += indent + '<' + element + '>\r\n';
-
-      if (element.match( /^<?\w[^>]*[^\/]$/ ) && !element.startsWith("input")  ) { 
-          indent += tab;              
-      }
-  });
-
-  return result.substring(1, result.length-3);
+  // source: https://stackoverflow.com/a/6507079
+  return html.replace(/\s/g, "")
 }
