@@ -292,7 +292,6 @@ var dbConnectionPool  = mysql.createPool({
   database: process.env.MYSQL_DATABASE || "abstr-grader"
 });
 
-console.log(`MYSQL >> ${process.env.MYSQL_HOST || "mysql"}`);
 dbConnectionPool.on('acquire', function (connection) {
   console.log('Connection %d acquired', connection.threadId);
 });
