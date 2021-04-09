@@ -33,7 +33,7 @@ graders:
     mark: /mark
     configuration: /foo/configuration
 tests:
-  car_series:
+  cartest:
     submissions: 
       - car_perfect
       - car_okayish
@@ -56,7 +56,7 @@ tests:
         feedbacks: 
           - file: junit_perfect_cartest
           - file: junit_okayish_cartest
-          - file: javac_negative_cartest
+          - file: failed_compile_cartest
         configuration:
           test_files:
             git: car_coursework
@@ -67,9 +67,9 @@ tests:
           - 0
           - 0
         feedbacks: 
-          - file: iograder_cartest
-          - file: iograder_cartest
-          - file: iograder_cartest
+          - file: iograder_perfect_cartest
+          - file: iograder_okayish_cartest
+          - file: failed_compile_cartest
         configuration:
           test_files:
             git: car_coursework
