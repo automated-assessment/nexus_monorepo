@@ -132,9 +132,6 @@ class AssignmentController < ApplicationController
   end
 
   def create_from_git
-    # Maybe here we need to perform some sort of validation on the url
-    # Or possible find some form tag in rails to have it only allow to enter url
-    # Or actually both?
     repo_url = params[:repository_url]
     course = Course.find_by(id: params[:cid])
 
@@ -148,6 +145,7 @@ class AssignmentController < ApplicationController
       return
     end
     
+    # Get assignment definition files
     assignment_config = nil
     grader_config = nil
     begin
@@ -162,6 +160,7 @@ class AssignmentController < ApplicationController
       return
     end
     
+    # Convert assignment YAML format to a hash nexus already understands
     formatted_config = nil
     begin
       formatted_config = GitUtils.convert_assignment_config_format(course.id, assignment_config, grader_config)
@@ -170,6 +169,7 @@ class AssignmentController < ApplicationController
       return
     end
 
+    # Create the assignment
     @assignment = Assignment.new(formatted_config)
     if @assignment
       return unless authenticate_can_administrate!(@assignment.course)
@@ -236,7 +236,7 @@ class AssignmentController < ApplicationController
           # Temporary commenting because graders return 'Cannot POST' even
           # though you actually can and they do get configured
           # raise res.body unless res.code.to_i < 400
-          
+
           assignment.log("Configured #{grader['name']} grader", 'info')
         rescue StandardError => e
           assignment.log("Failed to configure #{grader['name']} grader", 'error')
@@ -376,6 +376,7 @@ class AssignmentController < ApplicationController
       end
     end
 
+    # Get the assignment config from YAML file definitions
     begin
       assignment_config = GitUtils.get_assignment_config(@assignment)
       grader_config = GitUtils.get_grader_config(@assignment)
@@ -384,6 +385,7 @@ class AssignmentController < ApplicationController
       return
     end
 
+    # Format config to a format nexus already understands
     formatted_config = nil
     begin
       formatted_config = GitUtils.convert_assignment_config_format(@assignment.course.id, assignment_config, grader_config)

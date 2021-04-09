@@ -5,10 +5,13 @@ class GitUtils
 
   class << self
     # Assignment definition utils
+
+    # Generate the path in which an assignment repository would be cloned
     def gen_assignment_path(assignment)
       Rails.root.join('var', 'assignments', 'code', assignment.id.to_s)
     end
 
+    # Generate a temporary path for an assignment
     def gen_tmp_assignment_path()
       Rails.root.join('var', 'assignments', 'tmp', SecureRandom.alphanumeric(10))
     end
@@ -96,26 +99,31 @@ class GitUtils
       return g.object('HEAD').sha == Git.ls_remote(g.remote('origin').url)['head'][:sha]
     end
 
+    # Gets a hash which contains the assignment definition from a YAML file
     def get_assignment_config(assignment)
       return get_assignment_config_from_path(gen_assignment_path(assignment))
     end
     
+    # Gets a hash which contains the assignment grader config definition from a YAML file
     def get_grader_config(assignment)
       return get_grader_config_from_path(gen_assignment_path(assignment))
     end
 
+    # Get an assignment YAML definition from a specified folder
     def get_assignment_config_from_path(path)
       assignment_config_file = File.join(path, 'assignment.yml')
       assignment_config = YAML.load(File.read(assignment_config_file))
       return assignment_config
     end
     
+    # Get an assignment grader config YAML definition from a specified folder
     def get_grader_config_from_path(path)
       grader_config_file = File.join(path, 'grader-config.yml')
       grader_config = YAML.load(File.read(grader_config_file))
       return grader_config
     end
 
+    # Takes the marking tool uid as an argument and returns the id of that tool
     def convert_marking_tool_names_to_ids(name)
       marking_tool = MarkingTool.find_by(uid: name)
       
@@ -126,6 +134,10 @@ class GitUtils
       return marking_tool.id.to_s
     end
 
+    # Generates a hash representing a grader in an array of graders. The format
+    # matches the format in which nexus receives the assignment data when an
+    # assignment is created. The array attribute in the assignment object is
+    # 'marking_tool_contexts_attributes'.
     def gen_marking_tool_attributes(grader)
       attributes = {
         'marking_tool_id' => convert_marking_tool_names_to_ids(grader['name']),
@@ -137,13 +149,17 @@ class GitUtils
       return attributes
     end
 
+    # Generate an array of graders for an assignment from a YAML grader config.
+    # The format matches the format in which nexus receives the assignment data
+    # when an assignment is created. The array attribute in the assignment
+    # object is 'marking_tool_contexts_attributes'.
     def gen_marking_tool_contexts_attributes(grader_config)
       marking_tool_contexts_attributes = grader_config.map.with_index { |grader, idx| [idx.to_s, gen_marking_tool_attributes(grader)] }.to_h
       return marking_tool_contexts_attributes
     end
     
+    # Converts the uat parameter type name to type id
     def convert_uat_parameter_type_name_to_type(name)
-      # Temporary solution
       id_map = {
         'int' => '1',
         'float' => '2',
@@ -154,6 +170,9 @@ class GitUtils
       return id_map[name]
     end
 
+    # Generates a single uat parameter from an assignment YAML definition The
+    # format matches the format in which nexus receives the assignment data when
+    # an assignment is created manually, not from git.
     def gen_uat_parameters(uat)
       parameters = {
         'name' => uat['name'],
@@ -164,6 +183,10 @@ class GitUtils
       return parameters
     end
 
+    # Take a YAML assignment definition and generates the uat parameter array
+    # which nexus would receive if assignment was created manually. The uat
+    # parameter array attribute in the assignment hash is called
+    # 'uat_parameters_attributes'.
     def gen_uat_parameters_attributes(assignment_config)
       if assignment_config['is_unique']
         if assignment_config['uat_parameters']
@@ -193,11 +216,16 @@ class GitUtils
       end
     end
 
+    # Takes a YAML grader config and generates the 'active_services' attribute for an assignment.
     def gen_active_services(grader_config)
       active_services = grader_config.map.with_index { |grader, idx| [idx.to_s, grader['depends-on']] }.select {|grader| grader[1] != nil }.to_h
       return active_services
     end
 
+    # Takes the YAML definition format of an assignment and grader configuration
+    # and converts it to a format nexus already understands. It essentially aims
+    # to mimic the same format that an assignment definition is received in when
+    # an assignment gets created manually.
     def convert_assignment_config_format(course_id, assignment_config, grader_config)
       assignment = {
         'course_id' => course_id,
@@ -221,7 +249,7 @@ class GitUtils
       return assignment
     end
 
-    # Utils for generating urls for Github Actions
+    # Utils for generating Github Actions
 
     # Generate url for the route edit_assignment_from_git_json
     def gen_edit_from_git_json_url(host, id)
