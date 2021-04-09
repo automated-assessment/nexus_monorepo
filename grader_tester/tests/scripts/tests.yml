@@ -33,109 +33,114 @@ graders:
     mark: /mark
     configuration: /foo/configuration
 tests:
-  cartest:
-    submissions: 
-      - car_perfect
-      - car_okayish
-      - basic_no_compile
-    graders:
-      javac-tool:
-        marks: 
-          - 100
-          - 100
-          - 0
-        feedbacks: 
-          - file: javac_positive_cartest
-          - file: javac_positive_cartest
-          - file: javac_negative_cartest
-      junit-grader:
-        marks: 
-          - 100
-          - 25
-          - 0
-        feedbacks: 
-          - file: junit_perfect_cartest
-          - file: junit_okayish_cartest
-          - file: failed_compile_cartest
-        configuration:
-          test_files:
-            git: car_coursework
-          timeout: 1m
-      io-grader:
-        marks: 
-          - 100
-          - 0
-          - 0
-        feedbacks: 
-          - file: iograder_perfect_cartest
-          - file: iograder_okayish_cartest
-          - file: failed_compile_cartest
-        configuration:
-          test_files:
-            git: car_coursework
-          timeout: 15
+  # cartest:
+  #   submissions: 
+  #     - car_perfect
+  #     - car_okayish
+  #     - basic_no_compile
+  #   graders:
+  #     javac-tool:
+  #       marks: 
+  #         - 100
+  #         - 100
+  #         - 0
+  #       feedbacks: 
+  #         - file: javac_positive_cartest
+  #         - file: javac_positive_cartest
+  #         - file: javac_negative_cartest
+  #     junit-grader:
+  #       marks: 
+  #         - 100
+  #         - 25
+  #         - 0
+  #       feedbacks: 
+  #         - file: junit_perfect_cartest
+  #         - file: junit_okayish_cartest
+  #         - file: failed_compile_cartest
+  #       configuration:
+  #         test_files:
+  #           git: car_coursework
+  #         timeout: 1m
+  #     io-grader:
+  #       marks: 
+  #         - 100
+  #         - 0
+  #         - 0
+  #       feedbacks: 
+  #         - file: iograder_perfect_cartest
+  #         - file: iograder_okayish_cartest
+  #         - file: failed_compile_cartest
+  #       configuration:
+  #         test_files:
+  #           git: car_coursework
+  #         timeout: 15
   # compile:
-  #   submission: 
+  #   submissions: 
   #     - basic_compiles
   #   graders:
   #     javac-tool:
-  #       mark: 
+  #       marks: 
   #         - 100
-  #       feedback: 
+  #       feedbacks: 
   #         - dontcare
-  #     # The "grader" below doesn't actually look at the submission, so we take a random one
-  #     sample-abstract-grader:
-  #       mark: 
-  #         - 97
-  #       feedback:
-  #         - text: <div class="generic-feedback"><p>Some more specialised feedback</p></div>
   # compile_with_jar_files:
-  #   submission: 
-  #     compiles_with_jar_files
+  #   submissions: 
+  #     - basic_compiles
+  #     - compiles_with_jar_files
   #   graders:
   #     javac-tool:
-  #       mark: 100
-  #       feedback: dontcare
-  # no_compile:
-  #   submission: basic_no_compile
-  #   graders:
-  #     javac-tool:
-  #       mark: 0
-  #       feedback: dontcare
-  # cpp-compile:
-  #   submission: basic_compiles_cpp
-  #   graders:
-  #     cpp-compilation:
-  #       mark: 100
-  #       feedback: dontcare
-  #     # The "grader" below doesn't actually look at the submission, so we take a random one
-  #     sample-abstract-grader:
-  #       mark: 97
-  #       feedback:
-  #         text: <div class="generic-feedback"><p>Some more specialised feedback</p></div>
-  # no_compile_cpp:
-  #   submission: basic_no_compile_cpp
-  #   graders:
-  #     cpp-compilation:
-  #       mark: 0
-  #       feedback: dontcare
-  # complex_cpp:
-  #   submission: complex_cpp
-  #   graders:
-  #     cpp-compilation:
-  #       mark: 100
-  #       feedback: dontcare
-  #     cppunit-grader:
-  #       mark: 100
-  #       feedback: dontcare
-  #       configuration:
-  #         test_files:
-  #           repository: complex_coursework
-  #         timeout: 1m
-  #     cpp-iograder:
-  #       mark: 100
-  #       feedback: dontcare
-  #       configuration:
-  #         test_files:
-  #           repository: complex_coursework
-  #         timeout: 15
+  #       marks: 
+  #         - 100
+  #         - 100
+  #       feedbacks: 
+  #         - dontcare
+  #         - dontcare
+  #       # The "grader" below doesn't actually look at the submission, so we take a random one
+  #       sample-abstract-grader:
+  #         marks: 
+  #           - 97
+  #           - 97
+  #         feedbacks:
+  #           - text: <div class="generic-feedback"><p>Some more specialised feedback</p></div>
+  #           - text: <div class="generic-feedback"><p>Some more specialised feedback</p></div>
+  complextest:
+    submissions:
+      - complex_cpp
+      - basic_compiles
+      - basic_no_compile_cpp
+    graders:
+      cpp-compilation:
+        marks: 
+          - 100
+          - 100
+          - 0
+        feedbacks: 
+          - file: cppcompile_success
+          - file: cppcompile_emptygood
+          - file: cppcompile_fail
+      cppunit-grader:
+        marks: 
+          - 100
+          - 0
+          - 0
+        feedbacks: 
+          - file: cppunit_good_feedback
+          - dontcare
+          - dontcare
+        configuration:
+          test_files:
+            git: complex_coursework
+          timeout: 1m
+      cpp-iograder:
+        marks:
+          - 100
+          - 0
+          - 0
+        feedbacks:
+          - file: cppiograder_good_feedback
+          - dontcare
+          - dontcare
+        configuration:
+          test_files:
+            git: complex_coursework
+          timeout: 15
